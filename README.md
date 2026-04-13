@@ -1,16 +1,141 @@
-# React + Vite
+# 🐷 부리부리 미니홈피
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> 지수 💜 현하, 우리 둘만의 프라이빗 커플 앱
 
-Currently, two official plugins are available:
+<br/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ 소개
 
-## React Compiler
+**부리부리 미니홈피**는 커플 두 사람만을 위한 프라이빗 웹앱이에요.  
+일상 기록, 일정 공유, 감정 나누기, 편지 주고받기까지 — 우리만의 작은 공간이에요 🐷💜
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+<br/>
 
-## Expanding the ESLint configuration
+## 📱 주요 기능
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🌡️ 감정 온도계
+- 하루 한 번 오늘의 기분을 1~100도로 기록
+- 기록 안 하면 자동으로 💀 0도 패널티 부여
+- 연속 기록 **스트릭** 시스템 (끊기면 🔥 배너 경고)
+- 두 사람 온도 차이가 25도 이상이면 **❤️ 토닥토닥** 공감 버튼 등장
+- **주간 리포트** — 평균 온도 + 트렌드 자동 생성
+- 주·월·연 단위 온도 히스토리 그래프
+
+### ✍️ 오늘의 기록 (다이어리)
+- 감정 이모지 선택 + 텍스트 + 사진 업로드
+- Firebase Storage에 이미지 저장
+- 하트 좋아요 + 화려한 파티클 효과
+- 실시간 댓글 주고받기
+- 감정별 부리부리 캐릭터 표시
+
+### 📅 커플 캘린더
+- 일정 추가/수정/삭제 (실시간 동기화)
+- ⭐ 중요 일정 지정 시 D-DAY 배너에 자동 표시
+- 일정 등록 시 상대방에게 실시간 알림
+
+### 🎫 쿠폰북
+- 직접 텍스트 입력해서 쿠폰 발급 (양쪽 모두 가능)
+- 카테고리 태그: 밥🍜 / 데이트🎬 / 집안일🧹 / 스킨십🐷 / 소원⭐ / 기타🎁
+- **🎰 랜덤 뽑기 룰렛** — 받은 쿠폰 중 랜덤으로 당첨
+- 유효기간 14일 (3일 이하 남으면 경고 뱃지)
+- 받은 쿠폰 / 보낸 쿠폰 / 사용·만료 탭 분리
+
+### 💌 몰래 편지함
+- 시간 예약 편지 (1시간 후 / 3시간 후 / 내일 / 직접 설정)
+- 열리기 전까지 내용 비공개 🔒
+- 봉투 색상 선택 (보라 / 복숭아 / 핑크 / 민트)
+
+### 📋 버킷리스트
+- 데이트 / 여행 / 도전 / 기타 카테고리
+- 완료 시 confetti 파티클 효과
+- 둘 다 체크해야 완료 처리
+
+### ✨ D-DAY 배너
+- ⭐ 중요 일정까지 D-day + 시:분:초 카운트다운
+- 배경에 하트·별 파티클이 스르륵 떠다님
+- 부리부리 캐릭터 양쪽에서 동동 🐷
+
+### 🔔 실시간 알림
+- 일정 등록 / 다이어리 댓글 / 온도 차이 / 쿠폰 토닥이기 알림
+- 상단 스낵바로 실시간 수신
+
+<br/>
+
+## 🛠️ 기술 스택
+
+| 영역 | 사용 기술 |
+|------|-----------|
+| 프레임워크 | React 19 + Vite 7 |
+| UI | MUI (Material UI) v7 |
+| 애니메이션 | Framer Motion, CSS Keyframes, Canvas API |
+| 백엔드/DB | Firebase Firestore (실시간 동기화) |
+| 스토리지 | Firebase Storage (이미지 업로드) |
+| 인증 | Firebase Anonymous Auth |
+| 배포 | Firebase Hosting |
+| 이펙트 | canvas-confetti, 커스텀 파티클 엔진 |
+
+<br/>
+
+## 📁 프로젝트 구조
+
+```
+src/
+├── App.jsx                 # 메인 앱, 라우팅, 알림, 로그인
+├── firebase.js             # Firebase 초기화
+├── touchEffects.js         # 터치 이펙트 (리플, 파티클, 하트팡)
+│
+├── CoupleDDay.jsx          # D-DAY 카운트다운 배너
+├── CoupleCalendar.jsx      # 커플 캘린더
+├── CoupleCoupons.jsx       # 쿠폰북
+├── DiaryWrite.jsx          # 다이어리 작성
+├── DiaryList.jsx           # 다이어리 목록 + 하트/댓글
+├── EmotionThermometer.jsx  # 감정 온도계
+├── SecretLetter.jsx        # 몰래 편지함
+├── Bucketlist.jsx          # 버킷리스트
+├── ScheduleList.jsx        # 일정 목록
+└── NewMessageDialog.jsx    # 새 메시지 다이얼로그
+```
+
+<br/>
+
+## 🚀 로컬 실행
+
+```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
+npm run dev
+
+# 빌드
+npm run build
+
+# Firebase Hosting 배포
+npm run deploy
+```
+
+> **Note:** Firebase 프로젝트 연결이 필요해요. `firebase.js`에 본인의 Firebase config를 입력하세요.
+
+<br/>
+
+## 🎨 디자인 컨셉
+
+**부리부리** 캐릭터를 중심으로 한 아기자기하고 따뜻한 감성 디자인이에요.
+
+- **컬러 팔레트**: 라벤더 `#EDE0F5` · 피치 `#FFE4D4` · 퍼플 `#7B4FA6` · 오렌지 `#E8630A`
+- **폰트**: Jua (제목) + Noto Sans KR (본문)
+- **인터랙션**: 터치 리플, 부리부리 팡 이펙트, 화면 전체 하트 파티클
+- **애니메이션**: 캐릭터 bobbing, 페이지 슬라이드, 카드 fade-in
+
+<br/>
+
+## 💜 만든 이유
+
+세상에 하나뿐인, 우리 둘만을 위한 공간을 만들고 싶었어요.  
+앱스토어에 없어도 괜찮아요 — 우리만 쓰면 되니까요 🐷
+
+---
+
+<p align="center">
+  🐷 부리부리와 함께하는 우리의 공간 💜
+</p>
