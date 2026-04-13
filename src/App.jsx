@@ -29,6 +29,7 @@ import SecretLetter       from "./SecretLetter";
 import EmotionThermometer from "./EmotionThermometer";
 import ScheduleList       from "./ScheduleList";
 import BucketList         from "./Bucketlist";
+import TravelMap          from "./TravelMap";
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
 
 import meImg from "./assets/JS.jpg";
@@ -52,7 +53,8 @@ const B = {
 
 const PAGE = {
   MAIN: "main", SCHEDULE: "schedule", COUPONS: "coupons",
-  LETTER: "letter", THERMO: "thermo", DIARY_ALL: "diary_all", BUCKET: "bucket",
+  LETTER: "letter", THERMO: "thermo", DIARY_ALL: "diary_all",
+  BUCKET: "bucket", TRAVEL: "travel",
 };
 
 // ── 전역 스타일 ────────────────────────────────────────────────────
@@ -398,8 +400,7 @@ function App() {
 
   // ── 캘린더 알림 state ─────────────────────────────────────────
   const [calNotifOpen, setCalNotifOpen] = useState(false);
-  const [calNotifData, setCalNotifData] = useState(null); // { id, writer, count }
-  // unreadList를 ref로도 유지해서 클로저 stale 문제 완전 차단
+  const [calNotifData, setCalNotifData] = useState(null);
   const [calUnreadList, setCalUnreadList] = useState([]);
   const calUnreadRef   = useRef([]);
 
@@ -407,7 +408,6 @@ function App() {
   const [diaryNotifOpen, setDiaryNotifOpen] = useState(false);
   const [diaryNotifMsg,  setDiaryNotifMsg]  = useState("");
 
-  // ── 이미 처리한 알림 ID 세트 (메모리) ────────────────────────
   // ── 이미 처리한 알림 ID (localStorage로 앱 재시작 후에도 유지) ──────
   const shownCalIds = useRef(
     new Set(JSON.parse(localStorage.getItem("shownCalIds") || "[]"))
@@ -426,7 +426,7 @@ function App() {
 
   // ── 페이지 이동 ───────────────────────────────────────────────
   const goTo   = page => { setCurrentPage(page); setIsDrawerOpen(false); window.scrollTo(0, 0); };
-  const goMain = ()   => { setCurrentPage(PAGE.MAIN); window.scrollTo(0, 0); };
+  const goMain = () => { setCurrentPage(PAGE.MAIN); setIsDrawerOpen(false); window.scrollTo(0, 0); };
 
   // ── 버전 체크 ─────────────────────────────────────────────────
   useEffect(() => {
@@ -457,7 +457,7 @@ function App() {
     return () => clearInterval(id);
   }, []);
 
-  // ── localStorage 알림 ID 오래된 것 정리 (100개 초과 시 앞에서 자름) ──
+  // ── localStorage 알림 ID 오래된 것 정리 ──────────────────────
   useEffect(() => {
     ["shownCalIds", "shownDiaryIds"].forEach(key => {
       try {
@@ -481,8 +481,6 @@ function App() {
   }, []);
 
   // ── 캘린더 알림 리스너 ────────────────────────────────────────
-  // type 없는 것 = 일정 등록 알림
-  // isRead:false 인 것만 구독, 확인하면 Firestore에서도 사라짐
   useEffect(() => {
     if (!currentUser) return;
     const q = query(
@@ -493,16 +491,15 @@ function App() {
       const list = snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
         .filter(n =>
-          n.writer !== currentUser &&   // 내가 쓴 건 제외
-          !n.type &&                    // 캘린더 알림만 (type 없음)
-          !shownCalIds.current.has(n.id) // 이미 처리한 건 제외
+          n.writer !== currentUser &&
+          !n.type &&
+          !shownCalIds.current.has(n.id)
         )
         .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
 
       calUnreadRef.current = list;
       setCalUnreadList(list);
 
-      // 스낵바가 닫혀 있을 때만 첫 번째 알림 세팅
       setCalNotifOpen(prev => {
         if (!prev && list.length > 0) {
           setCalNotifData(list[0]);
@@ -519,26 +516,16 @@ function App() {
   const handleCalNotifClick = async () => {
     if (!calNotifData) return;
     const clickedId = calNotifData.id;
-
-    // 1) 즉시 메모리에 기록 (재표시 차단)
     addShownCalId(clickedId);
-
-    // 2) Firestore 읽음 처리 (await로 순서 보장)
     try { await updateDoc(doc(db, "notifications", clickedId), { isRead: true }); } catch (e) {}
-
-    // 3) ref에서 최신 목록 읽기 (stale 클로저 완전 회피)
     const next = calUnreadRef.current.filter(
       n => n.id !== clickedId && !shownCalIds.current.has(n.id)
     );
-
     if (next.length > 0) {
-      // 다음 알림 표시
       setCalNotifData(next[0]);
     } else {
-      // 마지막 알림 → 닫고 일정 페이지로 이동
       setCalNotifOpen(false);
       setCalNotifData(null);
-      // state 업데이트 flush 후 페이지 이동
       setTimeout(() => goTo(PAGE.SCHEDULE), 50);
     }
   };
@@ -564,15 +551,10 @@ function App() {
 
       const latest = list[0];
       addShownDiaryId(latest.id);
-
-      // Firestore 읽음 처리 (await 불필요 — 즉시 처리)
       updateDoc(doc(db, "notifications", latest.id), { isRead: true }).catch(() => {});
-
-      // 스낵바 표시
       setDiaryNotifMsg(latest.content || "새로운 알림이 있어요!");
       setDiaryNotifOpen(true);
 
-      // 해당 일기로 스크롤 (약간 딜레이 후)
       if (latest.targetId) {
         setTimeout(() => {
           const el = document.getElementById(`diary-${latest.targetId}`);
@@ -636,6 +618,7 @@ function App() {
     { label:"🌡️ 감정 온도계",      emoji:"🌡️", name:"감정 온도계", sub:"오늘 온도 기록",       page:PAGE.THERMO,    color:B.accent },
     { label:"📖 전체 기록 보기",   emoji:"📖", name:"전체 기록",   sub:"우리의 소중한 기록",   page:PAGE.DIARY_ALL, color:B.pants  },
     { label:"🪣 버킷리스트",        emoji:"🪣", name:"버킷리스트",  sub:"같이 이루고 싶은 것",  page:PAGE.BUCKET,    color:B.green  },
+    { label:"🗺️ 여행 지도",        emoji:"🗺️", name:"여행 지도",  sub:"함께 간 곳 핀 꽂기",   page:PAGE.TRAVEL,    color:"#3A86FF"},
   ];
 
   return (
@@ -698,7 +681,6 @@ function App() {
               overflow: 'visible',
             }}
           >
-            {/* 펄스 링 */}
             <Box sx={{
               position: 'absolute', inset: -4,
               borderRadius: '50%',
@@ -782,7 +764,6 @@ function App() {
                         boxShadow: isActive ? `0 4px 16px ${B.pants}44` : 'none',
                         '&:active': { transform: 'scale(0.93)' },
                       }}>
-                      {/* shine 효과 */}
                       {!isActive && (
                         <Box sx={{
                           position: 'absolute', top: 0, left: '-80%', width: '40%', height: '100%',
@@ -801,7 +782,6 @@ function App() {
                         color: isActive ? 'rgba(255,255,255,0.7)' : B.dark + '55',
                         fontFamily: "'Noto Sans KR',sans-serif",
                       }}>{item.sub}</Typography>
-                      {/* 현재 페이지 표시 */}
                       {isActive && (
                         <Box sx={{
                           position: 'absolute', top: 8, right: 8,
@@ -848,7 +828,7 @@ function App() {
             </Box>
           </Drawer>
 
-          {/* 캘린더 알림 스낵바 (보라색, 클릭하면 다음 알림 or 일정 페이지 이동) */}
+          {/* 캘린더 알림 스낵바 */}
           <Snackbar
             open={calNotifOpen}
             autoHideDuration={null}
@@ -871,7 +851,7 @@ function App() {
             </Alert>
           </Snackbar>
 
-          {/* diary/comment 알림 스낵바 (주황색, 5초 자동닫힘) */}
+          {/* diary/comment 알림 스낵바 */}
           <Snackbar
             open={diaryNotifOpen}
             autoHideDuration={5000}
@@ -923,6 +903,11 @@ function App() {
               <BucketList currentUser={currentUser} />
             </SubPage>
           )}
+          {currentPage === PAGE.TRAVEL && (
+            <SubPage title="우리의 여행 지도" icon="🗺️" onBack={goMain}>
+              <TravelMap currentUser={currentUser} />
+            </SubPage>
+          )}
 
           {/* ── 메인 페이지 ── */}
           {currentPage === PAGE.MAIN && (
@@ -971,7 +956,7 @@ function App() {
                   <DiaryWrite currentUser={currentUser} />
                 </SectionCard>
 
-                {/* 최근 기록 미리보기 (최신 3개) */}
+                {/* 최근 기록 미리보기 */}
                 <SectionCard icon="📖" title="최근 기록" sub="탐정 부리부리가 기억해요 🕵️"
                   buriImg={buri9} bgColor={B.lavender + "44"} borderColor={B.pants}
                   onMore={() => goTo(PAGE.DIARY_ALL)}>

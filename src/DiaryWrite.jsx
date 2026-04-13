@@ -30,6 +30,9 @@ const emotions = [
   { label:"울음", emoji:"😭" },
   { label:"슬픔", emoji:"😢" },
   { label:"화남", emoji:"👹" },
+  { label:"설렘", emoji:"🫶" },
+  { label:"피곤", emoji:"🥱" },
+  { label:"최고", emoji:"🔥" },
 ];
 
 const sendNotification = async (currentUser, diaryId) => {
@@ -121,32 +124,33 @@ const DiaryWrite = ({ currentUser }) => {
         <Typography sx={{ mb:1, color: B.dark + "88", fontWeight:'bold', fontSize:'0.82rem', fontFamily:"'Noto Sans KR', sans-serif" }}>
           지금 기분은 어떤가요?
         </Typography>
-        <ToggleButtonGroup
-          value={emotion} exclusive
-          onChange={(e, v) => v && setEmotion(v)}
-          fullWidth
-          sx={{
-            display:'flex', gap:1, border:'none', flexWrap:'wrap',
-            '& .MuiToggleButton-root': {
-              border:'none', borderRadius:'12px !important',
-              bgcolor: B.peach + "88",
-              boxShadow:`0 2px 6px ${B.skin}66`,
-              fontSize:'1.2rem', flex:1, minWidth:'50px',
-              transition:'all 0.18s',
-              '&:hover': { bgcolor: B.lavender, transform:'scale(1.08)' },
-              '&.Mui-selected': {
-                bgcolor: B.pants, color:'white !important',
-                boxShadow:`0 4px 12px ${B.pants}55`,
-                transform:'scale(1.1)',
-                '&:hover': { bgcolor:'#6A3D96' },
-              },
-            },
-          }}
-        >
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0.8 }}>
           {emotions.map((em) => (
-            <ToggleButton key={em.label} value={em.label}>{em.emoji}</ToggleButton>
+            <Box
+              key={em.label}
+              onClick={() => setEmotion(em.label)}
+              sx={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
+                py: 1, borderRadius: '12px', cursor: 'pointer', transition: 'all 0.18s',
+                bgcolor: emotion === em.label ? B.pants : B.peach + "88",
+                boxShadow: emotion === em.label
+                  ? `0 4px 12px ${B.pants}55`
+                  : `0 2px 6px ${B.skin}66`,
+                transform: emotion === em.label ? 'scale(1.06)' : 'scale(1)',
+                '&:hover': { bgcolor: emotion === em.label ? '#6A3D96' : B.lavender, transform: 'scale(1.06)' },
+                '&:active': { transform: 'scale(0.95)' },
+              }}
+            >
+              <Typography sx={{ fontSize: '1.35rem', lineHeight: 1 }}>{em.emoji}</Typography>
+              <Typography sx={{
+                fontSize: '0.6rem', lineHeight: 1,
+                color: emotion === em.label ? 'white' : B.dark + "88",
+                fontFamily: "'Noto Sans KR', sans-serif",
+                fontWeight: emotion === em.label ? 700 : 400,
+              }}>{em.label}</Typography>
+            </Box>
           ))}
-        </ToggleButtonGroup>
+        </Box>
       </Box>
 
       {/* 텍스트 입력 */}
