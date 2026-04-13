@@ -1,0 +1,8 @@
+/* App.css - 부리부리 테마 */
+
+#root {
+  max-width: 480px; /* 모바일 전용 */
+  margin: 0 auto;
+  padding: 0;
+  text-align: left;
+}

@@ -1,0 +1,169 @@
+/* ── react-calendar 모바일 최적화 ─────────────────────────────── */
+
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  background: transparent !important;
+  font-family: 'Noto Sans KR', sans-serif !important;
+  line-height: 1.2 !important;
+}
+
+/* 네비게이션 (월 이동 버튼) */
+.react-calendar__navigation {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  height: 44px !important;
+}
+
+.react-calendar__navigation button {
+  min-width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  border: none !important;
+  background: transparent !important;
+  font-family: 'Jua', sans-serif !important;
+  font-size: 1rem !important;
+  color: #7B4FA6 !important;
+  cursor: pointer !important;
+  transition: background 0.15s, transform 0.1s !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.react-calendar__navigation button:active {
+  transform: scale(0.88) !important;
+  background: #EDE0F5 !important;
+}
+
+.react-calendar__navigation button:disabled {
+  opacity: 0.3 !important;
+}
+
+.react-calendar__navigation__label {
+  font-size: 1rem !important;
+  font-weight: bold !important;
+  color: #7B4FA6 !important;
+  flex-grow: 1 !important;
+  pointer-events: none !important;
+}
+
+/* 요일 헤더 */
+.react-calendar__month-view__weekdays {
+  text-align: center !important;
+  margin-bottom: 4px !important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 6px 0 !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #7B4FA6cc !important;
+  font-family: 'Noto Sans KR', sans-serif !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none !important;
+}
+
+/* 날짜 타일 */
+.react-calendar__tile {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 6px 2px 4px !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  border-radius: 10px !important;
+  font-size: 0.82rem !important;
+  font-family: 'Noto Sans KR', sans-serif !important;
+  font-weight: 500 !important;
+  color: #3D1F00 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: background 0.12s, transform 0.1s !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.react-calendar__tile:active {
+  transform: scale(0.88) !important;
+  background: #EDE0F5 !important;
+}
+
+/* 오늘 */
+.react-calendar__tile--now {
+  background: #EDE0F5 !important;
+  border-radius: 10px !important;
+}
+
+.react-calendar__tile--now abbr {
+  color: #7B4FA6 !important;
+  font-weight: 700 !important;
+}
+
+/* 선택된 날짜 */
+.react-calendar__tile--active,
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: #7B4FA6 !important;
+  border-radius: 10px !important;
+  color: white !important;
+}
+
+.react-calendar__tile--active abbr {
+  color: white !important;
+  font-weight: 700 !important;
+}
+
+/* 다중선택 */
+.react-calendar__tile.multi-selected-tile {
+  background: #FFE4D4 !important;
+  border: 2px solid #7B4FA6 !important;
+  border-radius: 10px !important;
+}
+
+/* 공휴일 / 일요일 */
+.react-calendar__tile.holiday abbr {
+  color: #E24B4A !important;
+}
+
+/* 중요 일정 */
+.react-calendar__tile.important-day abbr {
+  color: #7B4FA6 !important;
+  font-weight: 700 !important;
+}
+
+.react-calendar__tile.important-day::before {
+  content: '⭐';
+  position: absolute !important;
+  top: 1px !important;
+  right: 2px !important;
+  font-size: 7px !important;
+  line-height: 1 !important;
+}
+
+/* 이웃 달 날짜 */
+.react-calendar__month-view__days__day--neighboringMonth {
+  opacity: 0.3 !important;
+}
+
+/* 일정 바 */
+.tile-dots {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  width: 100% !important;
+  padding: 0 3px !important;
+  margin-top: 2px !important;
+  align-items: center !important;
+}
+
+.tile-dot-bar {
+  height: 3px !important;
+  width: 80% !important;
+  border-radius: 2px !important;
+  flex-shrink: 0 !important;
+}
