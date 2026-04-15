@@ -30,6 +30,7 @@ import EmotionThermometer from "./EmotionThermometer";
 import ScheduleList       from "./ScheduleList";
 import BucketList         from "./Bucketlist";
 import TravelMap          from "./TravelMap";
+import LoveStats          from "./LoveStats";
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
 
 import meImg from "./assets/JS.jpg";
@@ -44,7 +45,6 @@ import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
 import buri8 from "./assets/KakaoTalk_20260316_132954818.png";
 import buri9 from "./assets/KakaoTalk_20260316_133007779.png";
 
-// ── 상수 ─────────────────────────────────────────────────────────
 const B = {
   skin: "#F5B8A0", pants: "#7B4FA6", dark: "#3D1F00",
   cream: "#FFF8F2", peach: "#FFE4D4", lavender: "#EDE0F5",
@@ -54,10 +54,9 @@ const B = {
 const PAGE = {
   MAIN: "main", SCHEDULE: "schedule", COUPONS: "coupons",
   LETTER: "letter", THERMO: "thermo", DIARY_ALL: "diary_all",
-  BUCKET: "bucket", TRAVEL: "travel",
+  BUCKET: "bucket", TRAVEL: "travel", STATS: "stats",
 };
 
-// ── 전역 스타일 ────────────────────────────────────────────────────
 const GlobalStyle = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -120,7 +119,6 @@ const GlobalStyle = () => (
   `}</style>
 );
 
-// ── SectionCard ───────────────────────────────────────────────────
 const SectionCard = ({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children }) => (
   <Box sx={{
     bgcolor: bgColor || B.cream, borderRadius: 4,
@@ -170,7 +168,6 @@ const SectionCard = ({ icon, title, sub, buriImg, bgColor, borderColor, onMore, 
   </Box>
 );
 
-// ── SubPage ───────────────────────────────────────────────────────
 const SubPage = ({ title, icon, onBack, children }) => (
   <Box sx={{ animation: "pageSlideIn 0.3s ease both", minHeight: "100vh" }}>
     <Box sx={{
@@ -195,7 +192,6 @@ const SubPage = ({ title, icon, onBack, children }) => (
   </Box>
 );
 
-// ── SecretLetterPreview ───────────────────────────────────────────
 const SecretLetterPreview = () => {
   const [latest, setLatest] = useState(null);
   useEffect(() => {
@@ -205,7 +201,6 @@ const SecretLetterPreview = () => {
     });
     return () => unsub();
   }, []);
-
   if (!latest) return (
     <Typography sx={{ textAlign: "center", py: 2, fontSize: "0.82rem",
       color: B.dark + "66", fontFamily: "'Jua',sans-serif" }}>
@@ -234,7 +229,6 @@ const SecretLetterPreview = () => {
   );
 };
 
-// ── LoginScreen ───────────────────────────────────────────────────
 const LoginScreen = ({ onLogin }) => {
   const floatEmojis = ['🐷','💜','✨','🎉','⭐','💕','🎊','🐷','💜','✨'];
   const handleSelect = (role, e) => {
@@ -296,7 +290,6 @@ const LoginScreen = ({ onLogin }) => {
         }}>부리부리가 기다리고 있어요 🐷</Typography>
       </Box>
       <Stack direction="row" spacing={2.5} sx={{ position: 'relative', zIndex: 2, mb: 3 }}>
-        {/* 지수 카드 */}
         <Box component="button" onPointerDown={e => handleSelect("지수", e)}
           sx={{
             width: 148, background: 'white', borderRadius: '28px',
@@ -332,7 +325,6 @@ const LoginScreen = ({ onLogin }) => {
             animation: 'buriWiggle 2.2s ease-in-out infinite',
           }} />
         </Box>
-        {/* 현하 카드 */}
         <Box component="button" onPointerDown={e => handleSelect("현하", e)}
           sx={{
             width: 148, background: 'white', borderRadius: '28px',
@@ -390,31 +382,21 @@ const LoginScreen = ({ onLogin }) => {
   );
 };
 
-// ── App ───────────────────────────────────────────────────────────
 function App() {
   const [currentUser,      setCurrentUser]      = useState(null);
   const [loading,          setLoading]          = useState(true);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [isDrawerOpen,     setIsDrawerOpen]     = useState(false);
   const [currentPage,      setCurrentPage]      = useState(PAGE.MAIN);
-
-  // ── 캘린더 알림 state ─────────────────────────────────────────
-  const [calNotifOpen, setCalNotifOpen] = useState(false);
-  const [calNotifData, setCalNotifData] = useState(null);
-  const [calUnreadList, setCalUnreadList] = useState([]);
+  const [calNotifOpen,     setCalNotifOpen]     = useState(false);
+  const [calNotifData,     setCalNotifData]     = useState(null);
+  const [calUnreadList,    setCalUnreadList]    = useState([]);
   const calUnreadRef   = useRef([]);
-
-  // ── diary/comment 알림 state ──────────────────────────────────
   const [diaryNotifOpen, setDiaryNotifOpen] = useState(false);
   const [diaryNotifMsg,  setDiaryNotifMsg]  = useState("");
 
-  // ── 이미 처리한 알림 ID (localStorage로 앱 재시작 후에도 유지) ──────
-  const shownCalIds = useRef(
-    new Set(JSON.parse(localStorage.getItem("shownCalIds") || "[]"))
-  );
-  const shownDiaryIds = useRef(
-    new Set(JSON.parse(localStorage.getItem("shownDiaryIds") || "[]"))
-  );
+  const shownCalIds = useRef(new Set(JSON.parse(localStorage.getItem("shownCalIds") || "[]")));
+  const shownDiaryIds = useRef(new Set(JSON.parse(localStorage.getItem("shownDiaryIds") || "[]")));
   const addShownCalId = id => {
     shownCalIds.current.add(id);
     localStorage.setItem("shownCalIds", JSON.stringify([...shownCalIds.current]));
@@ -424,11 +406,9 @@ function App() {
     localStorage.setItem("shownDiaryIds", JSON.stringify([...shownDiaryIds.current]));
   };
 
-  // ── 페이지 이동 ───────────────────────────────────────────────
   const goTo   = page => { setCurrentPage(page); setIsDrawerOpen(false); window.scrollTo(0, 0); };
-  const goMain = () => { setCurrentPage(PAGE.MAIN); setIsDrawerOpen(false); window.scrollTo(0, 0); };
+  const goMain = ()   => { setCurrentPage(PAGE.MAIN); setIsDrawerOpen(false); window.scrollTo(0, 0); };
 
-  // ── 버전 체크 ─────────────────────────────────────────────────
   useEffect(() => {
     const check = async () => {
       try {
@@ -457,21 +437,15 @@ function App() {
     return () => clearInterval(id);
   }, []);
 
-  // ── localStorage 알림 ID 오래된 것 정리 ──────────────────────
   useEffect(() => {
     ["shownCalIds", "shownDiaryIds"].forEach(key => {
       try {
         const arr = JSON.parse(localStorage.getItem(key) || "[]");
-        if (arr.length > 100) {
-          localStorage.setItem(key, JSON.stringify(arr.slice(-100)));
-        }
-      } catch (e) {
-        localStorage.removeItem(key);
-      }
+        if (arr.length > 100) localStorage.setItem(key, JSON.stringify(arr.slice(-100)));
+      } catch (e) { localStorage.removeItem(key); }
     });
   }, []);
 
-  // ── 인증 ──────────────────────────────────────────────────────
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, user => {
       setCurrentUser(user?.displayName || null);
@@ -480,31 +454,18 @@ function App() {
     return () => unsub();
   }, []);
 
-  // ── 캘린더 알림 리스너 ────────────────────────────────────────
   useEffect(() => {
     if (!currentUser) return;
-    const q = query(
-      collection(db, "notifications"),
-      where("isRead", "==", false)
-    );
+    const q = query(collection(db, "notifications"), where("isRead", "==", false));
     const unsub = onSnapshot(q, snap => {
       const list = snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
-        .filter(n =>
-          n.writer !== currentUser &&
-          !n.type &&
-          !shownCalIds.current.has(n.id)
-        )
+        .filter(n => n.writer !== currentUser && !n.type && !shownCalIds.current.has(n.id))
         .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-
       calUnreadRef.current = list;
       setCalUnreadList(list);
-
       setCalNotifOpen(prev => {
-        if (!prev && list.length > 0) {
-          setCalNotifData(list[0]);
-          return true;
-        }
+        if (!prev && list.length > 0) { setCalNotifData(list[0]); return true; }
         if (list.length === 0) return false;
         return prev;
       });
@@ -512,15 +473,12 @@ function App() {
     return () => unsub();
   }, [currentUser]);
 
-  // ── 캘린더 알림 클릭 핸들러 ──────────────────────────────────
   const handleCalNotifClick = async () => {
     if (!calNotifData) return;
     const clickedId = calNotifData.id;
     addShownCalId(clickedId);
     try { await updateDoc(doc(db, "notifications", clickedId), { isRead: true }); } catch (e) {}
-    const next = calUnreadRef.current.filter(
-      n => n.id !== clickedId && !shownCalIds.current.has(n.id)
-    );
+    const next = calUnreadRef.current.filter(n => n.id !== clickedId && !shownCalIds.current.has(n.id));
     if (next.length > 0) {
       setCalNotifData(next[0]);
     } else {
@@ -530,31 +488,20 @@ function App() {
     }
   };
 
-  // ── diary/comment 알림 리스너 ─────────────────────────────────
   useEffect(() => {
     if (!currentUser) return;
-    const q = query(
-      collection(db, "notifications"),
-      where("isRead", "==", false)
-    );
+    const q = query(collection(db, "notifications"), where("isRead", "==", false));
     const unsub = onSnapshot(q, snap => {
       const list = snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
-        .filter(n =>
-          n.writer !== currentUser &&
-          (n.type === "diary" || n.type === "comment") &&
-          !shownDiaryIds.current.has(n.id)
-        )
+        .filter(n => n.writer !== currentUser && (n.type === "diary" || n.type === "comment") && !shownDiaryIds.current.has(n.id))
         .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-
       if (list.length === 0) return;
-
       const latest = list[0];
       addShownDiaryId(latest.id);
       updateDoc(doc(db, "notifications", latest.id), { isRead: true }).catch(() => {});
       setDiaryNotifMsg(latest.content || "새로운 알림이 있어요!");
       setDiaryNotifOpen(true);
-
       if (latest.targetId) {
         setTimeout(() => {
           const el = document.getElementById(`diary-${latest.targetId}`);
@@ -570,7 +517,6 @@ function App() {
     return () => unsub();
   }, [currentUser]);
 
-  // ── 기타 핸들러 ───────────────────────────────────────────────
   const handleUpdateConfirm = async () => {
     try { await signOut(auth); window.location.reload(true); } catch (e) { window.location.reload(true); }
   };
@@ -597,7 +543,6 @@ function App() {
     }
   };
 
-  // ── 로딩 ──────────────────────────────────────────────────────
   if (loading) return (
     <>
       <GlobalStyle />
@@ -610,7 +555,6 @@ function App() {
     </>
   );
 
-  // ── 드로어 메뉴 ───────────────────────────────────────────────
   const MENU_ITEMS = [
     { label:"📅 일정 한눈에 보기", emoji:"📅", name:"일정 보기",   sub:"등록된 일정 한눈에",   page:PAGE.SCHEDULE,  color:B.pants  },
     { label:"🎟️ 쿠폰북",          emoji:"🎟️", name:"쿠폰북",     sub:"사용 가능한 쿠폰",     page:PAGE.COUPONS,   color:B.accent },
@@ -619,13 +563,13 @@ function App() {
     { label:"📖 전체 기록 보기",   emoji:"📖", name:"전체 기록",   sub:"우리의 소중한 기록",   page:PAGE.DIARY_ALL, color:B.pants  },
     { label:"🪣 버킷리스트",        emoji:"🪣", name:"버킷리스트",  sub:"같이 이루고 싶은 것",  page:PAGE.BUCKET,    color:B.green  },
     { label:"🗺️ 여행 지도",        emoji:"🗺️", name:"여행 지도",  sub:"함께 간 곳 핀 꽂기",   page:PAGE.TRAVEL,    color:"#3A86FF"},
+    { label:"📊 연애 통계",        emoji:"📊", name:"연애 통계",  sub:"우리 연애 리포트",      page:PAGE.STATS,     color:"#E91E8C"},
   ];
 
   return (
     <>
       <GlobalStyle />
 
-      {/* 업데이트 팝업 */}
       <Dialog open={updateDialogOpen} disableEscapeKeyDown disableEnforceFocus aria-hidden={false}
         PaperProps={{ sx: { borderRadius: 5, p: 1, textAlign: 'center', bgcolor: B.cream,
           border: `2px solid ${B.pants}44`, boxShadow: `0 8px 40px ${B.pants}44`, overflow: 'visible' } }}>
@@ -656,7 +600,6 @@ function App() {
         </DialogActions>
       </Dialog>
 
-      {/* 로그인 / 메인 분기 */}
       {!currentUser ? (
         <LoginScreen onLogin={login} />
       ) : (
@@ -664,7 +607,6 @@ function App() {
           <Box component="img" src={buri7} alt="" className="buri-float b2" />
           <Box component="img" src={buri3} alt="" className="buri-float b3" />
 
-          {/* 햄버거 버튼 — 펄스 효과 */}
           <Box
             onClick={() => { setIsDrawerOpen(true); vibrate([15,10,20]); }}
             onPointerDown={e => createBuriPang(e)}
@@ -682,8 +624,7 @@ function App() {
             }}
           >
             <Box sx={{
-              position: 'absolute', inset: -4,
-              borderRadius: '50%',
+              position: 'absolute', inset: -4, borderRadius: '50%',
               border: `2px solid ${B.pants}55`,
               animation: 'hamRing 2.5s ease-in-out infinite',
               pointerEvents: 'none',
@@ -691,7 +632,6 @@ function App() {
             <MenuIcon sx={{ color: 'white', fontSize: 22 }} />
           </Box>
 
-          {/* 드로어 — 그리드 카드형 */}
           <Drawer anchor="left" open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}
             PaperProps={{ sx: {
               width: 290, bgcolor: B.cream,
@@ -702,8 +642,6 @@ function App() {
               borderRight: `2px solid ${B.pants}22`,
               display: 'flex', flexDirection: 'column',
             } }}>
-
-            {/* 드로어 헤더 */}
             <Box sx={{
               px: 2.5, pt: 3, pb: 2,
               borderBottom: `1.5px dashed ${B.pants}22`,
@@ -720,8 +658,7 @@ function App() {
                 <Box>
                   <Typography sx={{
                     fontFamily: "'Jua',sans-serif", fontSize: '1.3rem',
-                    color: B.pants, lineHeight: 1.2,
-                    textShadow: `1px 1px 0 ${B.skin}88`,
+                    color: B.pants, lineHeight: 1.2, textShadow: `1px 1px 0 ${B.skin}88`,
                   }}>
                     {currentUser}의 메뉴 🐷
                   </Typography>
@@ -736,7 +673,6 @@ function App() {
               </Stack>
             </Box>
 
-            {/* 그리드 메뉴 */}
             <Box sx={{ px: 1.6, pt: 2, flex: 1, overflowY: 'auto' }}>
               <Typography sx={{
                 fontSize: '0.6rem', fontWeight: 700, color: B.pants + '88',
@@ -749,14 +685,13 @@ function App() {
                   const isActive = currentPage === item.page;
                   return (
                     <Box key={item.label}
-                      onClick={() => { vibrate(15); item.page === PAGE.MAIN ? goMain() : goTo(item.page); }}
+                      onClick={() => { vibrate(15); goTo(item.page); }}
                       onPointerDown={e => createBuriPang(e)}
                       sx={{
                         bgcolor: isActive ? B.pants : 'white',
                         borderRadius: '16px',
                         border: `1.5px solid ${isActive ? 'transparent' : item.color + '33'}`,
-                        p: '14px 12px',
-                        cursor: 'pointer',
+                        p: '14px 12px', cursor: 'pointer',
                         display: 'flex', flexDirection: 'column', gap: '5px',
                         position: 'relative', overflow: 'hidden',
                         animation: `gridCardIn 0.3s ease ${i * 0.05}s both`,
@@ -794,14 +729,12 @@ function App() {
                 })}
               </Box>
 
-              {/* 홈 버튼 */}
               <Box
                 onClick={() => { goMain(); vibrate(15); }}
                 onPointerDown={e => createBuriPang(e)}
                 sx={{
                   mt: 1.5, py: 1.2, borderRadius: '14px',
-                  bgcolor: B.pants + '18',
-                  border: `1.5px solid ${B.pants}33`,
+                  bgcolor: B.pants + '18', border: `1.5px solid ${B.pants}33`,
                   textAlign: 'center', cursor: 'pointer',
                   transition: 'transform 0.12s',
                   '&:active': { transform: 'scale(0.97)' },
@@ -813,29 +746,23 @@ function App() {
               </Box>
             </Box>
 
-            {/* 하단 */}
             <Box sx={{ p: 2, textAlign: 'center', borderTop: `1px dashed ${B.pants}22` }}>
               <Box component="img" src={buri2} alt=""
                 sx={{ width: 70, opacity: 0.6, animation: 'buriFloat1 4s ease-in-out infinite', mb: 0.5 }} />
               <Box onClick={logout} sx={{ cursor: 'pointer' }}>
                 <Typography sx={{ fontSize: '0.65rem', color: B.dark + '44',
-                  fontFamily: "'Noto Sans KR',sans-serif",
-                  '&:hover': { color: B.accent },
-                }}>
+                  fontFamily: "'Noto Sans KR',sans-serif", '&:hover': { color: B.accent } }}>
                   사용자 전환 (로그아웃)
                 </Typography>
               </Box>
             </Box>
           </Drawer>
 
-          {/* 캘린더 알림 스낵바 */}
           <Snackbar
-            open={calNotifOpen}
-            autoHideDuration={null}
+            open={calNotifOpen} autoHideDuration={null}
             onClose={(_, reason) => { if (reason === 'escapeKeyDown') setCalNotifOpen(false); }}
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            sx={{ mt: 7, cursor: 'pointer' }}
-            onClick={handleCalNotifClick}>
+            sx={{ mt: 7, cursor: 'pointer' }} onClick={handleCalNotifClick}>
             <Alert
               icon={<Box component="img" src={buri9} sx={{ width: 24, height: 24, objectFit: "contain" }} />}
               sx={{
@@ -845,19 +772,14 @@ function App() {
                 '& .MuiAlert-icon': { alignItems: 'center' },
               }}>
               {calUnreadList.length > 1 ? `[${calUnreadList.length}개] ` : ""}
-              {calNotifData
-                ? `${calNotifData.writer}가 일정을 ${calNotifData.count ?? 1}개 등록했어요! 📅`
-                : ""}
+              {calNotifData ? `${calNotifData.writer}가 일정을 ${calNotifData.count ?? 1}개 등록했어요! 📅` : ""}
             </Alert>
           </Snackbar>
 
-          {/* diary/comment 알림 스낵바 */}
           <Snackbar
-            open={diaryNotifOpen}
-            autoHideDuration={5000}
+            open={diaryNotifOpen} autoHideDuration={5000}
             onClose={() => setDiaryNotifOpen(false)}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            sx={{ mt: 7 }}>
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ mt: 7 }}>
             <Alert
               icon={<Box component="img" src={buri2} sx={{ width: 24, height: 24, objectFit: "contain" }} />}
               onClose={() => setDiaryNotifOpen(false)}
@@ -908,6 +830,11 @@ function App() {
               <TravelMap currentUser={currentUser} />
             </SubPage>
           )}
+          {currentPage === PAGE.STATS && (
+            <SubPage title="연애 통계" icon="📊" onBack={goMain}>
+              <LoveStats currentUser={currentUser} />
+            </SubPage>
+          )}
 
           {/* ── 메인 페이지 ── */}
           {currentPage === PAGE.MAIN && (
@@ -920,7 +847,6 @@ function App() {
                 </Button>
               </Box>
 
-              {/* 타이틀 */}
               <Box sx={{
                 textAlign: 'center', mb: 3, mt: 1, p: "18px 24px", borderRadius: 5,
                 bgcolor: B.lavender + "99", border: `1.5px dashed ${B.pants}44`,
@@ -943,20 +869,17 @@ function App() {
               </Box>
 
               <Stack spacing={2}>
-                {/* 캘린더 */}
                 <SectionCard icon="📅" title="우리의 일정" sub="활 쏘는 부리부리가 날짜를 지키고 있어요 🏹"
                   buriImg={buri6} bgColor={B.lavender + "44"} borderColor={B.pants}
                   onMore={() => goTo(PAGE.SCHEDULE)}>
                   <CoupleCalendar currentUser={currentUser} />
                 </SectionCard>
 
-                {/* 오늘의 기록 */}
                 <SectionCard icon="✍️" title="오늘의 기록" sub="칼 든 부리부리처럼 기록해요 ⚔️"
                   buriImg={buri4} bgColor="#FFF0E8" borderColor={B.accent}>
                   <DiaryWrite currentUser={currentUser} />
                 </SectionCard>
 
-                {/* 최근 기록 미리보기 */}
                 <SectionCard icon="📖" title="최근 기록" sub="탐정 부리부리가 기억해요 🕵️"
                   buriImg={buri9} bgColor={B.lavender + "44"} borderColor={B.pants}
                   onMore={() => goTo(PAGE.DIARY_ALL)}>
@@ -964,7 +887,6 @@ function App() {
                 </SectionCard>
               </Stack>
 
-              {/* 푸터 */}
               <Box sx={{ textAlign: 'center', mt: 5, opacity: 0.4 }}>
                 <Stack direction="row" justifyContent="center" alignItems="flex-end" gap={2}>
                   <Box component="img" src={buri3} alt="" sx={{ width: 60, animation: "buriFloat3 5s ease-in-out infinite" }} />
