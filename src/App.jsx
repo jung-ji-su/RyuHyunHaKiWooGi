@@ -31,6 +31,7 @@ import ScheduleList       from "./ScheduleList";
 import BucketList         from "./Bucketlist";
 import TravelMap          from "./TravelMap";
 import LoveStats          from "./LoveStats";
+import TodayMenu          from "./TodayMenu";
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
 
 import meImg from "./assets/JS.jpg";
@@ -54,7 +55,7 @@ const B = {
 const PAGE = {
   MAIN: "main", SCHEDULE: "schedule", COUPONS: "coupons",
   LETTER: "letter", THERMO: "thermo", DIARY_ALL: "diary_all",
-  BUCKET: "bucket", TRAVEL: "travel", STATS: "stats",
+  BUCKET: "bucket", TRAVEL: "travel", STATS: "stats", MENU: "menu",
 };
 
 const GlobalStyle = () => (
@@ -564,6 +565,7 @@ function App() {
     { label:"🪣 버킷리스트",        emoji:"🪣", name:"버킷리스트",  sub:"같이 이루고 싶은 것",  page:PAGE.BUCKET,    color:B.green  },
     { label:"🗺️ 여행 지도",        emoji:"🗺️", name:"여행 지도",  sub:"함께 간 곳 핀 꽂기",   page:PAGE.TRAVEL,    color:"#3A86FF"},
     { label:"📊 연애 통계",        emoji:"📊", name:"연애 통계",  sub:"우리 연애 리포트",      page:PAGE.STATS,     color:"#E91E8C"},
+    { label:"🍳 오늘의 메뉴",       emoji:"🍳", name:"오늘의 메뉴", sub:"오늘 저녁 뭐 해먹지?",  page:PAGE.MENU,      color:"#FF6B35"},
   ];
 
   return (
@@ -833,6 +835,11 @@ function App() {
           {currentPage === PAGE.STATS && (
             <SubPage title="연애 통계" icon="📊" onBack={goMain}>
               <LoveStats currentUser={currentUser} />
+            </SubPage>
+          )}
+          {currentPage === PAGE.MENU && (
+            <SubPage title="오늘의 메뉴 (오메)" icon="🍳" onBack={goMain}>
+              <TodayMenu currentUser={currentUser} />
             </SubPage>
           )}
 

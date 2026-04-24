@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "./CoupleCalendar.css";
 import { db } from "./firebase";
-import { collection, addDoc, query, onSnapshot, serverTimestamp, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection, addDoc, query, onSnapshot,
+  serverTimestamp, deleteDoc, doc, updateDoc
+} from "firebase/firestore";
 import confetti from "canvas-confetti";
 import ScheduleDetailDialog from "./ScheduleDetailDialog";
 import NewMessageDialog from "./NewMessageDialog";
@@ -35,17 +38,34 @@ const B = {
 };
 
 const CoupleCalendar = ({ currentUser }) => {
+  // ── 기본 상태 ─────────────────────────────────────────────────
   const [date,              setDate]              = useState(new Date());
   const [schedules,         setSchedules]         = useState([]);
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
   const [selectedDates,     setSelectedDates]     = useState([]);
-  const [newPlan,           setNewPlan]           = useState("");
-  const [category,          setCategory]          = useState("데이트");
-  const [isImportant,       setIsImportant]       = useState(false);
   const [open,              setOpen]              = useState(false);
   const [msgDialogOpen,     setMsgDialogOpen]     = useState(false);
   const [newMessages,       setNewMessages]       = useState([]);
 
+  // ── 폼 상태 (추가 & 수정 공용) ────────────────────────────────
+  const [newPlan,      setNewPlan]      = useState("");
+  const [category,     setCategory]     = useState("데이트");
+  const [isImportant,  setIsImportant]  = useState(false);
+  const [startTime,    setStartTime]    = useState("");
+  const [endTime,      setEndTime]      = useState("");
+  const [memo,         setMemo]         = useState("");
+  const [location,     setLocation]     = useState("");
+  const [participants, setParticipants] = useState("둘다");
+  const [editTarget,   setEditTarget]   = useState(null); // 수정 중인 schedule.id
+
+  // ── 폼 초기화 ─────────────────────────────────────────────────
+  const resetForm = () => {
+    setNewPlan(""); setCategory("데이트"); setIsImportant(false);
+    setStartTime(""); setEndTime(""); setMemo("");
+    setLocation(""); setParticipants("둘다"); setEditTarget(null);
+  };
+
+  // ── 일정 구독 ─────────────────────────────────────────────────
   useEffect(() => {
     const q = query(collection(db, "schedules"));
     const unsub = onSnapshot(q, snap => {
@@ -54,6 +74,7 @@ const CoupleCalendar = ({ currentUser }) => {
     return () => unsub();
   }, []);
 
+  // ── 중요 일정 confetti ────────────────────────────────────────
   useEffect(() => {
     if (open && !isMultiSelectMode && date instanceof Date) {
       const hasImportant = schedules.some(
@@ -66,6 +87,7 @@ const CoupleCalendar = ({ currentUser }) => {
     }
   }, [open, date, schedules, isMultiSelectMode]);
 
+  // ── 날짜 클릭 ────────────────────────────────────────────────
   const handleDateClick = clickedDate => {
     vibrate(15);
     const dateStr = clickedDate.toDateString();
@@ -75,10 +97,12 @@ const CoupleCalendar = ({ currentUser }) => {
       );
     } else {
       setDate(clickedDate);
+      resetForm(); // 날짜 전환 시 폼 초기화
       setOpen(true);
     }
   };
 
+  // ── 일정 등록 ─────────────────────────────────────────────────
   const handleAddSchedule = async () => {
     if (!newPlan.trim()) return;
     const targetDates = isMultiSelectMode ? selectedDates : [date.toDateString()];
@@ -87,6 +111,7 @@ const CoupleCalendar = ({ currentUser }) => {
         targetDates.map(dateStr =>
           addDoc(collection(db, "schedules"), {
             title: newPlan, category, isImportant,
+            startTime, endTime, memo, location, participants,
             date: dateStr, createdAt: serverTimestamp(), writer: currentUser,
           })
         )
@@ -95,17 +120,47 @@ const CoupleCalendar = ({ currentUser }) => {
         writer: currentUser, count: targetDates.length,
         firstDate: targetDates[0], createdAt: serverTimestamp(), isRead: false,
       });
-      setNewPlan(""); setIsImportant(false); setOpen(false);
-      setIsMultiSelectMode(false); setSelectedDates([]);
+      resetForm();
+      setIsMultiSelectMode(false);
+      setSelectedDates([]);
+      setOpen(false);
     } catch (e) { console.error("일정 등록 실패:", e); }
   };
 
+  // ── 일정 수정 ─────────────────────────────────────────────────
+  const handleEditSchedule = async () => {
+    if (!editTarget || !newPlan.trim()) return;
+    try {
+      await updateDoc(doc(db, "schedules", editTarget), {
+        title: newPlan, category, isImportant,
+        startTime, endTime, memo, location, participants,
+      });
+      resetForm(); // 수정 후 폼 초기화 → 추가 모드로 전환
+    } catch (e) { console.error("일정 수정 실패:", e); }
+  };
+
+  // ── 수정 모드 진입 ────────────────────────────────────────────
+  const handleStartEdit = (schedule) => {
+    setEditTarget(schedule.id);
+    setNewPlan(schedule.title        || "");
+    setCategory(schedule.category    || "데이트");
+    setIsImportant(schedule.isImportant || false);
+    setStartTime(schedule.startTime  || "");
+    setEndTime(schedule.endTime      || "");
+    setMemo(schedule.memo            || "");
+    setLocation(schedule.location    || "");
+    setParticipants(schedule.participants || "둘다");
+  };
+
+  // ── 일정 삭제 ─────────────────────────────────────────────────
   const handleDeleteSchedule = async id => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       await deleteDoc(doc(db, "schedules", id));
+      if (editTarget === id) resetForm(); // 수정 중이던 항목 삭제 시 폼 초기화
     }
   };
 
+  // ── 타일 클래스 ──────────────────────────────────────────────
   const getTileClassName = ({ date: d, view }) => {
     if (view !== "month") return null;
     const dateStr = d.toDateString();
@@ -117,6 +172,7 @@ const CoupleCalendar = ({ currentUser }) => {
     return classes.join(" ") || null;
   };
 
+  // ── 타일 도트 ────────────────────────────────────────────────
   const tileContent = ({ date: d, view }) => {
     if (view !== "month") return null;
     const daySchedules = schedules.filter(s => s.date === d.toDateString());
@@ -225,19 +281,39 @@ const CoupleCalendar = ({ currentUser }) => {
         </Stack>
       </Stack>
 
+      {/* 일정 다이얼로그 */}
       <ScheduleDetailDialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => { resetForm(); setOpen(false); }}
         date={isMultiSelectMode
           ? `콕! 집은 ${selectedDates.length}일`
           : (date instanceof Date ? date.toLocaleDateString("ko-KR") : date)}
         selectedSchedules={isMultiSelectMode
           ? []
-          : schedules.filter(s => s.date === (date instanceof Date ? date.toDateString() : date))}
-        newPlan={newPlan}         setNewPlan={setNewPlan}
-        category={category}      setCategory={setCategory}
-        isImportant={isImportant} setIsImportant={setIsImportant}
+          : schedules
+              .filter(s => s.date === (date instanceof Date ? date.toDateString() : date))
+              .sort((a, b) => {
+                // 시간 있는 것 먼저, 없으면 createdAt 순
+                if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
+                if (a.startTime) return -1;
+                if (b.startTime) return 1;
+                return 0;
+              })}
+        // 폼 상태
+        newPlan={newPlan}           setNewPlan={setNewPlan}
+        category={category}         setCategory={setCategory}
+        isImportant={isImportant}   setIsImportant={setIsImportant}
+        startTime={startTime}       setStartTime={setStartTime}
+        endTime={endTime}           setEndTime={setEndTime}
+        memo={memo}                 setMemo={setMemo}
+        location={location}         setLocation={setLocation}
+        participants={participants}  setParticipants={setParticipants}
+        // 액션
+        editTarget={editTarget}
         onAdd={handleAddSchedule}
+        onEdit={handleEditSchedule}
+        onStartEdit={handleStartEdit}
+        onCancelEdit={resetForm}
         onDelete={handleDeleteSchedule}
       />
 
