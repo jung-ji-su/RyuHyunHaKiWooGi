@@ -4,11 +4,11 @@ import {
   Box, Typography, Stack, Button, Chip, CircularProgress,
   IconButton, LinearProgress,
 } from "@mui/material";
-import ShuffleIcon       from "@mui/icons-material/Shuffle";
-import CheckCircleIcon   from "@mui/icons-material/CheckCircle";
+import ShuffleIcon from "@mui/icons-material/Shuffle";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import TimerIcon         from "@mui/icons-material/Timer";
-import AttachMoneyIcon   from "@mui/icons-material/AttachMoney";
+import TimerIcon from "@mui/icons-material/Timer";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
 const B = {
@@ -38,19 +38,26 @@ const getDiffColor = (d) => d === "초급" ? B.green : B.orange;
 
 // ── 필터 칩 ──────────────────────────────────────────────────────
 const FILTERS = [
-  { key: "전체", label: "🍽️ 전체" },
+  { key: "전체", label: "✨ 전체" },
+  { key: "밥", label: "🍚 든든한 밥" },
+  { key: "면", label: "🍜 면 요리" },
   { key: "고기", label: "🥩 고기" },
-  { key: "해산물", label: "🦐 해산물" },
-  { key: "채식", label: "🥦 채식" },
+  { key: "해산물", label: "🦐 해산물" }, // 일식/양식 카테고리 해산물 메뉴 대응
+  { key: "국", label: "🥣 국·찌개" }, // 찌개 카테고리 포함
+  { key: "빵", label: "🥪 브런치·빵" },
+  { key: "다이어트", label: "💪 고단백·식단" }, // 지수의 벌크업용!
+  { key: "안주", label: "🍺 이색 안주" }, // 퇴근 후 힐링용
+  { key: "분식", label: "🌶️ 분식·간식" },
+  { key: "양식", label: "🍝 양식·파티" }, // 홈파티용
 ];
 
 // ── 메인 컴포넌트 ─────────────────────────────────────────────────
 const TodayMenu = () => {
-  const [menu,       setMenu]       = useState(null);
-  const [rolling,    setRolling]    = useState(false);
-  const [filter,     setFilter]     = useState("전체");
-  const [checked,    setChecked]    = useState({});
-  const [step,       setStep]       = useState("home");
+  const [menu, setMenu] = useState(null);
+  const [rolling, setRolling] = useState(false);
+  const [filter, setFilter] = useState("전체");
+  const [checked, setChecked] = useState({});
+  const [step, setStep] = useState("home");
   const rollCount = useRef(0);
 
   const getFiltered = () =>
@@ -100,26 +107,44 @@ const TodayMenu = () => {
         }}>
           오늘 뭐 먹지?
         </Typography>
-        <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88", mt: 0.5,
-          fontFamily: "'Noto Sans KR',sans-serif" }}>
+        <Typography sx={{
+          fontSize: "0.8rem", color: B.dark + "88", mt: 0.5,
+          fontFamily: "'Noto Sans KR',sans-serif"
+        }}>
           버튼 하나로 오늘 저녁 메뉴 해결! 🍳
         </Typography>
       </Box>
 
       {/* 필터 */}
-      <Box sx={{ overflowX: "auto", pb: 1, mb: 2.5, "&::-webkit-scrollbar": { height: 0 } }}>
-        <Stack direction="row" gap={0.8} sx={{ width: "max-content" }}>
+      {/* 필터 (가로 스크롤 제거 -> 여러 줄 배치로 수정) */}
+      <Box sx={{ mb: 2.5 }}>
+        <Stack
+          direction="row"
+          gap={1}
+          sx={{
+            flexWrap: "wrap", // 이 속성이 핵심! 자리가 없으면 다음 줄로 넘김
+            justifyContent: "flex-start"
+          }}
+        >
           {FILTERS.map(f => (
-            <Chip key={f.key} label={f.label} size="small"
+            <Chip
+              key={f.key}
+              label={f.label}
+              size="small"
               onClick={() => setFilter(f.key)}
               sx={{
-                fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.75rem",
+                fontFamily: "'Noto Sans KR',sans-serif",
+                fontSize: "0.75rem",
                 bgcolor: filter === f.key ? B.orange : B.peach,
                 color: filter === f.key ? "white" : B.dark,
                 fontWeight: filter === f.key ? 700 : 400,
                 border: `1.5px solid ${filter === f.key ? B.orange : "transparent"}`,
-                transition: "all 0.15s", height: 28,
-              }} />
+                transition: "all 0.15s",
+                height: 30, // 모바일에서 터치하기 편하게 살짝 키웠어
+                px: 0.5,
+                "&:hover": { bgcolor: filter === f.key ? B.orange : B.peach + "BB" }
+              }}
+            />
           ))}
         </Stack>
       </Box>
@@ -133,8 +158,10 @@ const TodayMenu = () => {
           animation: "pulse 0.1s ease infinite",
         }}>
           <Typography sx={{ fontSize: "3rem", lineHeight: 1 }}>{menu.emoji}</Typography>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.3rem",
-            color: B.orange, mt: 1 }}>
+          <Typography sx={{
+            fontFamily: "'Jua',sans-serif", fontSize: "1.3rem",
+            color: B.orange, mt: 1
+          }}>
             {menu.name}
           </Typography>
         </Box>
@@ -162,8 +189,10 @@ const TodayMenu = () => {
 
       {/* 메뉴 리스트 미리보기 */}
       <Box sx={{ mt: 3 }}>
-        <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.dark + "88",
-          fontSize: "0.82rem", mb: 1.2 }}>
+        <Typography sx={{
+          fontFamily: "'Jua',sans-serif", color: B.dark + "88",
+          fontSize: "0.82rem", mb: 1.2
+        }}>
           📋 오늘의 메뉴 후보 ({getFiltered().length}개)
         </Typography>
         <Stack spacing={0.8}>
@@ -179,12 +208,16 @@ const TodayMenu = () => {
               }}>
               <Typography sx={{ fontSize: "1.4rem", lineHeight: 1 }}>{m.emoji}</Typography>
               <Box sx={{ flex: 1 }}>
-                <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.88rem",
-                  color: B.dark }}>
+                <Typography sx={{
+                  fontFamily: "'Jua',sans-serif", fontSize: "0.88rem",
+                  color: B.dark
+                }}>
                   {m.name}
                 </Typography>
-                <Typography sx={{ fontSize: "0.68rem", color: B.dark + "66",
-                  fontFamily: "'Noto Sans KR',sans-serif" }}>
+                <Typography sx={{
+                  fontSize: "0.68rem", color: B.dark + "66",
+                  fontFamily: "'Noto Sans KR',sans-serif"
+                }}>
                   {m.cook_time} · {getTotalPrice(m.ingredients)}원
                 </Typography>
               </Box>
@@ -282,18 +315,24 @@ const TodayMenu = () => {
           <Stack direction="row" alignItems="center" gap={1}>
             <Typography sx={{ fontSize: "1.3rem" }}>🛒</Typography>
             <Box>
-              <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
-                color: B.dark }}>
+              <Typography sx={{
+                fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
+                color: B.dark
+              }}>
                 예상 장보기 비용
               </Typography>
-              <Typography sx={{ fontSize: "0.7rem", color: B.dark + "66",
-                fontFamily: "'Noto Sans KR',sans-serif" }}>
+              <Typography sx={{
+                fontSize: "0.7rem", color: B.dark + "66",
+                fontFamily: "'Noto Sans KR',sans-serif"
+              }}>
                 {menu.serving} 기준
               </Typography>
             </Box>
           </Stack>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.4rem",
-            color: B.orange }}>
+          <Typography sx={{
+            fontFamily: "'Jua',sans-serif", fontSize: "1.4rem",
+            color: B.orange
+          }}>
             {total}원
           </Typography>
         </Box>
@@ -303,26 +342,36 @@ const TodayMenu = () => {
           bgcolor: B.lavender + "66", borderRadius: 3, p: 1.8, mb: 2.5,
           border: `1.5px solid ${B.pants}22`,
         }}>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
-            color: B.pants, mb: 0.5 }}>
+          <Typography sx={{
+            fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
+            color: B.pants, mb: 0.5
+          }}>
             💜 실패하지 않는 팁
           </Typography>
-          <Typography sx={{ fontSize: "0.8rem", color: B.dark + "cc", lineHeight: 1.6,
-            fontFamily: "'Noto Sans KR',sans-serif" }}>
+          <Typography sx={{
+            fontSize: "0.8rem", color: B.dark + "cc", lineHeight: 1.6,
+            fontFamily: "'Noto Sans KR',sans-serif"
+          }}>
             {menu.tip}
           </Typography>
         </Box>
 
         {/* 재료 & 장보기 체크리스트 */}
-        <Box sx={{ bgcolor: "white", borderRadius: 3, p: 2, mb: 2.5,
-          border: `1px solid ${B.orange}22` }}>
+        <Box sx={{
+          bgcolor: "white", borderRadius: 3, p: 2, mb: 2.5,
+          border: `1px solid ${B.orange}22`
+        }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
-            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.92rem",
-              color: B.dark }}>
+            <Typography sx={{
+              fontFamily: "'Jua',sans-serif", fontSize: "0.92rem",
+              color: B.dark
+            }}>
               🛍️ 재료 & 장보기
             </Typography>
-            <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
-              fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Typography sx={{
+              fontSize: "0.72rem", color: B.dark + "66",
+              fontFamily: "'Noto Sans KR',sans-serif"
+            }}>
               {checkedCount}/{totalIngredients} 완료
             </Typography>
           </Stack>
@@ -361,13 +410,17 @@ const TodayMenu = () => {
                   }}>
                     {ing.name}
                   </Typography>
-                  <Typography sx={{ fontSize: "0.68rem", color: B.dark + "55",
-                    fontFamily: "'Noto Sans KR',sans-serif" }}>
+                  <Typography sx={{
+                    fontSize: "0.68rem", color: B.dark + "55",
+                    fontFamily: "'Noto Sans KR',sans-serif"
+                  }}>
                     {ing.amount}
                   </Typography>
                 </Box>
-                <Typography sx={{ fontSize: "0.75rem", color: B.orange,
-                  fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 600, flexShrink: 0 }}>
+                <Typography sx={{
+                  fontSize: "0.75rem", color: B.orange,
+                  fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 600, flexShrink: 0
+                }}>
                   {ing.price.toLocaleString()}원
                 </Typography>
               </Box>
@@ -387,10 +440,14 @@ const TodayMenu = () => {
         </Box>
 
         {/* 레시피 단계 */}
-        <Box sx={{ bgcolor: "white", borderRadius: 3, p: 2,
-          border: `1px solid ${B.pants}22` }}>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.92rem",
-            color: B.dark, mb: 1.5 }}>
+        <Box sx={{
+          bgcolor: "white", borderRadius: 3, p: 2,
+          border: `1px solid ${B.pants}22`
+        }}>
+          <Typography sx={{
+            fontFamily: "'Jua',sans-serif", fontSize: "0.92rem",
+            color: B.dark, mb: 1.5
+          }}>
             👨‍🍳 레시피 순서
           </Typography>
           <Stack spacing={1.2}>
@@ -401,13 +458,17 @@ const TodayMenu = () => {
                   bgcolor: B.orange, display: "flex", alignItems: "center",
                   justifyContent: "center", mt: "1px",
                 }}>
-                  <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.75rem",
-                    color: "white", lineHeight: 1 }}>
+                  <Typography sx={{
+                    fontFamily: "'Jua',sans-serif", fontSize: "0.75rem",
+                    color: "white", lineHeight: 1
+                  }}>
                     {i + 1}
                   </Typography>
                 </Box>
-                <Typography sx={{ fontSize: "0.82rem", color: B.dark + "cc", lineHeight: 1.6,
-                  fontFamily: "'Noto Sans KR',sans-serif", flex: 1 }}>
+                <Typography sx={{
+                  fontSize: "0.82rem", color: B.dark + "cc", lineHeight: 1.6,
+                  fontFamily: "'Noto Sans KR',sans-serif", flex: 1
+                }}>
                   {step}
                 </Typography>
               </Stack>

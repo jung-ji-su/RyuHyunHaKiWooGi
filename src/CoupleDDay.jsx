@@ -5,15 +5,18 @@ import { collection, query, where, onSnapshot, orderBy } from "firebase/firestor
 import buri4 from "./assets/KakaoTalk_20260316_132913765.png";
 import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
 
+import buriExcited from "./assets/KakaoTalk_20260424_173800871.png"; // 꽃 들고 (신남)
+import buriLove from "./assets/KakaoTalk_20260424_173810950.png"; // 하트눈 (설렘)
+
 const B = {
-  pants:   "#7B4FA6",
-  skin:    "#F5B8A0",
-  cream:   "#FFF8F2",
-  peach:   "#FFE4D4",
-  lavender:"#EDE0F5",
-  accent:  "#E8630A",
-  dark:    "#3D1F00",
-  pink:    "#FF6B9D",
+  pants: "#7B4FA6",
+  skin: "#F5B8A0",
+  cream: "#FFF8F2",
+  peach: "#FFE4D4",
+  lavender: "#EDE0F5",
+  accent: "#E8630A",
+  dark: "#3D1F00",
+  pink: "#FF6B9D",
 };
 
 // ── 떠다니는 파티클 캔버스 (부드러운 하트/별) ────────────────────
@@ -22,13 +25,13 @@ const FloatingCanvas = ({ canvasRef, wrapRef }) => null; // 훅에서 처리
 // ── 메인 컴포넌트 ─────────────────────────────────────────────────
 export default function CoupleDDay() {
   const [targetEvent, setTargetEvent] = useState(null);
-  const [days, setDays]   = useState(null);
-  const [time, setTime]   = useState({ h:"00", m:"00", s:"00" });
+  const [days, setDays] = useState(null);
+  const [time, setTime] = useState({ h: "00", m: "00", s: "00" });
   const [isToday, setIsToday] = useState(false);
 
   const canvasRef = useRef(null);
-  const wrapRef   = useRef(null);
-  const animRef   = useRef(null);
+  const wrapRef = useRef(null);
+  const animRef = useRef(null);
 
   // ── Firebase ──────────────────────────────────────────────────
   useEffect(() => {
@@ -54,14 +57,14 @@ export default function CoupleDDay() {
       const diff = new Date(targetEvent.date).getTime() - Date.now();
       if (diff <= 0) {
         setIsToday(true); setDays(0);
-        setTime({ h:"00", m:"00", s:"00" });
+        setTime({ h: "00", m: "00", s: "00" });
       } else {
         setIsToday(false);
         setDays(Math.floor(diff / 86400000));
         setTime({
           h: String(Math.floor((diff % 86400000) / 3600000)).padStart(2, "0"),
-          m: String(Math.floor((diff % 3600000)  / 60000)).padStart(2, "0"),
-          s: String(Math.floor((diff % 60000)    / 1000)).padStart(2, "0"),
+          m: String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0"),
+          s: String(Math.floor((diff % 60000) / 1000)).padStart(2, "0"),
         });
       }
     };
@@ -73,12 +76,12 @@ export default function CoupleDDay() {
   // ── 캔버스 - 떠다니는 하트/별 ────────────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
-    const wrap   = wrapRef.current;
+    const wrap = wrapRef.current;
     if (!canvas || !wrap) return;
     const ctx = canvas.getContext("2d");
 
     const resize = () => {
-      canvas.width  = wrap.clientWidth;
+      canvas.width = wrap.clientWidth;
       canvas.height = wrap.clientHeight;
     };
     resize();
@@ -86,7 +89,7 @@ export default function CoupleDDay() {
     ro.observe(wrap);
 
     // 떠다니는 파티클 생성
-    const SHAPES = ['heart','heart','heart','star','circle'];
+    const SHAPES = ['heart', 'heart', 'heart', 'star', 'circle'];
     const COLORS = [B.pants, B.pink, B.accent, B.skin, '#FFB3D9', '#C9A7E8', '#FFD6E7'];
 
     const makeParticle = () => ({
@@ -113,8 +116,8 @@ export default function CoupleDDay() {
       const s = size * 0.5;
       ctx.beginPath();
       ctx.moveTo(0, s * 0.4);
-      ctx.bezierCurveTo( s * 1.0, -s * 0.3,  s * 1.2, -s * 1.1, 0, -s * 0.7);
-      ctx.bezierCurveTo(-s * 1.2, -s * 1.1, -s * 1.0, -s * 0.3, 0,  s * 0.4);
+      ctx.bezierCurveTo(s * 1.0, -s * 0.3, s * 1.2, -s * 1.1, 0, -s * 0.7);
+      ctx.bezierCurveTo(-s * 1.2, -s * 1.1, -s * 1.0, -s * 0.3, 0, s * 0.4);
       ctx.fill();
     };
 
@@ -147,8 +150,8 @@ export default function CoupleDDay() {
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.wobble += p.wobbleSpeed;
-        p.x  += p.vx + Math.sin(p.wobble) * 0.4;
-        p.y  += p.vy;
+        p.x += p.vx + Math.sin(p.wobble) * 0.4;
+        p.y += p.vy;
         p.rotation += p.rotSpeed;
 
         if (p.fadeIn) {
@@ -167,8 +170,8 @@ export default function CoupleDDay() {
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rotation);
 
-        if (p.shape === 'heart')       drawHeart(ctx, 0, 0, p.size);
-        else if (p.shape === 'star')   drawStar(ctx, p.size);
+        if (p.shape === 'heart') drawHeart(ctx, 0, 0, p.size);
+        else if (p.shape === 'star') drawStar(ctx, p.size);
         else {
           ctx.beginPath();
           ctx.arc(0, 0, p.size * 0.4, 0, Math.PI * 2);
@@ -373,6 +376,7 @@ export default function CoupleDDay() {
         }
 
         /* 부리 장식 */
+        /* 왼쪽 첫 번째 요소 */
         .dday-buri-left {
           position: absolute; bottom: 8px; left: 10px;
           width: 44px;
@@ -380,10 +384,32 @@ export default function CoupleDDay() {
           filter: drop-shadow(0 3px 6px ${B.pants}33);
           pointer-events: none;
         }
+
+        /* 왼쪽 두 번째 요소: left 값을 키워서 오른쪽으로 이동 */
+        .dday-buri-left2 {
+          position: absolute; bottom: 8px; left: 60px; /* 10px + width(44px) + 여백 */
+          width: 44px;
+          animation: ddayBobLeft 3s ease-in-out infinite;
+          animation-delay: 0.5s; /* 살짝 엇박자로 움직이게 추가 */
+          filter: drop-shadow(0 3px 6px ${B.pants}33);
+          pointer-events: none;
+        }
+
+        /* 오른쪽 첫 번째 요소 */
         .dday-buri-right {
           position: absolute; bottom: 8px; right: 10px;
           width: 44px;
           animation: ddayBobRight 3.4s ease-in-out infinite;
+          filter: drop-shadow(0 3px 6px ${B.accent}33);
+          pointer-events: none;
+        }
+
+        /* 오른쪽 두 번째 요소: right 값을 키워서 왼쪽으로 이동 */
+        .dday-buri-right2 {
+          position: absolute; bottom: 8px; right: 60px; /* 10px + width(44px) + 여백 */
+          width: 44px;
+          animation: ddayBobRight 3.4s ease-in-out infinite;
+          animation-delay: 0.7s; /* 살짝 엇박자로 움직이게 추가 */
           filter: drop-shadow(0 3px 6px ${B.accent}33);
           pointer-events: none;
         }
@@ -411,6 +437,8 @@ export default function CoupleDDay() {
         {/* 부리부리 캐릭터 */}
         <img src={buri4} alt="" className="dday-buri-left" />
         <img src={buri7} alt="" className="dday-buri-right" />
+        <img src={buriExcited} alt="" className="dday-buri-left2" />
+        <img src={buriLove} alt="" className="dday-buri-right2" />
 
         <div className="dday-content">
           {/* 상단 라벨 */}
@@ -452,8 +480,8 @@ export default function CoupleDDay() {
             </>
           ) : (
             <div className="dday-empty">
-              💜 특별한 날을 등록해 보세요!<br/>
-              <span style={{ fontSize:"12px", opacity:0.7 }}>캘린더에서 ⭐ 중요 일정으로 추가하면 여기 떠요</span>
+              💜 특별한 날을 등록해 보세요!<br />
+              <span style={{ fontSize: "12px", opacity: 0.7 }}>캘린더에서 ⭐ 중요 일정으로 추가하면 여기 떠요</span>
             </div>
           )}
         </div>
