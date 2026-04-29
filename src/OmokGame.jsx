@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { db } from "./firebase.js";
 import {
-  collection, doc, setDoc, onSnapshot, updateDoc, serverTimestamp, addDoc, query, where, getDocs, orderBy
+  collection, doc, setDoc, onSnapshot, updateDoc, serverTimestamp, addDoc, query, where, getDocs
 } from "firebase/firestore";
 import {
   Box, Typography, Button, TextField, Dialog, DialogTitle, 
   DialogContent, DialogActions, Paper, Stack, Chip
 } from "@mui/material";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { getRandomCoupon } from "./GameCoupons.js";
 
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png"; //기본
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png"; //웃음
@@ -140,14 +141,16 @@ const OmokGame = ({ currentUser, opponentUser }) => {
   // 소원 입력 다이얼로그
   const [wishDialogOpen, setWishDialogOpen] = useState(false);
   const [wishText, setWishText] = useState("");
+  
+  // 쿠폰 다이얼로그
+  const [couponDialogOpen, setCouponDialogOpen] = useState(false);
+  const [wonCoupon, setWonCoupon] = useState("");
 
   // ── 방 생성 ──────────────────────────────────────
   const createRoom = async () => {
     const newGameId = `game_${Date.now()}`;
     const initialBoard2D = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(EMPTY));
     const initialBoard1D = flatten2D(initialBoard2D);
-    
-    alert("🎮 방 생성 시작: " + newGameId);
     
     // 방 생성자가 흑돌
     await setDoc(doc(db, "omokGames", newGameId), {
@@ -162,8 +165,6 @@ const OmokGame = ({ currentUser, opponentUser }) => {
       wishRequest: "",
       createdAt: serverTimestamp(),
     });
-
-    alert("✅ 방 생성 완료! 리스너 시작합니다");
     
     // 상태 업데이트
     setGameId(newGameId);
@@ -171,71 +172,64 @@ const OmokGame = ({ currentUser, opponentUser }) => {
     setMyColor(BLACK);
     setPlayers({ black: currentUser, white: null });
     
-    // 즉시 리스너 시작 (useEffect 기다리지 않고)
+    // 즉시 리스너 시작
     startListener(newGameId);
   };
 
   // ── 방 입장 ──────────────────────────────────────
   const joinRoom = async () => {
-    alert("🚪 입장하기 시도...");
-    
-    // 대기 중인 방 찾기 (최신순)
-    const q = query(
-      collection(db, "omokGames"),
-      where("gameState", "==", "waiting"),
-      orderBy("createdAt", "desc") // ← 최신 방 먼저!
-    );
-    
-    const snapshot = await getDocs(q);
-    
-    alert("🔍 대기 중인 방 개수: " + snapshot.size);
-    
-    if (snapshot.empty) {
-      alert("대기 중인 방이 없어요! 새로 만들어주세요.");
-      return;
+    try {
+      // 대기 중인 방 찾기
+      const q = query(
+        collection(db, "omokGames"),
+        where("gameState", "==", "waiting")
+      );
+      
+      const snapshot = await getDocs(q);
+      
+      if (snapshot.empty) {
+        alert("대기 중인 방이 없어요! 새로 만들어주세요.");
+        return;
+      }
+
+      // 클라이언트에서 최신순 정렬
+      const rooms = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+
+      // 자기가 만들지 않은 방 찾기
+      const targetRoom = rooms.find(room => room.players.black !== currentUser);
+      
+      if (!targetRoom) {
+        alert("입장 가능한 방이 없어요!\n(모두 내가 만든 방)");
+        return;
+      }
+
+      // 방에 입장 (백돌로 배정)
+      await updateDoc(doc(db, "omokGames", targetRoom.id), {
+        "players.white": currentUser,
+        gameState: "ready", // 준비 완료
+      });
+
+      setGameId(targetRoom.id);
+      setGameState("ready");
+      setMyColor(WHITE);
+      
+      // 즉시 리스너 시작
+      startListener(targetRoom.id);
+      
+    } catch (error) {
+      alert("❌ 에러 발생: " + error.message);
+      console.error(error);
     }
-
-    // 첫 번째 대기 중인 방에 입장 (= 가장 최근 방)
-    const roomDoc = snapshot.docs[0];
-    const roomId = roomDoc.id;
-    const roomData = roomDoc.data();
-
-    alert("📍 입장 시도\n방 ID: " + roomId + "\n방 주인: " + roomData.players.black + "\n나: " + currentUser);
-
-    // 이미 내가 만든 방이면 입장 불가
-    if (roomData.players.black === currentUser) {
-      alert("자기가 만든 방에는 입장할 수 없어요!");
-      return;
-    }
-
-    // 방에 입장 (백돌로 배정)
-    await updateDoc(doc(db, "omokGames", roomId), {
-      "players.white": currentUser,
-      gameState: "ready", // 준비 완료
-    });
-
-    alert("✅ 입장 완료! gameState를 ready로 변경");
-
-    setGameId(roomId);
-    setGameState("ready");
-    setMyColor(WHITE);
-    
-    // 즉시 리스너 시작
-    startListener(roomId);
   };
 
   // ── 실시간 리스너 시작 함수 ──────────────────────
   const startListener = (roomId) => {
-    alert("👂 실시간 리스너 시작: " + roomId);
-
     const unsubscribe = onSnapshot(doc(db, "omokGames", roomId), (snapshot) => {
-      if (!snapshot.exists()) {
-        alert("❌ 문서가 존재하지 않음: " + roomId);
-        return;
-      }
+      if (!snapshot.exists()) return;
       
       const data = snapshot.data();
-      alert("📡 실시간 업데이트!\ngameState: " + data.gameState + "\nblack: " + data.players.black + "\nwhite: " + data.players.white);
 
       const board2D = unflatten1D(data.board);
       setBoard(board2D);
@@ -246,18 +240,15 @@ const OmokGame = ({ currentUser, opponentUser }) => {
 
       // 두 명 다 입장하면 자동으로 게임 시작
       if (data.gameState === "ready" && data.players.black && data.players.white) {
-        alert("🎮 두 명 모두 준비 완료! 1초 후 게임 시작...");
         setTimeout(async () => {
           await updateDoc(doc(db, "omokGames", roomId), {
             gameState: "playing",
           });
-          alert("✅ gameState를 playing으로 변경");
         }, 1000);
       }
 
       // 게임 종료되면 승자가 소원 입력
       if (data.winner && data.winner === myColor && !data.wishRequest) {
-        alert("🏆 승리! 폭죽 발사!");
         fireWinConfetti();
         setWishDialogOpen(true);
       }
@@ -317,11 +308,14 @@ const OmokGame = ({ currentUser, opponentUser }) => {
       return;
     }
 
+    const winner = myColor === BLACK ? players.black : players.white;
+    const loser = myColor === BLACK ? players.white : players.black;
+
     // 게임 결과 저장
     await addDoc(collection(db, "gameResults"), {
       gameType: "오목",
-      winner: myColor === BLACK ? players.black : players.white,
-      loser: myColor === BLACK ? players.white : players.black,
+      winner: winner,
+      loser: loser,
       wishRequest: wishText,
       wishCompleted: false,
       playedAt: serverTimestamp(),
@@ -334,7 +328,21 @@ const OmokGame = ({ currentUser, opponentUser }) => {
     });
 
     setWishDialogOpen(false);
-    alert("🎉 소원이 등록되었어요! 상대방이 들어줘야 해요~");
+    
+    // 승자에게 랜덤 쿠폰 지급!
+    const randomCoupon = getRandomCoupon();
+    
+    await addDoc(collection(db, "coupons"), {
+      owner: winner,
+      title: randomCoupon,
+      used: false,
+      createdAt: serverTimestamp(),
+      fromGame: "오목",
+    });
+    
+    // 쿠폰 알림 표시
+    setWonCoupon(randomCoupon);
+    setCouponDialogOpen(true);
   };
 
   // ── 게임 초기화 ──────────────────────────────────
@@ -441,20 +449,8 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           }}>
             상대방을 기다리는 중...
           </Typography>
-          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66", mb: 1 }}>
+          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66", mb: 3 }}>
             상대방이 입장하면 자동으로 시작돼요!
-          </Typography>
-          
-          {/* 방 ID 표시 (디버깅용) */}
-          <Typography sx={{ 
-            fontSize: "0.7rem", 
-            color: B.dark + "44", 
-            fontFamily: "monospace",
-            mb: 3,
-            wordBreak: "break-all",
-            px: 2,
-          }}>
-            방 ID: {gameId}
           </Typography>
 
           <Box sx={{
@@ -792,6 +788,70 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             startIcon={<FavoriteIcon />}
           >
             소원 등록하기
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* ── 쿠폰 받기 다이얼로그 ──────────────────────── */}
+      <Dialog 
+        open={couponDialogOpen} 
+        onClose={() => setCouponDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogContent sx={{ textAlign: "center", py: 4 }}>
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", duration: 0.8 }}
+          >
+            <Typography sx={{ fontSize: "5rem", mb: 2 }}>🎁</Typography>
+          </motion.div>
+          
+          <Typography sx={{
+            fontFamily: "'Jua', sans-serif",
+            fontSize: "1.5rem",
+            color: B.accent,
+            mb: 2,
+          }}>
+            승리 보상!
+          </Typography>
+          
+          <Paper sx={{
+            p: 3,
+            bgcolor: B.peach + "33",
+            border: `2px solid ${B.accent}`,
+            borderRadius: 3,
+            mb: 3,
+          }}>
+            <Typography sx={{
+              fontFamily: "'Jua', sans-serif",
+              fontSize: "1.3rem",
+              color: B.pants,
+            }}>
+              {wonCoupon}
+            </Typography>
+          </Paper>
+          
+          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88", mb: 1 }}>
+            쿠폰이 쿠폰북에 추가되었어요!
+          </Typography>
+          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88" }}>
+            상대방에게 써먹어보세요! 😉
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setCouponDialogOpen(false)}
+            variant="contained"
+            fullWidth
+            sx={{
+              bgcolor: B.accent,
+              fontFamily: "'Jua', sans-serif",
+              "&:hover": { bgcolor: B.pants },
+            }}
+          >
+            확인
           </Button>
         </DialogActions>
       </Dialog>

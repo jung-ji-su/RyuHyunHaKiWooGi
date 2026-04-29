@@ -19,8 +19,6 @@ import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import MailIcon from "@mui/icons-material/Mail";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import OmokGame from './OmokGame';
-import GameWishList from './GameWishList';
 
 import CoupleCalendar from "./CoupleCalendar";
 import DiaryWrite from "./DiaryWrite";
@@ -34,6 +32,8 @@ import BucketList from "./Bucketlist";
 import TravelMap from "./TravelMap";
 import LoveStats from "./LoveStats";
 import TodayMenu from "./TodayMenu";
+import MiniGameHub from './MiniGameHub';
+import AccountBook from './AccountBook';
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
 
 import meImg from "./assets/JS.jpg";
@@ -75,8 +75,8 @@ const PAGE = {
   MAIN: "main", SCHEDULE: "schedule", COUPONS: "coupons",
   LETTER: "letter", THERMO: "thermo", DIARY_ALL: "diary_all",
   BUCKET: "bucket", TRAVEL: "travel", STATS: "stats", MENU: "menu",
-  OMOK: "omok",
-  GAME_WISH: "game_wish",
+  MINIGAME: "minigame",
+  ACCOUNT_BOOK: "account_book",
 };
 
 const GlobalStyle = () => (
@@ -661,8 +661,15 @@ function App() {
     { label: "🗺️ 여행 지도", emoji: "🗺️", name: "여행 지도", sub: "함께 간 곳 핀 꽂기", page: PAGE.TRAVEL, color: "#3A86FF" },
     { label: "📊 연애 통계", emoji: "📊", name: "연애 통계", sub: "우리 연애 리포트", page: PAGE.STATS, color: "#E91E8C" },
     { label: "🍳 오늘의 메뉴", emoji: "🍳", name: "오늘의 메뉴", sub: "오늘 저녁 뭐 해먹지?", page: PAGE.MENU, color: "#FF6B35" },
-    { label: "🎮 오목 대결", emoji: "🎮", name: "오목 대결", sub: "실시간 두뇌 배틀!", page: PAGE.OMOK, color: "#8B4513" },
-    { label: "🏆 게임 전적", emoji: "🏆", name: "게임 전적", sub: "승부 기록 & 소원", page: PAGE.GAME_WISH, color: "#FFD700" },
+    { label: "🎮 미니게임", emoji: "🎮", name: "미니게임", sub: "오목, 그림 퀴즈 등", page: PAGE.MINIGAME, color: "#9C27B0" },
+    {
+      label: "💰 가계부",
+      emoji: "💰",
+      name: "가계부",
+      sub: "수입과 지출 관리",
+      page: PAGE.ACCOUNT_BOOK,
+      color: "#FFB300"
+    },
   ];
 
   return (
@@ -938,19 +945,22 @@ function App() {
           {currentPage === PAGE.STATS && <SubPage title="연애 통계" icon="📊" onBack={goMain}><LoveStats currentUser={currentUser} /></SubPage>}
           {currentPage === PAGE.MENU && <SubPage title="오늘의 메뉴 (오메)" icon="🍳" onBack={goMain}><TodayMenu currentUser={currentUser} /></SubPage>}
 
-          {/* ← 여기에 추가 */}
-          {currentPage === PAGE.OMOK && (
-            <SubPage title="오목 대결" icon="🎮" onBack={goMain}>
-              <OmokGame
+          {/* 미니게임 허브 (SubPage 없이 직접 렌더링) */}
+          {currentPage === PAGE.MINIGAME && (
+            <MiniGameHub
+              currentUser={currentUser}
+              opponentUser={currentUser === "지수" ? "현하" : "지수"}
+              onBack={goMain}
+            />
+          )}
+
+          {/* 가계부 추가! */}
+          {currentPage === PAGE.ACCOUNT_BOOK && (
+            <SubPage title="가계부" icon="💰" onBack={goMain}>
+              <AccountBook
                 currentUser={currentUser}
                 opponentUser={currentUser === "지수" ? "현하" : "지수"}
               />
-            </SubPage>
-          )}
-
-          {currentPage === PAGE.GAME_WISH && (
-            <SubPage title="게임 전적 & 소원" icon="🏆" onBack={goMain}>
-              <GameWishList currentUser={currentUser} />
             </SubPage>
           )}
 
