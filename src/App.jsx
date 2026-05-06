@@ -599,18 +599,38 @@ function App() {
     try { await signOut(auth); window.location.reload(true); } catch (e) { window.location.reload(true); }
   };
 
+  // ────────────────────────────────────────────────────────────
+  // 수정된 로그인 함수 (지수 + 현하 모두 비밀번호)
+  // ────────────────────────────────────────────────────────────
+
   const login = async role => {
+    // 지수 로그인
     if (role === "지수") {
       const pw = window.prompt("왜 내꺼로 로그인 하세여???");
-      if (pw !== "4579") { alert("[WARNING]👹👹👹류현하 침입 시도 감지!!!👹👹👹"); return; }
+      if (pw !== "4579") {
+        alert("[WARNING]👹👹👹류현하 침입 시도 감지!!!👹👹👹");
+        return;
+      }
     }
+
+    // 현하 로그인 (추가!)
+    if (role === "현하") {
+      const pw = window.prompt("🔒 현하님 비밀번호를 입력하세요");
+      if (pw !== "9999") {
+        alert("❌ 비밀번호가 틀렸습니다!");
+        return;
+      }
+    }
+
     try {
       setLoading(true);
       const uc = await signInAnonymously(auth);
       await updateProfile(uc.user, { displayName: role });
       setCurrentUser(role);
       setLoading(false);
-    } catch (e) { setLoading(false); }
+    } catch (e) {
+      setLoading(false);
+    }
   };
 
   const logout = async () => {
@@ -620,7 +640,7 @@ function App() {
       window.location.reload();
     }
   };
-
+  
   // ── 로딩 화면 ───────────────────────────────────────────────
   if (loading) return (
     <>
