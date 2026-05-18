@@ -11,7 +11,7 @@ import DayPanel             from "./DayPanel";
 import AiReport             from "./AiReport";
 import CustomCalendar       from "./CustomCalendar";
 
-import { Box, Typography, Button, Stack } from "@mui/material";
+import { Box, Typography, Button, Stack, Paper } from "@mui/material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 
 import { createBuriPang } from "./touchEffects";
@@ -177,7 +177,12 @@ const CoupleCalendar = ({ currentUser }) => {
     });
 
   return (
-    <Box sx={{ width: '100%', boxSizing: 'border-box' }}>
+    <Paper elevation={0} sx={{
+      p: 2, borderRadius: 3, width: '100%', boxSizing: 'border-box',
+      bgcolor: '#ffffff',
+      border: `1.5px solid ${B.pants}1a`,
+      boxShadow: `0 2px 16px ${B.pants}0a`,
+    }}>
 
       {/* ── 다중선택 토글 ──────────────────────────────────── */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 0.5 }}>
@@ -305,7 +310,7 @@ const CoupleCalendar = ({ currentUser }) => {
         onCancelEdit={resetForm}
         onDelete={handleDelete}
       />
-    </Box>
+    </Paper>
   );
 };
 

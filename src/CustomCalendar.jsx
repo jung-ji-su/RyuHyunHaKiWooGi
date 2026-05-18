@@ -62,7 +62,7 @@ function getTempColor(avg) {
 }
 
 // ── 셀 ──────────────────────────────────────────────────────────
-function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, schedules, temperatures, capsules, today, onDateClick }) {
+function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode, schedules, temperatures, capsules, today, onDateClick }) {
   const iso = toIso(d);
   const isSelected  = !multiSelectMode && selectedDate && isSameDay(d, selectedDate);
   const isMultiSel  = multiSelectMode && selectedDates.includes(d.toDateString());
@@ -115,6 +115,8 @@ function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, sch
         cursor: current ? 'pointer' : 'default',
         WebkitTapHighlightColor: 'transparent',
         '&:active': current ? { opacity: 0.55 } : {},
+        borderRight: (idx + 1) % 7 === 0 ? 'none' : `1px solid ${B.pants}0e`,
+        borderBottom: `1px solid ${B.pants}09`,
       }}
     >
       {/* 날짜 원 */}

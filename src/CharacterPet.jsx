@@ -198,7 +198,14 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side }) {
     timerRef.current = setTimeout(() => setBubble(null), 2800);
   };
 
-  useEffect(() => () => clearTimeout(timerRef.current), []);
+  useEffect(() => {
+    const hintId = setTimeout(() => {
+      const catImg = CAT_IMAGES[Math.floor(Math.random() * CAT_IMAGES.length)];
+      setBubble({ text: '나를 클릭해보시소! 👆', catImg, key: Date.now() });
+      timerRef.current = setTimeout(() => setBubble(null), 3000);
+    }, 700);
+    return () => { clearTimeout(hintId); clearTimeout(timerRef.current); };
+  }, []);
 
   return (
     <Box sx={{
