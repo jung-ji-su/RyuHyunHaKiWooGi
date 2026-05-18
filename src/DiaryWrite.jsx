@@ -11,6 +11,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from '@mui/icons-material/Close';
 
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
+import { recordCheckin } from "./CharacterPet";
 import buri4 from "./assets/KakaoTalk_20260316_132913765.png";
 import buri5 from "./assets/KakaoTalk_20260316_132923854.png";
 
@@ -94,6 +95,7 @@ const DiaryWrite = ({ currentUser }) => {
         createdAt: serverTimestamp(), likes: [],
       });
       await sendNotification(currentUser, docRef.id);
+      recordCheckin(currentUser).catch(console.error);
       alert("추억 저장 완료! 🐷");
       setContent(""); setFile(null); setPreview(null); setEmotion("행복");
     } catch (e) {
@@ -246,7 +248,7 @@ const DiaryWrite = ({ currentUser }) => {
       )}
 
       {/* 하단 액션 */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <input accept="image/*" id="icon-button-file" type="file"
             style={{ display: "none" }} onChange={handleFileChange} />
@@ -268,6 +270,7 @@ const DiaryWrite = ({ currentUser }) => {
           <Typography sx={{
             fontSize: "0.72rem", color: B.dark + "55",
             fontFamily: "'Noto Sans KR', sans-serif",
+            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
             {file ? file.name : "사진 첨부"}
           </Typography>
@@ -280,8 +283,9 @@ const DiaryWrite = ({ currentUser }) => {
           disabled={loading}
           onPointerDown={(e) => { createRipple(e); if (!loading) createBuriPang(e); }}
           sx={{
-            bgcolor: B.pants, borderRadius: "20px", px: 3.5, py: 1,
-            fontFamily: "'Jua', sans-serif", fontSize: "0.95rem",
+            bgcolor: B.pants, borderRadius: "20px", px: 3, py: 1.2,
+            fontFamily: "'Jua', sans-serif", fontSize: "1rem",
+            width: "100%",
             position: "relative", overflow: "hidden",
             boxShadow: `0 4px 14px ${B.pants}44`,
             transition: "transform 0.1s, box-shadow 0.1s",

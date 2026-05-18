@@ -227,8 +227,13 @@ export default function CoupleDDay() {
           20%  { transform:scale(1); }
         }
         @keyframes ddayLabelWave {
-          0%,100% { letter-spacing:3px; opacity:0.85; }
-          50%      { letter-spacing:5px; opacity:1; }
+          0%,100% { letter-spacing:2px; opacity:0.85; }
+          50%      { letter-spacing:4px; opacity:1; }
+        }
+        @keyframes ddayBorderGlow {
+          0%,100% { box-shadow: 0 8px 32px ${B.pants}22, 0 2px 8px ${B.skin}44, inset 0 1px 0 rgba(255,255,255,0.8); border-color: ${B.pants}33; }
+          33%     { box-shadow: 0 14px 48px #FF6B9D33, 0 0 30px ${B.pants}22, 0 0 0 4px #FF6B9D18, inset 0 1px 0 rgba(255,255,255,0.95); border-color: #FF6B9D44; }
+          66%     { box-shadow: 0 10px 40px ${B.accent}28, 0 0 24px ${B.accent}18, 0 0 0 3px ${B.accent}14, inset 0 1px 0 rgba(255,255,255,0.88); border-color: ${B.accent}33; }
         }
 
         .dday-wrap {
@@ -238,16 +243,13 @@ export default function CoupleDDay() {
           overflow: hidden;
           background: linear-gradient(145deg, ${B.cream} 0%, #FFF0F8 40%, ${B.lavender} 100%);
           border: 2.5px solid ${B.pants}33;
-          box-shadow:
-            0 8px 32px ${B.pants}18,
-            0 2px 8px ${B.skin}44,
-            inset 0 1px 0 rgba(255,255,255,0.8);
-          min-height: 195px;
+          min-height: 136px;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           margin-bottom: 20px;
+          animation: ddayBorderGlow 4s ease-in-out infinite;
         }
         .dday-canvas {
           position: absolute; top:0; left:0;
@@ -257,27 +259,27 @@ export default function CoupleDDay() {
         .dday-content {
           position: relative; z-index: 10;
           text-align: center;
-          padding: 28px 20px 22px;
+          padding: 14px 16px 10px;
           width: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 8px;
+          gap: 4px;
         }
 
         /* 상단 라벨 */
         .dday-label {
           font-family: 'Jua', sans-serif;
-          font-size: 13px;
+          font-size: 11px;
           color: ${B.pants};
-          letter-spacing: 3px;
+          letter-spacing: 2px;
           animation: ddayLabelWave 2.5s ease-in-out infinite;
           display: flex;
           align-items: center;
           gap: 6px;
         }
         .dday-label-dot {
-          width: 6px; height: 6px; border-radius: 50%;
+          width: 5px; height: 5px; border-radius: 50%;
           background: ${B.accent};
           box-shadow: 0 0 8px ${B.accent};
           animation: ddayPulse 1.4s ease-in-out infinite;
@@ -287,7 +289,7 @@ export default function CoupleDDay() {
         /* 이벤트 이름 */
         .dday-event-name {
           font-family: 'Jua', sans-serif;
-          font-size: 19px;
+          font-size: 15px;
           color: ${B.dark};
           margin: 0;
           animation: ddayFlicker 8s ease-in-out infinite;
@@ -297,36 +299,36 @@ export default function CoupleDDay() {
         .dday-number-wrap {
           display: flex;
           align-items: baseline;
-          gap: 4px;
+          gap: 2px;
           animation: ddayPulse 2s ease-in-out infinite;
         }
         .dday-d {
           font-family: 'Jua', sans-serif;
-          font-size: 28px;
+          font-size: 20px;
           color: ${B.pants};
           line-height: 1;
         }
         .dday-minus {
           font-family: 'Jua', sans-serif;
-          font-size: 24px;
+          font-size: 18px;
           color: ${B.accent};
           line-height: 1;
         }
         .dday-num {
           font-family: 'Jua', sans-serif;
-          font-size: 52px;
+          font-size: 38px;
           line-height: 1;
-          background: linear-gradient(135deg, ${B.pants} 0%, ${B.accent} 50%, #FF6B9D 100%);
-          background-size: 200% auto;
+          background: linear-gradient(90deg, ${B.pants} 0%, #FF6B9D 30%, ${B.accent} 60%, ${B.pants} 100%);
+          background-size: 300% auto;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          animation: ddayShine 3s linear infinite;
-          filter: drop-shadow(0 2px 8px ${B.pants}44);
+          animation: ddayShine 2.5s linear infinite;
+          filter: drop-shadow(0 2px 10px ${B.pants}55);
         }
         .dday-day-label {
           font-family: 'Jua', sans-serif;
-          font-size: 18px;
+          font-size: 13px;
           color: ${B.dark}88;
           line-height: 1;
         }
@@ -335,18 +337,18 @@ export default function CoupleDDay() {
         .dday-time {
           display: flex;
           align-items: center;
-          gap: 4px;
-          margin-top: 2px;
+          gap: 3px;
+          margin-top: 1px;
         }
         .dday-time-unit {
           background: ${B.pants}15;
           border: 1.5px solid ${B.pants}33;
-          border-radius: 10px;
-          padding: 4px 10px;
+          border-radius: 8px;
+          padding: 2px 7px;
           font-family: 'Jua', sans-serif;
-          font-size: 16px;
+          font-size: 13px;
           color: ${B.pants};
-          min-width: 38px;
+          min-width: 30px;
           text-align: center;
         }
         .dday-time-unit.seconds {
@@ -357,16 +359,16 @@ export default function CoupleDDay() {
         }
         .dday-time-sep {
           font-family: 'Jua', sans-serif;
-          font-size: 18px;
+          font-size: 13px;
           color: ${B.pants}66;
-          margin: 0 1px;
+          margin: 0;
           animation: ddayPulse 1s ease-in-out infinite;
         }
 
         /* 오늘! */
         .dday-today {
           font-family: 'Jua', sans-serif;
-          font-size: 32px;
+          font-size: 24px;
           background: linear-gradient(135deg, ${B.pants}, ${B.accent}, #FF6B9D);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -376,40 +378,33 @@ export default function CoupleDDay() {
         }
 
         /* 부리 장식 */
-        /* 왼쪽 첫 번째 요소 */
         .dday-buri-left {
-          position: absolute; bottom: 8px; left: 10px;
-          width: 44px;
+          position: absolute; bottom: 4px; left: 8px;
+          width: 36px;
           animation: ddayBobLeft 3s ease-in-out infinite;
           filter: drop-shadow(0 3px 6px ${B.pants}33);
           pointer-events: none;
         }
-
-        /* 왼쪽 두 번째 요소: left 값을 키워서 오른쪽으로 이동 */
         .dday-buri-left2 {
-          position: absolute; bottom: 8px; left: 60px; /* 10px + width(44px) + 여백 */
-          width: 44px;
+          position: absolute; bottom: 4px; left: 48px;
+          width: 36px;
           animation: ddayBobLeft 3s ease-in-out infinite;
-          animation-delay: 0.5s; /* 살짝 엇박자로 움직이게 추가 */
+          animation-delay: 0.5s;
           filter: drop-shadow(0 3px 6px ${B.pants}33);
           pointer-events: none;
         }
-
-        /* 오른쪽 첫 번째 요소 */
         .dday-buri-right {
-          position: absolute; bottom: 8px; right: 10px;
-          width: 44px;
+          position: absolute; bottom: 4px; right: 8px;
+          width: 36px;
           animation: ddayBobRight 3.4s ease-in-out infinite;
           filter: drop-shadow(0 3px 6px ${B.accent}33);
           pointer-events: none;
         }
-
-        /* 오른쪽 두 번째 요소: right 값을 키워서 왼쪽으로 이동 */
         .dday-buri-right2 {
-          position: absolute; bottom: 8px; right: 60px; /* 10px + width(44px) + 여백 */
-          width: 44px;
+          position: absolute; bottom: 4px; right: 48px;
+          width: 36px;
           animation: ddayBobRight 3.4s ease-in-out infinite;
-          animation-delay: 0.7s; /* 살짝 엇박자로 움직이게 추가 */
+          animation-delay: 0.7s;
           filter: drop-shadow(0 3px 6px ${B.accent}33);
           pointer-events: none;
         }
