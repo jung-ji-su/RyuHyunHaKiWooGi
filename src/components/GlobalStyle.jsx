@@ -17,7 +17,13 @@ export default function GlobalStyle() {
       ::-webkit-scrollbar-track { background: ${B.peach}; }
       ::-webkit-scrollbar-thumb { background: ${B.pants}88; border-radius: 10px; }
       .MuiPaper-root, .MuiTypography-root, .MuiButton-root { font-family: 'Noto Sans KR', sans-serif !important; }
-      .buri-float { position: fixed; pointer-events: none; z-index: 0; opacity: 0.13; filter: drop-shadow(0 4px 12px #7B4FA633); }
+      .buri-float {
+        position: fixed; pointer-events: none; z-index: 0; opacity: 0.10;
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: translateZ(0);
+      }
       .buri-float.b2 { top: 120px; left: -25px; width: 150px; animation: buriFloat2 7s ease-in-out infinite; }
       .buri-float.b3 { bottom: 200px; left: 5px; width: 110px; animation: buriFloat3 5s ease-in-out infinite; }
       .buri-float.b4 { top: 55%; right: -20px; width: 100px; animation: buriFloat1 6s ease-in-out 1s infinite; }

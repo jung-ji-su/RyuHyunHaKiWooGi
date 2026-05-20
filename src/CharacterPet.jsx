@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Box, Typography, Stack, Paper, Button } from '@mui/material';
+import { Box, Typography, Stack, Paper, Button, Drawer, TextField, IconButton } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { db } from './firebase';
 import {
   doc, getDoc, setDoc, runTransaction,
@@ -22,6 +26,7 @@ const B = {
 
 const COUPLE_ID = 'jisu_hyunha';
 const USERS = ['지수', '현하'];
+const ADMIN_USER = '지수';
 
 // ── 말풍선 문구 목록 ─────────────────────────────────────────────
 // 자유롭게 추가·삭제 가능 (10~15자 권장)
@@ -35,12 +40,9 @@ const SPEECH_BUBBLES = [
   '오늘 하루 어땠으여???',
   '기록 해주세여 제발 ',
   '오늘도 화이팅 하시소!! ✨',
-  '배고파 배고파 ㅠ',
   '나는감정없는사이코라그런가이런거보면미동도안함',
   '류덩이폼미쳤다;;',
   '무능무능',
-  '료이키텐카이 무량공처',
-  '히노카미카구라..',
   '류덩이를 변기에 넣고 돌려',
   '좋은일생기는 따봉냥이에 당첨됨',
   '현하가글써줄때까지숨참음',
@@ -180,7 +182,7 @@ export async function recordCheckin(user) {
 }
 
 // ── 개별 캐릭터 카드 ──────────────────────────────────────────────
-function UserCard({ user, hp, isCurrentUser, checkedIn, side }) {
+function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
   const stage = getStage(hp);
   const isSkull = hp < 15;
   const isLeft = side === 'left';
@@ -191,7 +193,8 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side }) {
 
   const handleCatClick = () => {
     clearTimeout(timerRef.current);
-    const text = SPEECH_BUBBLES[Math.floor(Math.random() * SPEECH_BUBBLES.length)];
+    const list = bubbles?.length ? bubbles : SPEECH_BUBBLES;
+    const text = list[Math.floor(Math.random() * list.length)];
     const catImg = CAT_IMAGES[Math.floor(Math.random() * CAT_IMAGES.length)];
     setBubble({ text, catImg, key: Date.now() });
     setClickCount(c => c + 1);
@@ -243,15 +246,17 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side }) {
           {bubble && (
             <motion.div
               key={bubble.key}
-              initial={{ opacity: 0, scale: 0.5, y: 10, x: isLeft ? '-50%' : '0%' }}
+              initial={{ opacity: 0, scale: 0.6, y: 8, x: isLeft ? '-50%' : '0%' }}
               animate={{ opacity: 1, scale: 1, y: 0, x: isLeft ? '-50%' : '0%' }}
-              exit={{ opacity: 0, scale: 0.82, y: -10, x: isLeft ? '-50%' : '0%', transition: { duration: 0.3, ease: 'easeOut' } }}
-              transition={{ type: 'spring', stiffness: 460, damping: 22 }}
+              exit={{ opacity: 0, scale: 0.88, y: -6, x: isLeft ? '-50%' : '0%', transition: { duration: 0.15, ease: 'easeIn' } }}
+              transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
               style={{
                 position: 'absolute',
                 bottom: 'calc(100% + 6px)',
                 zIndex: 100,
                 pointerEvents: 'none',
+                willChange: 'transform, opacity',
+                WebkitBackfaceVisibility: 'hidden',
                 ...(isLeft ? { left: '50%' } : { right: 0 }),
               }}
             >
@@ -328,16 +333,17 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side }) {
           alt={stage.label}
           key={`${stage.label}-${clickCount}`}
           initial={clickCount > 0
-            ? { scale: 1.22, rotate: clickCount % 2 === 0 ? 9 : -9 }
-            : { scale: 0.85, opacity: 0 }}
+            ? { scale: 1.18, rotate: clickCount % 2 === 0 ? 8 : -8 }
+            : { scale: 0.88, opacity: 0 }}
           animate={{ scale: 1, rotate: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 380, damping: 16 }}
+          transition={{ duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
           style={{
             width: 72, height: 72, objectFit: 'contain',
             display: 'block',
-            filter: isSkull
-              ? 'grayscale(0.85) brightness(0.72)'
-              : `drop-shadow(0 3px 8px ${stage.color}44)`,
+            willChange: 'transform',
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden',
+            filter: isSkull ? 'grayscale(0.85) brightness(0.72)' : 'none',
           }}
         />
       </Box>
@@ -361,11 +367,14 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side }) {
       </Stack>
       <Box sx={{ height: 7, borderRadius: 4, bgcolor: `${stage.color}1a`, overflow: 'hidden', mb: 0.8 }}>
         <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${hp}%` }}
-          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: hp / 100 }}
+          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.15 }}
           style={{
             height: '100%',
+            width: '100%',
+            transformOrigin: 'left center',
+            willChange: 'transform',
             background: isSkull
               ? '#BDBDBD'
               : `linear-gradient(to right, ${stage.color}88, ${stage.color})`,
@@ -397,21 +406,38 @@ export default function CharacterPet({ currentUser }) {
   const [loading, setLoading] = useState(true);
   const [jiltaSent, setJiltaSent] = useState(false);
 
+  // 말풍선 관리
+  const [bubbles, setBubbles] = useState(SPEECH_BUBBLES);
+  const [manageOpen, setManageOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const [newPhrase, setNewPhrase] = useState('');
+  const [saving, setSaving] = useState(false);
+
   const today = toIso(new Date());
   const otherUser = USERS.find(u => u !== currentUser) ?? '';
+  const configRef = doc(db, 'couple_config', COUPLE_ID);
 
   useEffect(() => {
     const init = async () => {
       try {
-        const charSnap = await getDoc(doc(db, 'couple_character', COUPLE_ID));
+        const [charSnap, configSnap] = await Promise.all([
+          getDoc(doc(db, 'couple_character', COUPLE_ID)),
+          getDoc(configRef),
+        ]);
+
+        // 말풍선 로드
+        if (configSnap.exists() && configSnap.data().speechBubbles?.length) {
+          setBubbles(configSnap.data().speechBubbles);
+        } else {
+          await setDoc(configRef, { speechBubbles: SPEECH_BUBBLES }, { merge: true });
+        }
+
         const rawData = charSnap.exists() ? charSnap.data() : {};
         const defaults = { hp: 60, lastEvalDate: today, revivalMission: null };
-
         const updatedData = {};
         for (const user of USERS) {
           updatedData[user] = await evaluateUserPenalties(user, rawData[user] ?? { ...defaults });
         }
-
         if (!charSnap.exists()) {
           await setDoc(doc(db, 'couple_character', COUPLE_ID), { ...updatedData, updatedAt: serverTimestamp() });
         }
@@ -427,6 +453,26 @@ export default function CharacterPet({ currentUser }) {
     };
     init();
   }, []);
+
+  const saveBubbles = async (list) => {
+    await setDoc(configRef, { speechBubbles: list }, { merge: true });
+    setBubbles(list);
+  };
+
+  const handleAddPhrase = async (onSuccess) => {
+    const trimmed = newPhrase.trim();
+    if (!trimmed || saving) return;
+    setSaving(true);
+    try {
+      await saveBubbles([...bubbles, trimmed]);
+      setNewPhrase('');
+      onSuccess?.();
+    } finally { setSaving(false); }
+  };
+
+  const handleDeletePhrase = async (idx) => {
+    await saveBubbles(bubbles.filter((_, i) => i !== idx));
+  };
 
   const sendJilta = async () => {
     if (jiltaSent) return;
@@ -475,13 +521,53 @@ export default function CharacterPet({ currentUser }) {
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '0.92rem' }}>
           😸 고먐미 건강 상태
         </Typography>
-        {bothCheckedIn && (
-          <Box sx={{ px: 1.2, py: 0.25, borderRadius: 10, bgcolor: '#E8F5E9', border: '1px solid #A5D6A7' }}>
-            <Typography sx={{ fontSize: '0.62rem', color: '#2E7D32', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
-              💑 둘 다 기록 완료!
-            </Typography>
+        <Stack direction="row" alignItems="center" gap={0.8}>
+          {bothCheckedIn && (
+            <Box sx={{ px: 1.2, py: 0.25, borderRadius: 10, bgcolor: '#E8F5E9', border: '1px solid #A5D6A7' }}>
+              <Typography sx={{ fontSize: '0.62rem', color: '#2E7D32', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
+                💑 둘 다 기록 완료!
+              </Typography>
+            </Box>
+          )}
+          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+            <Button
+              size="small"
+              startIcon={
+                currentUser === ADMIN_USER
+                  ? <EditNoteIcon sx={{ fontSize: '0.85rem !important' }} />
+                  : <AddCircleOutlineIcon sx={{ fontSize: '0.85rem !important' }} />
+              }
+              onClick={() => currentUser === ADMIN_USER ? setManageOpen(true) : setAddOpen(true)}
+              sx={{
+                borderRadius: 10,
+                bgcolor: B.pants,
+                color: 'white',
+                fontSize: '0.62rem',
+                fontFamily: "'Noto Sans KR',sans-serif",
+                fontWeight: 700,
+                px: 1.2, py: 0.35,
+                minHeight: 0,
+                boxShadow: `0 2px 10px ${B.pants}55`,
+                animation: 'hamPulse 2.5s ease-in-out infinite',
+                '&:hover': { bgcolor: '#6A3D96', boxShadow: `0 3px 14px ${B.pants}77` },
+                '&:active': { transform: 'scale(0.92)' },
+              }}
+            >
+              {currentUser === ADMIN_USER ? '문구관리' : '문구추가'}
+            </Button>
+            <Box sx={{
+              position: 'absolute', top: -5, right: -6,
+              bgcolor: '#FF4444', borderRadius: 10,
+              px: '4px', py: '1px',
+              border: '1.5px solid white',
+              pointerEvents: 'none',
+            }}>
+              <Typography sx={{ fontSize: '0.42rem', color: 'white', fontWeight: 900, lineHeight: 1, letterSpacing: 0.5 }}>
+                NEW
+              </Typography>
+            </Box>
           </Box>
-        )}
+        </Stack>
       </Stack>
 
       {/* ── 캐릭터 카드 2장 ──────────────────────────────────── */}
@@ -494,6 +580,7 @@ export default function CharacterPet({ currentUser }) {
             isCurrentUser={user === currentUser}
             checkedIn={checkedIn.includes(user)}
             side={idx === 0 ? 'left' : 'right'}
+            bubbles={bubbles}
           />
         ))}
       </Stack>
@@ -552,6 +639,191 @@ export default function CharacterPet({ currentUser }) {
           </Typography>
         </Box>
       )}
+
+      {/* ── 말풍선 관리 Drawer ─────────────────────────────── */}
+      <Drawer
+        anchor="bottom"
+        open={manageOpen}
+        onClose={() => { setManageOpen(false); setNewPhrase(''); }}
+        PaperProps={{
+          sx: {
+            borderRadius: '22px 22px 0 0',
+            maxHeight: '80vh',
+            bgcolor: B.cream,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          },
+        }}
+      >
+        {/* 핸들 */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.4, pb: 0.5, flexShrink: 0 }}>
+          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '33' }} />
+        </Box>
+
+        {/* 헤더 */}
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.4, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
+            💬 말풍선 문구 관리
+          </Typography>
+          <Typography sx={{ fontSize: '0.66rem', color: '#bbb', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            고양이 클릭 시 여기서 랜덤하게 나와요 · 두 사람이 함께 공유해요
+          </Typography>
+        </Box>
+
+        {/* 문구 목록 */}
+        <Box sx={{ overflowY: 'auto', flex: 1, px: 2, py: 1.5 }}>
+          {bubbles.length === 0 && (
+            <Box sx={{ textAlign: 'center', py: 4, color: '#ccc' }}>
+              <Typography sx={{ fontSize: '0.8rem', fontFamily: "'Noto Sans KR',sans-serif" }}>
+                문구가 없어요. 아래에서 추가해보세요!
+              </Typography>
+            </Box>
+          )}
+          {bubbles.map((phrase, idx) => (
+            <Box key={idx} sx={{
+              display: 'flex', alignItems: 'center', gap: 1,
+              bgcolor: 'white', borderRadius: 2.5, px: 1.5, py: 1, mb: 0.8,
+              border: `1.5px solid ${B.pants}0e`,
+              boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+            }}>
+              <Typography sx={{
+                flex: 1, fontSize: '0.82rem',
+                fontFamily: "'Noto Sans KR',sans-serif", color: B.dark,
+                wordBreak: 'break-all',
+              }}>
+                {phrase}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={() => handleDeletePhrase(idx)}
+                sx={{
+                  color: '#ddd', p: 0.5, flexShrink: 0,
+                  '&:hover': { color: '#ff6b6b', bgcolor: '#fff0f0' },
+                  '&:active': { transform: 'scale(0.85)' },
+                }}
+              >
+                <DeleteIcon sx={{ fontSize: '0.9rem' }} />
+              </IconButton>
+            </Box>
+          ))}
+          <Box sx={{ height: 8 }} />
+        </Box>
+
+        {/* 추가 입력 */}
+        <Box sx={{
+          px: 2, pb: 3, pt: 1.2, flexShrink: 0,
+          borderTop: `1px solid ${B.pants}0e`,
+          bgcolor: B.cream,
+        }}>
+          <Stack direction="row" gap={1} alignItems="center">
+            <TextField
+              placeholder="새 문구 입력 (최대 30자)"
+              value={newPhrase}
+              onChange={e => setNewPhrase(e.target.value.slice(0, 30))}
+              onKeyDown={e => { if (e.key === 'Enter') handleAddPhrase(); }}
+              size="small"
+              sx={{
+                flex: 1,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2.5, fontSize: '0.85rem', bgcolor: 'white',
+                  '& fieldset': { borderColor: `${B.pants}28` },
+                  '&:hover fieldset': { borderColor: `${B.pants}66` },
+                  '&.Mui-focused fieldset': { borderColor: B.pants },
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <Typography sx={{ fontSize: '0.58rem', color: '#ccc', whiteSpace: 'nowrap', pl: 0.5 }}>
+                    {newPhrase.length}/30
+                  </Typography>
+                ),
+              }}
+            />
+            <IconButton
+              onClick={handleAddPhrase}
+              disabled={!newPhrase.trim() || saving}
+              sx={{
+                bgcolor: B.pants, color: 'white',
+                borderRadius: 2.5, width: 42, height: 42, flexShrink: 0,
+                '&:hover': { bgcolor: '#6A3D96' },
+                '&:active': { transform: 'scale(0.9)' },
+                '&.Mui-disabled': { bgcolor: '#e8e8e8', color: '#bbb' },
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Stack>
+        </Box>
+      </Drawer>
+      {/* ── 추가 전용 Drawer (비관리자용) ──────────────────── */}
+      <Drawer
+        anchor="bottom"
+        open={addOpen}
+        onClose={() => { setAddOpen(false); setNewPhrase(''); }}
+        PaperProps={{
+          sx: {
+            borderRadius: '22px 22px 0 0',
+            bgcolor: B.cream,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          },
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.4, pb: 0.5, flexShrink: 0 }}>
+          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '33' }} />
+        </Box>
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.4, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
+            💬 말풍선 문구 추가
+          </Typography>
+          <Typography sx={{ fontSize: '0.66rem', color: '#bbb', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            새 문구를 추가하면 두 사람 모두에게 공유돼요
+          </Typography>
+        </Box>
+        <Box sx={{ px: 2, pb: 3, pt: 1.5, bgcolor: B.cream, flexShrink: 0 }}>
+          <Stack direction="row" gap={1} alignItems="center">
+            <TextField
+              placeholder="새 문구 입력 (최대 30자)"
+              value={newPhrase}
+              onChange={e => setNewPhrase(e.target.value.slice(0, 30))}
+              onKeyDown={e => { if (e.key === 'Enter') handleAddPhrase(() => setAddOpen(false)); }}
+              size="small"
+              autoFocus
+              sx={{
+                flex: 1,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2.5, fontSize: '0.85rem', bgcolor: 'white',
+                  '& fieldset': { borderColor: `${B.pants}28` },
+                  '&:hover fieldset': { borderColor: `${B.pants}66` },
+                  '&.Mui-focused fieldset': { borderColor: B.pants },
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <Typography sx={{ fontSize: '0.58rem', color: '#ccc', whiteSpace: 'nowrap', pl: 0.5 }}>
+                    {newPhrase.length}/30
+                  </Typography>
+                ),
+              }}
+            />
+            <IconButton
+              onClick={() => handleAddPhrase(() => setAddOpen(false))}
+              disabled={!newPhrase.trim() || saving}
+              sx={{
+                bgcolor: B.pants, color: 'white',
+                borderRadius: 2.5, width: 42, height: 42, flexShrink: 0,
+                '&:hover': { bgcolor: '#6A3D96' },
+                '&:active': { transform: 'scale(0.9)' },
+                '&.Mui-disabled': { bgcolor: '#e8e8e8', color: '#bbb' },
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Stack>
+        </Box>
+      </Drawer>
     </Paper>
   );
 }

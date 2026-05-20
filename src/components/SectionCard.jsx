@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { B } from '../lib/constants';
 
-export default function SectionCard({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children }) {
+export default function SectionCard({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children, noPadding }) {
   return (
     <Box sx={{
       bgcolor: bgColor || B.cream, borderRadius: 4,
@@ -53,7 +53,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
           </Box>
         )}
       </Box>
-      <Box sx={{ p: 2 }}>{children}</Box>
+      <Box sx={{ px: noPadding ? 0 : 2, pt: noPadding ? 1 : 2, pb: noPadding ? 0.5 : 2 }}>{children}</Box>
     </Box>
   );
 }

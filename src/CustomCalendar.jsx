@@ -61,7 +61,8 @@ function getTempColor(avg) {
   return         '#E8630A';
 }
 
-// ── 셀 ──────────────────────────────────────────────────────────
+const PRIORITY = ['기념일', '데이트', '개인일정'];
+
 function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode, schedules, temperatures, capsules, today, onDateClick }) {
   const iso = toIso(d);
   const isSelected  = !multiSelectMode && selectedDate && isSameDay(d, selectedDate);
@@ -75,61 +76,88 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
   const avgTemp      = dayTemps.length
     ? Math.round(dayTemps.reduce((s, t) => s + parseInt(t.temp ?? 0), 0) / dayTemps.length)
     : null;
-  const tempColor    = getTempColor(avgTemp);
+  const tempColor = getTempColor(avgTemp);
 
   const hasJ       = current && temperatures.some(t => t.date === iso && t.author === '지수' && !t.isPenalty);
   const hasH       = current && temperatures.some(t => t.date === iso && t.author === '현하' && !t.isPenalty);
   const isSynced   = hasJ && hasH;
   const hasCapsule = current && capsules.some(c => c.date === iso);
 
-  let circleBg = 'transparent';
-  if (isSelected)      circleBg = B.pants;
-  else if (isMultiSel) circleBg = B.peach;
-  else if (isToday)    circleBg = `${B.pants}1a`;
+  // 카드 컬러: 우선순위 높은 카테고리 기준
+  const sorted = [...daySchedules].sort((a, b) => PRIORITY.indexOf(a.category) - PRIORITY.indexOf(b.category));
+  const mainColor = sorted[0] ? (CATEGORY_COLORS[sorted[0].category] || B.pants) : null;
+  const isCard = daySchedules.length > 0 && current;
 
+  // 날짜 원 스타일
+  let circleBg     = 'transparent';
   let circleBorder = 'none';
-  if (isToday && !isSelected)  circleBorder = `2px solid ${B.pants}`;
-  else if (isMultiSel)         circleBorder = `2px solid ${B.pants}77`;
+  let circleShadow = 'none';
+
+  if (isSelected && isCard) {
+    circleBg = 'rgba(255,255,255,0.28)';
+  } else if (isSelected) {
+    circleBg     = `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`;
+    circleShadow = `0 4px 18px ${B.pants}55, 0 2px 6px ${B.pants}33`;
+  } else if (isMultiSel) {
+    circleBg     = B.peach;
+    circleBorder = `2px solid ${B.pants}77`;
+  } else if (isToday) {
+    circleBg     = `${B.pants}12`;
+    circleBorder = `2px solid ${B.pants}`;
+    circleShadow = `0 0 0 3px ${B.pants}14`;
+  }
 
   let numColor = B.dark;
   if (isSelected)                numColor = 'white';
   else if (isToday)              numColor = B.pants;
   else if (isHoliday && current) numColor = '#E24B4A';
 
-  const visibleBars = daySchedules.slice(0, 2);
-  const extraCount  = daySchedules.length - 2;
-
   return (
     <Box
       onClick={() => { if (current) { vibrate(10); onDateClick(d); } }}
       sx={{
         position: 'relative',
-        height: 64,
+        height: 68,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        pt: '7px',
-        pb: '5px',
+        pt: '6px',
+        pb: '4px',
         opacity: current ? 1 : 0,
         pointerEvents: current ? 'auto' : 'none',
         cursor: current ? 'pointer' : 'default',
         WebkitTapHighlightColor: 'transparent',
-        '&:active': current ? { opacity: 0.55 } : {},
-        borderRight: (idx + 1) % 7 === 0 ? 'none' : `1px solid ${B.pants}0e`,
-        borderBottom: `1px solid ${B.pants}09`,
+        '&:active': current ? { opacity: 0.65 } : {},
+        transition: 'all 0.15s',
+        ...(isCard ? {
+          m: '2px',
+          borderRadius: '8px',
+          background: isSelected
+            ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
+            : `linear-gradient(135deg, rgba(255,255,255,0.97) 0%, ${mainColor}0d 100%)`,
+          boxShadow: isSelected
+            ? `0 4px 16px ${B.pants}44`
+            : `0 3px 10px ${mainColor}28, 0 1px 4px ${mainColor}18`,
+          border: isSelected ? 'none' : `1px solid ${mainColor}28`,
+          zIndex: 1,
+        } : {
+          borderRight: (idx + 1) % 7 === 0 ? 'none' : `1px solid rgba(123,79,166,0.06)`,
+          borderBottom: `1px solid rgba(123,79,166,0.05)`,
+        }),
       }}
     >
       {/* 날짜 원 */}
       <Box sx={{
-        width: 34, height: 34, borderRadius: '50%',
-        bgcolor: circleBg, border: circleBorder,
+        width: 32, height: 32, borderRadius: '50%',
+        background: circleBg,
+        border: circleBorder,
+        boxShadow: circleShadow,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
-        boxShadow: isSelected ? `0 3px 12px ${B.pants}55` : 'none',
-        transition: 'background 0.15s, box-shadow 0.15s',
+        transition: 'all 0.2s ease',
       }}>
         <Typography sx={{
-          fontSize: '0.84rem',
+          fontSize: '0.82rem',
           fontWeight: (isSelected || isToday || isMultiSel) ? 700 : 500,
           fontFamily: "'Noto Sans KR',sans-serif",
           lineHeight: 1,
@@ -142,30 +170,31 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
       {/* 감정 온도 바 */}
       {tempColor && current ? (
         <Box sx={{
-          width: '54%', height: 2.5, borderRadius: 2,
-          bgcolor: tempColor, opacity: isSelected ? 0.5 : 0.85,
+          width: '56%', height: 3, borderRadius: 2,
+          background: `linear-gradient(to right, ${tempColor}77, ${tempColor})`,
+          opacity: (isSelected && !isCard) ? 0.5 : 0.85,
           mt: '2px', flexShrink: 0,
         }} />
       ) : (
-        <Box sx={{ height: 4.5, flexShrink: 0 }} />
+        <Box sx={{ height: 5, flexShrink: 0 }} />
       )}
 
-      {/* 일정 컬러 바 */}
+      {/* 일정 dot 배지 */}
       {daySchedules.length > 0 && (
-        <Box sx={{ width: '82%', mt: '2px', display: 'flex', flexDirection: 'column', gap: '1.5px', flexShrink: 0 }}>
-          {visibleBars.map((s, i) => (
+        <Box sx={{ display: 'flex', gap: '2.5px', mt: '3px', justifyContent: 'center', alignItems: 'center' }}>
+          {sorted.slice(0, 3).map((s, i) => (
             <Box key={i} sx={{
-              height: 3, borderRadius: 2,
-              bgcolor: isSelected ? 'rgba(255,255,255,0.8)' : (CATEGORY_COLORS[s.category] || B.pants),
+              width: 5, height: 5, borderRadius: '50%',
+              bgcolor: isSelected ? 'rgba(255,255,255,0.85)' : (CATEGORY_COLORS[s.category] || B.pants),
+              flexShrink: 0,
             }} />
           ))}
-          {extraCount > 0 && (
+          {daySchedules.length > 3 && (
             <Typography sx={{
-              fontSize: '0.44rem', lineHeight: 1, textAlign: 'center',
-              color: isSelected ? 'rgba(255,255,255,0.75)' : B.dark + '55',
-              mt: '0.5px',
+              fontSize: '0.42rem', lineHeight: 1,
+              color: isSelected ? 'rgba(255,255,255,0.7)' : B.dark + '55',
             }}>
-              +{extraCount}
+              +{daySchedules.length - 3}
             </Typography>
           )}
         </Box>
@@ -173,14 +202,12 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
 
       {/* 커플 싱크 */}
       {isSynced && (
-        <Box sx={{ position: 'absolute', top: 3, right: 1, fontSize: '7px', lineHeight: 1, pointerEvents: 'none' }}>
+        <Box sx={{ position: 'absolute', top: 2, right: 1, fontSize: '8px', lineHeight: 1, pointerEvents: 'none' }}>
           💑
         </Box>
       )}
-
-      {/* 타임캡슐 */}
       {hasCapsule && isFuture && (
-        <Box sx={{ position: 'absolute', top: 3, left: 1, fontSize: '7px', lineHeight: 1, pointerEvents: 'none' }}>
+        <Box sx={{ position: 'absolute', top: 2, left: 1, fontSize: '8px', lineHeight: 1, pointerEvents: 'none' }}>
           🔒
         </Box>
       )}
@@ -188,7 +215,6 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
   );
 }
 
-// ── 메인 ────────────────────────────────────────────────────────
 export default function CustomCalendar({
   selectedDate,
   selectedDates = [],
@@ -240,9 +266,11 @@ export default function CustomCalendar({
         <IconButton
           onClick={() => navigate(-1)} size="small"
           sx={{
-            color: B.pants, width: 34, height: 34,
-            bgcolor: B.lavender + '80',
-            '&:hover': { bgcolor: B.lavender },
+            color: B.pants, width: 36, height: 36,
+            background: 'rgba(255,255,255,0.72)',
+            border: '1px solid rgba(123,79,166,0.14)',
+            boxShadow: '0 2px 8px rgba(123,79,166,0.08)',
+            '&:hover': { background: 'rgba(255,255,255,0.95)' },
             '&:active': { transform: 'scale(0.82)' },
           }}
         >
@@ -259,8 +287,11 @@ export default function CustomCalendar({
             style={{ textAlign: 'center' }}
           >
             <Typography sx={{
-              fontFamily: "'Jua',sans-serif", fontSize: '1.1rem',
-              color: B.pants, lineHeight: 1,
+              fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', lineHeight: 1,
+              background: `linear-gradient(135deg, ${B.pants} 20%, #A855F7 100%)`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
             }}>
               {viewYear}년 {viewMonth + 1}월
             </Typography>
@@ -270,9 +301,11 @@ export default function CustomCalendar({
         <IconButton
           onClick={() => navigate(1)} size="small"
           sx={{
-            color: B.pants, width: 34, height: 34,
-            bgcolor: B.lavender + '80',
-            '&:hover': { bgcolor: B.lavender },
+            color: B.pants, width: 36, height: 36,
+            background: 'rgba(255,255,255,0.72)',
+            border: '1px solid rgba(123,79,166,0.14)',
+            boxShadow: '0 2px 8px rgba(123,79,166,0.08)',
+            '&:hover': { background: 'rgba(255,255,255,0.95)' },
             '&:active': { transform: 'scale(0.82)' },
           }}
         >
@@ -286,7 +319,7 @@ export default function CustomCalendar({
           <Typography key={w} sx={{
             textAlign: 'center', fontSize: '0.67rem', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
-            color: i === 0 ? '#E24B4A99' : B.dark + '33',
+            color: i === 0 ? '#E24B4A88' : B.dark + '2a',
             py: '4px',
           }}>
             {w}
@@ -295,67 +328,60 @@ export default function CustomCalendar({
       </Box>
 
       {/* ── 날짜 그리드 */}
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div
-          key={`${viewYear}-${viewMonth}`}
-          initial={{ x: slideDir * 40, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -slideDir * 40, opacity: 0 }}
-          transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}
-        >
-          {days.map(({ date: d, current }, idx) => (
-            <DayCell
-              key={`${toIso(d)}-${current}`}
-              d={d} current={current} idx={idx}
-              selectedDate={selectedDate}
-              selectedDates={selectedDates}
-              multiSelectMode={multiSelectMode}
-              schedules={schedules}
-              temperatures={temperatures}
-              capsules={capsules}
-              today={today}
-              onDateClick={onDateClick}
-            />
-          ))}
-        </motion.div>
-      </AnimatePresence>
+      <Box sx={{ position: 'relative', height: 408, overflow: 'hidden' }}>
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={`${viewYear}-${viewMonth}`}
+            initial={{ x: slideDir * 32, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -slideDir * 32, opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            style={{
+              position: 'absolute', top: 0, left: 0, right: 0,
+              display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)',
+              willChange: 'transform, opacity',
+            }}
+          >
+            {days.map(({ date: d, current }, idx) => (
+              <DayCell
+                key={`${toIso(d)}-${current}`}
+                d={d} current={current} idx={idx}
+                selectedDate={selectedDate}
+                selectedDates={selectedDates}
+                multiSelectMode={multiSelectMode}
+                schedules={schedules}
+                temperatures={temperatures}
+                capsules={capsules}
+                today={today}
+                onDateClick={onDateClick}
+              />
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </Box>
 
-      {/* ── 범례 (심플 pill) */}
-      <Box sx={{
-        display: 'flex', flexWrap: 'wrap', gap: '6px',
-        justifyContent: 'center', mt: 1.8,
-      }}>
+      {/* ── 범례 */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '5px', justifyContent: 'center', mt: 1.8 }}>
         {Object.entries(CATEGORY_COLORS).map(([label, color]) => (
           <Box key={label} sx={{
-            display: 'flex', alignItems: 'center', gap: '5px',
+            display: 'flex', alignItems: 'center', gap: '4px',
             px: '8px', py: '4px', borderRadius: '20px',
-            bgcolor: color + '14',
+            background: `${color}0e`, border: `1px solid ${color}22`,
           }}>
-            <Box sx={{ width: 14, height: 3, borderRadius: 2, bgcolor: color, flexShrink: 0 }} />
-            <Typography sx={{ fontSize: '0.58rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: color, flexShrink: 0 }} />
+            <Typography sx={{ fontSize: '0.57rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif" }}>
               {label}
             </Typography>
           </Box>
         ))}
         <Box sx={{
-          display: 'flex', alignItems: 'center', gap: '5px',
-          px: '8px', py: '4px', borderRadius: '20px',
-          bgcolor: '#85B7EB14',
-        }}>
-          <Box sx={{ width: 14, height: 3, borderRadius: 2, background: 'linear-gradient(to right,#85B7EB,#EF9F27,#E8630A)', flexShrink: 0 }} />
-          <Typography sx={{ fontSize: '0.58rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif" }}>
-            감정온도
-          </Typography>
-        </Box>
-        <Box sx={{
           display: 'flex', alignItems: 'center', gap: '4px',
           px: '8px', py: '4px', borderRadius: '20px',
-          bgcolor: '#cc88ff14',
+          background: '#85B7EB0e', border: '1px solid #85B7EB22',
         }}>
-          <Typography sx={{ fontSize: '0.62rem', lineHeight: 1 }}>💑</Typography>
-          <Typography sx={{ fontSize: '0.58rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif" }}>
-            함께 기록
+          <Box sx={{ width: 14, height: 4, borderRadius: 2, background: 'linear-gradient(to right,#85B7EB,#EF9F27,#E8630A)', flexShrink: 0 }} />
+          <Typography sx={{ fontSize: '0.57rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif" }}>
+            감정온도
           </Typography>
         </Box>
       </Box>

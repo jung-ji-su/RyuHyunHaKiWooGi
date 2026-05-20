@@ -38,9 +38,9 @@ export default function HomePage({ currentUser, logout }) {
 
         <SectionCard
           icon="📅" title="우리의 일정"
-          sub="활 쏘는 부리부리가 날짜를 지키고 있어요 🏹"
           buriImg={buri6} bgColor={B.lavender + '44'} borderColor={B.pants}
-          onMore={() => navigate(ROUTES.SCHEDULE)}>
+          onMore={() => navigate(ROUTES.SCHEDULE)}
+          noPadding>
           <CoupleCalendar currentUser={currentUser} />
         </SectionCard>
 
