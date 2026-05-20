@@ -57,6 +57,31 @@ const sendNotification = async (currentUser, diaryId) => {
   } catch (e) { console.error("알림 전송 실패:", e); }
 };
 
+const compressImage = (file, maxWidth = 1200, quality = 0.82) =>
+  new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = ({ target: { result } }) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })),
+          'image/jpeg', quality
+        );
+      };
+      img.src = result;
+    };
+    reader.readAsDataURL(file);
+  });
+
 const DiaryWrite = ({ currentUser }) => {
   const [content, setContent]   = useState("");
   const [file, setFile]         = useState(null);
@@ -66,14 +91,14 @@ const DiaryWrite = ({ currentUser }) => {
 
   const selectedEm = emotions.find(e => e.label === emotion);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
-      reader.readAsDataURL(selectedFile);
-    }
+    if (!selectedFile) return;
+    const compressed = await compressImage(selectedFile);
+    setFile(compressed);
+    const reader = new FileReader();
+    reader.onloadend = () => setPreview(reader.result);
+    reader.readAsDataURL(compressed);
   };
 
   const handleCancelFile = () => { setFile(null); setPreview(null); };

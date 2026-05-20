@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Drawer, IconButton, Stack, Button } from '@mui/material';
+import { Box, Typography, Drawer, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { db } from '../firebase';
 import { updateDoc, doc } from 'firebase/firestore';
@@ -42,7 +42,6 @@ function timeAgo(ts) {
 function getMeta(n) {
   const m = TYPE_META[n.type];
   if (m) return m;
-  // 구형 일정 알림 (type 없음)
   if (!n.type && n.count !== undefined) return TYPE_META.schedule;
   return { icon: '🔔', color: B.pants, label: '알림' };
 }
@@ -55,16 +54,10 @@ function getContent(n) {
 }
 
 const TYPE_ROUTES = {
-  schedule:     '/schedule',
-  diary:        '/diary',
-  comment:      '/diary',
-  bucket:       '/bucket',
-  bucket_add:   '/bucket',
-  letter:       '/letter',
-  letter_reply: '/letter',
-  temp_diff:    '/thermo',
-  hug:          '/thermo',
-  jilta:        '/',
+  schedule: '/schedule', diary: '/diary', comment: '/diary',
+  bucket: '/bucket', bucket_add: '/bucket',
+  letter: '/letter', letter_reply: '/letter',
+  temp_diff: '/thermo', hug: '/thermo', jilta: '/',
 };
 
 export default function NotificationDrawer({ open, onClose, notifications, onMarkAllRead }) {
@@ -74,10 +67,6 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
   const totalPages = Math.ceil(notifications.length / PAGE_SIZE);
   const pageItems  = notifications.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const unread     = notifications.filter(n => !n.isRead).length;
-
-  const handleMarkAll = () => {
-    onMarkAllRead();
-  };
 
   const handleNotifClick = async (n) => {
     if (!n.isRead) {
@@ -96,110 +85,201 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
       PaperProps={{
         sx: {
           width: '100%', maxWidth: 420,
-          bgcolor: B.cream,
-          backgroundImage: `radial-gradient(circle at 80% 0%, ${B.lavender}77 0%, transparent 40%)`,
+          background: 'linear-gradient(160deg, #FAF5FF 0%, #FFF8F2 55%, #F5F0FF 100%)',
+          boxShadow: '-8px 0 48px rgba(123,79,166,0.18)',
           display: 'flex', flexDirection: 'column',
         },
       }}
     >
       {/* ── 헤더 ─────────────────────────────────────────────── */}
-      <Box sx={{ px: 2, pt: 2.5, pb: 1.5, flexShrink: 0 }}>
+      <Box sx={{
+        px: 2, pt: 3, pb: 1.5, flexShrink: 0,
+        background: 'rgba(255,255,255,0.6)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderBottom: `1px solid ${B.pants}14`,
+      }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" alignItems="center" gap={1}>
+          <Stack direction="row" alignItems="center" gap={1.2}>
             <IconButton size="small" onClick={onClose}
-              sx={{ color: B.dark+'88', bgcolor: B.lavender+'44', '&:hover': { bgcolor: B.lavender } }}>
+              sx={{
+                color: B.dark + '88',
+                bgcolor: 'rgba(255,255,255,0.7)',
+                border: `1px solid ${B.pants}22`,
+                backdropFilter: 'blur(8px)',
+                '&:hover': { bgcolor: B.lavender, borderColor: B.pants + '44' },
+              }}>
               <CloseIcon sx={{ fontSize: '1rem' }} />
             </IconButton>
-            <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '1.05rem' }}>
+
+            <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '1.08rem' }}>
               🔔 알림
             </Typography>
+
             {unread > 0 && (
               <Box sx={{
-                px: 1, py: 0.1, borderRadius: 10,
-                bgcolor: '#E53935', display: 'inline-flex',
+                px: 1.2, py: 0.15, borderRadius: 10,
+                background: 'linear-gradient(135deg, #E53935, #FF5252)',
+                boxShadow: '0 2px 8px rgba(229,57,53,0.4)',
               }}>
-                <Typography sx={{ fontSize: '0.62rem', color: 'white', fontWeight: 700 }}>
+                <Typography sx={{ fontSize: '0.62rem', color: 'white', fontWeight: 700, lineHeight: 1.4 }}>
                   {unread}
                 </Typography>
               </Box>
             )}
           </Stack>
+
           {unread > 0 && (
-            <Button size="small" onClick={handleMarkAll}
+            <Box
+              onClick={onMarkAllRead}
               sx={{
-                fontSize: '0.65rem', color: B.pants+'88',
+                px: 1.5, py: 0.5, borderRadius: 8,
+                bgcolor: 'rgba(255,255,255,0.6)',
+                border: `1px solid ${B.pants}22`,
+                cursor: 'pointer', userSelect: 'none',
+                backdropFilter: 'blur(8px)',
+                '&:hover': { bgcolor: B.lavender + '88' },
+                '&:active': { transform: 'scale(0.95)' },
+                transition: 'all 0.15s',
+              }}
+            >
+              <Typography sx={{
+                fontSize: '0.68rem', color: B.pants + 'bb',
                 fontFamily: "'Noto Sans KR',sans-serif",
-                '&:hover': { bgcolor: B.lavender },
               }}>
-              모두 읽음
-            </Button>
+                모두 읽음 ✓
+              </Typography>
+            </Box>
           )}
         </Stack>
-        <Box sx={{ height: 1, bgcolor: B.pants+'14', mt: 1.5 }} />
+
+        {unread === 0 && notifications.length > 0 && (
+          <Typography sx={{
+            fontSize: '0.68rem', color: B.dark + '44',
+            fontFamily: "'Noto Sans KR',sans-serif",
+            mt: 0.8, ml: 0.5,
+          }}>
+            모든 알림을 읽었어요 ✨
+          </Typography>
+        )}
       </Box>
 
-      {/* ── 리스트 ───────────────────────────────────────────── */}
-      <Box sx={{ flex: 1, overflowY: 'auto' }}>
+      {/* ── 알림 리스트 ─────────────────────────────────────── */}
+      <Box sx={{ flex: 1, overflowY: 'auto', py: 1.5, px: 1.5 }}>
         {pageItems.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 10, opacity: 0.5 }}>
-            <Typography sx={{ fontSize: '2.5rem', mb: 1 }}>🔕</Typography>
-            <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.dark+'66', fontSize: '0.9rem' }}>
+          <Box sx={{ textAlign: 'center', py: 10 }}>
+            <Typography sx={{ fontSize: '3.5rem', mb: 1.5, opacity: 0.4 }}>🔕</Typography>
+            <Typography sx={{
+              fontFamily: "'Jua',sans-serif",
+              color: B.dark + '55', fontSize: '0.95rem',
+            }}>
               아직 알림이 없어요
+            </Typography>
+            <Typography sx={{
+              fontFamily: "'Noto Sans KR',sans-serif",
+              color: B.dark + '33', fontSize: '0.75rem', mt: 0.5,
+            }}>
+              일정이나 일기를 작성하면 알림이 와요
             </Typography>
           </Box>
         ) : (
-          pageItems.map(n => {
-            const meta    = getMeta(n);
-            const content = getContent(n);
-            return (
-              <Box key={n.id} onClick={() => handleNotifClick(n)} sx={{
-                px: 2, py: 1.6,
-                borderBottom: `1px solid ${B.pants}08`,
-                bgcolor: n.isRead ? 'transparent' : `${meta.color}07`,
-                display: 'flex', alignItems: 'flex-start', gap: 1.5,
-                cursor: 'pointer',
-                transition: 'background-color 0.15s',
-                '&:hover': { bgcolor: `${meta.color}12` },
-                '&:active': { bgcolor: `${meta.color}22` },
-              }}>
-                {/* 타입 아이콘 */}
-                <Box sx={{
-                  width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
-                  bgcolor: `${meta.color}18`, border: `1.5px solid ${meta.color}28`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.1rem',
-                }}>
-                  {meta.icon}
-                </Box>
+          <Stack spacing={0.8}>
+            {pageItems.map(n => {
+              const meta    = getMeta(n);
+              const content = getContent(n);
+              return (
+                <Box
+                  key={n.id}
+                  onClick={() => handleNotifClick(n)}
+                  sx={{
+                    borderRadius: '14px',
+                    background: n.isRead
+                      ? 'rgba(255,255,255,0.55)'
+                      : 'rgba(255,255,255,0.82)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    border: n.isRead
+                      ? '1px solid rgba(255,255,255,0.7)'
+                      : `1px solid ${meta.color}28`,
+                    boxShadow: n.isRead
+                      ? '0 1px 6px rgba(123,79,166,0.05)'
+                      : `0 2px 14px ${meta.color}18, 0 1px 4px rgba(0,0,0,0.04)`,
+                    display: 'flex', alignItems: 'flex-start', gap: 1.4,
+                    p: 1.5,
+                    cursor: 'pointer',
+                    transition: 'all 0.18s',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&:hover': {
+                      background: 'rgba(255,255,255,0.92)',
+                      transform: 'translateY(-1px)',
+                      boxShadow: `0 4px 20px ${meta.color}22`,
+                    },
+                    '&:active': { transform: 'scale(0.98)' },
+                  }}
+                >
+                  {/* 미읽음 왼쪽 컬러 바 */}
+                  {!n.isRead && (
+                    <Box sx={{
+                      position: 'absolute', left: 0, top: '20%', bottom: '20%',
+                      width: 3, borderRadius: '0 3px 3px 0',
+                      bgcolor: meta.color,
+                    }} />
+                  )}
 
-                {/* 내용 */}
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{
-                    fontFamily: "'Noto Sans KR',sans-serif",
-                    fontSize: '0.82rem', lineHeight: 1.45,
-                    color: n.isRead ? B.dark+'66' : B.dark,
-                    fontWeight: n.isRead ? 400 : 600,
-                  }}>
-                    {content}
-                  </Typography>
-                  <Typography sx={{
-                    fontSize: '0.62rem', color: B.dark+'44',
-                    mt: 0.3, fontFamily: "'Noto Sans KR',sans-serif",
-                  }}>
-                    {timeAgo(n.createdAt)}
-                  </Typography>
-                </Box>
-
-                {/* 미읽음 닷 */}
-                {!n.isRead && (
+                  {/* 타입 아이콘 */}
                   <Box sx={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    bgcolor: meta.color, flexShrink: 0, mt: 1,
-                  }} />
-                )}
-              </Box>
-            );
-          })
+                    width: 40, height: 40, borderRadius: '12px', flexShrink: 0,
+                    background: `linear-gradient(135deg, ${meta.color}22 0%, ${meta.color}0e 100%)`,
+                    border: `1.5px solid ${meta.color}28`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.05rem',
+                    boxShadow: `0 2px 8px ${meta.color}18`,
+                  }}>
+                    {meta.icon}
+                  </Box>
+
+                  {/* 내용 */}
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography sx={{
+                      fontFamily: "'Noto Sans KR',sans-serif",
+                      fontSize: '0.82rem', lineHeight: 1.5,
+                      color: n.isRead ? B.dark + '66' : B.dark,
+                      fontWeight: n.isRead ? 400 : 600,
+                    }}>
+                      {content}
+                    </Typography>
+                    <Stack direction="row" alignItems="center" gap={0.8} sx={{ mt: 0.4 }}>
+                      <Box sx={{
+                        px: 0.8, py: 0.05, borderRadius: 4,
+                        bgcolor: `${meta.color}14`,
+                      }}>
+                        <Typography sx={{ fontSize: '0.6rem', color: meta.color, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                          {meta.label}
+                        </Typography>
+                      </Box>
+                      <Typography sx={{
+                        fontSize: '0.62rem', color: B.dark + '44',
+                        fontFamily: "'Noto Sans KR',sans-serif",
+                      }}>
+                        {timeAgo(n.createdAt)}
+                      </Typography>
+                    </Stack>
+                  </Box>
+
+                  {/* 미읽음 닷 */}
+                  {!n.isRead && (
+                    <Box sx={{
+                      width: 7, height: 7, borderRadius: '50%',
+                      background: `linear-gradient(135deg, ${meta.color}, ${meta.color}cc)`,
+                      boxShadow: `0 0 6px ${meta.color}88`,
+                      flexShrink: 0, mt: 1,
+                    }} />
+                  )}
+                </Box>
+              );
+            })}
+          </Stack>
         )}
       </Box>
 
@@ -207,20 +287,45 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
       {totalPages > 1 && (
         <Box sx={{
           px: 2, py: 1.5, flexShrink: 0,
+          background: 'rgba(255,255,255,0.6)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
           borderTop: `1px solid ${B.pants}10`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2,
         }}>
-          <Button size="small" disabled={page === 0} onClick={() => setPage(p => p - 1)}
-            sx={{ minWidth: 0, color: B.pants, fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.8rem' }}>
+          <Box
+            onClick={() => page > 0 && setPage(p => p - 1)}
+            sx={{
+              px: 2, py: 0.6, borderRadius: 8,
+              bgcolor: page === 0 ? 'transparent' : 'rgba(255,255,255,0.7)',
+              border: `1px solid ${page === 0 ? B.pants + '18' : B.pants + '33'}`,
+              color: page === 0 ? B.pants + '33' : B.pants,
+              cursor: page === 0 ? 'default' : 'pointer',
+              fontFamily: "'Jua',sans-serif", fontSize: '0.85rem',
+              transition: 'all 0.15s',
+              '&:hover': page > 0 ? { bgcolor: B.lavender + '66' } : {},
+            }}
+          >
             ‹ 이전
-          </Button>
-          <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif" }}>
+          </Box>
+          <Typography sx={{ fontSize: '0.75rem', color: B.dark + '66', fontFamily: "'Noto Sans KR',sans-serif" }}>
             {page + 1} / {totalPages}
           </Typography>
-          <Button size="small" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}
-            sx={{ minWidth: 0, color: B.pants, fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.8rem' }}>
+          <Box
+            onClick={() => page < totalPages - 1 && setPage(p => p + 1)}
+            sx={{
+              px: 2, py: 0.6, borderRadius: 8,
+              bgcolor: page >= totalPages - 1 ? 'transparent' : 'rgba(255,255,255,0.7)',
+              border: `1px solid ${page >= totalPages - 1 ? B.pants + '18' : B.pants + '33'}`,
+              color: page >= totalPages - 1 ? B.pants + '33' : B.pants,
+              cursor: page >= totalPages - 1 ? 'default' : 'pointer',
+              fontFamily: "'Jua',sans-serif", fontSize: '0.85rem',
+              transition: 'all 0.15s',
+              '&:hover': page < totalPages - 1 ? { bgcolor: B.lavender + '66' } : {},
+            }}
+          >
             다음 ›
-          </Button>
+          </Box>
         </Box>
       )}
     </Drawer>

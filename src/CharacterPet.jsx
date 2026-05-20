@@ -517,19 +517,12 @@ export default function CharacterPet({ currentUser }) {
     }}>
 
       {/* ── 헤더 ─────────────────────────────────────────────── */}
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.8 }}>
-        <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '0.92rem' }}>
-          😸 고먐미 건강 상태
-        </Typography>
-        <Stack direction="row" alignItems="center" gap={0.8}>
-          {bothCheckedIn && (
-            <Box sx={{ px: 1.2, py: 0.25, borderRadius: 10, bgcolor: '#E8F5E9', border: '1px solid #A5D6A7' }}>
-              <Typography sx={{ fontSize: '0.62rem', color: '#2E7D32', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
-                💑 둘 다 기록 완료!
-              </Typography>
-            </Box>
-          )}
-          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <Box sx={{ mb: 1.8 }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '0.92rem' }}>
+            😸 고먐미 건강 상태
+          </Typography>
+          <Box sx={{ position: 'relative', display: 'inline-flex', flexShrink: 0 }}>
             <Button
               size="small"
               startIcon={
@@ -553,7 +546,7 @@ export default function CharacterPet({ currentUser }) {
                 '&:active': { transform: 'scale(0.92)' },
               }}
             >
-              {currentUser === ADMIN_USER ? '문구관리' : '문구추가'}
+              {currentUser === ADMIN_USER ? '문구 관리' : '문구 추가'}
             </Button>
             <Box sx={{
               position: 'absolute', top: -5, right: -6,
@@ -568,7 +561,22 @@ export default function CharacterPet({ currentUser }) {
             </Box>
           </Box>
         </Stack>
-      </Stack>
+
+        {/* 둘 다 완료 칩 — 별도 줄 */}
+        {bothCheckedIn && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 0.9 }}>
+            <Box sx={{
+              px: 1.6, py: 0.35, borderRadius: 10,
+              bgcolor: '#E8F5E9', border: '1px solid #A5D6A7',
+              display: 'inline-flex', alignItems: 'center', gap: 0.5,
+            }}>
+              <Typography sx={{ fontSize: '0.68rem', color: '#2E7D32', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
+                💑 오늘 둘 다 기록 완료!
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
 
       {/* ── 캐릭터 카드 2장 ──────────────────────────────────── */}
       <Stack direction="row" gap={1.5} sx={{ mb: 1.5 }}>
