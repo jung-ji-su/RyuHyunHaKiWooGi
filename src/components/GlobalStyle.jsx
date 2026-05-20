@@ -80,6 +80,12 @@ export default function GlobalStyle() {
         40%  { transform: rotate(12deg); }
         50%  { transform: rotate(-6deg); }
       }
+      @keyframes hamsterSpin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+      .hamster-idle   { display:inline-block; animation: hamsterSpin 3s linear infinite; }
+      .hamster-active { display:inline-block; animation: hamsterSpin 0.55s linear infinite; }
     `}</style>
   );
 }

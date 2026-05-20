@@ -197,14 +197,25 @@ export default function BottomNav({ logout }) {
                 transition: 'transform 0.12s',
                 '&:active': { transform: 'scale(0.86)' },
               }}>
-              <Typography sx={{
-                fontSize: '22px', lineHeight: 1,
-                filter: active ? `drop-shadow(0 2px 8px ${B.pants}99)` : 'none',
-                transform: active ? 'scale(1.18) translateY(-1px)' : 'scale(1)',
-                transition: 'transform 0.22s cubic-bezier(.34,1.56,.64,1), filter 0.2s',
-              }}>
-                {emoji}
-              </Typography>
+              {emoji === '🐹' ? (
+                <Box component="span" sx={{
+                  display: 'inline-block', fontSize: '22px', lineHeight: 1,
+                  transform: active ? 'scale(1.22) translateY(-1px)' : 'scale(1)',
+                  transition: 'transform 0.22s cubic-bezier(.34,1.56,.64,1)',
+                  filter: active ? `drop-shadow(0 2px 8px ${B.pants}99)` : 'none',
+                }}>
+                  <span className={active ? 'hamster-active' : 'hamster-idle'}>🐹</span>
+                </Box>
+              ) : (
+                <Typography sx={{
+                  fontSize: '22px', lineHeight: 1,
+                  filter: active ? `drop-shadow(0 2px 8px ${B.pants}99)` : 'none',
+                  transform: active ? 'scale(1.18) translateY(-1px)' : 'scale(1)',
+                  transition: 'transform 0.22s cubic-bezier(.34,1.56,.64,1), filter 0.2s',
+                }}>
+                  {emoji}
+                </Typography>
+              )}
               <Typography sx={{
                 fontSize: '0.62rem',
                 fontWeight: active ? 700 : 400,

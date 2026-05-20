@@ -17,6 +17,7 @@ export const ROUTES = {
   MENU: "/menu",
   GAMES: "/games",
   ACCOUNT: "/account",
+  TAMAGOTCHI: "/tamagotchi",
 };
 
 export const MENU_ITEMS = [
@@ -31,13 +32,16 @@ export const MENU_ITEMS = [
   { emoji: "🍳", name: "오늘의 메뉴", sub: "오늘 저녁 뭐 해먹지?", path: ROUTES.MENU, color: "#FF6B35" },
   { emoji: "🎮", name: "미니게임", sub: "오목, 그림 퀴즈 등", path: ROUTES.GAMES, color: "#9C27B0" },
   { emoji: "💰", name: "가계부", sub: "수입과 지출 관리", path: ROUTES.ACCOUNT, color: "#FFB300" },
+  { emoji: "🐾", name: "다마고치", sub: "커플 펫 키우기 대결", path: ROUTES.TAMAGOTCHI, color: "#7B4FA6" },
 ];
 
-// 바텀 네비게이션 5탭 (자주 쓰는 메뉴 4개 + 더보기)
+// 바텀 네비게이션 6탭 (자주 쓰는 메뉴 5개 + 더보기)
 export const BOTTOM_NAV = [
   { emoji: "🏠", name: "홈", path: ROUTES.HOME },
   { emoji: "📅", name: "일정", path: ROUTES.SCHEDULE },
   { emoji: "📖", name: "기록", path: ROUTES.DIARY },
+   { emoji: "🐹", name: "햄찌", path: ROUTES.TAMAGOTCHI },
   { emoji: "🌡️", name: "온도계", path: ROUTES.THERMO },
+  { emoji: "🪣", name: "버킷", path: ROUTES.BUCKET },
   { emoji: "☰", name: "더보기", path: null },
 ];

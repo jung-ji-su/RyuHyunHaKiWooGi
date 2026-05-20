@@ -40,6 +40,7 @@ const LoveStats         = lazy(() => import('./LoveStats'));
 const TodayMenu         = lazy(() => import('./TodayMenu'));
 const MiniGameHub       = lazy(() => import('./MiniGameHub'));
 const AccountBook       = lazy(() => import('./AccountBook'));
+const CoupleTamagotchi  = lazy(() => import('./CoupleTamagotchi'));
 
 // ── 페이지 로딩 fallback ─────────────────────────────────────────
 function PageLoader() {
@@ -344,6 +345,14 @@ function AppInner() {
             <SubPage title="가계부" icon="💰">
               <Suspense fallback={<PageLoader />}>
                 <AccountBook currentUser={currentUser} opponentUser={opponent} />
+              </Suspense>
+            </SubPage>
+          } />
+
+          <Route path="tamagotchi" element={
+            <SubPage title="커플 다마고치" icon="🐾">
+              <Suspense fallback={<PageLoader />}>
+                <CoupleTamagotchi currentUser={currentUser} />
               </Suspense>
             </SubPage>
           } />
