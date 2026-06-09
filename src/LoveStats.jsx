@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { db } from "./firebase";
-import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
+import { collection, query, onSnapshot, orderBy, limit } from "firebase/firestore";
 import { Box, Typography, Stack, CircularProgress, Chip } from "@mui/material";
-
-const B = {
-  pants: "#7B4FA6", skin: "#F5B8A0", cream: "#FFF8F2",
-  peach: "#FFE4D4", lavender: "#EDE0F5", accent: "#E8630A",
-  dark: "#3D1F00", pink: "#FF8FAB", green: "#1D9E75",
-};
+import { B } from "./lib/constants";
 
 const EMOTIONS = [
   { label: "행복", emoji: "🥰", color: "#E8630A" },
@@ -23,6 +18,8 @@ const EMOTIONS = [
 
 const getEmoji        = (label) => EMOTIONS.find(e => e.label === label)?.emoji || "📝";
 const getEmotionColor = (label) => EMOTIONS.find(e => e.label === label)?.color || B.pants;
+
+const CAT_EMOJIS = { "카페": "☕", "맛집": "🍽️", "여행": "✈️", "데이트": "💜", "산책": "🌿", "기타": "📍" };
 
 // ── 미니 바 차트 ─────────────────────────────────────────────────
 const MiniBarChart = ({ data, maxVal, color }) => (
@@ -74,7 +71,6 @@ const StatCard = ({ emoji, label, value, sub, color, bgColor }) => (
   </Box>
 );
 
-// ── 섹션 헤더 ────────────────────────────────────────────────────
 const SectionHeader = ({ icon, title }) => (
   <Typography sx={{
     fontFamily: "'Jua',sans-serif", fontSize: "0.92rem", color: B.pants,
@@ -92,43 +88,30 @@ const LoveStats = ({ currentUser }) => {
   const [buckets, setBuckets] = useState([]);
   const [thermo,  setThermo]  = useState([]);
 
-  // ✅ Fix 2: 컬렉션별 로딩 상태를 독립적으로 관리 — 경쟁 조건 제거
   const [loadedMap, setLoadedMap] = useState({
     diaries: false, coupons: false, pins: false, buckets: false, thermo: false,
   });
-  const markLoaded = (key) =>
-    setLoadedMap(prev => ({ ...prev, [key]: true }));
+  const markLoaded = (key) => setLoadedMap(prev => ({ ...prev, [key]: true }));
   const loading = !Object.values(loadedMap).every(Boolean);
 
   const [period, setPeriod] = useState("전체");
 
   useEffect(() => {
-    const u1 = onSnapshot(
-      query(collection(db, "diaries"),    orderBy("createdAt", "desc")),
-      s => { setDiaries(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("diaries"); }
-    );
-    const u2 = onSnapshot(
-      query(collection(db, "coupons"),    orderBy("createdAt", "desc")),
-      s => { setCoupons(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("coupons"); }
-    );
-    const u3 = onSnapshot(
-      query(collection(db, "travelPins"), orderBy("createdAt", "desc")),
-      s => { setPins(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("pins"); }
-    );
-    const u4 = onSnapshot(
-      query(collection(db, "buckets"),    orderBy("createdAt", "desc")),
-      s => { setBuckets(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("buckets"); }
-    );
-    // ✅ Fix 3: 컬렉션명 "temperatures"로 수정 (EmotionThermometer 실제 저장 컬렉션)
-    const u5 = onSnapshot(
-      query(collection(db, "temperatures"), orderBy("date", "desc")),
-      s => { setThermo(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("thermo"); }
-    );
+    const u1 = onSnapshot(query(collection(db, "diaries"),      orderBy("createdAt", "desc"), limit(200)),
+      s => { setDiaries(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("diaries"); });
+    const u2 = onSnapshot(query(collection(db, "coupons"),      orderBy("createdAt", "desc"), limit(100)),
+      s => { setCoupons(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("coupons"); });
+    const u3 = onSnapshot(query(collection(db, "travelPins"),   orderBy("createdAt", "desc"), limit(200)),
+      s => { setPins(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("pins"); });
+    const u4 = onSnapshot(query(collection(db, "buckets"),      orderBy("createdAt", "desc"), limit(200)),
+      s => { setBuckets(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("buckets"); });
+    const u5 = onSnapshot(query(collection(db, "temperatures"), orderBy("date", "desc"),      limit(100)),
+      s => { setThermo(s.docs.map(d => ({ id: d.id, ...d.data() }))); markLoaded("thermo"); });
     return () => { u1(); u2(); u3(); u4(); u5(); };
   }, []);
 
   // ── 기간 필터 ─────────────────────────────────────────────────
-  const filterByPeriod = (items, dateField = "createdAt") => {
+  const filterByPeriod = useMemo(() => (items, dateField = "createdAt") => {
     if (period === "전체") return items;
     const days = period === "30일" ? 30 : 7;
     const cutoff = new Date();
@@ -137,68 +120,78 @@ const LoveStats = ({ currentUser }) => {
       const d = item[dateField]?.toDate?.() || (item[dateField] ? new Date(item[dateField]) : null);
       return d && d >= cutoff;
     });
-  };
+  }, [period]);
 
-  const filteredDiaries = filterByPeriod(diaries);
-  const filteredCoupons = filterByPeriod(coupons);
-  const filteredPins    = filterByPeriod(pins);
+  const filteredDiaries = useMemo(() => filterByPeriod(diaries), [filterByPeriod, diaries]);
+  const filteredCoupons = useMemo(() => filterByPeriod(coupons), [filterByPeriod, coupons]);
+  const filteredPins    = useMemo(() => filterByPeriod(pins),    [filterByPeriod, pins]);
 
-  // ── 다이어리 감정 통계 ────────────────────────────────────────
-  const emotionCount = {};
-  filteredDiaries.forEach(d => {
-    const e = d.emotion || "행복";
-    emotionCount[e] = (emotionCount[e] || 0) + 1;
-  });
-  const emotionData = Object.entries(emotionCount)
-    .sort((a, b) => b[1] - a[1])
-    .map(([label, value]) => ({ label, value, emoji: getEmoji(label) }));
+  // ── 다이어리 통계 ─────────────────────────────────────────────
+  const emotionData = useMemo(() => {
+    const count = {};
+    filteredDiaries.forEach(d => {
+      const e = d.emotion || "행복";
+      count[e] = (count[e] || 0) + 1;
+    });
+    return Object.entries(count)
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, value]) => ({ label, value, emoji: getEmoji(label) }));
+  }, [filteredDiaries]);
+
   const maxEmotion = emotionData[0]?.value || 1;
   const topEmotion = emotionData[0];
 
-  const jsuCount = filteredDiaries.filter(d => d.author === "지수").length;
-  const hyCount  = filteredDiaries.filter(d => d.author === "현하").length;
+  const { jsuCount, hyCount, topLiked } = useMemo(() => ({
+    jsuCount: filteredDiaries.filter(d => d.author === "지수").length,
+    hyCount:  filteredDiaries.filter(d => d.author === "현하").length,
+    topLiked: [...filteredDiaries].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))[0],
+  }), [filteredDiaries]);
 
-  const topLiked = [...filteredDiaries]
-    .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))[0];
-
-  // ── 쿠폰 통계 ────────────────────────────────────────────────
-  const usedCoupons  = filteredCoupons.filter(c => c.status === "used");
-  const availCoupons = filteredCoupons.filter(c => c.status === "available");
-  const couponRate   = filteredCoupons.length > 0
-    ? Math.round((usedCoupons.length / filteredCoupons.length) * 100) : 0;
-
-  const couponTitles = {};
-  usedCoupons.forEach(c => {
-    couponTitles[c.title] = (couponTitles[c.title] || 0) + 1;
-  });
-  const topCoupon = Object.entries(couponTitles).sort((a, b) => b[1] - a[1])[0];
+  // ── 쿠폰 통계 ─────────────────────────────────────────────────
+  const { usedCoupons, availCoupons, couponRate, topCoupon } = useMemo(() => {
+    const used  = filteredCoupons.filter(c => c.status === "used");
+    const avail = filteredCoupons.filter(c => c.status === "available");
+    const rate  = filteredCoupons.length > 0
+      ? Math.round((used.length / filteredCoupons.length) * 100) : 0;
+    const titles = {};
+    used.forEach(c => { titles[c.title] = (titles[c.title] || 0) + 1; });
+    const top = Object.entries(titles).sort((a, b) => b[1] - a[1])[0];
+    return { usedCoupons: used, availCoupons: avail, couponRate: rate, topCoupon: top };
+  }, [filteredCoupons]);
 
   // ── 여행 핀 통계 ──────────────────────────────────────────────
-  const pinCatCount = {};
-  filteredPins.forEach(p => {
-    const cat = p.category || "기타";
-    pinCatCount[cat] = (pinCatCount[cat] || 0) + 1;
-  });
-  const catEmojis = { "카페": "☕", "맛집": "🍽️", "여행": "✈️", "데이트": "💜", "산책": "🌿", "기타": "📍" };
-  const pinCatData = Object.entries(pinCatCount)
-    .sort((a, b) => b[1] - a[1])
-    .map(([label, value]) => ({ label, value, emoji: catEmojis[label] || "📍" }));
-  const maxPin = pinCatData[0]?.value || 1;
+  const { pinCatData, maxPin, jsuPins, hyPins } = useMemo(() => {
+    const catCount = {};
+    filteredPins.forEach(p => {
+      const cat = p.category || "기타";
+      catCount[cat] = (catCount[cat] || 0) + 1;
+    });
+    const data = Object.entries(catCount)
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, value]) => ({ label, value, emoji: CAT_EMOJIS[label] || "📍" }));
+    return {
+      pinCatData: data,
+      maxPin: data[0]?.value || 1,
+      jsuPins: filteredPins.filter(p => p.addedBy === "지수").length,
+      hyPins:  filteredPins.filter(p => p.addedBy === "현하").length,
+    };
+  }, [filteredPins]);
 
-  const jsuPins = filteredPins.filter(p => p.addedBy === "지수").length;
-  const hyPins  = filteredPins.filter(p => p.addedBy === "현하").length;
-
-  // ✅ Fix 1: b.done → b.isDone (BucketList 저장 필드명과 일치)
-  // ✅ Fix 4: 버킷은 전체 기준 (생성일 기간 필터 적용 시 달성률 왜곡)
-  const doneBuckets = buckets.filter(b => b.isDone === true);
-  const bucketRate  = buckets.length > 0
-    ? Math.round((doneBuckets.length / buckets.length) * 100) : 0;
+  // ── 버킷 통계 ─────────────────────────────────────────────────
+  const { doneBuckets, bucketRate } = useMemo(() => {
+    const done = buckets.filter(b => b.isDone === true);
+    const rate = buckets.length > 0 ? Math.round((done.length / buckets.length) * 100) : 0;
+    return { doneBuckets: done, bucketRate: rate };
+  }, [buckets]);
 
   // ── 감정 온도 통계 ────────────────────────────────────────────
-  const recent14 = thermo.slice(0, 14);
-  const avgTemp  = recent14.length > 0
-    ? Math.round(recent14.reduce((s, t) => s + (parseInt(t.temp) || 0), 0) / recent14.length)
-    : null;
+  const { recent14, avgTemp } = useMemo(() => {
+    const r14 = thermo.slice(0, 14);
+    const avg = r14.length > 0
+      ? Math.round(r14.reduce((s, t) => s + (parseInt(t.temp) || 0), 0) / r14.length)
+      : null;
+    return { recent14: r14, avgTemp: avg };
+  }, [thermo]);
 
   if (loading) return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6, gap: 2 }}>
@@ -259,7 +252,6 @@ const LoveStats = ({ currentUser }) => {
             <StatCard emoji="📍" label="방문 장소" value={`${filteredPins.length}곳`}
               sub={`지수 ${jsuPins} · 현하 ${hyPins}`}
               color="#3A86FF" bgColor="#F0F7FF" />
-            {/* ✅ Fix 1 반영: 올바른 doneBuckets, bucketRate 표시 */}
             <StatCard emoji="🪣" label="버킷리스트" value={`${bucketRate}%`}
               sub={`${doneBuckets.length}/${buckets.length}개 달성`}
               color={B.green} bgColor="#F0FBF6" />
@@ -504,7 +496,6 @@ const LoveStats = ({ currentUser }) => {
           </Box>
         )}
 
-        {/* 푸터 */}
         <Box sx={{ textAlign: "center", pt: 1, opacity: 0.5 }}>
           <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66", fontFamily: "'Jua',sans-serif" }}>
             🐷 부리부리가 열심히 집계했어요 🐷

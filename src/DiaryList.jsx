@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback, memo } from "react";
 import { db } from "./firebase.js";
 import {
   collection, query, orderBy, onSnapshot, deleteDoc, doc, addDoc,
-  serverTimestamp, updateDoc, arrayUnion, arrayRemove,
+  serverTimestamp, updateDoc, arrayUnion, arrayRemove, limit,
 } from "firebase/firestore";
 import {
   Card, CardContent, Typography, Stack, Box, Avatar, Divider,
@@ -89,14 +89,14 @@ const DiaryList = ({ currentUser, pageSize }) => {
   const galleryItems = diaries.filter(d => d.imageUrl);
 
   useEffect(() => {
-    const q = query(collection(db, "diaries"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "diaries"), orderBy("createdAt", "desc"), limit(100));
     return onSnapshot(q, (snapshot) => {
       setDiaries(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
       setIsLoading(false);
     });
   }, []);
 
-  const handleAddComment = async (diaryId) => {
+  const handleAddComment = useCallback(async (diaryId) => {
     const commentText = commentInputs[diaryId];
     if (!currentUser) { alert("로그인 정보가 없어서 댓글을 달 수 없어요 ㅠ_ㅠ"); return; }
     if (!commentText?.trim()) return;
@@ -113,9 +113,9 @@ const DiaryList = ({ currentUser, pageSize }) => {
         content: `${currentUser}가 ${dateStr ? dateStr + ' ' : ''}기록에 댓글을 남겼어요! 💬`,
         targetId: diaryId, createdAt: serverTimestamp(), isRead: false,
       });
-      setCommentInputs({ ...commentInputs, [diaryId]: "" });
+      setCommentInputs(prev => ({ ...prev, [diaryId]: "" }));
     } catch (e) { console.error("댓글 저장 실패:", e); }
-  };
+  }, [currentUser, diaries, commentInputs]);
 
   return (
     <Box sx={{ mt: 2, mb: 4 }}>
@@ -353,7 +353,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
 };
 
 // ── 개별 다이어리 카드 ───────────────────────────────────────────
-const DiaryCard = ({ item, currentUser, commentText, setCommentText, onAddComment, meImg, gfImg, onOpenLightbox }) => {
+const DiaryCard = memo(({ item, currentUser, commentText, setCommentText, onAddComment, meImg, gfImg, onOpenLightbox }) => {
   const [comments, setComments]       = useState([]);
   const [editMode, setEditMode]       = useState(false);
   const [editContent, setEditContent] = useState("");
@@ -418,7 +418,8 @@ const DiaryCard = ({ item, currentUser, commentText, setCommentText, onAddCommen
   useEffect(() => {
     const q = query(
       collection(db, "diaries", item.id, "comments"),
-      orderBy("createdAt", "asc")
+      orderBy("createdAt", "asc"),
+      limit(20),
     );
     return onSnapshot(q, (snapshot) => {
       setComments(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
@@ -503,7 +504,7 @@ const DiaryCard = ({ item, currentUser, commentText, setCommentText, onAddCommen
               )}
             </Typography>
             <Typography variant="caption" sx={{ color: B.dark + "66" }}>
-              {item.createdAt?.toDate().toLocaleString("ko-KR")}
+              {item.createdAt?.toDate?.()?.toLocaleString("ko-KR")}
             </Typography>
           </Box>
 
@@ -655,6 +656,7 @@ const DiaryCard = ({ item, currentUser, commentText, setCommentText, onAddCommen
             <img
               src={item.imageUrl}
               alt="추억 사진"
+              loading="lazy"
               decoding="async"
               onLoad={() => setImgLoaded(true)}
               style={{
@@ -702,7 +704,7 @@ const DiaryCard = ({ item, currentUser, commentText, setCommentText, onAddCommen
             fullWidth size="small" placeholder="따뜻한 한마디 남기기... 🐷"
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && onAddComment()}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && onAddComment()}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 5, bgcolor: B.cream,
@@ -727,6 +729,6 @@ const DiaryCard = ({ item, currentUser, commentText, setCommentText, onAddCommen
       </CardContent>
     </Card>
   );
-};
+});
 
 export default DiaryList;

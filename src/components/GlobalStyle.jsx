@@ -5,6 +5,7 @@ export default function GlobalStyle() {
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap');
       * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      html { scrollbar-gutter: stable; }
       body {
         font-family: 'Noto Sans KR', sans-serif;
         background-color: ${B.cream};
@@ -12,6 +13,11 @@ export default function GlobalStyle() {
           radial-gradient(circle at 15% 20%, ${B.peach}99 0%, transparent 35%),
           radial-gradient(circle at 85% 70%, ${B.lavender}88 0%, transparent 35%);
         min-height: 100vh;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+      }
+      @media (hover: none) and (pointer: coarse) {
+        *:hover { transform: none !important; }
       }
       ::-webkit-scrollbar { width: 6px; }
       ::-webkit-scrollbar-track { background: ${B.peach}; }

@@ -6,31 +6,50 @@ import {
   orderBy, limit, writeBatch,
 } from 'firebase/firestore';
 
+// sessionStorage + 24h TTL로 본 알림 ID 관리
+function loadShownIds() {
+  try {
+    const raw = sessionStorage.getItem('shownNotifIds');
+    if (!raw) return new Set();
+    const obj = JSON.parse(raw);
+    const cutoff = Date.now() - 86400000;
+    return new Set(Object.keys(obj).filter(id => obj[id] > cutoff));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveShownId(id, shownSet) {
+  try {
+    const raw = sessionStorage.getItem('shownNotifIds');
+    const obj = raw ? JSON.parse(raw) : {};
+    obj[id] = Date.now();
+    const cutoff = Date.now() - 86400000;
+    Object.keys(obj).forEach(k => { if (obj[k] < cutoff) delete obj[k]; });
+    sessionStorage.setItem('shownNotifIds', JSON.stringify(obj));
+  } catch {}
+}
+
 export function useNotifications(currentUser) {
   const navigate = useNavigate();
 
-  // ── 전체 알림 리스트 (드로어용) ─────────────────────────────────
   const [allNotifications, setAllNotifications] = useState([]);
   const [unreadCount,      setUnreadCount]      = useState(0);
 
-  // ── 팝업 토스트 ─────────────────────────────────────────────────
   const [toastOpen, setToastOpen] = useState(false);
-  const [toastData, setToastData] = useState(null); // { content, type }
+  const [toastData, setToastData] = useState(null);
 
-  // ── 일정 팝업 (클릭 시 /schedule 이동) ──────────────────────────
   const [schedulePopupOpen, setSchedulePopupOpen] = useState(false);
   const [schedulePopupItem, setSchedulePopupItem] = useState(null);
   const scheduleQueueRef = useRef([]);
   const scheduleOpenRef  = useRef(false);
 
-  // 이미 팝업으로 보여준 ID 추적 (localStorage)
-  const shownRef = useRef(new Set(JSON.parse(localStorage.getItem('shownNotifIds') || '[]')));
+  const shownRef = useRef(loadShownIds());
   const addShown = (id) => {
     shownRef.current.add(id);
-    localStorage.setItem('shownNotifIds', JSON.stringify([...shownRef.current].slice(-300)));
+    saveShownId(id, shownRef.current);
   };
 
-  // schedulePopupOpen이 false가 되면 ref도 동기화
   useEffect(() => {
     if (!schedulePopupOpen) scheduleOpenRef.current = false;
   }, [schedulePopupOpen]);
@@ -45,7 +64,6 @@ export function useNotifications(currentUser) {
     const unsub = onSnapshot(q, snap => {
       const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-      // 나에게 해당하는 알림 필터
       const mine = all.filter(n => {
         if (n.type === 'jilta') return n.target === currentUser;
         return n.writer && n.writer !== currentUser;
@@ -54,14 +72,12 @@ export function useNotifications(currentUser) {
       setAllNotifications(mine);
       setUnreadCount(mine.filter(n => !n.isRead).length);
 
-      // 팝업 표시 (새 미읽음 & 미표시)
       const newOnes = mine.filter(n => !n.isRead && !shownRef.current.has(n.id));
       if (newOnes.length === 0) return;
 
       const latest = newOnes[0];
       addShown(latest.id);
 
-      // 일정 type → 일정 전용 팝업
       const isSchedule = latest.type === 'schedule' || (!latest.type && latest.count !== undefined);
       if (isSchedule) {
         const scheduleNew = newOnes.filter(n => n.type === 'schedule' || (!n.type && n.count !== undefined));
@@ -72,7 +88,6 @@ export function useNotifications(currentUser) {
         return;
       }
 
-      // 나머지 → 일반 토스트 (일정 팝업 중이면 표시 안 함)
       if (!scheduleOpenRef.current) {
         setToastData({ content: latest.content || '새로운 알림이 있어요!', type: latest.type });
         setToastOpen(true);
@@ -109,9 +124,7 @@ export function useNotifications(currentUser) {
     allNotifications,
     unreadCount,
     markAllRead,
-    // 일반 토스트
     toastOpen, toastData, setToastOpen,
-    // 일정 팝업
     schedulePopupOpen, schedulePopupItem,
     setSchedulePopupOpen, handleSchedulePopupClick,
   };

@@ -18,6 +18,7 @@ export const ROUTES = {
   GAMES: "/games",
   ACCOUNT: "/account",
   TAMAGOTCHI: "/tamagotchi",
+  WORLDCUP: "/worldcup",
 };
 
 export const MENU_ITEMS = [
@@ -33,6 +34,7 @@ export const MENU_ITEMS = [
   { emoji: "🎮", name: "미니게임", sub: "오목, 그림 퀴즈 등", path: ROUTES.GAMES, color: "#9C27B0" },
   { emoji: "💰", name: "가계부", sub: "수입과 지출 관리", path: ROUTES.ACCOUNT, color: "#FFB300" },
   { emoji: "🐾", name: "다마고치", sub: "커플 펫 키우기 대결", path: ROUTES.TAMAGOTCHI, color: "#7B4FA6" },
+  { emoji: "⚔️", name: "이상형 월드컵", sub: "최애를 뽑아봐요!", path: ROUTES.WORLDCUP, color: "#7B4FA6" },
 ];
 
 // 바텀 네비게이션 6탭 (자주 쓰는 메뉴 5개 + 더보기)

@@ -8,7 +8,7 @@ export default function SubPage({ title, icon, children }) {
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ animation: 'pageSlideIn 0.25s ease both', minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh' }}>
       {/* 상단 헤더 */}
       <Box sx={{
         position: 'sticky', top: 0, zIndex: 100,
@@ -18,7 +18,8 @@ export default function SubPage({ title, icon, children }) {
         display: 'flex', alignItems: 'center', gap: 1.5,
       }}>
         <IconButton
-          onClick={() => { navigate(-1); vibrate(15); }}
+          onPointerDown={() => vibrate(15)}
+          onClick={() => setTimeout(() => navigate(-1), 50)}
           sx={{ color: B.pants, p: 0.5, '&:active': { transform: 'scale(0.88)' } }}>
           <ChevronLeftIcon />
         </IconButton>

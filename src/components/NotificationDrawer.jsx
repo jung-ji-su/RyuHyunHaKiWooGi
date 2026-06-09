@@ -57,7 +57,7 @@ const TYPE_ROUTES = {
   schedule: '/schedule', diary: '/diary', comment: '/diary',
   bucket: '/bucket', bucket_add: '/bucket',
   letter: '/letter', letter_reply: '/letter',
-  temp_diff: '/thermo', hug: '/thermo', jilta: '/',
+  thermo: '/thermo', temp_diff: '/thermo', hug: '/thermo', jilta: '/',
 };
 
 export default function NotificationDrawer({ open, onClose, notifications, onMarkAllRead }) {
@@ -106,6 +106,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
           background: 'linear-gradient(160deg, #FAF5FF 0%, #FFF8F2 55%, #F5F0FF 100%)',
           boxShadow: '-8px 0 48px rgba(123,79,166,0.18)',
           display: 'flex', flexDirection: 'column',
+          paddingTop: 'env(safe-area-inset-top, 0px)',
         },
       }}
     >

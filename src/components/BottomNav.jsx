@@ -35,6 +35,7 @@ export default function BottomNav({ logout }) {
             `,
             borderRight: `2px solid ${B.pants}22`,
             display: 'flex', flexDirection: 'column',
+            paddingTop: 'env(safe-area-inset-top, 0px)',
           },
         }}>
 
@@ -192,7 +193,7 @@ export default function BottomNav({ logout }) {
               {emoji === '🐹' ? (
                 <Box component="span" sx={{
                   display: 'inline-block', fontSize: '22px', lineHeight: 1,
-                  transform: active ? 'scale(1.22) translateY(-1px)' : 'scale(1)',
+                  transform: active ? 'scale(1.10) translateY(-1px)' : 'scale(1)',
                   transition: 'transform 0.22s cubic-bezier(.34,1.56,.64,1)',
                   filter: active ? `drop-shadow(0 2px 8px ${B.pants}99)` : 'none',
                 }}>
@@ -202,7 +203,7 @@ export default function BottomNav({ logout }) {
                 <Typography sx={{
                   fontSize: '22px', lineHeight: 1,
                   filter: active ? `drop-shadow(0 2px 8px ${B.pants}99)` : 'none',
-                  transform: active ? 'scale(1.18) translateY(-1px)' : 'scale(1)',
+                  transform: active ? 'scale(1.08) translateY(-1px)' : 'scale(1)',
                   transition: 'transform 0.22s cubic-bezier(.34,1.56,.64,1), filter 0.2s',
                 }}>
                   {emoji}

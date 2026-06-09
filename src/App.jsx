@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense, useContext } from 'react';
-import { BrowserRouter, Routes, Route, Outlet, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Box, Typography, Snackbar, Alert,
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
@@ -43,6 +44,7 @@ const TodayMenu         = lazy(() => import('./TodayMenu'));
 const MiniGameHub       = lazy(() => import('./MiniGameHub'));
 const AccountBook       = lazy(() => import('./AccountBook'));
 const CoupleTamagotchi  = lazy(() => import('./CoupleTamagotchi'));
+const WorldCup          = lazy(() => import('./WorldCup'));
 
 // ── 페이지 로딩 fallback ─────────────────────────────────────────
 function PageLoader() {
@@ -62,9 +64,20 @@ function PageLoader() {
 // ── 레이아웃 (Outlet + BottomNav) ───────────────────────────────
 function Layout() {
   const { logout } = useContext(UserContext);
+  const location = useLocation();
   return (
     <>
-      <Outlet />
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -8 }}
+          transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
+          <Outlet />
+        </motion.div>
+      </AnimatePresence>
       <BottomNav logout={logout} />
     </>
   );
@@ -114,6 +127,31 @@ function AppInner() {
     const id = setInterval(check, 30000);
     return () => clearInterval(id);
   }, []);
+
+  // SW postMessage → React Router 딥링크
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    const handler = (event) => {
+      if (event.data?.type === 'NAVIGATE') {
+        try {
+          const url = new URL(event.data.url);
+          navigate(url.pathname);
+        } catch {}
+      }
+    };
+    navigator.serviceWorker.addEventListener('message', handler);
+    return () => navigator.serviceWorker.removeEventListener('message', handler);
+  }, [navigate]);
+
+  // 포그라운드 FCM 알림 → 기존 토스트로 표시
+  useEffect(() => {
+    const handler = (e) => {
+      const notif = e.detail?.notification ?? {};
+      if (notif.body) setToastOpen(true);
+    };
+    window.addEventListener('fcm-foreground', handler);
+    return () => window.removeEventListener('fcm-foreground', handler);
+  }, [setToastOpen]);
 
   // localStorage 정리
   useEffect(() => {
@@ -362,6 +400,14 @@ function AppInner() {
             <SubPage title="커플 다마고치" icon="🐾">
               <Suspense fallback={<PageLoader />}>
                 <CoupleTamagotchi currentUser={currentUser} />
+              </Suspense>
+            </SubPage>
+          } />
+
+          <Route path="worldcup" element={
+            <SubPage title="이상형 월드컵" icon="⚔️">
+              <Suspense fallback={<PageLoader />}>
+                <WorldCup currentUser={currentUser} />
               </Suspense>
             </SubPage>
           } />

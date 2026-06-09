@@ -7,6 +7,7 @@ import {
 } from '../lib/buriAssets';
 import SectionCard from '../components/SectionCard';
 import NotifButton from '../components/NotifButton';
+import QuickNotif from '../components/QuickNotif';
 import CoupleCalendar from '../CoupleCalendar';
 import DiaryWrite from '../DiaryWrite';
 import DiaryList from '../DiaryList';
@@ -31,6 +32,13 @@ export default function HomePage({ currentUser, logout }) {
           sub="매일 기록하면 HP가 올라가요 💗"
           buriImg={buriSmile} bgColor={B.lavender + '44'} borderColor={B.pants}>
           <CharacterPet currentUser={currentUser} />
+        </SectionCard>
+
+        <SectionCard
+          icon="💌" title="콕 찌르기"
+          sub="버튼 하나로 상대방에게 알림 보내기 👉"
+          buriImg={buriSmile} bgColor={B.peach + '66'} borderColor={B.accent}>
+          <QuickNotif />
         </SectionCard>
 
         <SectionCard
