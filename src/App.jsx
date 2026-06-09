@@ -22,10 +22,12 @@ import { useNotifications }  from './hooks/useNotifications';
 import { B } from './lib/constants';
 import {
   buri8, buri9,
-  buriShocked, buriFire, buriTired, buriBeard,
+  buriShocked, buriTired,
   buriGirl, buriFlower,
 } from './lib/buriAssets';
 import { createRipple, createBuriPang } from './touchEffects';
+import { useFCM }        from './hooks/useFCM';
+import InstallPrompt     from './components/InstallPrompt';
 
 // ── 페이지 lazy import (코드 스플리팅) ────────────────────────────
 const HomePage          = lazy(() => import('./pages/HomePage'));
@@ -72,6 +74,7 @@ function Layout() {
 function AppInner() {
   const navigate = useNavigate();
   const { currentUser, loading, login, logout } = useAuth();
+  const { requestPermission } = useFCM(currentUser);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
   const {
@@ -108,7 +111,7 @@ function AppInner() {
       } catch {}
     };
     check();
-    const id = setInterval(check, 10000);
+    const id = setInterval(check, 30000);
     return () => clearInterval(id);
   }, []);
 
@@ -121,6 +124,11 @@ function AppInner() {
       } catch { localStorage.removeItem(key); }
     });
   }, []);
+
+  // 알림 드로어 열리면 토스트 닫기 (중복 표시 방지)
+  useEffect(() => {
+    if (notifDrawerOpen) setToastOpen(false);
+  }, [notifDrawerOpen]);
 
   const handleUpdateConfirm = async () => {
     try { await signOut(auth); window.location.reload(true); } catch { window.location.reload(true); }
@@ -207,8 +215,8 @@ function AppInner() {
 
       {/* ── 일정 등록 팝업 ───────────────────────────────────── */}
       <Snackbar
-        open={schedulePopupOpen} autoHideDuration={null}
-        onClose={(_, reason) => { if (reason === 'escapeKeyDown') setSchedulePopupOpen(false); }}
+        open={schedulePopupOpen} autoHideDuration={8000}
+        onClose={(_, reason) => { if (reason !== 'clickaway') setSchedulePopupOpen(false); }}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{ mt: 1, cursor: 'pointer' }} onClick={handleSchedulePopupClick}>
         <Alert
@@ -240,15 +248,16 @@ function AppInner() {
             '& .MuiAlert-icon': { alignItems: 'center' },
             '& .MuiAlert-action': { color: 'white' },
           }}>
-          {toastData?.content ?? ''} 💌
+          {toastData?.content ?? ''}
         </Alert>
       </Snackbar>
 
       {/* 배경 플로팅 부리 */}
       <Box component="img" src={buriShocked} alt="" className="buri-float b2" />
-      <Box component="img" src={buriFire}    alt="" className="buri-float b3" />
       <Box component="img" src={buriTired}   alt="" className="buri-float b4" />
-      <Box component="img" src={buriBeard}   alt="" className="buri-float b5" />
+
+      {/* PWA 설치 / 알림 허용 프롬프트 */}
+      <InstallPrompt onRequestPermission={requestPermission} />
 
       {/* ── 라우터 ── */}
       <Routes>

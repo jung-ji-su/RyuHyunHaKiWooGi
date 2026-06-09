@@ -21,6 +21,7 @@ export function useNotifications(currentUser) {
   const [schedulePopupOpen, setSchedulePopupOpen] = useState(false);
   const [schedulePopupItem, setSchedulePopupItem] = useState(null);
   const scheduleQueueRef = useRef([]);
+  const scheduleOpenRef  = useRef(false);
 
   // 이미 팝업으로 보여준 ID 추적 (localStorage)
   const shownRef = useRef(new Set(JSON.parse(localStorage.getItem('shownNotifIds') || '[]')));
@@ -29,12 +30,17 @@ export function useNotifications(currentUser) {
     localStorage.setItem('shownNotifIds', JSON.stringify([...shownRef.current].slice(-300)));
   };
 
+  // schedulePopupOpen이 false가 되면 ref도 동기화
+  useEffect(() => {
+    if (!schedulePopupOpen) scheduleOpenRef.current = false;
+  }, [schedulePopupOpen]);
+
   useEffect(() => {
     if (!currentUser) return;
     const q = query(
       collection(db, 'notifications'),
       orderBy('createdAt', 'desc'),
-      limit(200),
+      limit(60),
     );
     const unsub = onSnapshot(q, snap => {
       const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -62,12 +68,15 @@ export function useNotifications(currentUser) {
         scheduleQueueRef.current = scheduleNew;
         setSchedulePopupItem(latest);
         setSchedulePopupOpen(true);
+        scheduleOpenRef.current = true;
         return;
       }
 
-      // 나머지 → 일반 토스트
-      setToastData({ content: latest.content || '새로운 알림이 있어요!', type: latest.type });
-      setToastOpen(true);
+      // 나머지 → 일반 토스트 (일정 팝업 중이면 표시 안 함)
+      if (!scheduleOpenRef.current) {
+        setToastData({ content: latest.content || '새로운 알림이 있어요!', type: latest.type });
+        setToastOpen(true);
+      }
     });
     return () => unsub();
   }, [currentUser]);
@@ -81,6 +90,7 @@ export function useNotifications(currentUser) {
     if (next.length > 0) {
       setSchedulePopupItem(next[0]);
     } else {
+      scheduleOpenRef.current = false;
       setSchedulePopupOpen(false);
       setSchedulePopupItem(null);
       setTimeout(() => navigate('/schedule'), 50);

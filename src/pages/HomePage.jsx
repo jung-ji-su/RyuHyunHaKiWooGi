@@ -1,11 +1,12 @@
-import { Box, Container, Button, Stack, Typography } from '@mui/material';
+import { Box, Container, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { B, ROUTES } from '../lib/constants';
 import {
-  buri1, buri3, buri4, buri6, buri8, buri9,
-  buriBeard, buriCouple, buriCry, buriShocked, buriSmile,
+  buri3, buri4, buri6, buri8, buri9,
+  buriCouple, buriSmile,
 } from '../lib/buriAssets';
 import SectionCard from '../components/SectionCard';
+import NotifButton from '../components/NotifButton';
 import CoupleCalendar from '../CoupleCalendar';
 import DiaryWrite from '../DiaryWrite';
 import DiaryList from '../DiaryList';
@@ -18,12 +19,8 @@ export default function HomePage({ currentUser, logout }) {
   return (
     <Container maxWidth="sm" sx={{ py: 4, position: 'relative', zIndex: 1 }}>
       <CoupleDDay />
-
-      <Box sx={{ textAlign: 'right', mb: 1 }}>
-        <Button size="small" onClick={logout}
-          sx={{ color: B.pants + '88', fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.75rem' }}>
-          사용자 전환 (로그아웃)
-        </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+        <NotifButton />
       </Box>
 
       {/* 메인 헤더 배너 */}
@@ -63,11 +60,9 @@ export default function HomePage({ currentUser, logout }) {
       {/* 메인 푸터 */}
       <Box sx={{ textAlign: 'center', mt: 5, opacity: 0.42 }}>
         <Stack direction="row" justifyContent="center" alignItems="flex-end" gap={1.5}>
-          <Box component="img" src={buriBeard} alt="" sx={{ width: 44, animation: 'buriFloat3 6s ease-in-out infinite' }} />
-          <Box component="img" src={buri3} alt=""     sx={{ width: 56, animation: 'buriFloat3 5s ease-in-out infinite' }} />
+          <Box component="img" src={buri3} alt=""      sx={{ width: 56, animation: 'buriFloat3 5s ease-in-out infinite' }} />
           <Box component="img" src={buriCouple} alt="" sx={{ width: 72, animation: 'buriFloat1 5.5s ease-in-out 0.3s infinite' }} />
-          <Box component="img" src={buri8} alt=""     sx={{ width: 56, animation: 'buriFloat1 5s ease-in-out infinite' }} />
-          <Box component="img" src={buriCry} alt=""   sx={{ width: 44, animation: 'buriFloat2 6s ease-in-out 0.6s infinite' }} />
+          <Box component="img" src={buri8} alt=""      sx={{ width: 56, animation: 'buriFloat1 5s ease-in-out infinite' }} />
         </Stack>
         <Typography sx={{ fontSize: '0.72rem', color: B.dark + '66', mt: 1, fontFamily: "'Jua',sans-serif" }}>
           🐷 부리부리 미니홈피 🐷

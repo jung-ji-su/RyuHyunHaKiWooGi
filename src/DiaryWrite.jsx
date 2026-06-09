@@ -51,7 +51,7 @@ const sendNotification = async (currentUser, diaryId) => {
   try {
     await addDoc(collection(db, "notifications"), {
       writer: currentUser, type: "diary",
-      content: `${currentUser}님이 새로운 기록을 남겼어요! 📝`,
+      content: `${currentUser}가 새로운 기록을 남겼어요! 📝`,
       targetId: diaryId, createdAt: serverTimestamp(), isRead: false,
     });
   } catch (e) { console.error("알림 전송 실패:", e); }

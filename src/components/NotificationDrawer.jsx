@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Drawer, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { db } from '../firebase';
-import { updateDoc, doc } from 'firebase/firestore';
+import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
 
 const B = {
   pants: '#7B4FA6', cream: '#FFF8F2', lavender: '#EDE0F5',
@@ -62,11 +62,29 @@ const TYPE_ROUTES = {
 
 export default function NotificationDrawer({ open, onClose, notifications, onMarkAllRead }) {
   const [page, setPage] = useState(0);
+  const [, setTick] = useState(0);
   const navigate = useNavigate();
+
+  // 드로어 열릴 때 항상 1페이지로 리셋
+  useEffect(() => {
+    if (open) setPage(0);
+  }, [open]);
+
+  // 1분마다 timeAgo 갱신
+  useEffect(() => {
+    if (!open) return;
+    const id = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(id);
+  }, [open]);
 
   const totalPages = Math.ceil(notifications.length / PAGE_SIZE);
   const pageItems  = notifications.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const unread     = notifications.filter(n => !n.isRead).length;
+
+  const handleNotifDelete = async (e, n) => {
+    e.stopPropagation();
+    deleteDoc(doc(db, 'notifications', n.id)).catch(() => {});
+  };
 
   const handleNotifClick = async (n) => {
     if (!n.isRead) {
@@ -267,15 +285,30 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     </Stack>
                   </Box>
 
-                  {/* 미읽음 닷 */}
-                  {!n.isRead && (
-                    <Box sx={{
-                      width: 7, height: 7, borderRadius: '50%',
-                      background: `linear-gradient(135deg, ${meta.color}, ${meta.color}cc)`,
-                      boxShadow: `0 0 6px ${meta.color}88`,
-                      flexShrink: 0, mt: 1,
-                    }} />
-                  )}
+                  {/* 미읽음 닷 + 삭제 버튼 */}
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+                    {!n.isRead && (
+                      <Box sx={{
+                        width: 7, height: 7, borderRadius: '50%',
+                        background: `linear-gradient(135deg, ${meta.color}, ${meta.color}cc)`,
+                        boxShadow: `0 0 6px ${meta.color}88`,
+                        mt: 0.5,
+                      }} />
+                    )}
+                    <Box
+                      onClick={(e) => handleNotifDelete(e, n)}
+                      sx={{
+                        width: 20, height: 20, borderRadius: '50%',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: B.dark + '44', fontSize: '0.75rem', lineHeight: 1,
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: '#ff000018', color: '#E53935' },
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      ✕
+                    </Box>
+                  </Box>
                 </Box>
               );
             })}

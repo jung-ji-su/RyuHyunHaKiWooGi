@@ -1,0 +1,25 @@
+{
+  "name": "부리부리 미니홈피",
+  "short_name": "부리부리",
+  "description": "지수와 현하의 커플 공간 💜",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF8F2",
+  "theme_color": "#7B4FA6",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

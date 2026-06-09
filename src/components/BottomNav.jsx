@@ -106,14 +106,6 @@ export default function BottomNav({ logout }) {
                     boxShadow: isActive ? `0 4px 16px ${B.pants}44` : 'none',
                     '&:active': { transform: 'scale(0.93)' },
                   }}>
-                  {!isActive && (
-                    <Box sx={{
-                      position: 'absolute', top: 0, left: '-80%', width: '40%', height: '100%',
-                      background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%)',
-                      animation: `shineSlide ${3 + i * 0.4}s ease-in-out ${i * 0.2}s infinite`,
-                      pointerEvents: 'none',
-                    }} />
-                  )}
                   <Typography sx={{ fontSize: '22px', lineHeight: 1 }}>{item.emoji}</Typography>
                   <Typography sx={{
                     fontFamily: "'Jua',sans-serif", fontSize: '0.8rem',
@@ -177,7 +169,7 @@ export default function BottomNav({ logout }) {
       {/* ── 하단 탭 바 ── */}
       <Box sx={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 900,
-        bgcolor: B.cream + 'f2', backdropFilter: 'blur(16px)',
+        bgcolor: B.cream + 'f2', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
         borderTop: `1.5px solid ${B.pants}22`,
         display: 'flex', alignItems: 'center',
         boxShadow: `0 -4px 24px ${B.pants}14`,
@@ -189,7 +181,7 @@ export default function BottomNav({ logout }) {
           return (
             <Box key={name}
               onClick={(e) => handleTab(path, e)}
-              onPointerDown={e => { if (path) createBuriPang(e); }}
+              onPointerDown={e => createBuriPang(e)}
               sx={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center',

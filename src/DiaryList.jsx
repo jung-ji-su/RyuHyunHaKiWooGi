@@ -104,9 +104,13 @@ const DiaryList = ({ currentUser, pageSize }) => {
       await addDoc(collection(db, "diaries", diaryId, "comments"), {
         text: commentText, author: currentUser, createdAt: serverTimestamp(),
       });
+      const diary = diaries.find(d => d.id === diaryId);
+      const dateStr = diary?.createdAt?.toDate
+        ? `${diary.createdAt.toDate().getMonth() + 1}/${diary.createdAt.toDate().getDate()}`
+        : '';
       await addDoc(collection(db, "notifications"), {
         writer: currentUser, type: "comment",
-        content: `${currentUser}님이 내 기록에 댓글을 남겼어요! 💬`,
+        content: `${currentUser}가 ${dateStr ? dateStr + ' ' : ''}기록에 댓글을 남겼어요! 💬`,
         targetId: diaryId, createdAt: serverTimestamp(), isRead: false,
       });
       setCommentInputs({ ...commentInputs, [diaryId]: "" });

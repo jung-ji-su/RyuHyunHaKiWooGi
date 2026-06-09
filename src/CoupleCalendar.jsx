@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
 import {
   collection, addDoc, query, onSnapshot,
-  serverTimestamp, deleteDoc, doc, updateDoc, orderBy
+  serverTimestamp, deleteDoc, doc, updateDoc, orderBy, limit
 } from "firebase/firestore";
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,8 +31,8 @@ const B = {
 const GLASS_SX = {
   px: '10px', py: 1.5, borderRadius: '20px', boxSizing: 'border-box',
   background: 'rgba(255,255,255,0.76)',
-  backdropFilter: 'blur(16px)',
-  WebkitBackdropFilter: 'blur(16px)',
+  backdropFilter: 'blur(8px)',
+  WebkitBackdropFilter: 'blur(8px)',
   border: '1.5px solid rgba(255,255,255,0.72)',
   boxShadow: '0 8px 32px rgba(123,79,166,0.13), 0 2px 8px rgba(123,79,166,0.07), inset 0 1px 0 rgba(255,255,255,0.95)',
   position: 'relative',
@@ -109,10 +109,10 @@ const CoupleCalendar = ({ currentUser }) => {
   };
 
   useEffect(() => {
-    const u1 = onSnapshot(query(collection(db, 'schedules')),    s => setSchedules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
-    const u2 = onSnapshot(query(collection(db, 'temperatures')), s => setTemperatures(s.docs.map(d => ({ id: d.id, ...d.data() }))));
-    const u3 = onSnapshot(query(collection(db, 'timeCapsules')), s => setCapsules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
-    const u4 = onSnapshot(query(collection(db, 'diaries'), orderBy('createdAt', 'desc')), s => setDiaries(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const u1 = onSnapshot(query(collection(db, 'schedules'),    orderBy('date', 'desc'),       limit(500)), s => setSchedules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const u2 = onSnapshot(query(collection(db, 'temperatures'), orderBy('date', 'desc'),       limit(400)), s => setTemperatures(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const u3 = onSnapshot(query(collection(db, 'timeCapsules'), orderBy('createdAt', 'desc'), limit(100)), s => setCapsules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const u4 = onSnapshot(query(collection(db, 'diaries'),      orderBy('createdAt', 'desc'), limit(200)), s => setDiaries(s.docs.map(d => ({ id: d.id, ...d.data() }))));
     return () => { u1(); u2(); u3(); u4(); };
   }, []);
 

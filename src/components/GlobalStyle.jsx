@@ -84,7 +84,7 @@ export default function GlobalStyle() {
         from { transform: rotate(0deg); }
         to   { transform: rotate(360deg); }
       }
-      .hamster-idle   { display:inline-block; animation: hamsterSpin 3s linear infinite; }
+      .hamster-idle   { display:inline-block; }
       .hamster-active { display:inline-block; animation: hamsterSpin 0.55s linear infinite; }
     `}</style>
   );
