@@ -42,21 +42,13 @@ const SPEECH_BUBBLES = [
   '오늘도 화이팅 하시소!! ✨',
   '류덩이폼미쳤다;;',
   '무능무능',
-  '류덩이를 변기에 넣고 돌려',
-  '현하가글써줄때까지숨참음',
-  '현하의 수박🍉가슴',
-  '왕 자지🍆 수👑 공주현하👸',
   '통뼈GOAT현하',
   '크리스티아누 류현하',
-  '카카오 사지마라 - 정지수',
-  '불가능은 시도하지 않은 사람들의 변명이다. — Muhammad Ali',
-  '위대한 일은 힘이 아니라 꾸준함으로 이루어진다. — Samuel Johnson',
-  '잘떄 코좀 골지마라 - 류머니',
-  '웅냥냥 - 지하니',
-  '과자는 인류가 만들어낸 최고의 완전식품이다 - 현덩이',
+  '불가능은 시도하지 않은 사람들의 변명이다.',
+  '위대한 일은 힘이 아니라 꾸준함으로 이루어진다.',
+  '잘떄 코좀 골지마라 😤',
+  '과자는 인류가 만들어낸 최고의 완전식품이다',
   '오래오래 행복하게 지내자❤️',
-  '🍆💦🌶️🍑🥵',
-  '빨고싶게생겼다🥵(실제로한말) - 현하'
 ];
 
 const CAT_IMAGES = [catFat, catSmile, catTongue, catGrumpy, catScruff, catStatue];
@@ -104,21 +96,23 @@ async function evaluateUserPenalties(user, userData) {
 
   if (lastEval >= yesterday) return userData;
 
+  const dates = [];
+  let cursor = addDays(lastEval, 1);
+  while (cursor <= yesterday) { dates.push(cursor); cursor = addDays(cursor, 1); }
+
+  const snaps = await Promise.all(
+    dates.map(date => getDoc(doc(db, 'daily_checkins', `${COUPLE_ID}_${date}`)))
+  );
+
   let hp = userData.hp ?? 60;
   let revivalMission = userData.revivalMission ?? null;
-  let cursor = addDays(lastEval, 1);
-
-  while (cursor <= yesterday) {
-    const snap = await getDoc(doc(db, 'daily_checkins', `${COUPLE_ID}_${cursor}`));
+  snaps.forEach(snap => {
     const checkedIn = snap.exists() ? (snap.data().checkedIn ?? []) : [];
     if (!checkedIn.includes(user)) hp = Math.max(0, hp - HP_LOSS);
-
-    // 해골 단계 진입 시 부활 미션 배정
     if (hp < 15 && !revivalMission) {
       revivalMission = MISSIONS[Math.floor(Math.random() * MISSIONS.length)].id;
     }
-    cursor = addDays(cursor, 1);
-  }
+  });
 
   const updated = { ...userData, hp, lastEvalDate: yesterday, revivalMission };
   await setDoc(doc(db, 'couple_character', COUPLE_ID), { [user]: updated }, { merge: true });
@@ -427,10 +421,10 @@ export default function CharacterPet({ currentUser }) {
 
         const rawData = charSnap.exists() ? charSnap.data() : {};
         const defaults = { hp: 60, lastEvalDate: today, revivalMission: null };
-        const updatedData = {};
-        for (const user of USERS) {
-          updatedData[user] = await evaluateUserPenalties(user, rawData[user] ?? { ...defaults });
-        }
+        const results = await Promise.all(
+          USERS.map(user => evaluateUserPenalties(user, rawData[user] ?? { ...defaults }))
+        );
+        const updatedData = Object.fromEntries(USERS.map((user, i) => [user, results[i]]));
         if (!charSnap.exists()) {
           await setDoc(doc(db, 'couple_character', COUPLE_ID), { ...updatedData, updatedAt: serverTimestamp() });
         }

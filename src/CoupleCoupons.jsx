@@ -42,8 +42,8 @@ function getCatMeta(key) {
 }
 
 function daysLeft(createdAt) {
-  if (!createdAt?.seconds) return EXPIRY_DAYS;
-  const created = new Date(createdAt.seconds * 1000);
+  if (!createdAt?.toDate) return EXPIRY_DAYS;
+  const created = createdAt.toDate();
   const diff = EXPIRY_DAYS - Math.floor((Date.now() - created) / 86400000);
   return Math.max(0, diff);
 }
@@ -451,10 +451,21 @@ const CoupleCoupons = ({ currentUser }) => {
       status: "available",
       createdAt: serverTimestamp(),
     });
+    await addDoc(collection(db, "notifications"), {
+      writer: currentUser, type: "coupon",
+      content: `${currentUser}가 쿠폰을 발급했어요! 🎫 "${title}"`,
+      createdAt: serverTimestamp(), isRead: false,
+    });
   };
 
   const useCoupon = async (id) => {
+    const coupon = coupons.find(c => c.id === id);
     await updateDoc(doc(db, "coupons", id), { status: "used" });
+    await addDoc(collection(db, "notifications"), {
+      writer: currentUser, type: "coupon_used",
+      content: `${currentUser}가 쿠폰을 사용했어요! 🎫 "${coupon?.title ?? ''}"`,
+      createdAt: serverTimestamp(), isRead: false,
+    });
     vibrate([10, 10, 20]);
   };
 

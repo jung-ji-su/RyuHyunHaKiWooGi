@@ -105,12 +105,12 @@ const DiaryList = ({ currentUser, pageSize }) => {
         text: commentText, author: currentUser, createdAt: serverTimestamp(),
       });
       const diary = diaries.find(d => d.id === diaryId);
-      const dateStr = diary?.createdAt?.toDate
-        ? `${diary.createdAt.toDate().getMonth() + 1}/${diary.createdAt.toDate().getDate()}`
+      const dateStr = diary?.createdAt?.toDate?.()
+        ? `${diary.createdAt.toDate().getMonth() + 1}/${diary.createdAt.toDate().getDate()} 일기`
         : '';
       await addDoc(collection(db, "notifications"), {
         writer: currentUser, type: "comment",
-        content: `${currentUser}가 ${dateStr ? dateStr + ' ' : ''}기록에 댓글을 남겼어요! 💬`,
+        content: `${currentUser}: "${commentText.trim()}" 💬${dateStr ? ` (${dateStr})` : ''}`,
         targetId: diaryId, createdAt: serverTimestamp(), isRead: false,
       });
       setCommentInputs(prev => ({ ...prev, [diaryId]: "" }));
@@ -249,7 +249,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
               item={item}
               currentUser={currentUser}
               commentText={commentInputs[item.id] || ""}
-              setCommentText={(val) => setCommentInputs({ ...commentInputs, [item.id]: val })}
+              setCommentInputs={setCommentInputs}
               onAddComment={() => handleAddComment(item.id)}
               meImg={meImg}
               gfImg={gfImg}
@@ -353,7 +353,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
 };
 
 // ── 개별 다이어리 카드 ───────────────────────────────────────────
-const DiaryCard = memo(({ item, currentUser, commentText, setCommentText, onAddComment, meImg, gfImg, onOpenLightbox }) => {
+const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAddComment, meImg, gfImg, onOpenLightbox }) => {
   const [comments, setComments]       = useState([]);
   const [editMode, setEditMode]       = useState(false);
   const [editContent, setEditContent] = useState("");
@@ -411,6 +411,13 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentText, onAddC
       } else {
         await updateDoc(diaryRef, { likes: arrayUnion(currentUser) });
         if (likeRef.current) createHeartPang(likeRef.current);
+        if (item.author !== currentUser) {
+          await addDoc(collection(db, "notifications"), {
+            writer: currentUser, type: "like",
+            content: `${currentUser}가 기록에 좋아요를 눌렀어요! ❤️`,
+            targetId: item.id, createdAt: serverTimestamp(), isRead: false,
+          });
+        }
       }
     } catch (e) { console.error("좋아요 처리 실패:", e); }
   };
@@ -419,7 +426,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentText, onAddC
     const q = query(
       collection(db, "diaries", item.id, "comments"),
       orderBy("createdAt", "asc"),
-      limit(20),
+      limit(50),
     );
     return onSnapshot(q, (snapshot) => {
       setComments(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
@@ -703,7 +710,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentText, onAddC
           <TextField
             fullWidth size="small" placeholder="따뜻한 한마디 남기기... 🐷"
             value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
+            onChange={(e) => setCommentInputs(prev => ({ ...prev, [item.id]: e.target.value }))}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && onAddComment()}
             sx={{
               "& .MuiOutlinedInput-root": {

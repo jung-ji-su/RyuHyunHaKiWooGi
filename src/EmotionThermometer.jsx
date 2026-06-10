@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
 import {
   collection, query, onSnapshot, addDoc,
-  serverTimestamp, orderBy, doc, updateDoc, arrayUnion,
+  serverTimestamp, orderBy, doc, updateDoc, arrayUnion, writeBatch,
 } from "firebase/firestore";
 import {
   Box, Typography, Stack, Button, CircularProgress,
@@ -66,11 +66,13 @@ async function backfillMissedDays(currentUser, existingRecords) {
   const today = toDateStr(new Date());
   const recorded = new Set(existingRecords.filter(r => r.author === currentUser).map(r => r.date));
   const missed = getDateRange(30).filter(d => d < today && !recorded.has(d));
-  await Promise.all(missed.map(date =>
-    addDoc(collection(db, "temperatures"), {
-      author: currentUser, temp: 0, date, isPenalty: true, createdAt: serverTimestamp(),
-    })
-  ));
+  if (!missed.length) return;
+  const batch = writeBatch(db);
+  missed.forEach(date => {
+    const ref = doc(collection(db, "temperatures"));
+    batch.set(ref, { author: currentUser, temp: 0, date, isPenalty: true, createdAt: serverTimestamp() });
+  });
+  await batch.commit();
 }
 
 // ── SVG 원형 게이지 ─────────────────────────────────────────────
@@ -420,21 +422,22 @@ const EmotionThermometer = ({ currentUser }) => {
   const [submitted,    setSubmitted]    = useState(false);
   const [loading,      setLoading]      = useState(true);
   const [chartTab,     setChartTab]     = useState("week");
-  const [backfilled,   setBackfilled]   = useState(false);
   const [memo,         setMemo]         = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
+  const backfilledRef = useRef(false);
 
   const today     = toDateStr(new Date());
   const otherUser = USERS.find(u => u !== currentUser) ?? USERS[0];
 
   useEffect(() => {
+    backfilledRef.current = false;
     const q = query(collection(db, "temperatures"), orderBy("date", "asc"));
     const unsub = onSnapshot(q, async snap => {
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setRecords(data);
       const myToday = data.find(r => r.author === currentUser && r.date === today);
       if (myToday) { setTodayTemp(myToday.temp); setSubmitted(true); }
-      if (!backfilled) { setBackfilled(true); await backfillMissedDays(currentUser, data); }
+      if (!backfilledRef.current) { backfilledRef.current = true; await backfillMissedDays(currentUser, data); }
       setLoading(false);
     });
     return () => unsub();
