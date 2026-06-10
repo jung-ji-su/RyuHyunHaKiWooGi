@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   collection, getDocs, deleteDoc, doc, query,
-  orderBy, limit, getDoc, addDoc, serverTimestamp, writeBatch,
+  orderBy, limit, getDoc, addDoc, serverTimestamp, writeBatch, where,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { UserContext } from '../lib/UserContext';
@@ -22,6 +22,33 @@ const LOCS = [
   { name:'동탄', lat:37.2015, lon:127.0726 },
   { name:'서울', lat:37.5665, lon:126.9780 },
 ];
+
+const COUPON_CAT = {
+  food:  { label: '밥',    emoji: '🍜' },
+  date:  { label: '데이트', emoji: '🎬' },
+  chore: { label: '집안일', emoji: '🧹' },
+  hug:   { label: '스킨십', emoji: '🐷' },
+  wish:  { label: '소원',  emoji: '⭐' },
+  etc:   { label: '기타',  emoji: '🎁' },
+};
+
+const EXPIRY_DAYS = 14;
+
+function couponDaysLeft(createdAt) {
+  if (!createdAt?.seconds) return EXPIRY_DAYS;
+  const created = new Date(createdAt.seconds * 1000);
+  const diff = EXPIRY_DAYS - Math.floor((Date.now() - created) / 86400000);
+  return Math.max(0, diff);
+}
+
+function dDayLabel(dateStr) {
+  const d = new Date(dateStr);
+  const today = new Date(); today.setHours(0,0,0,0); d.setHours(0,0,0,0);
+  const diff = Math.round((d - today) / 86400000);
+  if (diff === 0) return 'D-Day';
+  if (diff > 0) return `D-${diff}`;
+  return `D+${Math.abs(diff)}`;
+}
 
 // ── plain styles ─────────────────────────────────────────────────
 const S = {
@@ -54,16 +81,22 @@ export default function AdminPage() {
     if (currentUser && currentUser !== '지수') navigate('/');
   }, [currentUser, navigate]);
 
-  const [tokens, setTokens]     = useState({ 지수: null, 현하: null });
-  const [notifs, setNotifs]     = useState([]);
-  const [version, setVersion]   = useState('...');
-  const [changelog, setChangelog] = useState([]);
-  const [log, setLog]           = useState([]);
-  const [loading, setLoading]   = useState({});
+  const [tokens, setTokens]               = useState({ 지수: null, 현하: null });
+  const [notifs, setNotifs]               = useState([]);
+  const [version, setVersion]             = useState('...');
+  const [changelog, setChangelog]         = useState([]);
+  const [log, setLog]                     = useState([]);
+  const [loading, setLoading]             = useState({});
+
+  // new state
+  const [stats, setStats]                         = useState(null);
+  const [importantScheds, setImportantScheds]     = useState([]);
+  const [coupons, setCoupons]                     = useState([]);
 
   const addLog  = (text) => setLog(p => [`${new Date().toLocaleTimeString('ko-KR')} ${text}`, ...p.slice(0, 29)]);
   const setLoad = (key, v) => setLoading(p => ({ ...p, [key]: v }));
 
+  // ── loaders ───────────────────────────────────────────────────
   const loadTokens = async () => {
     const res = {};
     for (const u of USERS) {
@@ -93,21 +126,65 @@ export default function AdminPage() {
     } catch {}
   };
 
+  const loadStats = async () => {
+    try {
+      const [diaries, schedules, buckets, couponsSnap, temps, notifSnap] = await Promise.all([
+        getDocs(collection(db, 'diaries')),
+        getDocs(collection(db, 'schedules')),
+        getDocs(collection(db, 'buckets')),
+        getDocs(collection(db, 'coupons')),
+        getDocs(collection(db, 'temperatures')),
+        getDocs(collection(db, 'notifications')),
+      ]);
+      const bucketDocs = buckets.docs.map(d => d.data());
+      const couponDocs = couponsSnap.docs.map(d => d.data());
+      const importantCount = schedules.docs.filter(d => d.data().isImportant).length;
+      const availableCoupons = couponDocs.filter(c => c.status === 'available');
+      const usedCoupons      = couponDocs.filter(c => c.status === 'used');
+      setStats({
+        diaries: diaries.size,
+        schedules: schedules.size,
+        importantSchedules: importantCount,
+        buckets: { total: buckets.size, done: bucketDocs.filter(b => b.isDone).length },
+        coupons: { total: couponsSnap.size, available: availableCoupons.length, used: usedCoupons.length },
+        temperatures: temps.size,
+        notifications: notifSnap.size,
+      });
+    } catch (e) { addLog(`❌ 통계 로드 오류: ${e.message}`); }
+  };
+
+  const loadImportantScheds = async () => {
+    try {
+      const q = query(collection(db, 'schedules'), where('isImportant', '==', true), orderBy('date'));
+      const snap = await getDocs(q);
+      setImportantScheds(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    } catch (e) { addLog(`❌ 기념일 로드 오류: ${e.message}`); }
+  };
+
+  const loadCoupons = async () => {
+    try {
+      const q = query(collection(db, 'coupons'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      setCoupons(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    } catch (e) { addLog(`❌ 쿠폰 로드 오류: ${e.message}`); }
+  };
+
   useEffect(() => {
-    if (currentUser === '지수') { loadTokens(); loadNotifs(); loadVersion(); loadChangelog(); }
+    if (currentUser === '지수') {
+      loadTokens(); loadNotifs(); loadVersion(); loadChangelog();
+      loadStats(); loadImportantScheds(); loadCoupons();
+    }
   }, [currentUser]);
 
-  // ── 테스트 push (Firestore write → Cloud Function 트리거) ────────
+  // ── 테스트 push ──────────────────────────────────────────────
   const sendTest = async (user) => {
     const key = 'test_' + user;
     setLoad(key, true);
     try {
       await addDoc(collection(db, 'notifications'), {
-        type: 'jilta',
-        target: user,
+        type: 'jilta', target: user,
         content: `🐷 테스트 알림이에요! 앱 정상 작동 중 ✅ (${new Date().toLocaleTimeString('ko-KR')})`,
-        createdAt: serverTimestamp(),
-        isRead: false,
+        createdAt: serverTimestamp(), isRead: false,
       });
       addLog(`✅ ${user}에게 테스트 알림 전송 완료`);
       await loadNotifs();
@@ -115,7 +192,7 @@ export default function AdminPage() {
     setLoad(key, false);
   };
 
-  // ── 날씨 알림 즉시 테스트 (브라우저에서 Open-Meteo 직접 호출 → Firestore write) ──
+  // ── 날씨 알림 즉시 테스트 ────────────────────────────────────
   const sendWeather = async () => {
     setLoad('weather', true);
     try {
@@ -125,7 +202,6 @@ export default function AdminPage() {
           + `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max`
           + `&timezone=Asia%2FSeoul&forecast_days=1`;
         const data = await fetch(url).then(r => r.json());
-
         const times = data.hourly.time;
         const codes = data.hourly.weather_code;
         const temps = data.hourly.temperature_2m;
@@ -143,37 +219,34 @@ export default function AdminPage() {
           at(19) && `🌙 저녁  ${at(19)}`,
           `📊 최고 ${maxT}° / 최저 ${minT}° · 강수 ${rain}%💧`,
         ].filter(Boolean).join('\n');
-
         await addDoc(collection(db, 'notifications'), {
           type: 'admin', target: '지수', content,
           createdAt: serverTimestamp(), isRead: false,
         });
       }
-      addLog('✅ 날씨 알림 테스트 전송 완료 (동탄+서울 → 지수+현하)');
+      addLog('✅ 날씨 알림 테스트 전송 완료 (동탄+서울 → 지수)');
       await loadNotifs();
     } catch (e) { addLog(`❌ 오류: ${e.message}`); }
     setLoad('weather', false);
   };
 
-  // ── FCM 토큰 삭제 ─────────────────────────────────────────────
+  // ── FCM 토큰 삭제 ────────────────────────────────────────────
   const deleteToken = async (user) => {
-    if (!window.confirm(`${user}의 FCM 토큰을 삭제할까요?`)) return;
     await deleteDoc(doc(db, 'fcmTokens', user));
     addLog(`🗑️ ${user} FCM 토큰 삭제`);
     await loadTokens();
   };
 
-  // ── 알림 단건 삭제 ────────────────────────────────────────────
+  // ── 알림 단건 삭제 ───────────────────────────────────────────
   const deleteNotif = async (id) => {
     await deleteDoc(doc(db, 'notifications', id));
     setNotifs(p => p.filter(n => n.id !== id));
   };
 
-  // ── 읽은 알림 일괄 삭제 ───────────────────────────────────────
+  // ── 읽은 알림 일괄 삭제 ──────────────────────────────────────
   const deleteRead = async () => {
     const targets = notifs.filter(n => n.isRead);
     if (!targets.length) { addLog('삭제할 읽은 알림 없음'); return; }
-    if (!window.confirm(`읽은 알림 ${targets.length}개를 삭제할까요?`)) return;
     const batch = writeBatch(db);
     targets.forEach(n => batch.delete(doc(db, 'notifications', n.id)));
     await batch.commit();
@@ -181,9 +254,8 @@ export default function AdminPage() {
     await loadNotifs();
   };
 
-  // ── 전체 알림 삭제 ────────────────────────────────────────────
+  // ── 전체 알림 삭제 ───────────────────────────────────────────
   const deleteAll = async () => {
-    if (!window.confirm(`알림 ${notifs.length}개를 전부 삭제할까요?`)) return;
     const batch = writeBatch(db);
     notifs.forEach(n => batch.delete(doc(db, 'notifications', n.id)));
     await batch.commit();
@@ -191,9 +263,44 @@ export default function AdminPage() {
     setNotifs([]);
   };
 
+  // ── 기념일 삭제 ──────────────────────────────────────────────
+  const deleteImportantSched = async (id, title) => {
+    await deleteDoc(doc(db, 'schedules', id));
+    addLog(`🗑️ 기념일 삭제: ${title}`);
+    setImportantScheds(p => p.filter(s => s.id !== id));
+    setStats(p => p ? { ...p, importantSchedules: p.importantSchedules - 1, schedules: p.schedules - 1 } : p);
+  };
+
+  // ── 쿠폰 삭제 ────────────────────────────────────────────────
+  const deleteCoupon = async (id, title) => {
+    await deleteDoc(doc(db, 'coupons', id));
+    addLog(`🗑️ 쿠폰 삭제: ${title}`);
+    setCoupons(p => p.filter(c => c.id !== id));
+  };
+
+  // ── 만료 쿠폰 일괄 삭제 ──────────────────────────────────────
+  const deleteExpiredCoupons = async () => {
+    const expired = coupons.filter(c => c.status === 'available' && couponDaysLeft(c.createdAt) === 0);
+    if (!expired.length) { addLog('만료된 쿠폰 없음'); return; }
+    const batch = writeBatch(db);
+    expired.forEach(c => batch.delete(doc(db, 'coupons', c.id)));
+    await batch.commit();
+    addLog(`🗑️ 만료 쿠폰 ${expired.length}개 삭제`);
+    setCoupons(p => p.filter(c => !(c.status === 'available' && couponDaysLeft(c.createdAt) === 0)));
+  };
+
   if (!currentUser || currentUser !== '지수') return null;
 
   const unreadCount = notifs.filter(n => !n.isRead).length;
+  const availableCoupons = coupons.filter(c => c.status === 'available');
+  const usedCoupons      = coupons.filter(c => c.status === 'used');
+  const expiredCoupons   = availableCoupons.filter(c => couponDaysLeft(c.createdAt) === 0);
+
+  const KO_DAYS = ['일','월','화','수','목','금','토'];
+  const fmtDate = (dateStr) => {
+    const d = new Date(dateStr);
+    return `${d.getMonth()+1}/${d.getDate()}(${KO_DAYS[d.getDay()]})`;
+  };
 
   return (
     <div style={S.page}>
@@ -205,6 +312,39 @@ export default function AdminPage() {
           <div style={{ fontSize: 18, fontWeight: 800, color: '#1a1a1a' }}>⚙️ 관리자 패널</div>
           <div style={{ fontSize: 11, color: '#999', marginTop: 1 }}>지수 전용 · v{version}</div>
         </div>
+      </div>
+
+      {/* ── 앱 통계 ── */}
+      <div style={S.card}>
+        <div style={{ ...S.h, justifyContent: 'space-between' }}>
+          <span>📊 앱 통계</span>
+          <button style={btn('#555', true)} onClick={loadStats}>새로고침</button>
+        </div>
+        {stats === null ? (
+          <div style={{ fontSize: 12, color: '#bbb', textAlign: 'center', padding: '8px 0' }}>로딩 중...</div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+            {[
+              { label: '일기', value: stats.diaries, emoji: '📔', color: '#3A86FF' },
+              { label: '일정', value: stats.schedules, emoji: '📅', color: '#1D9E75', sub: `기념일 ${stats.importantSchedules}개` },
+              { label: '버킷', value: stats.buckets.total, emoji: '🎯', color: '#E8630A', sub: `완료 ${stats.buckets.done}개` },
+              { label: '쿠폰', value: stats.coupons.total, emoji: '🎟️', color: '#FFB300', sub: `사용가능 ${stats.coupons.available}개` },
+              { label: '감정온도', value: stats.temperatures, emoji: '🌡️', color: '#E91E8C' },
+              { label: '알림', value: stats.notifications, emoji: '🔔', color: '#7B4FA6', sub: `미읽음 ${unreadCount}개` },
+            ].map(item => (
+              <div key={item.label} style={{
+                background: item.color + '11', borderRadius: 10,
+                padding: '10px 8px', textAlign: 'center',
+                border: `1px solid ${item.color}22`,
+              }}>
+                <div style={{ fontSize: 18, marginBottom: 2 }}>{item.emoji}</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: item.color, lineHeight: 1 }}>{item.value}</div>
+                <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{item.label}</div>
+                {item.sub && <div style={{ fontSize: 10, color: '#999', marginTop: 1 }}>{item.sub}</div>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── 알림 테스트 ── */}
@@ -224,7 +364,6 @@ export default function AdminPage() {
             {loading['test_현하'] ? '전송중...' : '현하에게 테스트'}
           </button>
         </div>
-
         <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: 12, marginTop: 4 }}>
           <div style={{ fontSize: 12, color: '#888', marginBottom: 8, fontWeight: 600 }}>날씨 알림</div>
           <button
@@ -251,6 +390,140 @@ export default function AdminPage() {
           ))}
         </div>
       )}
+
+      {/* ── 기념일 관리 (D-day 알림 대상) ── */}
+      <div style={S.card}>
+        <div style={{ ...S.h, justifyContent: 'space-between' }}>
+          <span>🎉 기념일 관리 <span style={{ fontWeight: 400, fontSize: 12, color: '#888' }}>(D-day 알림 대상 · {importantScheds.length}개)</span></span>
+          <button style={btn('#555', true)} onClick={loadImportantScheds}>새로고침</button>
+        </div>
+        <div style={{ fontSize: 11, color: '#aaa', marginBottom: 10, lineHeight: 1.5 }}>
+          ⚡ D-1, D-2, D-3, D-7, D-30, D-60, D-90 당일 자동 알림 발송
+        </div>
+        {importantScheds.length === 0 ? (
+          <p style={{ fontSize: 13, color: '#bbb', margin: 0, textAlign: 'center', padding: '8px 0' }}>등록된 기념일 없음</p>
+        ) : (
+          <div style={{ maxHeight: 260, overflowY: 'auto' }}>
+            {importantScheds.map(s => {
+              const dday = dDayLabel(s.date);
+              const isPast = dday.startsWith('D+');
+              const isToday = dday === 'D-Day';
+              const ddayColor = isPast ? '#bbb' : isToday ? '#E8630A' : '#7B4FA6';
+              return (
+                <div key={s.id} style={{
+                  ...S.item,
+                  background: isPast ? '#fafafa' : '#faf6ff',
+                  border: `1px solid ${isPast ? '#eee' : '#e0d0f5'}`,
+                  opacity: isPast ? 0.7 : 1,
+                }}>
+                  <div style={{
+                    minWidth: 48, fontWeight: 800, fontSize: 12,
+                    color: ddayColor, fontFamily: 'monospace',
+                  }}>{dday}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#222' }}>{s.title}</div>
+                    <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>{fmtDate(s.date)}</div>
+                  </div>
+                  <button
+                    onClick={() => deleteImportantSched(s.id, s.title)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ddd', fontSize: 18, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
+                  >×</button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <div style={{ fontSize: 11, color: '#ccc', marginTop: 8 }}>
+          * 일정 페이지에서 ⭐ 표시된 항목이 이 목록에 포함됩니다
+        </div>
+      </div>
+
+      {/* ── 쿠폰 현황 ── */}
+      <div style={S.card}>
+        <div style={{ ...S.h, justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+          <span>
+            🎟️ 쿠폰 현황
+            <span style={{ fontWeight: 400, fontSize: 12, color: '#888' }}>
+              {' '}(사용가능 {availableCoupons.length} · 사용됨 {usedCoupons.length}
+              {expiredCoupons.length > 0 && <span style={{ color: '#e74c3c' }}> · 만료 {expiredCoupons.length}</span>})
+            </span>
+          </span>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button style={btn('#555', true)} onClick={loadCoupons}>새로고침</button>
+            {expiredCoupons.length > 0 && (
+              <button style={btn('#e74c3c', true)} onClick={deleteExpiredCoupons}>만료 삭제</button>
+            )}
+          </div>
+        </div>
+
+        {coupons.length === 0 ? (
+          <p style={{ fontSize: 13, color: '#bbb', margin: 0, textAlign: 'center', padding: '8px 0' }}>쿠폰 없음</p>
+        ) : (
+          <div style={{ maxHeight: 300, overflowY: 'auto' }}>
+            {/* 사용 가능 */}
+            {availableCoupons.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#1D9E75', marginBottom: 5 }}>✅ 사용 가능</div>
+                {availableCoupons.map(c => {
+                  const left = couponDaysLeft(c.createdAt);
+                  const isExp = left === 0;
+                  const cat = COUPON_CAT[c.cat] ?? COUPON_CAT.etc;
+                  return (
+                    <div key={c.id} style={{
+                      ...S.item,
+                      background: isExp ? '#fff5f5' : '#f8fff8',
+                      border: `1px solid ${isExp ? '#fcc' : '#c8ecd4'}`,
+                      opacity: isExp ? 0.8 : 1,
+                    }}>
+                      <span style={{ fontSize: 16, flexShrink: 0 }}>{cat.emoji}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#222' }}>{c.title || cat.label}</div>
+                        <div style={{ fontSize: 10, color: '#999', marginTop: 1 }}>
+                          {c.sender} → {c.receiver}
+                          {isExp
+                            ? <span style={{ color: '#e74c3c', fontWeight: 600, marginLeft: 6 }}>만료됨</span>
+                            : <span style={{ color: '#1D9E75', marginLeft: 6 }}>D-{left}</span>
+                          }
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => deleteCoupon(c.id, c.title || cat.label)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ddd', fontSize: 18, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
+                      >×</button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* 사용됨 */}
+            {usedCoupons.length > 0 && (
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#aaa', marginBottom: 5 }}>🔖 사용됨</div>
+                {usedCoupons.map(c => {
+                  const cat = COUPON_CAT[c.cat] ?? COUPON_CAT.etc;
+                  return (
+                    <div key={c.id} style={{
+                      ...S.item,
+                      background: '#fafafa', border: '1px solid #eee', opacity: 0.75,
+                    }}>
+                      <span style={{ fontSize: 16, flexShrink: 0 }}>{cat.emoji}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#888', textDecoration: 'line-through' }}>{c.title || cat.label}</div>
+                        <div style={{ fontSize: 10, color: '#bbb', marginTop: 1 }}>{c.sender} → {c.receiver}</div>
+                      </div>
+                      <button
+                        onClick={() => deleteCoupon(c.id, c.title || cat.label)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ddd', fontSize: 18, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
+                      >×</button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* ── FCM 토큰 ── */}
       <div style={S.card}>
@@ -288,32 +561,36 @@ export default function AdminPage() {
 
         {notifs.length === 0 ? (
           <p style={{ fontSize: 13, color: '#bbb', margin: 0, textAlign: 'center', padding: '12px 0' }}>알림 없음</p>
-        ) : notifs.map(n => {
-          const color = TYPE_COLOR[n.type] ?? '#888';
-          const ts = n.createdAt?.toDate?.()?.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) ?? '';
-          return (
-            <div key={n.id} style={{
-              ...S.item,
-              background: n.isRead ? '#fafafa' : '#fffbf0',
-              border: `1px solid ${n.isRead ? '#eee' : '#f5dfa0'}`,
-            }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3, flexWrap: 'wrap' }}>
-                  <span style={S.tag(color)}>{n.type}</span>
-                  {n.target && <span style={S.tag('#3A86FF')}>→{n.target}</span>}
-                  {n.writer && <span style={S.tag('#999')}>{n.writer}</span>}
-                  {!n.isRead && <span style={S.tag('#E8630A')}>NEW</span>}
-                  <span style={{ fontSize: 10, color: '#bbb', marginLeft: 'auto' }}>{ts}</span>
+        ) : (
+          <div style={{ maxHeight: 310, overflowY: 'auto' }}>
+            {notifs.map(n => {
+              const color = TYPE_COLOR[n.type] ?? '#888';
+              const ts = n.createdAt?.toDate?.()?.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) ?? '';
+              return (
+                <div key={n.id} style={{
+                  ...S.item,
+                  background: n.isRead ? '#fafafa' : '#fffbf0',
+                  border: `1px solid ${n.isRead ? '#eee' : '#f5dfa0'}`,
+                }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3, flexWrap: 'wrap' }}>
+                      <span style={S.tag(color)}>{n.type}</span>
+                      {n.target && <span style={S.tag('#3A86FF')}>→{n.target}</span>}
+                      {n.writer && <span style={S.tag('#999')}>{n.writer}</span>}
+                      {!n.isRead && <span style={S.tag('#E8630A')}>NEW</span>}
+                      <span style={{ fontSize: 10, color: '#bbb', marginLeft: 'auto' }}>{ts}</span>
+                    </div>
+                    <div style={{ fontSize: 12, color: n.isRead ? '#999' : '#333', lineHeight: 1.4 }}>{n.content}</div>
+                  </div>
+                  <button
+                    onClick={() => deleteNotif(n.id)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', fontSize: 18, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
+                  >×</button>
                 </div>
-                <div style={{ fontSize: 12, color: n.isRead ? '#999' : '#333', lineHeight: 1.4 }}>{n.content}</div>
-              </div>
-              <button
-                onClick={() => deleteNotif(n.id)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', fontSize: 18, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
-              >×</button>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* ── 배포 이력 ── */}
@@ -324,35 +601,39 @@ export default function AdminPage() {
         </div>
         {changelog.length === 0 ? (
           <p style={{ fontSize: 13, color: '#bbb', margin: 0 }}>기록 없음</p>
-        ) : changelog.map((c, i) => {
-          const d = new Date(c.date);
-          const dateStr = d.toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
-          const isCurrent = i === 0;
-          return (
-            <div key={c.version} style={{
-              display: 'flex', alignItems: 'flex-start', gap: 10,
-              padding: '9px 10px', borderRadius: 9, marginBottom: 5,
-              background: isCurrent ? '#f0f7ff' : '#fafafa',
-              border: `1px solid ${isCurrent ? '#bbd6f5' : '#eee'}`,
-            }}>
-              <div style={{ minWidth: 60 }}>
-                <div style={{
-                  fontSize: 11, fontWeight: 700, fontFamily: 'monospace',
-                  color: isCurrent ? '#1a6fc4' : '#888',
-                  background: isCurrent ? '#dbeafe' : '#eee',
-                  borderRadius: 4, padding: '2px 5px', display: 'inline-block',
-                }}>v{c.version}</div>
-                {isCurrent && <div style={{ fontSize: 10, color: '#1a6fc4', marginTop: 2, fontWeight: 600 }}>현재</div>}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12, color: '#333', lineHeight: 1.5 }}>
-                  {c.notes || <span style={{ color: '#bbb', fontStyle: 'italic' }}>메모 없음</span>}
+        ) : (
+          <div style={{ maxHeight: 290, overflowY: 'auto' }}>
+            {changelog.map((c, i) => {
+              const d = new Date(c.date);
+              const dateStr = d.toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
+              const isCurrent = i === 0;
+              return (
+                <div key={c.version} style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
+                  padding: '9px 10px', borderRadius: 9, marginBottom: 5,
+                  background: isCurrent ? '#f0f7ff' : '#fafafa',
+                  border: `1px solid ${isCurrent ? '#bbd6f5' : '#eee'}`,
+                }}>
+                  <div style={{ minWidth: 60 }}>
+                    <div style={{
+                      fontSize: 11, fontWeight: 700, fontFamily: 'monospace',
+                      color: isCurrent ? '#1a6fc4' : '#888',
+                      background: isCurrent ? '#dbeafe' : '#eee',
+                      borderRadius: 4, padding: '2px 5px', display: 'inline-block',
+                    }}>v{c.version}</div>
+                    {isCurrent && <div style={{ fontSize: 10, color: '#1a6fc4', marginTop: 2, fontWeight: 600 }}>현재</div>}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 12, color: '#333', lineHeight: 1.5 }}>
+                      {c.notes || <span style={{ color: '#bbb', fontStyle: 'italic' }}>메모 없음</span>}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#bbb', marginTop: 2 }}>{dateStr}</div>
+                  </div>
                 </div>
-                <div style={{ fontSize: 10, color: '#bbb', marginTop: 2 }}>{dateStr}</div>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        )}
         <div style={{ fontSize: 11, color: '#ccc', marginTop: 8 }}>
           * 앞으로 배포 시 <code style={{ background: '#f0f0f0', padding: '1px 4px', borderRadius: 3 }}>node deploy.js "배포 내용"</code> 으로 메모 추가 가능
         </div>
