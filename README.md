@@ -3,8 +3,9 @@
 > 지수 & 현하를 위한 **커플 전용 PWA 미니홈피**
 
 - 🌐 **URL**: https://ryuhyunhakiwoogi.web.app
-- 📦 **현재 버전**: 1.0.93
-- 📅 **최종 업데이트**: 2026-06-09
+- 📄 **포트폴리오**: [jung-ji-su.github.io/RyuHyunHaKiWooGi/portfolio_2026.html](https://jung-ji-su.github.io/RyuHyunHaKiWooGi/portfolio_2026.html)
+- 📦 **현재 버전**: 1.0.109
+- 📅 **최종 업데이트**: 2026-06-10
 
 <br/>
 
