@@ -80,7 +80,7 @@ export default function QuickNotif() {
     if (!other) return;
 
     setCooldown(item.emoji);
-    setTimeout(() => setCooldown(null), 3000);
+    setTimeout(() => setCooldown(null), 500);
 
     // 파티클 트리거
     setAnimKey(prev => ({ ...prev, [item.emoji]: Date.now() }));
