@@ -66,6 +66,7 @@ exports.kakaoProxy = onRequest(
 const ROUTE = {
   diary:        `${BASE}/diary`,
   comment:      `${BASE}/diary`,
+  like:         `${BASE}/diary`,
   schedule:     `${BASE}/schedule`,
   bucket:       `${BASE}/bucket`,
   bucket_add:   `${BASE}/bucket`,
@@ -74,6 +75,8 @@ const ROUTE = {
   thermo:       `${BASE}/thermo`,
   hug:          `${BASE}/thermo`,
   temp_diff:    `${BASE}/thermo`,
+  coupon:       `${BASE}/coupons`,
+  coupon_used:  `${BASE}/coupons`,
   jilta:        BASE,
 };
 
@@ -86,7 +89,7 @@ exports.sendPushOnNotification = onDocumentCreated(
 
     // 수신자 결정
     let recipient;
-    if (data.type === "jilta") {
+    if (data.type === "jilta" || data.type === "admin") {
       recipient = data.target;
     } else {
       if (!data.writer) return null;
@@ -146,14 +149,14 @@ const WMO = {
 
 async function fetchWeather(lat, lon) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
-    + `&hourly=weathercode,temperature_2m`
+    + `&hourly=weather_code,temperature_2m`
     + `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max`
     + `&timezone=Asia%2FSeoul&forecast_days=1`;
   const res = await fetch(url);
   const data = await res.json();
 
   const times = data.hourly.time;
-  const codes = data.hourly.weathercode;
+  const codes = data.hourly.weather_code;
   const temps = data.hourly.temperature_2m;
   const at = (h) => {
     const i = times.findIndex(t => t.endsWith(`T${String(h).padStart(2, "0")}:00`));
@@ -169,7 +172,7 @@ async function fetchWeather(lat, lon) {
 
 // ── 매일 09:00 KST 날씨 알림 ────────────────────────────────────
 exports.sendDailyWeather = onSchedule(
-  { schedule: "0 9 * * *", timeZone: "Asia/Seoul" },
+  { schedule: "0 6 * * *", timeZone: "Asia/Seoul" },
   async () => {
     const tokenMap = await getActiveTokenMap();
     if (Object.keys(tokenMap).length === 0) return null;
@@ -179,13 +182,13 @@ exports.sendDailyWeather = onSchedule(
       LOCATIONS.map(async (loc) => {
         try {
           const w = await fetchWeather(loc.lat, loc.lon);
-          const line1 = [
-            w.morning   && `아침 ${w.morning}`,
-            w.afternoon && `점심 ${w.afternoon}`,
-            w.evening   && `저녁 ${w.evening}`,
-          ].filter(Boolean).join("  /  ");
-          const line2 = `최고 ${w.maxTemp}° / 최저 ${w.minTemp}° · 강수 ${w.rainProb}%💧`;
-          await sendToTokens(tokens, `📍 ${loc.name} 오늘 날씨`, `${line1}\n${line2}`);
+          const body = [
+            w.morning   && `🌅 아침  ${w.morning}`,
+            w.afternoon && `☀️ 점심  ${w.afternoon}`,
+            w.evening   && `🌙 저녁  ${w.evening}`,
+            `📊 최고 ${w.maxTemp}° / 최저 ${w.minTemp}° · 강수 ${w.rainProb}%💧`,
+          ].filter(Boolean).join("\n");
+          await sendToTokens(tokens, `📍 ${loc.name} 오늘 날씨`, body);
         } catch (e) {
           console.error(`날씨 fetch 오류 ${loc.name}:`, e);
         }
@@ -274,6 +277,40 @@ exports.sendDailyReminders = onSchedule(
     }
 
     return null;
+  }
+);
+
+// ── 날씨 알림 즉시 테스트: ?secret=buri2026 로 호출 ─────────────
+exports.sendTestWeather = onRequest(
+  { cors: true },
+  async (req, res) => {
+    const secret = req.query.secret || req.body?.secret;
+    if (secret !== TEST_SECRET) { res.status(401).json({ error: "인증 실패" }); return; }
+
+    const tokenMap = await getActiveTokenMap();
+    if (Object.keys(tokenMap).length === 0) {
+      res.status(200).json({ ok: false, error: "등록된 FCM 토큰 없음" });
+      return;
+    }
+    const tokens = Object.values(tokenMap);
+
+    const results = [];
+    for (const loc of LOCATIONS) {
+      try {
+        const w = await fetchWeather(loc.lat, loc.lon);
+        const line1 = [
+          w.morning   && `아침 ${w.morning}`,
+          w.afternoon && `점심 ${w.afternoon}`,
+          w.evening   && `저녁 ${w.evening}`,
+        ].filter(Boolean).join("  /  ");
+        const line2 = `최고 ${w.maxTemp}° / 최저 ${w.minTemp}° · 강수 ${w.rainProb}%💧`;
+        await sendToTokens(tokens, `📍 ${loc.name} 오늘 날씨 [테스트]`, `${line1}\n${line2}`);
+        results.push({ loc: loc.name, ok: true, line1, line2 });
+      } catch (e) {
+        results.push({ loc: loc.name, ok: false, error: e.message });
+      }
+    }
+    res.json({ ok: true, results });
   }
 );
 

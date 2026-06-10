@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Box, Typography, IconButton, Drawer, Stack, Button } from '@mui/material';
 import ChevronLeftIcon  from '@mui/icons-material/ChevronLeft';
@@ -7,7 +7,8 @@ import DateRangeIcon    from '@mui/icons-material/DateRange';
 import AddTaskIcon      from '@mui/icons-material/AddTask';
 import SwapHorizIcon    from '@mui/icons-material/SwapHoriz';
 import { db } from './firebase';
-import { collection, onSnapshot, doc, setDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, deleteDoc, query, where, addDoc, serverTimestamp } from 'firebase/firestore';
+import { UserContext } from './lib/UserContext';
 import { vibrate } from './touchEffects';
 
 const B = {
@@ -154,6 +155,7 @@ function ScheduleDayCell({ d, current, idx, today, schedule, isMultiSelected, on
 }
 
 export default function WorkScheduleCalendar({ onFlip }) {
+  const { currentUser } = useContext(UserContext);
   const today = useRef(() => {
     const d = new Date(); d.setHours(0, 0, 0, 0); return d;
   }).current();
@@ -220,6 +222,20 @@ export default function WorkScheduleCalendar({ onFlip }) {
       if (type === null) return deleteDoc(doc(db, 'workSchedules', docId));
       return setDoc(doc(db, 'workSchedules', docId), { date: iso, type, coupleId: COUPLE_ID });
     }));
+
+    if (type !== null && currentUser) {
+      const s = SCHEDULE_MAP[type];
+      const dateLabel = targets.length === 1
+        ? targets[0]
+        : `${targets.length}개 날짜`;
+      await addDoc(collection(db, 'notifications'), {
+        writer: currentUser,
+        type: 'schedule',
+        content: `${currentUser}가 근무 스케줄을 등록했어요! ${s.emoji} ${s.label} (${s.time}) · ${dateLabel}`,
+        createdAt: serverTimestamp(),
+        isRead: false,
+      });
+    }
 
     setMultiDates([]);
     setIsMultiSelect(false);

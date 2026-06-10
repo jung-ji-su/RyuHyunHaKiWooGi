@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Typography, Drawer } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { B, MENU_ITEMS, BOTTOM_NAV } from '../lib/constants';
 import { buri1, buri2, buriCouple, buriFire } from '../lib/buriAssets';
 import { createBuriPang, vibrate } from '../touchEffects';
+import { UserContext } from '../lib/UserContext';
 
 export default function BottomNav({ logout }) {
   const navigate  = useNavigate();
   const { pathname } = useLocation();
+  const { currentUser } = useContext(UserContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleTab = (path, e) => {
@@ -145,6 +147,23 @@ export default function BottomNav({ logout }) {
               🏠 홈으로 돌아가기
             </Typography>
           </Box>
+
+          {/* 관리자 메뉴 (지수만) */}
+          {currentUser === '지수' && (
+            <Box
+              onClick={() => { navigate('/admin'); setDrawerOpen(false); vibrate(15); }}
+              sx={{
+                mt: 1, py: 1, borderRadius: '14px',
+                bgcolor: '#33333311', border: '1.5px solid #33333322',
+                textAlign: 'center', cursor: 'pointer',
+                transition: 'transform 0.12s',
+                '&:active': { transform: 'scale(0.97)' },
+              }}>
+              <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.78rem', color: '#555', fontWeight: 600 }}>
+                ⚙️ 관리자 패널
+              </Typography>
+            </Box>
+          )}
         </Box>
 
         {/* 드로어 푸터 */}
@@ -169,13 +188,12 @@ export default function BottomNav({ logout }) {
 
       {/* ── 하단 탭 바 ── */}
       <Box sx={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 900,
         bgcolor: B.cream + 'f2', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
         borderTop: `1.5px solid ${B.pants}22`,
         display: 'flex', alignItems: 'center',
         boxShadow: `0 -4px 24px ${B.pants}14`,
-        animation: 'bottomNavIn 0.35s ease both',
         pb: 'env(safe-area-inset-bottom, 0px)',
+        flexShrink: 0,
       }}>
         {BOTTOM_NAV.map(({ emoji, name, path }) => {
           const active = path ? pathname === path : false;
@@ -229,8 +247,6 @@ export default function BottomNav({ logout }) {
         })}
       </Box>
 
-      {/* 하단 바 높이만큼 여백 */}
-      <Box sx={{ height: 64 }} />
     </>
   );
 }

@@ -45,6 +45,7 @@ const MiniGameHub       = lazy(() => import('./MiniGameHub'));
 const AccountBook       = lazy(() => import('./AccountBook'));
 const CoupleTamagotchi  = lazy(() => import('./CoupleTamagotchi'));
 const WorldCup          = lazy(() => import('./WorldCup'));
+const AdminPage         = lazy(() => import('./pages/AdminPage'));
 
 // ── 페이지 로딩 fallback ─────────────────────────────────────────
 function PageLoader() {
@@ -66,22 +67,34 @@ function Layout() {
   const { logout } = useContext(UserContext);
   const location = useLocation();
   return (
-    <>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, x: 16 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -8 }}
-          transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
-          <Outlet />
-        </motion.div>
-      </AnimatePresence>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100dvh' }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -8 }}
+            transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
+      </Box>
       <BottomNav logout={logout} />
-    </>
+    </Box>
   );
 }
+
+// ── 알림 타입 → 페이지 경로 매핑 (토스트 클릭 / iOS 딥링크) ─────
+const TOAST_ROUTES = {
+  diary: '/diary', comment: '/diary', like: '/diary',
+  schedule: '/schedule',
+  bucket: '/bucket', bucket_add: '/bucket',
+  letter: '/letter', letter_reply: '/letter',
+  thermo: '/thermo', hug: '/thermo', temp_diff: '/thermo',
+  coupon: '/coupons', coupon_used: '/coupons',
+};
 
 // ── 앱 내부 (BrowserRouter 안에서 실행) ──────────────────────────
 function AppInner() {
@@ -143,15 +156,18 @@ function AppInner() {
     return () => navigator.serviceWorker.removeEventListener('message', handler);
   }, [navigate]);
 
-  // 포그라운드 FCM 알림 → 기존 토스트로 표시
+  // iOS PWA: 알림 탭으로 앱이 열릴 때 __nav 쿼리 파라미터로 딥링크 처리
   useEffect(() => {
-    const handler = (e) => {
-      const notif = e.detail?.notification ?? {};
-      if (notif.body) setToastOpen(true);
-    };
-    window.addEventListener('fcm-foreground', handler);
-    return () => window.removeEventListener('fcm-foreground', handler);
-  }, [setToastOpen]);
+    const params = new URLSearchParams(window.location.search);
+    const pendingNav = params.get('__nav');
+    if (pendingNav) {
+      window.history.replaceState({}, '', window.location.pathname);
+      setTimeout(() => navigate(decodeURIComponent(pendingNav)), 0);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 포그라운드 FCM 알림 → Firestore onSnapshot이 이미 처리하므로 별도 처리 불필요
+  // (이 핸들러 제거: toastData 없이 setToastOpen(true)만 하면 빈 토스트가 표시될 수 있음)
 
   // localStorage 정리
   useEffect(() => {
@@ -169,7 +185,15 @@ function AppInner() {
   }, [notifDrawerOpen]);
 
   const handleUpdateConfirm = async () => {
-    try { await signOut(auth); window.location.reload(true); } catch { window.location.reload(true); }
+    try { await signOut(auth); } catch {}
+    // 브라우저 캐시 전체 삭제 후 강제 새로고침
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+    } catch {}
+    window.location.replace(window.location.pathname + '?_cb=' + Date.now());
   };
 
   if (loading)      return <><GlobalStyle /><LoadingScreen /></>;
@@ -275,10 +299,15 @@ function AppInner() {
       <Snackbar
         open={toastOpen} autoHideDuration={5000}
         onClose={() => setToastOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ mt: 1 }}>
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ mt: 1, cursor: TOAST_ROUTES[toastData?.type] ? 'pointer' : 'default' }}
+        onClick={() => {
+          const path = TOAST_ROUTES[toastData?.type];
+          if (path) { setToastOpen(false); navigate(path); }
+        }}>
         <Alert
           icon={<Box component="img" src={buriGirl} sx={{ width: 24, height: 24, objectFit: 'contain' }} />}
-          onClose={() => setToastOpen(false)}
+          onClose={(e) => { e.stopPropagation(); setToastOpen(false); }}
           sx={{
             width: '100%', bgcolor: B.accent, color: 'white', fontWeight: 'bold',
             fontFamily: "'Noto Sans KR',sans-serif", borderRadius: 3,
@@ -411,6 +440,14 @@ function AppInner() {
               </Suspense>
             </SubPage>
           } />
+
+          {currentUser === '지수' && (
+            <Route path="admin" element={
+              <Suspense fallback={<PageLoader />}>
+                <AdminPage />
+              </Suspense>
+            } />
+          )}
         </Route>
       </Routes>
     </UserContext.Provider>
