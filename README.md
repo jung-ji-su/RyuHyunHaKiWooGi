@@ -155,44 +155,6 @@ public/
 
 <br/>
 
-## ⚔️ 이상형 월드컵 (`/worldcup`)
-
-### 데이터 구조 (`src/worldcupData.js`)
-
-```js
-export const THEMES = [
-  {
-    id: 'food',
-    emoji: '🍔',
-    name: '음식',
-    description: '최고의 음식을 골라봐요!',
-    color: '#FF6B35',
-    items: [
-      { id: 'pizza', name: '피자', emoji: '🍕', image: '/assets/worldcup/food/pizza.jpg' },
-      // ... 총 32개
-    ],
-  },
-  // food · travel · activity · sport · drama · cafe — 테마 6개, 각 32개 아이템
-];
-```
-
-### 아이템 이미지 교체 방법
-현재 placehold.co 플레이스홀더 이미지 사용 중.  
-`worldcupData.js`에서 `image` 필드만 실제 에셋 경로로 교체:
-
-```js
-{ id: 'pizza', name: '피자', emoji: '🍕', image: '/assets/worldcup/food/pizza.jpg' }
-```
-
-### 게임 로직
-- 시작 전 대진 규모 선택 (16 / 32 / 64 / 128강)
-- `calcBracketSize()` — 데이터 수보다 큰 규모 자동 다운그레이드
-- 라운드 종료마다 전환 배너 오버레이 (`RoundBanner`)
-- 카드 선택 → 패배 카드 blur + shrink 애니메이션 → 다음 매치 자동 진행
-- 최종 우승자 강조 표시
-
-<br/>
-
 ## ⚡ 성능 최적화
 
 ### 번들 분할 (Vite manualChunks)
@@ -458,13 +420,11 @@ VITE_FIREBASE_VAPID_KEY=BHEbFiMK-uMvS9hIg...
 
 ## 💜 만든 이유
 
-"앱스토어에 없어도 괜찮아요 — 우리만 쓰면 되니까요."
-
 기존 커플 앱들의 광고, 데이터 수집, 불필요한 소셜 기능이 싫었습니다.  
 그래서 우리만을 위한 프라이빗 웹앱을 직접 만들었습니다.
 
 **01 프라이버시가 전부다**  
-두 사람만 접근 가능한 완전 폐쇄형 공간. 우리 기록은 우리만 봅니다.
+두 사람만 접근 가능한 완전 폐쇄형 공간. 기록은 우리만 봅니다.
 
 **02 감정을 데이터로 기록한다**  
 감정 온도계로 매일의 기분을 기록하고 주간/월간 트렌드를 자동 생성합니다.
