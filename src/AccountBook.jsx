@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db } from "./firebase.js";
 import {
-  collection, addDoc, getDocs, query, where, orderBy, deleteDoc, doc, 
+  collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc,
   updateDoc, serverTimestamp, setDoc, getDoc
 } from "firebase/firestore";
 import {
@@ -148,30 +148,24 @@ const AccountBook = ({ currentUser, opponentUser }) => {
     }
   };
 
-  // ── 거래 내역 로딩 ──────────────────────────────────
+  // ── 거래 내역 실시간 로딩 ─────────────────────────────
   useEffect(() => {
-    if (hasAccess) {
-      loadTransactions();
-    }
-  }, [selectedMonth, hasAccess]);
-
-  const loadTransactions = async () => {
-    const year = selectedMonth.getFullYear();
+    if (!hasAccess) return;
+    const year  = selectedMonth.getFullYear();
     const month = selectedMonth.getMonth();
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0);
-
+    const startDate = new Date(year, month, 1).toISOString().split("T")[0];
+    const endDate   = new Date(year, month + 1, 0).toISOString().split("T")[0];
     const q = query(
       collection(db, "accountBook"),
-      where("date", ">=", startDate.toISOString().split("T")[0]),
-      where("date", "<=", endDate.toISOString().split("T")[0]),
+      where("date", ">=", startDate),
+      where("date", "<=", endDate),
       orderBy("date", "desc")
     );
-
-    const snapshot = await getDocs(q);
-    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    setTransactions(data);
-  };
+    const unsub = onSnapshot(q, snap => {
+      setTransactions(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return () => unsub();
+  }, [selectedMonth, hasAccess]);
 
   // ── 접근 권한 설정 토글 ──────────────────────────────
   const togglePrivacy = async () => {
@@ -214,7 +208,6 @@ const AccountBook = ({ currentUser, opponentUser }) => {
     }
 
     resetForm();
-    loadTransactions();
   };
 
   const handleEdit = (transaction) => {
@@ -230,7 +223,6 @@ const AccountBook = ({ currentUser, opponentUser }) => {
   const handleDelete = async (id) => {
     if (window.confirm("정말 삭제하시겠어요?")) {
       await deleteDoc(doc(db, "accountBook", id));
-      loadTransactions();
     }
   };
 

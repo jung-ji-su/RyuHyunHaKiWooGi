@@ -150,7 +150,9 @@ const CoupleCalendar = ({ currentUser }) => {
       await addDoc(collection(db, 'notifications'), {
         writer: currentUser, type: 'schedule',
         count: targets.length, firstDate: targets[0],
-        content: `${currentUser}가 일정을 ${targets.length}개 등록했어요! 📅`,
+        content: targets.length === 1
+          ? `${currentUser}가 ${new Date(targets[0]).getMonth()+1}월 ${new Date(targets[0]).getDate()}일 일정을 등록했어요! 📅`
+          : `${currentUser}가 ${new Date(targets[0]).getMonth()+1}월 ${new Date(targets[0]).getDate()}일 외 ${targets.length-1}개 일정을 등록했어요! 📅`,
         createdAt: serverTimestamp(), isRead: false,
       });
       resetForm();

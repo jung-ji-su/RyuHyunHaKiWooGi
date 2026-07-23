@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
 import {
   collection, query, onSnapshot, addDoc, updateDoc,
-  doc, serverTimestamp, orderBy,
+  doc, serverTimestamp, orderBy, limit,
 } from "firebase/firestore";
 import confetti from "canvas-confetti";
 import { Box, Typography, Stack, IconButton, TextField, Button,
@@ -45,7 +45,8 @@ const OPEN_PRESETS = [
 
 function getMidnight() {
   const d = new Date();
-  d.setHours(24, 0, 0, 0);
+  d.setDate(d.getDate() + 1);
+  d.setHours(0, 0, 0, 0);
   return d;
 }
 function getTomorrow9() {
@@ -228,8 +229,8 @@ const LetterCard = ({ letter, currentUser }) => {
             )}
             {isOpened && (
               <Typography sx={{ fontSize: "0.72rem", color: B.pants + "88", mt: 0.4 }}>
-                {letter.openedAt
-                  ? new Date(letter.openAt?.toMillis()).toLocaleDateString("ko-KR")
+                {letter.openAt?.toDate
+                  ? letter.openAt.toDate().toLocaleDateString("ko-KR")
                   : "열람됨"} · {isMyLetter ? "내가 보낸 편지" : "받은 편지"}
               </Typography>
             )}
@@ -340,7 +341,7 @@ const LetterCard = ({ letter, currentUser }) => {
                   placeholder="따뜻한 답장 한마디 💌"
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleReply()}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) handleReply(); }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 5, bgcolor: "white",
@@ -639,15 +640,13 @@ const SecretLetter = ({ currentUser }) => {
   const [showWrite, setShowWrite] = useState(false);
 
   useEffect(() => {
-    const q = query(collection(db, "letters"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "letters"), orderBy("createdAt", "desc"), limit(100));
     const unsub = onSnapshot(q, (snap) => {
       setLetters(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     });
     return () => unsub();
   }, []);
 
-  // 내가 받은 편지 + 내가 보낸 편지
-  const myLetters = letters.filter(l => l.from === currentUser || l.from !== currentUser);
   const unreadCount = letters.filter(l => l.from !== currentUser && !l.isOpened).length;
 
   return (

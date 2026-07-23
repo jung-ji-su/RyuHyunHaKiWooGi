@@ -9,8 +9,6 @@ import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { B } from '../lib/constants';
 
-const TEST_PUSH_URL = 'https://us-central1-ryuhyunhakiwoogi.cloudfunctions.net/sendTestPush';
-
 const isStandalone = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
   window.navigator.standalone === true;
@@ -22,9 +20,7 @@ export default function NotifButton() {
   const [perm,        setPerm]      = useState('default');
   const [hasToken,    setHasToken]  = useState(false);
   const [loading,     setLoading]   = useState(false);
-  const [testLoading, setTestLoading] = useState(false);
-  const [errMsg,      setErrMsg]    = useState('');
-  const [testMsg,     setTestMsg]   = useState('');
+  const [errMsg,   setErrMsg]   = useState('');
 
   useEffect(() => {
     if (!('Notification' in window)) { setPerm('unsupported'); return; }
@@ -37,23 +33,9 @@ export default function NotifButton() {
     }
   }, [currentUser]);
 
-  const handleTest = async () => {
-    if (!currentUser) return;
-    setTestLoading(true);
-    setTestMsg('');
-    try {
-      const res = await fetch(`${TEST_PUSH_URL}?user=${encodeURIComponent(currentUser)}`);
-      const json = await res.json();
-      setTestMsg(json.ok ? '✅ 테스트 푸시 전송!' : `❌ ${json.error}`);
-    } catch (e) {
-      setTestMsg(`❌ ${e.message}`);
-    } finally {
-      setTestLoading(false);
-    }
-  };
-
   if (!isStandalone()) return null;
   if (perm === 'unsupported') return null;
+  if (perm === 'granted' && hasToken) return null;
 
   const handleClick = async () => {
     if (perm === 'denied') return;
@@ -69,36 +51,6 @@ export default function NotifButton() {
       setLoading(false);
     }
   };
-
-  // 알림 등록 완료 상태 → 테스트 버튼만 표시
-  if (perm === 'granted' && hasToken) {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
-        <Button
-          onClick={handleTest}
-          disabled={testLoading}
-          size="small"
-          sx={{
-            bgcolor: '#fff3e0', color: '#e65100',
-            borderRadius: 3, px: 1.5, py: 0.6,
-            fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem',
-            border: '1px solid #ffcc8033',
-            '&:hover': { bgcolor: '#ffe0b2' },
-          }}
-        >
-          {testLoading ? '전송 중...' : '🔔 테스트 알림 보내기'}
-        </Button>
-        {testMsg !== '' && (
-          <Typography sx={{
-            fontSize: '0.7rem', color: testMsg.startsWith('✅') ? '#2e7d32' : '#cc0000',
-            fontFamily: "'Noto Sans KR',sans-serif",
-          }}>
-            {testMsg}
-          </Typography>
-        )}
-      </Box>
-    );
-  }
 
   const label = loading
     ? '등록 중...'

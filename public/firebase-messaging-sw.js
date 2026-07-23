@@ -1,6 +1,3 @@
-// Firebase CDN 없이 순수 Push API로 처리
-// Firebase getToken()은 SW에 Firebase SDK가 없어도 동작함
-
 self.addEventListener('push', (event) => {
   if (!event.data) return;
 
@@ -9,8 +6,9 @@ self.addEventListener('push', (event) => {
   catch { payload = {}; }
 
   const notif = payload.notification ?? {};
-  const title   = notif.title ?? '부리부리 🐷';
-  const body    = notif.body  ?? '새로운 알림이 있어요!';
+  const title  = notif.title ?? '부리부리 🐷';
+  const body   = notif.body  ?? '새로운 알림이 있어요!';
+  const link   = payload.fcmOptions?.link ?? '/';
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -18,7 +16,7 @@ self.addEventListener('push', (event) => {
       icon:    '/icon.svg',
       badge:   '/icon.svg',
       vibrate: [200, 100, 200],
-      data:    payload.data ?? {},
+      data:    { link, ...(payload.data ?? {}) },
       tag:     'buri-push',
     })
   );
@@ -26,8 +24,27 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  const link = event.notification.data?.link ?? '/';
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
-      .then(wins => wins.length > 0 ? wins[0].focus() : clients.openWindow('/'))
+      .then(wins => {
+        const existing = wins.find(w => w.url.startsWith(self.location.origin));
+        if (existing) {
+          existing.focus();
+          // iOS에서 navigate()가 미지원 → postMessage로 앱에 전달
+          existing.postMessage({ type: 'NAVIGATE', url: link });
+          return;
+        }
+        // iOS PWA: sub-path openWindow가 무시될 수 있어 쿼리 파라미터로 경로 전달
+        try {
+          const path = new URL(link).pathname;
+          return clients.openWindow(path && path !== '/'
+            ? `/?__nav=${encodeURIComponent(path)}`
+            : '/');
+        } catch {
+          return clients.openWindow('/');
+        }
+      })
   );
 });

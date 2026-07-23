@@ -17,14 +17,14 @@ export function useAuth() {
   const login = async (role) => {
     if (role === "지수") {
       const pw = window.prompt("왜 내꺼로 로그인 하세여???");
-      if (pw !== "4579") {
+      if (pw !== import.meta.env.VITE_PW_JISU) {
         alert("[WARNING]👹👹👹류현하 침입 시도 감지!!!👹👹👹");
         return;
       }
     }
     if (role === "현하") {
       const pw = window.prompt("🔒 현하님 비밀번호를 입력하세요");
-      if (pw !== "9999") {
+      if (pw !== import.meta.env.VITE_PW_HYUNHA) {
         alert("❌ 비밀번호가 틀렸습니다!");
         return;
       }
