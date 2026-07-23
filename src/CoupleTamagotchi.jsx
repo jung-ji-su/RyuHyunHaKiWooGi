@@ -8,9 +8,11 @@ import { B } from './lib/constants';
 const COUPLE_ID = 'jisu_hyunha';
 const USERS = ['지수', '현하'];
 
-// [신규] 단계별 사진 경로. dist/assets 폴더에 넣어둔 실제 파일명으로 매핑.
+// [신규] 단계별 사진 경로. 실제 사진 파일은 public/assets 폴더에 넣어두세요.
+// (dist 폴더는 빌드 결과물이라 git에 안 잡히고 빌드할 때마다 통째로 새로 생성되니
+//  절대 dist에 직접 넣지 마세요. public/assets에 넣으면 빌드 시 dist/assets로 자동 복사됩니다.)
 // 파일이 없거나 로드에 실패하면 자동으로 기존 이모지로 대체되니 안전합니다.
-const PET_IMAGE_BASE = 'dist/assets/';
+const PET_IMAGE_BASE = '/assets/';
 
 const STAGES = [
   { name: '알',       emoji: '🥚', image: null,                          color: '#E8B800', btnLabel: '품어주기',     btnEmoji: '🤗', particles: ['❤️','🌟','✨','💛'] },
