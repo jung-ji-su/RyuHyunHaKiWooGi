@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useId } from 'react';
 import { Box, Typography, Stack, Paper, Button, Chip } from '@mui/material';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { db } from './firebase';
@@ -30,6 +30,19 @@ const STAGES = [
 const STAGE_XP_MULT = [4, 14, 33, 65, 98];
 const xpForLevel = (stage, lv) => lv * (STAGE_XP_MULT[stage] ?? 100);
 
+// [신규] 진화 단계+레벨+XP를 하나의 누적 수치로 환산 (미니 XP 히스토리 그래프용).
+// data.xp는 레벨업/진화마다 0으로 리셋되기 때문에, 그래프가 계속 우상향하도록
+// 지금까지 통과한 모든 단계/레벨의 XP를 합산한 값을 사용한다.
+function totalProgressXP(data) {
+  let total = 0;
+  for (let s = 0; s < data.stage; s++) {
+    for (let l = 1; l <= 10; l++) total += xpForLevel(s, l);
+  }
+  for (let l = 1; l < data.level; l++) total += xpForLevel(data.stage, l);
+  total += data.xp;
+  return total;
+}
+
 const streakMult = (s) => s >= 15 ? 2.5 : s >= 8 ? 2.0 : s >= 4 ? 1.5 : 1.0;
 
 // ── 계란 금 정의 (SVG path, viewBox 0 0 48 48) ───────────────────────
@@ -46,7 +59,7 @@ function EggWithCracks({ level, isChubby, image }) {
   const numCracks   = Math.max(0, Math.floor((level - 1) / 2)); // Lv1-2:0, Lv3-4:1, ...Lv9-10:4
   const almostHatch = level >= 9;
   const isMax       = level === 10;
-  const sz          = isChubby ? 54 : 48;
+  const sz          = isChubby ? 74 : 64; // [수정] 카드 여백을 줄이기 위해 펫 크기 확대 (기존 48/54 → 64/74)
   const [imgFailed, setImgFailed] = useState(false); // [신규] 사진 로드 실패 시 이모지로 자동 대체
 
   return (
@@ -134,6 +147,7 @@ function makeDefault() {
     todaySnack: 0, lastSnackDate: null,   // [수정] 간식 카운트를 날짜 기준으로 리셋하기 위한 필드
     lastCheerSentDate: null,               // [신규] 파트너에게 응원을 보낸 날짜 (하루 1회 제한용)
     isDead: false,                         // [신규] 5일 이상 미접속 시 사망 상태
+    xpHistory: [],                         // [신규] 최근 방문일별 누적 진행치 기록 (미니 그래프용, 최대 14개)
   };
 }
 
@@ -161,6 +175,7 @@ function evaluateOnLoad(raw, today) {
   if (d.lastSnackDate === undefined) d.lastSnackDate = null;
   if (d.lastCheerSentDate === undefined) d.lastCheerSentDate = null;
   if (d.isDead === undefined) d.isDead = false;
+  if (!Array.isArray(d.xpHistory)) d.xpHistory = [];
 
   // [버그 수정] 기존엔 lastEvalDate(누군가 마지막으로 평가를 실행한 날짜)를 기준으로 삼아서,
   // 커플 중 한쪽만 매일 접속해도 두 사람의 lastEvalDate가 함께 갱신되어 버렸음.
@@ -246,6 +261,69 @@ function MiniStat({ emoji, label, value, color }) {
           style={{ height: '100%', width: '100%', transformOrigin: 'left', background: color, borderRadius: 2 }}
         />
       </Box>
+    </Box>
+  );
+}
+
+// ── [신규] 미니 XP 히스토리 그래프 (최근 방문 추이) ──────────────────────
+function XPHistorySparkline({ history, color }) {
+  const gradId = useId().replace(/[:]/g, '');
+  const recent = (history || []).slice(-7);
+
+  if (recent.length < 2) {
+    return (
+      <Box sx={{ mb: '8px', p: '6px 8px', borderRadius: '8px', bgcolor: color+'0c', border: `1px dashed ${color}33` }}>
+        <Typography sx={{ fontSize: '0.5rem', color: B.dark+'66', fontFamily: "'Noto Sans KR'" }}>
+          📈 며칠 더 기록이 쌓이면 성장 그래프가 보여요
+        </Typography>
+      </Box>
+    );
+  }
+
+  const W = 130, H = 34, PAD = 3;
+  const values = recent.map(r => r.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = (max - min) || 1;
+  const stepX = (W - PAD * 2) / (recent.length - 1);
+
+  const points = recent.map((r, i) => ({
+    x: PAD + i * stepX,
+    y: H - PAD - ((r.value - min) / range) * (H - PAD * 2),
+  }));
+
+  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${H} L ${points[0].x.toFixed(1)} ${H} Z`;
+
+  const delta = values[values.length - 1] - values[0];
+  const trendUp = delta > 0;
+
+  return (
+    <Box sx={{ mb: '8px', p: '6px 8px', borderRadius: '8px', bgcolor: color+'0a', border: `1px solid ${color}22` }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: '3px' }}>
+        <Typography sx={{ fontSize: '0.5rem', color: B.dark+'77', fontFamily: "'Noto Sans KR'", fontWeight: 700 }}>
+          📈 최근 성장 추이
+        </Typography>
+        <Typography sx={{ fontSize: '0.5rem', color: trendUp ? '#43A047' : B.dark+'55', fontFamily: "'Jua'" }}>
+          {trendUp ? '▲' : delta < 0 ? '▼' : '━'} {Math.abs(Math.round(delta))} XP
+        </Typography>
+      </Stack>
+      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.35" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d={areaPath} fill={`url(#${gradId})`} stroke="none" />
+        <motion.path
+          d={linePath} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, ease: 'easeOut' }}
+        />
+        {points.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r={i === points.length - 1 ? 2.4 : 1.4} fill={color} />
+        ))}
+      </svg>
     </Box>
   );
 }
@@ -340,29 +418,73 @@ function EvolutionCelebration({ stageColor, isLegendary }) {
 }
 
 // ── [신규] 단계별 상시 오라 효과 — 진화할수록 점점 화려해짐 ────────────────
-function PetAura({ stageIndex, color }) {
+// ── [신규] 단계별 상시 오라 효과 — 진화할수록 효과 개수/종류가 늘어남 ────────
+function PetAura({ stageIndex, color, level, nextColor }) {
   if (stageIndex < 1) return null; // 알 단계는 EggWithCracks의 자체 크랙/Lv10 글로우로 처리됨
 
-  const tier          = Math.min(stageIndex, 5); // 1(아기)~5(전설)
-  const isLegendary   = stageIndex === 5;
-  const hasRays       = stageIndex >= 4;          // 왕햄찌 이상
-  const ringOpacity   = [0, 0.18, 0.30, 0.42, 0.60, 0.88][tier];
-  const ringScale     = [0, 1.15, 1.22, 1.30, 1.42, 1.6][tier];
-  const sparkleCount  = [0, 0, 2, 3, 5, 7][tier];
-  const sparkleEmojis = isLegendary ? ['✨','🌟','💫','⭐'] : hasRays ? ['✨','👑'] : ['✨','💫'];
+  const tier        = Math.min(stageIndex, 5); // 1(아기)~5(전설)
+  const isLegendary  = stageIndex === 5;
+  const hasRays      = stageIndex >= 4;          // 왕햄찌 이상: 회전 광선
+  const hasRing      = tier >= 2;                // [신규] 햄찌 이상: 회전 테두리 링
+  const hasBurst     = tier >= 3;                // [신규] 통통햄찌 이상: 주기적 버스트 파티클
+
+  // [수정] 저단계(아기~햄찌)가 너무 안 보이던 문제 → 기본치 전체 상향
+  const ringOpacity  = [0, 0.55, 0.65, 0.72, 0.85, 0.98][tier];
+  const ringScale    = [0, 1.25, 1.32, 1.4, 1.5, 1.68][tier];
+  const sparkleCount = [0, 3, 4, 5, 6, 8][tier];
+  const orbitRadius  = [0, 34, 40, 46, 54, 62][tier];
+  const auraInset    = [0, -16, -20, -24, -30, -38][tier];
+  const burstCount   = [0, 0, 0, 3, 4, 6][tier];
+
+  const sparkleEmojis = isLegendary
+    ? ['✨','🌟','💫','⭐']
+    : hasRays ? ['✨','👑']
+    : tier >= 2 ? ['✨','💫','⭐']
+    : ['✨','💫'];
+
+  // [F] 다음 진화가 임박(Lv9~10)하면 다음 단계 색을 살짝 섞어 예고
+  const nearEvolution = !isLegendary && level >= 9 && !!nextColor;
 
   const ringBg = isLegendary
     ? 'conic-gradient(from 0deg, #FF6B6B, #FFD93D, #6BCB77, #4D96FF, #9B59B6, #FF6BAF, #FF6B6B)'
-    : `radial-gradient(circle, ${color}${hasRays ? 'cc' : '88'} 0%, transparent 70%)`;
+    : nearEvolution
+      ? `radial-gradient(circle, ${nextColor}ee 0%, ${color}99 55%, transparent 75%)`
+      : `radial-gradient(circle, ${color}${hasRays ? 'ee' : 'dd'} 0%, ${color}66 45%, transparent 70%)`;
 
   return (
-    <Box sx={{ position: 'absolute', inset: -18, zIndex: 0, pointerEvents: 'none' }}>
+    <Box sx={{ position: 'absolute', inset: auraInset, zIndex: 0, pointerEvents: 'none' }}>
       {/* 은은하게 숨쉬듯 커졌다 작아지는 배경 글로우 (모든 단계 공통, 단계별로 강도만 다름) */}
       <motion.div
-        animate={{ scale: [1, ringScale, 1], opacity: [ringOpacity * 0.55, ringOpacity, ringOpacity * 0.55] }}
+        animate={{ scale: [1, ringScale, 1], opacity: [ringOpacity * 0.65, ringOpacity, ringOpacity * 0.65] }}
         transition={{ duration: isLegendary ? 2.1 : 2.8, repeat: Infinity, ease: 'easeInOut' }}
-        style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: ringBg, filter: 'blur(10px)' }}
+        style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: ringBg, filter: 'blur(8px)' }}
       />
+
+      {/* [F] 진화 임박 시 다음 단계 색으로 은은하게 맥동하는 프리뷰 글로우 */}
+      {nearEvolution && (
+        <motion.div
+          animate={{ opacity: [0.15, 0.4, 0.15] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            background: `radial-gradient(circle, ${nextColor}88 0%, transparent 65%)`,
+            filter: 'blur(6px)',
+          }}
+        />
+      )}
+
+      {/* [신규] 햄찌 이상: 반대 방향으로 천천히 도는 테두리 링 */}
+      {hasRing && (
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: isLegendary ? 7 : 12, repeat: Infinity, ease: 'linear' }}
+          style={{
+            position: 'absolute', inset: isLegendary ? 6 : 10, borderRadius: '50%',
+            border: `${isLegendary ? 2 : 1.5}px dashed ${isLegendary ? '#FFD700aa' : color + '88'}`,
+            opacity: ringOpacity,
+          }}
+        />
+      )}
 
       {/* 왕햄찌 이상: 천천히 회전하는 광선 */}
       {hasRays && (
@@ -378,6 +500,27 @@ function PetAura({ stageIndex, color }) {
         />
       )}
 
+      {/* [신규] 통통햄찌 이상: 주기적으로 터지는 작은 버스트 파티클 */}
+      {hasBurst && Array.from({ length: burstCount }).map((_, i) => {
+        const angle = (360 / burstCount) * i;
+        const rad   = (angle * Math.PI) / 180;
+        const bx = 50 + Math.cos(rad) * orbitRadius * 0.7;
+        const by = 50 + Math.sin(rad) * orbitRadius * 0.7;
+        return (
+          <motion.div key={`burst-${i}`}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: [0, 1.3, 0], opacity: [0, 0.9, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.4, delay: i * 0.35, ease: 'easeOut' }}
+            style={{
+              position: 'absolute', left: `${bx}%`, top: `${by}%`, transform: 'translate(-50%,-50%)',
+              width: isLegendary ? 10 : 7, height: isLegendary ? 10 : 7, borderRadius: '50%',
+              background: isLegendary ? '#FFD700' : color,
+              boxShadow: `0 0 6px 2px ${isLegendary ? '#FFD700' : color}`,
+            }}
+          />
+        );
+      })}
+
       {/* 궤도를 도는 반짝이 파티클 — 단계가 높을수록 개수 많고 빠르게 회전 */}
       {sparkleCount > 0 && (
         <motion.div
@@ -386,18 +529,22 @@ function PetAura({ stageIndex, color }) {
           style={{ position: 'absolute', inset: 0 }}
         >
           {Array.from({ length: sparkleCount }).map((_, i) => {
-            const angle  = (360 / sparkleCount) * i;
-            const rad    = (angle * Math.PI) / 180;
-            const radius = 34;
-            const x = 50 + Math.cos(rad) * radius;
-            const y = 50 + Math.sin(rad) * radius;
+            const angle = (360 / sparkleCount) * i;
+            const rad   = (angle * Math.PI) / 180;
+            const x = 50 + Math.cos(rad) * orbitRadius;
+            const y = 50 + Math.sin(rad) * orbitRadius;
             return (
-              <Box key={i} component="span" sx={{
-                position: 'absolute', left: `${x}%`, top: `${y}%`, transform: 'translate(-50%,-50%)',
-                fontSize: isLegendary ? '13px' : '10px', lineHeight: 1,
-              }}>
+              <motion.span
+                key={i}
+                animate={{ scale: [0.7, 1.3, 0.7], opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.1 + (i % 3) * 0.3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
+                style={{
+                  position: 'absolute', left: `${x}%`, top: `${y}%`, transform: 'translate(-50%,-50%)',
+                  fontSize: isLegendary ? '13px' : '10px', lineHeight: 1,
+                }}
+              >
                 {sparkleEmojis[i % sparkleEmojis.length]}
-              </Box>
+              </motion.span>
             );
           })}
         </motion.div>
@@ -405,7 +552,6 @@ function PetAura({ stageIndex, color }) {
     </Box>
   );
 }
-
 // ── PetCard ───────────────────────────────────────────────────────────
 function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUser, onResetUser }) {
   const stage = STAGES[Math.min(data.stage, STAGES.length-1)];
@@ -463,7 +609,22 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {/* 펫 이모지 */}
       <Box onClick={isMe ? handleInteract : undefined}
         sx={{ position: 'relative', display: 'inline-block', cursor: isMe ? 'pointer' : 'default', mb: '4px' }}>
-        {!isDead && <PetAura stageIndex={data.stage} color={stage.color} />}
+          {/* [신규] 이펙트 대비를 위한 국소 다크 스포트라이트 — 펫 아이콘 뒤에만 */}
+          {!isDead && data.stage >= 1 && (
+            <Box sx={{
+              position: 'absolute', inset: -34, zIndex: -1, borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(10,8,20,0.55) 0%, rgba(10,8,20,0.25) 55%, transparent 75%)',
+              pointerEvents: 'none',
+            }} />
+          )}
+          {!isDead && (
+            <PetAura
+              stageIndex={data.stage}
+              color={stage.color}
+              level={data.level}
+              nextColor={STAGES[data.stage + 1]?.color}
+            />
+          )}
         <AnimatePresence>
           {particles.map(p => <FloatingParticle key={p.id} {...p} />)}
         </AnimatePresence>
@@ -473,7 +634,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           style={{ lineHeight: 1, userSelect: 'none', display: 'inline-block', position: 'relative', zIndex: 1 }}
         >
           {data.health <= 0
-            ? <Box component="span" sx={{ fontSize: '48px' }}>💀</Box>
+            ? <Box component="span" sx={{ fontSize: '64px' }}>💀</Box>
             : data.stage === 0
               ? <EggWithCracks level={data.level} isChubby={data.weight >= 70} image={stage.image} />
               : (stage.image && !petImgFailed
@@ -483,12 +644,12 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
                       alt={stage.name}
                       onError={() => setPetImgFailed(true)}
                       sx={{
-                        width: data.weight >= 70 ? 54 : 48,
-                        height: data.weight >= 70 ? 54 : 48,
+                        width: data.weight >= 70 ? 74 : 64,
+                        height: data.weight >= 70 ? 74 : 64,
                         objectFit: 'contain', display: 'block', userSelect: 'none',
                       }}
                     />
-                  : <Box component="span" sx={{ fontSize: data.weight >= 70 ? '54px' : '48px' }}>{stage.emoji}</Box>
+                  : <Box component="span" sx={{ fontSize: data.weight >= 70 ? '74px' : '64px' }}>{stage.emoji}</Box>
                 )
           }
         </motion.div>
@@ -544,6 +705,9 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       }}>
         🔥 {data.streak}일 연속{mult > 1 ? ` ×${mult}` : ''}
       </Typography>
+
+      {/* [신규] 미니 XP 히스토리 그래프 — 여백을 채우고 성장 추이를 보여줌 */}
+      <XPHistorySparkline history={data.xpHistory} color={stage.color} />
 
       {/* [신규] 사망 안내 문구 (5일 이상 미접속) */}
       {isDead && (
@@ -741,6 +905,11 @@ export default function CoupleTamagotchi({ currentUser }) {
           updated = applyXp(updated, 10);
           if (updated._evolved && updated.stage > prevStage) celebrateEvolution(updated.stage);
           delete updated._evolved;
+
+          // [신규] 오늘 방문 시점의 누적 진행치를 히스토리에 기록 (최근 14개만 유지, 그래프는 최근 7개만 표시)
+          const progressValue = totalProgressXP(updated);
+          updated = { ...updated, xpHistory: [...(updated.xpHistory || []), { date: today, value: progressValue }].slice(-14) };
+
           evaluated[currentUser] = updated;
         }
 
