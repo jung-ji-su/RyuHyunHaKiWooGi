@@ -58,7 +58,7 @@ const sendNotification = async (currentUser, diaryId) => {
 };
 
 const compressImage = (file, maxWidth = 1200, quality = 0.82) =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = ({ target: { result } }) => {
       const img = new Image();
@@ -73,12 +73,17 @@ const compressImage = (file, maxWidth = 1200, quality = 0.82) =>
         canvas.height = height;
         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
         canvas.toBlob(
-          (blob) => resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })),
+          (blob) => {
+            if (!blob) { reject(new Error('이미지 압축 실패')); return; }
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+          },
           'image/jpeg', quality
         );
       };
+      img.onerror = () => reject(new Error('이미지를 불러오지 못했어요'));
       img.src = result;
     };
+    reader.onerror = () => reject(new Error('파일을 읽지 못했어요'));
     reader.readAsDataURL(file);
   });
 
@@ -94,11 +99,16 @@ const DiaryWrite = ({ currentUser }) => {
   const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
-    const compressed = await compressImage(selectedFile);
-    setFile(compressed);
-    const reader = new FileReader();
-    reader.onloadend = () => setPreview(reader.result);
-    reader.readAsDataURL(compressed);
+    try {
+      const compressed = await compressImage(selectedFile);
+      setFile(compressed);
+      const reader = new FileReader();
+      reader.onloadend = () => setPreview(reader.result);
+      reader.readAsDataURL(compressed);
+    } catch (e) {
+      console.error("사진 처리 실패:", e);
+      alert("사진을 처리하지 못했어요. 다른 사진을 선택해 주세요.");
+    }
   };
 
   const handleCancelFile = () => { setFile(null); setPreview(null); };

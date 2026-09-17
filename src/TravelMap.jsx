@@ -128,7 +128,7 @@ const kakaoSearchPlaces = (keyword) =>
     });
 
 // ── 검색 바 ─────────────────────────────────────────────────────
-const SearchBar = ({ onSelect, onMyLocation, kakaoReady }) => {
+const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
     const [keyword, setKeyword] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -168,16 +168,19 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady }) => {
                     value={keyword}
                     onChange={handleChange}
                     onFocus={() => results.length > 0 && setShowList(true)}
-                    placeholder="지역 + 상호명 으로 검색하세소😍"
+                    placeholder={kakaoFailed ? "검색을 불러오지 못했어요" : "지역 + 상호명 으로 검색하세소😍"}
+                    disabled={kakaoFailed}
                     size="small" fullWidth
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                {!kakaoReady
-                                    ? <CircularProgress size={14} sx={{ color: B.pants + "66" }} />
-                                    : loading
-                                        ? <CircularProgress size={14} sx={{ color: B.pants }} />
-                                        : <SearchIcon sx={{ fontSize: 18, color: B.pants + "88" }} />}
+                                {kakaoFailed
+                                    ? <SearchIcon sx={{ fontSize: 18, color: B.dark + "33" }} />
+                                    : !kakaoReady
+                                        ? <CircularProgress size={14} sx={{ color: B.pants + "66" }} />
+                                        : loading
+                                            ? <CircularProgress size={14} sx={{ color: B.pants }} />
+                                            : <SearchIcon sx={{ fontSize: 18, color: B.pants + "88" }} />}
                             </InputAdornment>
                         ),
                         endAdornment: keyword && (
@@ -420,6 +423,7 @@ const TravelMap = ({ currentUser }) => {
     const [pins, setPins] = useState([]);
     const [leafletLoaded, setLeafletLoaded] = useState(false);
     const [kakaoReady, setKakaoReady] = useState(false);
+    const [kakaoFailed, setKakaoFailed] = useState(false); // [신규] SDK 로드 실패 시 무한 스피너 대신 실패 표시
     const [addDialog, setAddDialog] = useState({ open: false, latlng: null, placeName: "" });
     const [detailDialog, setDetailDialog] = useState({ open: false, pin: null });
     const [view, setView] = useState("map");
@@ -429,7 +433,7 @@ const TravelMap = ({ currentUser }) => {
     // Leaflet + 카카오 SDK 동시 로드
     useEffect(() => {
         loadLeaflet().then(() => setLeafletLoaded(true));
-        loadKakaoSdk().then(() => setKakaoReady(true)).catch(() => { });
+        loadKakaoSdk().then(() => setKakaoReady(true)).catch(() => setKakaoFailed(true));
     }, []);
 
     // Firestore 핀 리스너
@@ -579,7 +583,7 @@ const TravelMap = ({ currentUser }) => {
 
             {/* 검색 바 */}
             <Box mb={1.5}>
-                <SearchBar onSelect={handleSearchSelect} onMyLocation={handleMyLocation} kakaoReady={kakaoReady} />
+                <SearchBar onSelect={handleSearchSelect} onMyLocation={handleMyLocation} kakaoReady={kakaoReady} kakaoFailed={kakaoFailed} />
             </Box>
 
             {/* 카테고리 필터 */}

@@ -389,6 +389,8 @@ export default function CharacterPet({ currentUser }) {
   const [allData, setAllData] = useState(null);
   const [todayCheckin, setTodayCheckin] = useState({ checkedIn: [] });
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false); // [신규] 초기 로드 실패 시 무한 로딩 대신 재시도 UI 표시
+  const [retryKey, setRetryKey] = useState(0);        // [신규] 값 변경 시 아래 useEffect를 재실행해 재시도
   const [jiltaSent, setJiltaSent] = useState(false);
 
   // 말풍선 관리
@@ -404,6 +406,8 @@ export default function CharacterPet({ currentUser }) {
 
   useEffect(() => {
     const init = async () => {
+      setLoading(true);
+      setLoadError(false);
       try {
         const [charSnap, configSnap] = await Promise.all([
           getDoc(doc(db, 'couple_character', COUPLE_ID)),
@@ -432,12 +436,13 @@ export default function CharacterPet({ currentUser }) {
         setTodayCheckin(checkinSnap.exists() ? checkinSnap.data() : { checkedIn: [] });
       } catch (e) {
         console.error('CharacterPet 초기화 오류:', e);
+        setLoadError(true);
       } finally {
         setLoading(false);
       }
     };
     init();
-  }, []);
+  }, [retryKey]);
 
   const saveBubbles = async (list) => {
     await setDoc(configRef, { speechBubbles: list }, { merge: true });
@@ -473,6 +478,18 @@ export default function CharacterPet({ currentUser }) {
       console.error('질타 전송 실패:', e);
     }
   };
+
+  if (loadError && !allData) {
+    return (
+      <Box sx={{ textAlign: 'center', py: 3 }}>
+        <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>😿 불러오지 못했어요</Typography>
+        <Button size="small" onClick={() => setRetryKey(k => k + 1)}
+          sx={{ mt: 1, fontFamily: "'Noto Sans KR'", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
+          다시 시도
+        </Button>
+      </Box>
+    );
+  }
 
   if (loading || !allData) {
     return (

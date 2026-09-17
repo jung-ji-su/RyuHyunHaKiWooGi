@@ -20,7 +20,7 @@ export default function SubPage({ title, icon, children }) {
         <IconButton
           onPointerDown={() => vibrate(15)}
           onClick={() => setTimeout(() => navigate(-1), 50)}
-          sx={{ color: B.pants, p: 0.5, '&:active': { transform: 'scale(0.88)' } }}>
+          sx={{ color: B.pants, p: 1.25, minWidth: 44, minHeight: 44, '&:active': { transform: 'scale(0.88)' } }}>
           <ChevronLeftIcon />
         </IconButton>
         <Typography sx={{

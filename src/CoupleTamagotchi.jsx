@@ -553,7 +553,7 @@ function PetAura({ stageIndex, color, level, nextColor }) {
   );
 }
 // ── PetCard ───────────────────────────────────────────────────────────
-function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUser, onResetUser }) {
+function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUser, onResetUser, onReviveUser }) {
   const stage = STAGES[Math.min(data.stage, STAGES.length-1)];
   const [particles, setParticles] = useState([]);
   const [bouncing, setBouncing]   = useState(false);
@@ -713,9 +713,24 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {isDead && (
         <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000008', border: `1px dashed ${B.dark}33`, mb: '8px' }}>
           <Typography sx={{ fontSize: '0.56rem', color: B.dark+'99', fontFamily: "'Noto Sans KR'", fontWeight: 700, lineHeight: 1.5 }}>
-            💀 5일 동안 돌봄을 받지 못해 떠났어요.{isMe ? ' 아래 버튼으로 다시 알부터 시작할 수 있어요.' : ''}
+            💀 5일 동안 돌봄을 받지 못해 떠났어요.{isMe ? ' 아래 버튼으로 다시 살릴 수 있어요.' : ''}
           </Typography>
         </Box>
+      )}
+
+      {/* [신규] 되살리기 — 알로 초기화하지 않고 죽은 시점의 stage Lv.1로 부활 */}
+      {isDead && isMe && (
+        <Button size="small" onClick={() => onReviveUser(user)}
+          sx={{
+            width: '100%', borderRadius: 10, fontSize: '0.62rem', py: '5px', mb: '8px',
+            bgcolor: stage.color, color: 'white',
+            fontFamily: "'Noto Sans KR'", fontWeight: 700,
+            boxShadow: `0 2px 8px ${stage.color}44`,
+            '&:hover': { bgcolor: stage.color+'dd' },
+            '&:active': { transform: 'scale(0.96)' },
+          }}>
+          💗 되살리기 ({stage.name} Lv.1로)
+        </Button>
       )}
 
       {/* 오늘 체크인 표시 (상대방) */}
@@ -864,6 +879,8 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 export default function CoupleTamagotchi({ currentUser }) {
   const [allData, setAllData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false); // [신규] 초기 로드 실패 시 무한 로딩 대신 재시도 UI 표시
+  const [retryKey, setRetryKey] = useState(0);        // [신규] 값 변경 시 아래 useEffect를 재실행해 재시도
   const [evolved, setEvolved] = useState(null); // [수정] { name, color, isLegendary } | null
   const shakeControls = useAnimation(); // [신규] 진화 시 위젯을 흔드는 스크린쉐이크 제어
   const today   = toIso();
@@ -890,6 +907,8 @@ export default function CoupleTamagotchi({ currentUser }) {
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
+      setLoadError(false);
       try {
         const snap = await getDoc(docRef);
         const raw  = snap.exists() ? snap.data() : {};
@@ -919,11 +938,12 @@ export default function CoupleTamagotchi({ currentUser }) {
         await setDoc(docRef, { ...payload, updatedAt: serverTimestamp() }, { merge: true });
       } catch (e) {
         console.error('타마고치 로드 오류:', e);
+        setLoadError(true);
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [retryKey]);
 
   const handleAction = async (action) => {
     if (!allData) return;
@@ -974,6 +994,17 @@ export default function CoupleTamagotchi({ currentUser }) {
     await setDoc(docRef, { [targetUser]: resetData, updatedAt: serverTimestamp() }, { merge: true });
   };
 
+  // [신규] 사망한 펫을 알이 아니라 죽은 시점의 stage를 유지한 채 그 stage Lv.1로 되살림.
+  // xpHistory는 유지해 성장 그래프가 끊기지 않게 함. (알로 되돌리기와 달리 진화 단계는 보존)
+  const handleRevivePet = async (targetUser) => {
+    if (!allData) return;
+    const prev = allData[targetUser];
+    const revived = { ...makeDefault(), stage: prev.stage, xpHistory: prev.xpHistory, lastVisitDate: today };
+    const newAllData = { ...allData, [targetUser]: revived };
+    setAllData(newAllData);
+    await setDoc(docRef, { [targetUser]: revived, updatedAt: serverTimestamp() }, { merge: true });
+  };
+
   // [신규] 파트너에게 응원 보내기: 파트너 애정+XP 즉시 반영, 나는 하루 1회만 가능
   const handleCheer = async () => {
     if (!allData) return;
@@ -1001,6 +1032,18 @@ export default function CoupleTamagotchi({ currentUser }) {
       updatedAt: serverTimestamp(),
     }, { merge: true });
   };
+
+  if (loadError && !allData) {
+    return (
+      <Box sx={{ textAlign: 'center', py: 6 }}>
+        <Typography sx={{ fontFamily: "'Jua'", color: B.pants }}>😿 불러오지 못했어요</Typography>
+        <Button size="small" onClick={() => setRetryKey(k => k + 1)}
+          sx={{ mt: 1, fontFamily: "'Noto Sans KR'", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
+          다시 시도
+        </Button>
+      </Box>
+    );
+  }
 
   if (loading || !allData) {
     return (
@@ -1101,6 +1144,7 @@ export default function CoupleTamagotchi({ currentUser }) {
               onCheer={u !== currentUser ? handleCheer : undefined}
               otherUser={otherUser}
               onResetUser={handleResetPet}
+              onReviveUser={handleRevivePet}
             />
           ))}
         </Stack>

@@ -125,6 +125,7 @@ function useCountdown(openAt) {
 const LetterCard = ({ letter, currentUser }) => {
   const { remaining, isReady } = useCountdown(letter.openAt);
   const [justOpened, setJustOpened] = useState(false);
+  const [openFailed, setOpenFailed] = useState(false); // [신규] 열기 실패 시 재시도 안내용
   const [reply, setReply] = useState("");
   const [replyLoading, setReplyLoading] = useState(false);
   const cardRef = useRef(null);
@@ -143,6 +144,7 @@ const LetterCard = ({ letter, currentUser }) => {
   const handleOpen = async () => {
     if (justOpened) return;
     setJustOpened(true);
+    setOpenFailed(false);
     vibrate([30, 20, 30, 20, 60]);
 
     // confetti 터트리기
@@ -156,7 +158,11 @@ const LetterCard = ({ letter, currentUser }) => {
 
     try {
       await updateDoc(doc(db, "letters", letter.id), { isOpened: true });
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+      setJustOpened(false); // [수정] 실패 시 낙관적 갱신 롤백 — 버튼이 다시 눌리도록 재시도 허용
+      setOpenFailed(true);
+    }
   };
 
   const handleReply = async () => {
@@ -260,7 +266,13 @@ const LetterCard = ({ letter, currentUser }) => {
               >
                 💌 편지 열기
               </Button>
-            ) : (
+            ) : null}
+            {isReady && openFailed && (
+              <Typography sx={{ fontSize: "0.72rem", color: B.accent, fontWeight: 700, mt: 1 }}>
+                편지를 여는 데 실패했어요. 다시 눌러주세요.
+              </Typography>
+            )}
+            {!isReady && (
               <Box>
                 <Box component="img" src={buri6} alt=""
                   sx={{ width: 52, mb: 1, animation: "headBob 2s ease-in-out infinite",

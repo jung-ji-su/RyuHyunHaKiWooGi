@@ -242,7 +242,7 @@ function AppInner() {
       {/* ── 알림 벨 (fixed) ──────────────────────────────────── */}
       {!notifDrawerOpen && (
         <Box sx={{
-          position: 'fixed', top: 12, right: 12, zIndex: 1350,
+          position: 'fixed', top: 'calc(env(safe-area-inset-top, 0px) + 12px)', right: 12, zIndex: 1350,
           animation: unreadCount > 0 ? 'bellShake 1.2s ease-in-out infinite' : 'none',
         }}>
           <IconButton
