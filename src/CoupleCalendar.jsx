@@ -14,11 +14,16 @@ import CustomCalendar       from "./CustomCalendar";
 import WorkScheduleCalendar from "./WorkScheduleCalendar";
 
 import { Box, Typography, Button, Stack, Paper, IconButton } from "@mui/material";
-import AddTaskIcon   from "@mui/icons-material/AddTask";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import DateRangeIcon from "@mui/icons-material/DateRange";
+import AddTaskIcon          from "@mui/icons-material/AddTask";
+import SwapHorizIcon        from "@mui/icons-material/SwapHoriz";
+import DateRangeIcon        from "@mui/icons-material/DateRange";
+import EventIcon            from "@mui/icons-material/Event";
+import DeviceThermostatIcon from "@mui/icons-material/DeviceThermostat";
+import FavoriteIcon         from "@mui/icons-material/Favorite";
+import BarChartIcon         from "@mui/icons-material/BarChart";
 
 import { createBuriPang } from "./touchEffects";
+import { calendarColor as C, calendarRadius, calendarFont as F, TOUCH_MIN } from "./lib/calendarTokens";
 
 const B = {
   pants:    '#7B4FA6', skin:    '#F5B8A0',
@@ -27,40 +32,12 @@ const B = {
   dark:     '#3D1F00',
 };
 
-// 글래스 카드 스타일
-const GLASS_SX = {
-  px: '10px', py: 1.5, borderRadius: '20px', boxSizing: 'border-box',
-  background: 'rgba(255,255,255,0.76)',
-  backdropFilter: 'blur(8px)',
-  WebkitBackdropFilter: 'blur(8px)',
-  border: '1.5px solid rgba(255,255,255,0.72)',
-  boxShadow: '0 8px 32px rgba(123,79,166,0.13), 0 2px 8px rgba(123,79,166,0.07), inset 0 1px 0 rgba(255,255,255,0.95)',
-  position: 'relative',
-  zIndex: 1,
-};
-
-// 그라데이션 배경 wrapper
-const GRADIENT_WRAP_SX = {
-  borderRadius: '18px',
-  px: '4px',
-  py: '8px',
-  position: 'relative',
-  overflow: 'hidden',
-  background: 'linear-gradient(145deg, #E5D5F8 0%, #FFE4D4 55%, #EAD8F7 100%)',
-  '&::before': {
-    content: '""',
-    position: 'absolute', top: -50, right: -50, zIndex: 0,
-    width: 200, height: 200, borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(123,79,166,0.30) 0%, transparent 65%)',
-    pointerEvents: 'none',
-  },
-  '&::after': {
-    content: '""',
-    position: 'absolute', bottom: -55, left: -40, zIndex: 0,
-    width: 160, height: 160, borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(245,184,160,0.42) 0%, transparent 65%)',
-    pointerEvents: 'none',
-  },
+// 단일 카드 — 바깥 그라데이션 wrap + 글래스 카드의 3중 중첩을 한 겹으로 정리
+const CARD_SX = {
+  p: '14px 10px 16px', borderRadius: `${calendarRadius.lg}px`, boxSizing: 'border-box',
+  bgcolor: C.surface,
+  border: `1px solid ${C.border}`,
+  boxShadow: '0 2px 14px rgba(46,42,56,0.06)',
 };
 
 function toIso(d) {
@@ -109,7 +86,7 @@ const CoupleCalendar = ({ currentUser }) => {
   };
 
   useEffect(() => {
-    const u1 = onSnapshot(query(collection(db, 'schedules'),    orderBy('date', 'desc'),       limit(500)), s => setSchedules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const u1 = onSnapshot(query(collection(db, 'schedules'),    orderBy('createdAt', 'desc'),  limit(500)), s => setSchedules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
     const u2 = onSnapshot(query(collection(db, 'temperatures'), orderBy('date', 'desc'),       limit(400)), s => setTemperatures(s.docs.map(d => ({ id: d.id, ...d.data() }))));
     const u3 = onSnapshot(query(collection(db, 'timeCapsules'), orderBy('createdAt', 'desc'), limit(100)), s => setCapsules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
     const u4 = onSnapshot(query(collection(db, 'diaries'),      orderBy('createdAt', 'desc'), limit(200)), s => setDiaries(s.docs.map(d => ({ id: d.id, ...d.data() }))));
@@ -144,7 +121,8 @@ const CoupleCalendar = ({ currentUser }) => {
         addDoc(collection(db, 'schedules'), {
           title: newPlan, category, isImportant,
           startTime, endTime, memo, location, participants,
-          date: dateStr, createdAt: serverTimestamp(), writer: currentUser,
+          date: dateStr, dateIso: toIso(new Date(dateStr)), // [수정] date는 toDateString이라 정렬 불가 — ISO 정렬용 필드 병행 저장
+          createdAt: serverTimestamp(), writer: currentUser,
         })
       ));
       await addDoc(collection(db, 'notifications'), {
@@ -233,15 +211,12 @@ const CoupleCalendar = ({ currentUser }) => {
     exit:    (dir) => ({ rotateY: dir * -90, opacity: 0 }),
   };
 
-  const ICON_BTN_SX = (active, activeColor = B.pants) => ({
-    width: 36, height: 36, borderRadius: '50%',
-    bgcolor: active ? activeColor : 'rgba(255,255,255,0.72)',
-    color: active ? 'white' : activeColor,
-    border: active ? 'none' : `1px solid rgba(123,79,166,0.18)`,
-    boxShadow: active
-      ? `0 4px 16px ${activeColor}50`
-      : '0 2px 8px rgba(123,79,166,0.08)',
-    '&:hover': { bgcolor: active ? activeColor : 'rgba(255,255,255,0.95)' },
+  const ICON_BTN_SX = (active) => ({
+    width: TOUCH_MIN, height: TOUCH_MIN, borderRadius: '50%',
+    bgcolor: active ? C.accent : 'transparent',
+    color: active ? C.onAccent : C.textSecondary,
+    border: active ? 'none' : `1px solid ${C.border}`,
+    '&:hover': { bgcolor: active ? C.accent : C.divider },
     '&:active': { transform: 'scale(0.88)' },
     transition: 'all 0.18s ease',
   });
@@ -260,97 +235,92 @@ const CoupleCalendar = ({ currentUser }) => {
             transition={{ duration: 0.32, ease: 'easeInOut' }}
             style={{ transformOrigin: 'center center', willChange: 'transform, opacity' }}
           >
-            <Box sx={GRADIENT_WRAP_SX}>
-              <Paper elevation={0} sx={GLASS_SX}>
+            <Paper elevation={0} sx={CARD_SX}>
 
-                {/* 아이콘 버튼 영역 */}
-                <Stack direction="row" justifyContent="flex-end" gap={0.8} sx={{ mb: 1 }}>
-                  <IconButton size="small" onClick={handleMultiToggle} sx={ICON_BTN_SX(isMultiSelect)}>
-                    <DateRangeIcon sx={{ fontSize: '1.1rem' }} />
-                  </IconButton>
-                  <IconButton size="small" onClick={handleFlip} sx={ICON_BTN_SX(true)}>
-                    <SwapHorizIcon sx={{ fontSize: '1.1rem' }} />
-                  </IconButton>
-                </Stack>
+              {/* 아이콘 버튼 영역 */}
+              <Stack direction="row" justifyContent="flex-end" gap={0.8} sx={{ mb: 1 }}>
+                <IconButton onClick={handleMultiToggle} sx={ICON_BTN_SX(isMultiSelect)}>
+                  <DateRangeIcon sx={{ fontSize: '1.1rem' }} />
+                </IconButton>
+                <IconButton onClick={handleFlip} sx={ICON_BTN_SX(true)}>
+                  <SwapHorizIcon sx={{ fontSize: '1.1rem' }} />
+                </IconButton>
+              </Stack>
 
-                {/* 다중선택 확정 버튼 */}
-                {isMultiSelect && (
-                  <Button fullWidth variant="contained"
-                    startIcon={<AddTaskIcon />}
-                    disabled={selectedDates.length === 0}
-                    onClick={() => setScheduleOpen(true)}
-                    onPointerDown={e => createBuriPang(e)}
-                    sx={{
-                      mb: 1.5, borderRadius: 3, fontFamily: "'Jua',sans-serif", py: 0.9,
-                      background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
-                      boxShadow: `0 4px 16px ${B.pants}44`,
-                      '&:active': { transform: 'scale(0.96)' },
-                      '&.Mui-disabled': { bgcolor: B.pants + '55', color: 'white' },
+              {/* 다중선택 확정 버튼 */}
+              {isMultiSelect && (
+                <Button fullWidth variant="contained"
+                  startIcon={<AddTaskIcon />}
+                  disabled={selectedDates.length === 0}
+                  onClick={() => setScheduleOpen(true)}
+                  onPointerDown={e => createBuriPang(e)}
+                  sx={{
+                    mb: 1.5, minHeight: TOUCH_MIN, borderRadius: 3, fontFamily: "'Jua',sans-serif",
+                    bgcolor: C.accent,
+                    boxShadow: `0 4px 16px ${C.accent}44`,
+                    '&:hover': { bgcolor: C.accent },
+                    '&:active': { transform: 'scale(0.96)' },
+                    '&.Mui-disabled': { bgcolor: C.accent + '55', color: 'white' },
+                  }}>
+                  {selectedDates.length > 0 ? `${selectedDates.length}개 날짜에 일정 추가` : '날짜를 선택하세요'}
+                </Button>
+              )}
+
+              {/* 커스텀 캘린더 */}
+              <CustomCalendar
+                selectedDate={date}
+                selectedDates={selectedDates}
+                schedules={schedules}
+                temperatures={temperatures}
+                capsules={capsules}
+                multiSelectMode={isMultiSelect}
+                onDateClick={handleDateClick}
+                onMonthChange={setActiveMonth}
+              />
+
+              {/* 월간 인사이트 카드 — 색은 카테고리 구분에만 쓰므로 여기는 중성 톤 */}
+              <Stack direction="row" gap={1} sx={{ mt: 1.6 }}>
+                {[
+                  { Icon: EventIcon,            value: monthSchedules.length,               label: '이번달 일정' },
+                  { Icon: DeviceThermostatIcon, value: avgTemp !== null ? `${avgTemp}°` : '—', label: '평균 온도' },
+                  { Icon: FavoriteIcon,         value: `${syncRate}%`,                        label: '커플 싱크' },
+                ].map((item) => (
+                  <Box key={item.label} sx={{
+                    flex: 1,
+                    bgcolor: C.surface,
+                    border: `1px solid ${C.border}`,
+                    borderRadius: `${calendarRadius.md}px`, p: '10px 6px',
+                    textAlign: 'center',
+                  }}>
+                    <item.Icon sx={{ fontSize: '1.05rem', color: C.textSecondary, mb: 0.3 }} />
+                    <Typography sx={{
+                      fontFamily: "'Jua',sans-serif", fontSize: '1.02rem', lineHeight: 1,
+                      color: C.textPrimary,
                     }}>
-                    {selectedDates.length > 0 ? `${selectedDates.length}개 날짜에 일정 추가` : '날짜를 선택하세요'}
-                  </Button>
-                )}
+                      {item.value}
+                    </Typography>
+                    <Typography sx={{ fontSize: F.micro, color: C.textFaint, fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
+                      {item.label}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
 
-                {/* 커스텀 캘린더 */}
-                <CustomCalendar
-                  selectedDate={date}
-                  selectedDates={selectedDates}
-                  schedules={schedules}
-                  temperatures={temperatures}
-                  capsules={capsules}
-                  multiSelectMode={isMultiSelect}
-                  onDateClick={handleDateClick}
-                  onMonthChange={setActiveMonth}
-                />
-
-                {/* 월간 인사이트 카드 */}
-                <Stack direction="row" gap={1} sx={{ mt: 1.8 }}>
-                  {[
-                    { emoji: '📅', value: monthSchedules.length, label: '이번달 일정', color: B.pants },
-                    { emoji: '🌡️', value: avgTemp !== null ? `${avgTemp}°` : '—', label: '평균 온도', color: B.accent },
-                    { emoji: '💑', value: `${syncRate}%`, label: '커플 싱크', color: '#16A34A' },
-                  ].map(({ emoji, value, label, color }) => (
-                    <Box key={label} sx={{
-                      flex: 1,
-                      background: 'rgba(255,255,255,0.65)',
-                      border: `1px solid rgba(255,255,255,0.8)`,
-                      borderRadius: '14px', p: '10px 6px',
-                      textAlign: 'center',
-                      boxShadow: `0 4px 14px ${color}0d`,
-                    }}>
-                      <Typography sx={{ fontSize: '1rem', lineHeight: 1, mb: 0.4 }}>{emoji}</Typography>
-                      <Typography sx={{
-                        fontFamily: "'Jua',sans-serif", fontSize: '1.05rem', lineHeight: 1,
-                        background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}>
-                        {value}
-                      </Typography>
-                      <Typography sx={{ fontSize: '0.54rem', color: B.dark+'55', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
-                        {label}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Stack>
-
-                {/* 리포트 라인 */}
-                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography sx={{ fontSize: '0.7rem', color: B.pants + 'aa', fontFamily: "'Noto Sans KR',sans-serif", flex: 1 }}>
-                    {getRecapMessage(syncRate, avgTemp, monthSchedules.length)}
-                  </Typography>
-                  <Button size="small" onClick={() => setReportOpen(true)}
-                    sx={{
-                      fontSize: '0.6rem', color: B.pants + '88', fontFamily: "'Noto Sans KR',sans-serif",
-                      px: 0.8, py: 0.2, minHeight: 0, borderRadius: 2, flexShrink: 0,
-                      '&:hover': { bgcolor: 'rgba(123,79,166,0.08)', color: B.pants },
-                    }}>
-                    📊 리포트
-                  </Button>
-                </Box>
-              </Paper>
-            </Box>
+              {/* 리포트 라인 */}
+              <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography sx={{ fontSize: '0.7rem', color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif", flex: 1 }}>
+                  {getRecapMessage(syncRate, avgTemp, monthSchedules.length)}
+                </Typography>
+                <Button size="small" startIcon={<BarChartIcon sx={{ fontSize: '0.85rem' }} />} onClick={() => setReportOpen(true)}
+                  sx={{
+                    fontSize: '0.66rem', color: C.accent, fontFamily: "'Noto Sans KR',sans-serif",
+                    px: 1, minWidth: TOUCH_MIN, minHeight: TOUCH_MIN, borderRadius: 2, flexShrink: 0,
+                    '&:hover': { bgcolor: C.accentSoft },
+                  }}>
+                  리포트
+                </Button>
+              </Box>
+            </Paper>
           </motion.div>
         ) : (
           <motion.div
@@ -363,22 +333,9 @@ const CoupleCalendar = ({ currentUser }) => {
             transition={{ duration: 0.32, ease: 'easeInOut' }}
             style={{ transformOrigin: 'center center', willChange: 'transform, opacity' }}
           >
-            <Box sx={{
-              ...GRADIENT_WRAP_SX,
-              background: 'linear-gradient(145deg, #D5EDD8 0%, #E8F5E9 40%, #EDE0F5 100%)',
-              '&::before': {
-                ...GRADIENT_WRAP_SX['&::before'],
-                background: 'radial-gradient(circle, rgba(22,163,74,0.22) 0%, transparent 65%)',
-              },
-              '&::after': {
-                ...GRADIENT_WRAP_SX['&::after'],
-                background: 'radial-gradient(circle, rgba(237,224,245,0.55) 0%, transparent 65%)',
-              },
-            }}>
-              <Paper elevation={0} sx={GLASS_SX}>
-                <WorkScheduleCalendar onFlip={handleFlip} />
-              </Paper>
-            </Box>
+            <Paper elevation={0} sx={CARD_SX}>
+              <WorkScheduleCalendar onFlip={handleFlip} />
+            </Paper>
           </motion.div>
         )}
       </AnimatePresence>

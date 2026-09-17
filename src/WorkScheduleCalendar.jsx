@@ -493,7 +493,12 @@ export default function WorkScheduleCalendar({ onFlip }) {
 
           {((!isMultiSelect && currentSchedule) || (isMultiSelect && multiDates.length > 0)) && (
             <Box
-              onClick={() => handleScheduleSelect(null)}
+              onClick={() => {
+                const msg = isMultiSelect
+                  ? `선택한 ${multiDates.length}개 날짜의 스케줄을 삭제하시겠습니까?`
+                  : '정말 삭제하시겠습니까?';
+                if (window.confirm(msg)) handleScheduleSelect(null);
+              }}
               sx={{
                 mt: 1.5, py: 1.2, borderRadius: 2.5, textAlign: 'center',
                 border: '1.5px solid #EF444440',

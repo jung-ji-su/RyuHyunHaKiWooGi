@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
-import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 
 import buri4 from "./assets/KakaoTalk_20260316_132913765.png";
 import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
@@ -22,6 +22,12 @@ const B = {
 // ── 떠다니는 파티클 캔버스 (부드러운 하트/별) ────────────────────
 const FloatingCanvas = ({ canvasRef, wrapRef }) => null; // 훅에서 처리
 
+// [수정] schedules.date는 toDateString() 문자열이라 Firestore orderBy로는 실제 날짜순이 아님.
+// dateIso(신규 문서)가 있으면 그걸 쓰고, 없는 기존 문서는 date 문자열을 그대로 Date로 파싱해 비교한다.
+function scheduleSortDate(s) {
+  return s.dateIso ? new Date(s.dateIso + 'T00:00:00') : new Date(s.date);
+}
+
 // ── 메인 컴포넌트 ─────────────────────────────────────────────────
 export default function CoupleDDay() {
   const [targetEvent, setTargetEvent] = useState(null);
@@ -37,14 +43,14 @@ export default function CoupleDDay() {
   useEffect(() => {
     const q = query(
       collection(db, "schedules"),
-      where("isImportant", "==", true),
-      orderBy("date", "asc")
+      where("isImportant", "==", true)
     );
     const unsub = onSnapshot(q, snapshot => {
       const now = new Date(); now.setHours(0, 0, 0, 0);
       const events = snapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(e => new Date(e.date) >= now);
+        .filter(e => new Date(e.date) >= now)
+        .sort((a, b) => scheduleSortDate(a) - scheduleSortDate(b)); // [수정] Firestore orderBy 대신 클라이언트에서 실제 날짜순 정렬
       setTargetEvent(events[0] ?? null);
     });
     return () => unsub();

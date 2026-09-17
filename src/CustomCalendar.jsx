@@ -3,20 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Box, Typography, IconButton } from '@mui/material';
 import ChevronLeftIcon  from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FavoriteIcon     from '@mui/icons-material/Favorite';
+import LockIcon         from '@mui/icons-material/Lock';
 import { vibrate } from './touchEffects';
-
-const B = {
-  pants: '#7B4FA6', skin: '#F5B8A0', cream: '#FFF8F2', peach: '#FFE4D4',
-  lavender: '#EDE0F5', accent: '#E8630A', dark: '#3D1F00',
-};
+import { calendarColor as C, calendarFont as F, TOUCH_MIN } from './lib/calendarTokens';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
-
-const CATEGORY_COLORS = {
-  기념일: '#ffc628',
-  데이트: '#ff3434',
-  개인일정: '#4079f3',
-};
 
 const HOLIDAYS = [
   '2026-01-01','2026-02-16','2026-02-17','2026-02-18',
@@ -50,18 +42,20 @@ function getCalendarDays(year, month) {
   return days;
 }
 
-function getTempColor(avg) {
-  if (avg === null) return null;
-  const v = Math.round(avg);
-  if (v === 0)  return '#aaa';
-  if (v < 20)   return '#B4B2A9';
-  if (v < 40)   return '#85B7EB';
-  if (v < 60)   return '#EF9F27';
-  if (v < 80)   return '#7B4FA6';
-  return         '#E8630A';
-}
-
 const PRIORITY = ['기념일', '데이트', '개인일정'];
+
+// 일정 카테고리를 색 + 모양 두 가지로 함께 표현 — 색만으로 구분하지 않기 위함(접근성).
+function ShapeDot({ category, dim, size = 5 }) {
+  const meta = C.category[category] || { hue: C.accent, shape: 'circle' };
+  const bg = dim ? `${meta.hue}99` : meta.hue;
+  if (meta.shape === 'diamond') {
+    return <Box sx={{ width: size - 1, height: size - 1, bgcolor: bg, borderRadius: '1px', transform: 'rotate(45deg)', flexShrink: 0 }} />;
+  }
+  if (meta.shape === 'square') {
+    return <Box sx={{ width: size, height: size, bgcolor: bg, borderRadius: '1px', flexShrink: 0 }} />;
+  }
+  return <Box sx={{ width: size, height: size, bgcolor: bg, borderRadius: '50%', flexShrink: 0 }} />;
+}
 
 function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode, schedules, temperatures, capsules, today, onDateClick }) {
   const iso = toIso(d);
@@ -72,92 +66,65 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
   const isFuture    = d > today;
 
   const daySchedules = current ? schedules.filter(s => s.date === d.toDateString()) : [];
-  const dayTemps     = current ? temperatures.filter(t => t.date === iso && !t.isPenalty) : [];
-  const avgTemp      = dayTemps.length
-    ? Math.round(dayTemps.reduce((s, t) => s + parseInt(t.temp ?? 0), 0) / dayTemps.length)
-    : null;
-  const tempColor = getTempColor(avgTemp);
 
+  // 커플 싱크 배지 판정에만 온도 기록 존재 여부를 씀 (온도 값/색 표시는 캘린더에서 제거됨)
   const hasJ       = current && temperatures.some(t => t.date === iso && t.author === '지수' && !t.isPenalty);
   const hasH       = current && temperatures.some(t => t.date === iso && t.author === '현하' && !t.isPenalty);
   const isSynced   = hasJ && hasH;
   const hasCapsule = current && capsules.some(c => c.date === iso);
 
-  // 카드 컬러: 우선순위 높은 카테고리 기준
   const sorted = [...daySchedules].sort((a, b) => PRIORITY.indexOf(a.category) - PRIORITY.indexOf(b.category));
-  const mainColor = sorted[0] ? (CATEGORY_COLORS[sorted[0].category] || B.pants) : null;
-  const isCard = daySchedules.length > 0 && current;
 
-  // 날짜 원 스타일
-  let circleBg     = 'transparent';
-  let circleBorder = 'none';
-  let circleShadow = 'none';
-
-  if (isSelected && isCard) {
-    circleBg = 'rgba(255,255,255,0.28)';
-  } else if (isSelected) {
-    circleBg     = `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`;
-    circleShadow = `0 4px 18px ${B.pants}55, 0 2px 6px ${B.pants}33`;
+  // 날짜 원: 오늘=채운 원, 선택=얇은 링. 오늘이면서 선택이면 채운 원 + 은은한 외곽 링으로 함께 표시.
+  let circleSx = {};
+  let numColor = C.textPrimary;
+  if (isToday) {
+    circleSx = {
+      bgcolor: C.accent,
+      boxShadow: isSelected && !multiSelectMode ? `0 0 0 3px ${C.accentSoft}` : 'none',
+    };
+    numColor = C.onAccent;
   } else if (isMultiSel) {
-    circleBg     = B.peach;
-    circleBorder = `2px solid ${B.pants}77`;
-  } else if (isToday) {
-    circleBg     = `${B.pants}12`;
-    circleBorder = `2px solid ${B.pants}`;
-    circleShadow = `0 0 0 3px ${B.pants}14`;
+    circleSx = { bgcolor: C.accentSoft };
+    numColor = C.accent;
+  } else if (isSelected) {
+    circleSx = { border: `2px solid ${C.accent}`, boxSizing: 'border-box' };
+    numColor = C.accent;
+  } else if (isHoliday && current) {
+    numColor = C.holiday;
   }
-
-  let numColor = B.dark;
-  if (isSelected)                numColor = 'white';
-  else if (isToday)              numColor = B.pants;
-  else if (isHoliday && current) numColor = '#E24B4A';
 
   return (
     <Box
       onClick={() => { if (current) { vibrate(10); onDateClick(d); } }}
       sx={{
         position: 'relative',
-        height: 68,
+        height: 54,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        pt: '6px',
-        pb: '4px',
+        pt: '7px',
+        pb: '5px',
         opacity: current ? 1 : 0,
         pointerEvents: current ? 'auto' : 'none',
         cursor: current ? 'pointer' : 'default',
         WebkitTapHighlightColor: 'transparent',
-        '&:active': current ? { opacity: 0.65 } : {},
-        transition: 'all 0.15s',
-        ...(isCard ? {
-          m: '2px',
-          borderRadius: '8px',
-          background: isSelected
-            ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
-            : `linear-gradient(135deg, rgba(255,255,255,0.97) 0%, ${mainColor}0d 100%)`,
-          boxShadow: isSelected
-            ? `0 4px 16px ${B.pants}44`
-            : `0 3px 10px ${mainColor}28, 0 1px 4px ${mainColor}18`,
-          border: isSelected ? 'none' : `1px solid ${mainColor}28`,
-          zIndex: 1,
-        } : {
-          borderRight: (idx + 1) % 7 === 0 ? 'none' : `1px solid rgba(123,79,166,0.06)`,
-          borderBottom: `1px solid rgba(123,79,166,0.05)`,
-        }),
+        '&:active': current ? { opacity: 0.6 } : {},
+        transition: 'opacity 0.15s',
+        borderRight: (idx + 1) % 7 === 0 ? 'none' : `1px solid ${C.divider}`,
+        borderBottom: `1px solid ${C.divider}`,
       }}
     >
       {/* 날짜 원 */}
       <Box sx={{
         width: 32, height: 32, borderRadius: '50%',
-        background: circleBg,
-        border: circleBorder,
-        boxShadow: circleShadow,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
         transition: 'all 0.2s ease',
+        ...circleSx,
       }}>
         <Typography sx={{
-          fontSize: '0.82rem',
+          fontSize: F.date,
           fontWeight: (isSelected || isToday || isMultiSel) ? 700 : 500,
           fontFamily: "'Noto Sans KR',sans-serif",
           lineHeight: 1,
@@ -167,49 +134,26 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
         </Typography>
       </Box>
 
-      {/* 감정 온도 바 */}
-      {tempColor && current ? (
-        <Box sx={{
-          width: '56%', height: 3, borderRadius: 2,
-          background: `linear-gradient(to right, ${tempColor}77, ${tempColor})`,
-          opacity: (isSelected && !isCard) ? 0.5 : 0.85,
-          mt: '2px', flexShrink: 0,
-        }} />
-      ) : (
-        <Box sx={{ height: 5, flexShrink: 0 }} />
-      )}
-
-      {/* 일정 dot 배지 */}
+      {/* 일정 표시 — dot 하나의 문법으로 통일(색+모양) */}
       {daySchedules.length > 0 && (
-        <Box sx={{ display: 'flex', gap: '2.5px', mt: '3px', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: '3px', mt: '5px', justifyContent: 'center', alignItems: 'center' }}>
           {sorted.slice(0, 3).map((s, i) => (
-            <Box key={i} sx={{
-              width: 5, height: 5, borderRadius: '50%',
-              bgcolor: isSelected ? 'rgba(255,255,255,0.85)' : (CATEGORY_COLORS[s.category] || B.pants),
-              flexShrink: 0,
-            }} />
+            <ShapeDot key={i} category={s.category} dim={isToday} />
           ))}
           {daySchedules.length > 3 && (
-            <Typography sx={{
-              fontSize: '0.42rem', lineHeight: 1,
-              color: isSelected ? 'rgba(255,255,255,0.7)' : B.dark + '55',
-            }}>
+            <Typography sx={{ fontSize: F.micro, lineHeight: 1, color: isToday ? C.onAccent : C.textFaint }}>
               +{daySchedules.length - 3}
             </Typography>
           )}
         </Box>
       )}
 
-      {/* 커플 싱크 */}
+      {/* 커플 싱크 / 타임캡슐 배지 */}
       {isSynced && (
-        <Box sx={{ position: 'absolute', top: 2, right: 1, fontSize: '8px', lineHeight: 1, pointerEvents: 'none' }}>
-          💑
-        </Box>
+        <FavoriteIcon sx={{ position: 'absolute', top: 3, right: 2, fontSize: 8, color: C.accent, pointerEvents: 'none' }} />
       )}
       {hasCapsule && isFuture && (
-        <Box sx={{ position: 'absolute', top: 2, left: 1, fontSize: '8px', lineHeight: 1, pointerEvents: 'none' }}>
-          🔒
-        </Box>
+        <LockIcon sx={{ position: 'absolute', top: 3, left: 2, fontSize: 8, color: C.textFaint, pointerEvents: 'none' }} />
       )}
     </Box>
   );
@@ -261,37 +205,31 @@ export default function CustomCalendar({
       onTouchEnd={onTouchEnd}
       sx={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'pan-y' }}
     >
-      {/* ── 월 헤더 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.8, px: 0.5 }}>
+      {/* ── 월 헤더: 화살표를 제목 옆에 작게, 터치 타겟은 44pt 유지 */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.2, mb: 1.2 }}>
         <IconButton
-          onClick={() => navigate(-1)} size="small"
+          onClick={() => navigate(-1)}
           sx={{
-            color: B.pants, width: 36, height: 36,
-            background: 'rgba(255,255,255,0.72)',
-            border: '1px solid rgba(123,79,166,0.14)',
-            boxShadow: '0 2px 8px rgba(123,79,166,0.08)',
-            '&:hover': { background: 'rgba(255,255,255,0.95)' },
-            '&:active': { transform: 'scale(0.82)' },
+            width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary,
+            '&:hover': { color: C.accent, bgcolor: 'transparent' },
+            '&:active': { color: C.accent, transform: 'scale(0.88)' },
           }}
         >
-          <ChevronLeftIcon sx={{ fontSize: '1rem' }} />
+          <ChevronLeftIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
 
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={`${viewYear}-${viewMonth}`}
-            initial={{ y: slideDir * 10, opacity: 0 }}
+            initial={{ y: slideDir * 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -slideDir * 10, opacity: 0 }}
+            exit={{ y: -slideDir * 8, opacity: 0 }}
             transition={{ duration: 0.17, ease: 'easeOut' }}
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: 'center', minWidth: 108 }}
           >
             <Typography sx={{
-              fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', lineHeight: 1,
-              background: `linear-gradient(135deg, ${B.pants} 20%, #A855F7 100%)`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              fontFamily: "'Jua',sans-serif", fontSize: F.monthTitle, lineHeight: 1,
+              color: C.textPrimary,
             }}>
               {viewYear}년 {viewMonth + 1}월
             </Typography>
@@ -299,17 +237,14 @@ export default function CustomCalendar({
         </AnimatePresence>
 
         <IconButton
-          onClick={() => navigate(1)} size="small"
+          onClick={() => navigate(1)}
           sx={{
-            color: B.pants, width: 36, height: 36,
-            background: 'rgba(255,255,255,0.72)',
-            border: '1px solid rgba(123,79,166,0.14)',
-            boxShadow: '0 2px 8px rgba(123,79,166,0.08)',
-            '&:hover': { background: 'rgba(255,255,255,0.95)' },
-            '&:active': { transform: 'scale(0.82)' },
+            width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary,
+            '&:hover': { color: C.accent, bgcolor: 'transparent' },
+            '&:active': { color: C.accent, transform: 'scale(0.88)' },
           }}
         >
-          <ChevronRightIcon sx={{ fontSize: '1rem' }} />
+          <ChevronRightIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
       </Box>
 
@@ -317,9 +252,9 @@ export default function CustomCalendar({
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', mb: '1px' }}>
         {WEEKDAYS.map((w, i) => (
           <Typography key={w} sx={{
-            textAlign: 'center', fontSize: '0.67rem', fontWeight: 700,
+            textAlign: 'center', fontSize: F.weekday, fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
-            color: i === 0 ? '#E24B4A88' : B.dark + '2a',
+            color: i === 0 ? C.holiday + 'aa' : C.textFaint,
             py: '4px',
           }}>
             {w}
@@ -328,7 +263,7 @@ export default function CustomCalendar({
       </Box>
 
       {/* ── 날짜 그리드 */}
-      <Box sx={{ position: 'relative', height: 408, overflow: 'hidden' }}>
+      <Box sx={{ position: 'relative', height: 324, overflow: 'hidden', border: `1px solid ${C.divider}`, borderRadius: '10px' }}>
         <AnimatePresence initial={false}>
           <motion.div
             key={`${viewYear}-${viewMonth}`}
@@ -360,30 +295,20 @@ export default function CustomCalendar({
         </AnimatePresence>
       </Box>
 
-      {/* ── 범례 */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '5px', justifyContent: 'center', mt: 1.8 }}>
-        {Object.entries(CATEGORY_COLORS).map(([label, color]) => (
+      {/* ── 범례: 일정 카테고리를 dot과 동일한 색+모양으로 표시 */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '5px', justifyContent: 'center', mt: 1.4 }}>
+        {Object.keys(C.category).map(label => (
           <Box key={label} sx={{
-            display: 'flex', alignItems: 'center', gap: '4px',
+            display: 'flex', alignItems: 'center', gap: '5px',
             px: '8px', py: '4px', borderRadius: '20px',
-            background: `${color}0e`, border: `1px solid ${color}22`,
+            bgcolor: C.surface, border: `1px solid ${C.border}`,
           }}>
-            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: color, flexShrink: 0 }} />
-            <Typography sx={{ fontSize: '0.57rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <ShapeDot category={label} size={6} />
+            <Typography sx={{ fontSize: F.label, color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif" }}>
               {label}
             </Typography>
           </Box>
         ))}
-        <Box sx={{
-          display: 'flex', alignItems: 'center', gap: '4px',
-          px: '8px', py: '4px', borderRadius: '20px',
-          background: '#85B7EB0e', border: '1px solid #85B7EB22',
-        }}>
-          <Box sx={{ width: 14, height: 4, borderRadius: 2, background: 'linear-gradient(to right,#85B7EB,#EF9F27,#E8630A)', flexShrink: 0 }} />
-          <Typography sx={{ fontSize: '0.57rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif" }}>
-            감정온도
-          </Typography>
-        </Box>
       </Box>
     </Box>
   );
