@@ -107,11 +107,12 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
 
   return (
     <Drawer anchor="bottom" open={open} onClose={onClose}
+      transitionDuration={{ enter: 320, exit: 260 }}
+      SlideProps={{ easing: { enter: 'cubic-bezier(.32,.72,0,1)', exit: 'cubic-bezier(.32,.72,0,1)' } }}
       PaperProps={{
         sx: {
-          position: 'relative',
           borderRadius: '24px 24px 0 0',
-          maxHeight: '82vh',
+          maxHeight: '85vh',
           background: glass.sheetBackground,
           backdropFilter: glass.sheetBlur,
           WebkitBackdropFilter: glass.sheetBlur,
@@ -392,7 +393,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
           </Box>
         )}
 
-        <Box sx={{ height: 28 }} />
+        <Box sx={{ height: 'calc(28px + env(safe-area-inset-bottom, 0px))' }} />
       </Box>
     </Drawer>
   );

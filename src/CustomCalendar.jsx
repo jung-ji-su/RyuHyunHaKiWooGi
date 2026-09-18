@@ -150,8 +150,9 @@ function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, sch
         </Typography>
       </Box>
 
-      {/* 일정 표시 — dot 하나의 문법으로 통일(색+모양) */}
-      {daySchedules.length > 0 && (
+      {/* 일정 dot + 커플싱크/타임캡슐 배지를 한 줄로 통일 — 예전엔 배지가 셀 상단에 절대위치로 떠 있어
+          dot 줄과 높이가 어긋나 보였다. 이제 전부 날짜 숫자 아래 같은 행에 나란히 표시한다. */}
+      {(daySchedules.length > 0 || isSynced || (hasCapsule && isFuture)) && (
         <Box sx={{ display: 'flex', gap: '3px', mt: '5px', justifyContent: 'center', alignItems: 'center' }}>
           {sorted.slice(0, 3).map((s, i) => (
             <ShapeDot key={i} category={s.category} dim={isToday} />
@@ -161,15 +162,13 @@ function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, sch
               +{daySchedules.length - 3}
             </Typography>
           )}
+          {isSynced && (
+            <FavoriteIcon sx={{ fontSize: 7, color: isToday ? C.onAccent : C.accent, flexShrink: 0 }} />
+          )}
+          {hasCapsule && isFuture && (
+            <LockIcon sx={{ fontSize: 7, color: isToday ? C.onAccent : C.textFaint, flexShrink: 0 }} />
+          )}
         </Box>
-      )}
-
-      {/* 커플 싱크 / 타임캡슐 배지 */}
-      {isSynced && (
-        <FavoriteIcon sx={{ position: 'absolute', top: 3, right: 2, fontSize: 8, color: C.accent, pointerEvents: 'none' }} />
-      )}
-      {hasCapsule && isFuture && (
-        <LockIcon sx={{ position: 'absolute', top: 3, left: 2, fontSize: 8, color: C.textFaint, pointerEvents: 'none' }} />
       )}
     </Box>
   );
@@ -307,7 +306,8 @@ export default function CustomCalendar({
         </AnimatePresence>
       </Box>
 
-      {/* ── 범례: 일정 카테고리를 dot과 동일한 색+모양으로 표시. 작은 반복 요소라 backdrop-filter 없이 유리풍만 */}
+      {/* ── 범례: 일정 카테고리를 dot과 동일한 색+모양으로 표시. 작은 반복 요소라 backdrop-filter 없이 유리풍만.
+          커플싱크(하트)·타임캡슐(자물쇠) 배지도 그리드에 표시되므로 함께 안내한다. */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', mt: 1.6 }}>
         {Object.keys(C.category).map(label => (
           <Box key={label} sx={{
@@ -321,6 +321,26 @@ export default function CustomCalendar({
             </Typography>
           </Box>
         ))}
+        <Box sx={{
+          display: 'flex', alignItems: 'center', gap: '5px',
+          px: '9px', py: '4px', borderRadius: '20px',
+          ...glassSmallSx(),
+        }}>
+          <FavoriteIcon sx={{ fontSize: 9, color: C.accent }} />
+          <Typography sx={{ fontSize: F.label, color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            커플싱크
+          </Typography>
+        </Box>
+        <Box sx={{
+          display: 'flex', alignItems: 'center', gap: '5px',
+          px: '9px', py: '4px', borderRadius: '20px',
+          ...glassSmallSx(),
+        }}>
+          <LockIcon sx={{ fontSize: 9, color: C.textFaint }} />
+          <Typography sx={{ fontSize: F.label, color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            타임캡슐
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

@@ -56,7 +56,11 @@ function getRecapMessage(syncRate, avgTemp, scheduleCount) {
   return '✨ 오늘도 감정 온도 기록해봐요!';
 }
 
-const CoupleCalendar = ({ currentUser }) => {
+// showFab: 이 컴포넌트를 독립된 일정 전용 화면에 띄울 때만 true로 넘겨 FAB을 노출한다.
+// 기본값 false — 홈 SectionCard처럼 다른 콘텐츠(리포트 라인 등)와 같은 카드 안에서 쓰일 때
+// FAB이 그 콘텐츠를 가리는 문제가 있었다. 현재 이 컴포넌트의 호출부는 HomePage 한 곳뿐이라
+// 실질적으로 FAB은 당분간 어디에도 노출되지 않는다(추후 독립 일정 페이지가 생기면 그쪽에서 true로 켠다).
+const CoupleCalendar = ({ currentUser, showFab = false }) => {
   const [date,          setDate]         = useState(new Date());
   const [activeMonth,   setActiveMonth]  = useState(() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1); });
   const [schedules,     setSchedules]    = useState([]);
@@ -358,7 +362,7 @@ const CoupleCalendar = ({ currentUser }) => {
       {/* FAB — 일정 캘린더 화면(앞면)에만, 다중선택 중엔 숨김(전용 CTA가 이미 있음).
           카드 안에 절대위치로 scoped — fixed로 뷰포트에 고정하면 홈의 다른 섹션까지 따라다니게 되므로
           이 카드 하단 경계에만 살짝 걸치도록 배치(뒤이은 섹션과의 16px 간격 안에서만 겹침) */}
-      {!showSchedule && !isMultiSelect && (
+      {showFab && !showSchedule && !isMultiSelect && (
         <Fab
           aria-label="일정 추가"
           onClick={handleFabAdd}

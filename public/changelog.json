@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.0.126",
+    "date": "2026-09-18T06:44:39.609Z",
+    "notes": "DayPanel/ScheduleDetailDialog 바텀시트 앵커 버그 수정(하단 고정 복원), 홈 FAB 제거, 캘린더 마커 한 줄 정렬 + 범례 보강"
+  },
+  {
     "version": "1.0.125",
     "date": "2026-09-18T06:13:42.463Z",
     "notes": "DayPanel 일정 항목 글래스 톤 정합 + ScheduleDetailDialog 작성자 배지/톤 정합, getWriterBadge 공용화"
@@ -143,10 +148,5 @@
     "version": "1.0.97",
     "date": "2026-06-10T04:00:00.000Z",
     "notes": "콕찌르기 Liquid Glass 버튼 + 파티클 애니메이션, Snackbar 팝업 제거"
-  },
-  {
-    "version": "1.0.96",
-    "date": "2026-06-09T15:00:00.000Z",
-    "notes": "BottomNav 스크롤 시 중간 이동 버그 수정, 근무스케줄 등록 알림 추가"
   }
 ]

@@ -145,11 +145,12 @@ export default function ScheduleDetailDialog({
       anchor="bottom"
       open={open}
       onClose={onClose}
+      transitionDuration={{ enter: 320, exit: 260 }}
+      SlideProps={{ easing: { enter: "cubic-bezier(.32,.72,0,1)", exit: "cubic-bezier(.32,.72,0,1)" } }}
       PaperProps={{
         sx: {
-          position: "relative",
           borderRadius: "24px 24px 0 0",
-          maxHeight: "92vh",
+          maxHeight: "85vh",
           background: glass.sheetBackground,
           backdropFilter: glass.sheetBlur,
           WebkitBackdropFilter: glass.sheetBlur,
@@ -419,7 +420,7 @@ export default function ScheduleDetailDialog({
       </Box>
 
       {/* 하단 버튼 */}
-      <Box sx={{ px: 2.2, pt: 0.8, pb: 3, flexShrink: 0 }}>
+      <Box sx={{ px: 2.2, pt: 0.8, pb: "calc(24px + env(safe-area-inset-bottom, 0px))", flexShrink: 0 }}>
         <Box
           onClick={canSubmit ? (isEditMode ? onEdit : onAdd) : undefined}
           sx={{
