@@ -5,17 +5,22 @@ import CloseIcon  from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon   from "@mui/icons-material/Edit";
 import PlaceIcon  from "@mui/icons-material/Place";
+import {
+  calendarColor as CC, glass, glassBorderSx, getWriterBadge, writerBadgeBg,
+} from "./lib/calendarTokens";
 
+// [톤 정합] 캘린더 그리드 dot(calendarColor.category)과 같은 색을 쓰도록 값만 맞춤 —
+// 예전엔 이 파일만 다른 hex(#ffc628 등)를 써서 그리드와 다이얼로그의 카테고리 색이 어긋나 있었음.
 const CATEGORY_COLORS = {
-  기념일:   "#ffc628",
-  데이트:   "#ff3434",
-  개인일정: "#4079f3",
+  기념일:   CC.category.기념일.hue,
+  데이트:   CC.category.데이트.hue,
+  개인일정: CC.category.개인일정.hue,
 };
 
 const CATEGORIES = [
-  { value: "기념일",   emoji: "💖", color: "#ffc628" },
-  { value: "데이트",   emoji: "🍕", color: "#ff3434" },
-  { value: "개인일정", emoji: "👤", color: "#4079f3" },
+  { value: "기념일",   emoji: "💖", color: CC.category.기념일.hue },
+  { value: "데이트",   emoji: "🍕", color: CC.category.데이트.hue },
+  { value: "개인일정", emoji: "👤", color: CC.category.개인일정.hue },
 ];
 
 const PARTICIPANT_OPTIONS = [
@@ -49,18 +54,19 @@ const GLASS_INPUT = {
 function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
   const catColor = CATEGORY_COLORS[item.category] || B.pants;
   const cat = CATEGORIES.find(c => c.value === item.category);
+  const badge = getWriterBadge(item);
 
   return (
     <Box sx={{
       mb: 0.9,
       display: "flex", alignItems: "stretch",
       borderRadius: "14px", overflow: "hidden",
+      // 작은 반복 리스트 요소라 backdrop-filter 없이 solid+shadow만 (캘린더 성능 원칙)
       background: isEditing
         ? `linear-gradient(135deg, ${catColor}12, ${catColor}06)`
         : "rgba(255,255,255,0.82)",
       border: isEditing ? `1.5px solid ${catColor}55` : "1px solid rgba(255,255,255,0.9)",
       boxShadow: isEditing ? `0 4px 18px ${catColor}22` : "0 2px 10px rgba(123,79,166,0.07)",
-      backdropFilter: "blur(8px)",
       transition: "all 0.22s ease",
     }}>
       <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${catColor}66)`, flexShrink: 0 }} />
@@ -74,6 +80,16 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
           }}>
             {item.isImportant && "⭐ "}{item.title}
           </Typography>
+          {badge && (
+            <Box sx={{
+              flexShrink: 0, px: '7px', py: '2px', borderRadius: 999,
+              background: writerBadgeBg(badge.who), color: '#fff',
+              fontSize: '0.56rem', fontWeight: 700,
+              fontFamily: "'Noto Sans KR',sans-serif",
+            }}>
+              {badge.label}
+            </Box>
+          )}
         </Stack>
         {item.location && (
           <Stack direction="row" alignItems="center" gap={0.3} sx={{ mt: 0.4 }}>
@@ -131,13 +147,17 @@ export default function ScheduleDetailDialog({
       onClose={onClose}
       PaperProps={{
         sx: {
+          position: "relative",
           borderRadius: "24px 24px 0 0",
           maxHeight: "92vh",
-          background: "linear-gradient(160deg, #FAF5FF 0%, #FFF8F2 55%, #F5F0FF 100%)",
+          background: glass.sheetBackground,
+          backdropFilter: glass.sheetBlur,
+          WebkitBackdropFilter: glass.sheetBlur,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          boxShadow: "0 -8px 40px rgba(123,79,166,0.18)",
+          boxShadow: glass.sheetShadow,
+          "&::before": glassBorderSx(),
         },
       }}
     >

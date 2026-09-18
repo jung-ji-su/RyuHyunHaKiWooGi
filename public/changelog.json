@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.0.125",
+    "date": "2026-09-18T06:13:42.463Z",
+    "notes": "DayPanel 일정 항목 글래스 톤 정합 + ScheduleDetailDialog 작성자 배지/톤 정합, getWriterBadge 공용화"
+  },
+  {
     "version": "1.0.124",
     "date": "2026-09-18T06:04:22.355Z",
     "notes": "캘린더 리퀴드 글래스모피즘 적용 — 홈 캘린더/일정 카드/D-day 배너/근무스케줄 톤 통일, FAB 추가, 일정 작성자 배지, 카테고리 색 유지"

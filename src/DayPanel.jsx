@@ -3,7 +3,7 @@ import { Box, Typography, Stack, Drawer, TextField, Button } from '@mui/material
 import { db } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { vibrate } from './touchEffects';
-import { calendarColor as CC } from './lib/calendarTokens';
+import { glass, glassBorderSx, getWriterBadge, writerBadgeBg } from './lib/calendarTokens';
 
 const B = {
   pants: '#7B4FA6', skin: '#F5B8A0', cream: '#FFF8F2', peach: '#FFE4D4',
@@ -28,23 +28,18 @@ function toIso(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-// [신규] 일정의 writer/participants 필드로 "지수"/"현하"/"둘 다" 작성자 배지를 만든다.
-// 필드가 없는 기존 문서는 null을 반환해 배지를 숨긴다(폴백).
-function getWriterBadge(s) {
-  if (s.participants === '둘다') return { label: '둘 다', who: 'both' };
-  if (!s.writer) return null;
-  if (s.participants === '상대방만') {
-    const other = s.writer === '지수' ? '현하' : '지수';
-    return { label: other, who: other === '현하' ? 'hyunha' : 'jisu' };
-  }
-  // '나만' 이거나 participants 필드 자체가 없는 오래된 문서는 작성자 본인으로 표시
-  return { label: s.writer, who: s.writer === '현하' ? 'hyunha' : 'jisu' };
-}
-
 const GLASS_CARD = {
   background: 'rgba(255,255,255,0.72)',
   backdropFilter: 'blur(10px)',
   WebkitBackdropFilter: 'blur(10px)',
+  border: '1px solid rgba(255,255,255,0.9)',
+  boxShadow: '0 2px 12px rgba(123,79,166,0.07)',
+};
+
+// 일정 섹션(반복 리스트) 전용 — 작은 반복 요소는 backdrop-filter 없이 solid+shadow만 쓰는
+// 캘린더 성능 원칙에 맞춰, MOOD/DIARY/TIME CAPSULE 섹션의 GLASS_CARD(blur)와는 분리했다.
+const SCHED_ITEM_BASE = {
+  background: 'rgba(255,255,255,0.62)',
   border: '1px solid rgba(255,255,255,0.9)',
   boxShadow: '0 2px 12px rgba(123,79,166,0.07)',
 };
@@ -114,11 +109,15 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
     <Drawer anchor="bottom" open={open} onClose={onClose}
       PaperProps={{
         sx: {
+          position: 'relative',
           borderRadius: '24px 24px 0 0',
           maxHeight: '82vh',
-          background: 'linear-gradient(160deg, #FAF5FF 0%, #FFF8F2 55%, #F5F0FF 100%)',
-          boxShadow: '0 -8px 40px rgba(123,79,166,0.18)',
+          background: glass.sheetBackground,
+          backdropFilter: glass.sheetBlur,
+          WebkitBackdropFilter: glass.sheetBlur,
+          boxShadow: glass.sheetShadow,
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
+          '&::before': glassBorderSx(),
         },
       }}
     >
@@ -208,14 +207,9 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                 const catColor = CATEGORY_COLORS[s.category] || B.pants;
                 const catEmoji = CATEGORY_EMOJIS[s.category] || '📅';
                 const badge = getWriterBadge(s);
-                const badgeBg = badge?.who === 'both'
-                  ? `linear-gradient(90deg, ${CC.person.jisu.to}, ${CC.person.hyunha.to})`
-                  : badge?.who === 'hyunha'
-                    ? `linear-gradient(150deg, ${CC.person.hyunha.from}, ${CC.person.hyunha.to})`
-                    : `linear-gradient(150deg, ${CC.person.jisu.from}, ${CC.person.jisu.to})`;
                 return (
                   <Box key={s.id} sx={{
-                    ...GLASS_CARD,
+                    ...SCHED_ITEM_BASE,
                     display: 'flex', alignItems: 'stretch',
                     borderRadius: '14px', overflow: 'hidden',
                     border: `1px solid ${catColor}22`,
@@ -235,7 +229,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                         {badge && (
                           <Box sx={{
                             flexShrink: 0, px: '7px', py: '2px', borderRadius: 999,
-                            background: badgeBg, color: '#fff',
+                            background: writerBadgeBg(badge.who), color: '#fff',
                             fontSize: '0.56rem', fontWeight: 700,
                             fontFamily: "'Noto Sans KR',sans-serif",
                           }}>
