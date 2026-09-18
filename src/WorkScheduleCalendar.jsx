@@ -10,11 +10,10 @@ import { db } from './firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, query, where, addDoc, serverTimestamp } from 'firebase/firestore';
 import { UserContext } from './lib/UserContext';
 import { vibrate } from './touchEffects';
-
-const B = {
-  pants: '#7B4FA6', skin: '#F5B8A0', cream: '#FFF8F2',
-  peach: '#FFE4D4', lavender: '#EDE0F5', accent: '#E8630A', dark: '#3D1F00',
-};
+import {
+  calendarColor as C, calendarFont as F, TOUCH_MIN,
+  glass, glassSmallSx,
+} from './lib/calendarTokens';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const COUPLE_ID = 'jisu_hyunha';
@@ -59,76 +58,78 @@ function getCalendarDays(year, month) {
   return days;
 }
 
-function ScheduleDayCell({ d, current, idx, today, schedule, isMultiSelected, onDateClick }) {
+// CustomCalendar.jsx의 day cell과 같은 문법: 선 없이 여백+그림자로 구조를 만들고,
+// 일정 있는 날만 살짝 뜬 유리 표면, 오늘은 입체 그라데이션 원으로 표시.
+function ScheduleDayCell({ d, current, today, schedule, isMultiSelected, onDateClick }) {
   const iso = toIso(d);
   const isToday   = isSameDay(d, today);
   const isHoliday = d.getDay() === 0 || HOLIDAYS.includes(iso);
   const sched     = schedule ? SCHEDULE_MAP[schedule] : null;
-  const isCard    = !!(sched && current);
+  const hasSched  = !!(sched && current);
+
+  let circleSx = {};
+  let numColor = C.textPrimary;
+  if (isMultiSelected) {
+    circleSx = { bgcolor: C.accent };
+    numColor = C.onAccent;
+  } else if (isToday) {
+    circleSx = {
+      background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.person.jisu.to})`,
+      boxShadow: `0 6px 16px ${C.accent}55, inset 0 1px 1px rgba(255,255,255,.5), inset 0 -3px 4px rgba(0,0,0,.18)`,
+    };
+    numColor = C.onAccent;
+  } else if (isHoliday && current) {
+    numColor = C.holiday;
+  }
 
   return (
     <Box
       onClick={() => { if (current) { vibrate(10); onDateClick(d); } }}
       sx={{
         position: 'relative',
-        height: 68,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        pt: '6px',
-        pb: '4px',
+        height: 62,
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        pt: '6px', pb: '4px',
+        borderRadius: '14px',
         opacity: current ? 1 : 0,
         pointerEvents: current ? 'auto' : 'none',
         cursor: current ? 'pointer' : 'default',
         WebkitTapHighlightColor: 'transparent',
-        '&:active': current ? { opacity: 0.7 } : {},
-        transition: 'all 0.15s',
-        ...(isCard ? {
-          m: '2px',
-          borderRadius: '8px',
-          background: isMultiSelected
-            ? `${B.pants}22`
-            : `linear-gradient(135deg, rgba(255,255,255,0.98) 0%, ${sched.color}0d 100%)`,
+        '&:active': current ? { transform: 'scale(0.92)' } : {},
+        transition: 'transform .12s ease',
+        ...(hasSched ? {
+          background: isMultiSelected ? `${C.accent}1f` : 'rgba(255,255,255,.4)',
           boxShadow: isMultiSelected
-            ? `0 3px 10px ${B.pants}33, inset 0 0 0 2px ${B.pants}55`
-            : `0 4px 14px ${sched.color}32, 0 1px 4px ${sched.color}20`,
-          border: isMultiSelected ? 'none' : `1px solid ${sched.color}28`,
-          zIndex: 1,
-        } : {
-          borderRight: (idx + 1) % 7 === 0 ? 'none' : `1px solid ${B.pants}0e`,
-          borderBottom: `1px solid ${B.pants}09`,
-          bgcolor: isMultiSelected ? `${B.pants}18` : 'transparent',
-          outline: isMultiSelected ? `2px solid ${B.pants}55` : 'none',
-          outlineOffset: -2,
-        }),
+            ? `inset 0 0 0 2px ${C.accent}55`
+            : '0 3px 10px rgba(123,79,166,.10), inset 0 1px 0 rgba(255,255,255,.7)',
+        } : (isMultiSelected ? { background: `${C.accent}14` } : {})),
       }}
     >
       {/* 날짜 원 */}
       <Box sx={{
         width: 30, height: 30, borderRadius: '50%',
-        bgcolor: isMultiSelected ? B.pants : (isToday ? `${B.pants}1a` : 'transparent'),
-        border: !isMultiSelected && isToday ? `2px solid ${B.pants}` : 'none',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0,
-        transition: 'background 0.15s',
+        flexShrink: 0, transition: 'all .2s ease',
+        ...circleSx,
       }}>
         <Typography sx={{
           fontSize: '0.8rem',
           fontWeight: (isMultiSelected || isToday) ? 700 : 500,
           fontFamily: "'Noto Sans KR',sans-serif",
           lineHeight: 1,
-          color: isMultiSelected ? 'white' : (isToday ? B.pants : (isHoliday && current ? '#E24B4A' : B.dark)),
+          color: numColor,
         }}>
           {d.getDate()}
         </Typography>
       </Box>
 
-      {/* 스케줄 pill */}
+      {/* 근무 pill */}
       {sched ? (
         <>
           <Box sx={{
-            mt: '3px', px: '6px', py: '1.5px', borderRadius: 10,
+            mt: '4px', px: '6px', py: '1.5px', borderRadius: 10,
             bgcolor: isMultiSelected ? `${sched.color}cc` : sched.color,
+            boxShadow: `0 2px 6px ${sched.color}40`,
             flexShrink: 0,
           }}>
             <Typography sx={{
@@ -254,6 +255,20 @@ export default function WorkScheduleCalendar({ onFlip }) {
 
   const currentSchedule = !isMultiSelect && selectedDate ? schedules[toIso(selectedDate)] : null;
 
+  const ICON_BTN_SX = (active, activeColor) => ({
+    width: TOUCH_MIN, height: TOUCH_MIN, borderRadius: '50%',
+    ...(active
+      ? {
+          background: `linear-gradient(150deg, ${activeColor}, ${activeColor})`,
+          color: '#fff',
+          boxShadow: `0 4px 14px ${activeColor}55, inset 0 1px 1px rgba(255,255,255,.4)`,
+        }
+      : { ...glassSmallSx(), color: C.textSecondary }
+    ),
+    '&:active': { transform: 'scale(0.88)' },
+    transition: 'transform .15s ease, box-shadow .15s ease',
+  });
+
   return (
     <Box
       onTouchStart={onTouchStart}
@@ -263,7 +278,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
       {/* ── 제목 + 다중선택 버튼 */}
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.2 }}>
         <Box>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '0.92rem', color: B.pants }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '0.92rem', color: C.textPrimary }}>
             🏥 근무 스케줄
           </Typography>
           <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.3 }}>
@@ -277,33 +292,10 @@ export default function WorkScheduleCalendar({ onFlip }) {
           </Stack>
         </Box>
         <Stack direction="row" gap={0.8}>
-          <IconButton
-            size="small"
-            onClick={toggleMultiSelect}
-            sx={{
-              width: 36, height: 36, borderRadius: '50%',
-              bgcolor: isMultiSelect ? B.pants : `${B.pants}14`,
-              color: isMultiSelect ? 'white' : B.pants,
-              boxShadow: isMultiSelect ? `0 2px 10px ${B.pants}44` : 'none',
-              '&:hover': { bgcolor: isMultiSelect ? '#6A3D96' : `${B.pants}22` },
-              '&:active': { transform: 'scale(0.88)' },
-              transition: 'all 0.18s',
-            }}
-          >
+          <IconButton onClick={toggleMultiSelect} sx={ICON_BTN_SX(isMultiSelect, C.accent)}>
             <DateRangeIcon sx={{ fontSize: '1.1rem' }} />
           </IconButton>
-          <IconButton
-            size="small"
-            onClick={onFlip}
-            sx={{
-              width: 36, height: 36, borderRadius: '50%',
-              bgcolor: '#16A34A', color: 'white',
-              boxShadow: '0 3px 10px #16A34A44',
-              '&:hover': { bgcolor: '#15803D' },
-              '&:active': { transform: 'scale(0.88)' },
-              transition: 'all 0.18s',
-            }}
-          >
+          <IconButton onClick={onFlip} sx={ICON_BTN_SX(true, '#16A34A')}>
             <SwapHorizIcon sx={{ fontSize: '1.1rem' }} />
           </IconButton>
         </Stack>
@@ -318,41 +310,39 @@ export default function WorkScheduleCalendar({ onFlip }) {
           disabled={multiDates.length === 0}
           onClick={() => setDrawerOpen(true)}
           sx={{
-            mb: 1.5, bgcolor: B.pants, borderRadius: 3,
-            fontFamily: "'Jua',sans-serif", py: 0.9,
-            boxShadow: `0 3px 10px ${B.pants}44`,
+            mb: 1.5, minHeight: TOUCH_MIN, borderRadius: 3,
+            fontFamily: "'Jua',sans-serif",
+            background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.accent})`,
+            boxShadow: `0 8px 22px ${C.accent}40, inset 0 1px 1px rgba(255,255,255,.4)`,
             '&:active': { transform: 'scale(0.96)' },
-            '&:hover': { bgcolor: '#6A3D96' },
-            '&.Mui-disabled': { bgcolor: B.pants + '55', color: 'white' },
+            '&.Mui-disabled': { bgcolor: C.accent + '55', color: 'white' },
           }}
         >
           {multiDates.length > 0 ? `${multiDates.length}개 날짜에 스케줄 적용` : '날짜를 선택하세요'}
         </Button>
       )}
 
-      {/* ── 월 헤더 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.8, px: 0.5 }}>
-        <IconButton onClick={() => navigate(-1)} size="small"
-          sx={{ color: B.pants, width: 34, height: 34, bgcolor: B.lavender + '80', '&:hover': { bgcolor: B.lavender }, '&:active': { transform: 'scale(0.82)' } }}>
-          <ChevronLeftIcon sx={{ fontSize: '1rem' }} />
+      {/* ── 월 헤더: CustomCalendar와 동일한 대칭 구조(prev/title/next만 있는 행), 44pt 터치 타겟 */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1.4 }}>
+        <IconButton onClick={() => navigate(-1)} sx={{ width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary, ...glassSmallSx(), '&:active': { transform: 'scale(0.86)' } }}>
+          <ChevronLeftIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={`${viewYear}-${viewMonth}`}
-            initial={{ y: slideDir * 10, opacity: 0 }}
+            initial={{ y: slideDir * 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -slideDir * 10, opacity: 0 }}
+            exit={{ y: -slideDir * 8, opacity: 0 }}
             transition={{ duration: 0.17 }}
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: 'center', minWidth: 108 }}
           >
-            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.1rem', color: B.pants }}>
+            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: F.monthTitle, color: C.textPrimary, lineHeight: 1 }}>
               {viewYear}년 {viewMonth + 1}월
             </Typography>
           </motion.div>
         </AnimatePresence>
-        <IconButton onClick={() => navigate(1)} size="small"
-          sx={{ color: B.pants, width: 34, height: 34, bgcolor: B.lavender + '80', '&:hover': { bgcolor: B.lavender }, '&:active': { transform: 'scale(0.82)' } }}>
-          <ChevronRightIcon sx={{ fontSize: '1rem' }} />
+        <IconButton onClick={() => navigate(1)} sx={{ width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary, ...glassSmallSx(), '&:active': { transform: 'scale(0.86)' } }}>
+          <ChevronRightIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
       </Box>
 
@@ -360,9 +350,9 @@ export default function WorkScheduleCalendar({ onFlip }) {
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', mb: '1px' }}>
         {WEEKDAYS.map((w, i) => (
           <Typography key={w} sx={{
-            textAlign: 'center', fontSize: '0.67rem', fontWeight: 700,
+            textAlign: 'center', fontSize: F.weekday, fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
-            color: i === 0 ? '#E24B4A99' : B.dark + '33',
+            color: i === 0 ? C.holiday + 'aa' : C.textFaint,
             py: '4px',
           }}>
             {w}
@@ -370,8 +360,8 @@ export default function WorkScheduleCalendar({ onFlip }) {
         ))}
       </Box>
 
-      {/* ── 날짜 그리드 */}
-      <Box sx={{ position: 'relative', height: 408, overflow: 'hidden' }}>
+      {/* ── 날짜 그리드: 선 없이 여백+그림자로만 구조를 만든다(부모 글래스 패널 위에 바로 얹힘) */}
+      <Box sx={{ position: 'relative', height: 372, overflow: 'hidden' }}>
         <AnimatePresence initial={false}>
           <motion.div
             key={`${viewYear}-${viewMonth}`}
@@ -382,13 +372,14 @@ export default function WorkScheduleCalendar({ onFlip }) {
             style={{
               position: 'absolute', top: 0, left: 0, right: 0,
               display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)',
+              gap: '2px',
               willChange: 'transform, opacity',
             }}
           >
-            {days.map(({ date: d, current }, idx) => (
+            {days.map(({ date: d, current }) => (
               <ScheduleDayCell
                 key={`${toIso(d)}-${current}`}
-                d={d} current={current} idx={idx}
+                d={d} current={current}
                 today={today}
                 schedule={current ? schedules[toIso(d)] : undefined}
                 isMultiSelected={isMultiSelect && multiDates.includes(toIso(d))}
@@ -399,55 +390,58 @@ export default function WorkScheduleCalendar({ onFlip }) {
         </AnimatePresence>
       </Box>
 
-      {/* ── 범례 */}
-      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '4px', justifyContent: 'center', mt: 1.8, overflow: 'hidden' }}>
+      {/* ── 범례: 작은 반복 요소라 backdrop-filter 없이 유리풍만 */}
+      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', mt: 1.6, overflow: 'hidden' }}>
         {SCHEDULE_TYPES.map(s => (
           <Box key={s.type} sx={{
             display: 'flex', alignItems: 'center', gap: '4px',
-            px: '7px', py: '3px', borderRadius: '20px',
-            bgcolor: s.bg, border: `1px solid ${s.color}22`,
+            px: '8px', py: '4px', borderRadius: '20px',
+            ...glassSmallSx(),
             flexShrink: 0,
           }}>
-            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: s.color, flexShrink: 0 }} />
-            <Typography sx={{ fontSize: '0.58rem', color: B.dark + '99', fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: s.color, boxShadow: `0 0 4px ${s.color}99`, flexShrink: 0 }} />
+            <Typography sx={{ fontSize: F.label, color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif" }}>
               {s.emoji} <b>{s.label}</b> {s.time}
             </Typography>
           </Box>
         ))}
       </Box>
 
-      {/* ── 스케줄 선택 Drawer */}
+      {/* ── 스케줄 선택 Drawer — 유리 바텀시트 톤 (CoupleCalendar 카드 1장 + 이 시트 1장 = 최대 2장, 예산 내) */}
       <Drawer
         anchor="bottom"
         open={drawerOpen}
         onClose={() => { setDrawerOpen(false); }}
         PaperProps={{
           sx: {
-            borderRadius: '22px 22px 0 0',
-            bgcolor: B.cream,
+            borderRadius: '24px 24px 0 0',
+            background: glass.sheetBackground,
+            backdropFilter: glass.sheetBlur,
+            WebkitBackdropFilter: glass.sheetBlur,
+            boxShadow: glass.sheetShadow,
             display: 'flex', flexDirection: 'column',
             overflow: 'hidden',
           },
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.4, pb: 0.5, flexShrink: 0 }}>
-          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '33' }} />
+          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: C.accent + '33' }} />
         </Box>
 
-        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.2, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.2, borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: C.textPrimary }}>
             {isMultiSelect
               ? `🏥 ${multiDates.length}개 날짜 스케줄 설정`
               : `🏥 ${selectedDate?.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })} 스케줄 설정`
             }
           </Typography>
           {!isMultiSelect && currentSchedule && (
-            <Typography sx={{ fontSize: '0.66rem', color: '#aaa', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Typography sx={{ fontSize: '0.66rem', color: C.textFaint, mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
               현재: {SCHEDULE_MAP[currentSchedule]?.emoji} {currentSchedule} ({SCHEDULE_MAP[currentSchedule]?.time})
             </Typography>
           )}
           {isMultiSelect && (
-            <Typography sx={{ fontSize: '0.66rem', color: '#aaa', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Typography sx={{ fontSize: '0.66rem', color: C.textFaint, mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
               선택한 날짜 전체에 같은 스케줄이 적용돼요
             </Typography>
           )}
@@ -462,7 +456,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
                   key={s.type}
                   onClick={() => handleScheduleSelect(s.type)}
                   sx={{
-                    borderRadius: 3, py: 1.5, px: 0.5,
+                    borderRadius: 3, py: 1.5, px: 0.5, minHeight: TOUCH_MIN,
                     bgcolor: active ? s.color : s.bg,
                     border: `2px solid ${active ? s.color : s.color + '44'}`,
                     textAlign: 'center', cursor: 'pointer',
@@ -500,9 +494,9 @@ export default function WorkScheduleCalendar({ onFlip }) {
                 if (window.confirm(msg)) handleScheduleSelect(null);
               }}
               sx={{
-                mt: 1.5, py: 1.2, borderRadius: 2.5, textAlign: 'center',
+                mt: 1.5, py: 1.2, borderRadius: 2.5, textAlign: 'center', minHeight: TOUCH_MIN,
                 border: '1.5px solid #EF444440',
-                bgcolor: '#FEF2F2',
+                bgcolor: '#FEF2F2cc',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
                 '&:active': { bgcolor: '#FEE2E2', transform: 'scale(0.97)' },

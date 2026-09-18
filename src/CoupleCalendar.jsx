@@ -13,8 +13,9 @@ import AiReport             from "./AiReport";
 import CustomCalendar       from "./CustomCalendar";
 import WorkScheduleCalendar from "./WorkScheduleCalendar";
 
-import { Box, Typography, Button, Stack, Paper, IconButton } from "@mui/material";
+import { Box, Typography, Button, Stack, Paper, IconButton, Fab } from "@mui/material";
 import AddTaskIcon          from "@mui/icons-material/AddTask";
+import AddIcon               from "@mui/icons-material/Add";
 import SwapHorizIcon        from "@mui/icons-material/SwapHoriz";
 import DateRangeIcon        from "@mui/icons-material/DateRange";
 import EventIcon            from "@mui/icons-material/Event";
@@ -22,8 +23,11 @@ import DeviceThermostatIcon from "@mui/icons-material/DeviceThermostat";
 import FavoriteIcon         from "@mui/icons-material/Favorite";
 import BarChartIcon         from "@mui/icons-material/BarChart";
 
-import { createBuriPang } from "./touchEffects";
-import { calendarColor as C, calendarRadius, calendarFont as F, TOUCH_MIN } from "./lib/calendarTokens";
+import { createBuriPang, vibrate } from "./touchEffects";
+import {
+  calendarColor as C, calendarRadius, calendarFont as F, TOUCH_MIN,
+  glassPanelSx, glassBorderSx, glassSmallSx,
+} from "./lib/calendarTokens";
 
 const B = {
   pants:    '#7B4FA6', skin:    '#F5B8A0',
@@ -32,12 +36,11 @@ const B = {
   dark:     '#3D1F00',
 };
 
-// 단일 카드 — 바깥 그라데이션 wrap + 글래스 카드의 3중 중첩을 한 겹으로 정리
+// 리퀴드 글래스 카드 — CoupleCalendar 앞/뒷면(근무 스케줄) 공용, 화면당 backdrop-filter 패널은 이거 하나뿐.
 const CARD_SX = {
-  p: '14px 10px 16px', borderRadius: `${calendarRadius.lg}px`, boxSizing: 'border-box',
-  bgcolor: C.surface,
-  border: `1px solid ${C.border}`,
-  boxShadow: '0 2px 14px rgba(46,42,56,0.06)',
+  ...glassPanelSx(calendarRadius.xl),
+  p: '14px 10px 16px', boxSizing: 'border-box',
+  '&::before': glassBorderSx(),
 };
 
 function toIso(d) {
@@ -178,6 +181,12 @@ const CoupleCalendar = ({ currentUser }) => {
     setSelectedDates([]);
   };
 
+  const handleFabAdd = () => {
+    vibrate(15);
+    resetForm();
+    setScheduleOpen(true);
+  };
+
   const ay  = activeMonth.getFullYear();
   const am  = activeMonth.getMonth();
   const amp = `${ay}-${String(am+1).padStart(2,'0')}`;
@@ -211,17 +220,23 @@ const CoupleCalendar = ({ currentUser }) => {
     exit:    (dir) => ({ rotateY: dir * -90, opacity: 0 }),
   };
 
+  // 아이콘 버튼: 비활성=작은 유리(backdrop-filter 없음), 활성=입체 그라데이션 채움 + 눌림 반응
   const ICON_BTN_SX = (active) => ({
     width: TOUCH_MIN, height: TOUCH_MIN, borderRadius: '50%',
-    bgcolor: active ? C.accent : 'transparent',
-    color: active ? C.onAccent : C.textSecondary,
-    border: active ? 'none' : `1px solid ${C.border}`,
-    '&:hover': { bgcolor: active ? C.accent : C.divider },
+    ...(active
+      ? {
+          background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.person.jisu.to})`,
+          color: C.onAccent,
+          boxShadow: `0 4px 14px ${C.accent}55, inset 0 1px 1px rgba(255,255,255,.4), inset 0 -2px 3px rgba(0,0,0,.15)`,
+        }
+      : { ...glassSmallSx(), color: C.textSecondary }
+    ),
     '&:active': { transform: 'scale(0.88)' },
-    transition: 'all 0.18s ease',
+    transition: 'transform .15s ease, box-shadow .15s ease',
   });
 
   return (
+    <Box sx={{ position: 'relative' }}>
     <Box sx={{ perspective: '1200px' }}>
       <AnimatePresence mode="wait" initial={false} custom={flipDirRef.current}>
         {!showSchedule ? (
@@ -256,10 +271,10 @@ const CoupleCalendar = ({ currentUser }) => {
                   onPointerDown={e => createBuriPang(e)}
                   sx={{
                     mb: 1.5, minHeight: TOUCH_MIN, borderRadius: 3, fontFamily: "'Jua',sans-serif",
-                    bgcolor: C.accent,
-                    boxShadow: `0 4px 16px ${C.accent}44`,
-                    '&:hover': { bgcolor: C.accent },
-                    '&:active': { transform: 'scale(0.96)' },
+                    background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.accent})`,
+                    boxShadow: `0 8px 22px ${C.accent}40, inset 0 1px 1px rgba(255,255,255,.4)`,
+                    '&:hover': { background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.accent})` },
+                    '&:active': { transform: 'scale(0.96)', boxShadow: `0 3px 8px ${C.accent}35, inset 0 3px 8px rgba(0,0,0,.2)` },
                     '&.Mui-disabled': { bgcolor: C.accent + '55', color: 'white' },
                   }}>
                   {selectedDates.length > 0 ? `${selectedDates.length}개 날짜에 일정 추가` : '날짜를 선택하세요'}
@@ -278,7 +293,7 @@ const CoupleCalendar = ({ currentUser }) => {
                 onMonthChange={setActiveMonth}
               />
 
-              {/* 월간 인사이트 카드 — 색은 카테고리 구분에만 쓰므로 여기는 중성 톤 */}
+              {/* 월간 인사이트 카드 — 색은 카테고리 구분에만 쓰므로 여기는 중성 톤, 작은 반복요소라 backdrop-filter 없이 유리풍만 */}
               <Stack direction="row" gap={1} sx={{ mt: 1.6 }}>
                 {[
                   { Icon: EventIcon,            value: monthSchedules.length,               label: '이번달 일정' },
@@ -287,8 +302,7 @@ const CoupleCalendar = ({ currentUser }) => {
                 ].map((item) => (
                   <Box key={item.label} sx={{
                     flex: 1,
-                    bgcolor: C.surface,
-                    border: `1px solid ${C.border}`,
+                    ...glassSmallSx(),
                     borderRadius: `${calendarRadius.md}px`, p: '10px 6px',
                     textAlign: 'center',
                   }}>
@@ -339,6 +353,29 @@ const CoupleCalendar = ({ currentUser }) => {
           </motion.div>
         )}
       </AnimatePresence>
+    </Box>
+
+      {/* FAB — 일정 캘린더 화면(앞면)에만, 다중선택 중엔 숨김(전용 CTA가 이미 있음).
+          카드 안에 절대위치로 scoped — fixed로 뷰포트에 고정하면 홈의 다른 섹션까지 따라다니게 되므로
+          이 카드 하단 경계에만 살짝 걸치도록 배치(뒤이은 섹션과의 16px 간격 안에서만 겹침) */}
+      {!showSchedule && !isMultiSelect && (
+        <Fab
+          aria-label="일정 추가"
+          onClick={handleFabAdd}
+          sx={{
+            position: 'absolute', right: 10, bottom: -14, zIndex: 5,
+            width: 52, height: 52, minHeight: 52,
+            background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.person.jisu.to})`,
+            color: '#fff',
+            boxShadow: `0 10px 24px ${C.accent}45, 0 3px 8px ${C.person.hyunha.to}35, inset 0 1px 2px rgba(255,255,255,.5), inset 0 -2px 4px rgba(0,0,0,.15)`,
+            '&:hover': { background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.person.jisu.to})` },
+            '&:active': { transform: 'scale(0.9) translateY(2px)' },
+            transition: 'transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease',
+          }}
+        >
+          <AddIcon sx={{ fontSize: '1.6rem' }} />
+        </Fab>
+      )}
 
       {/* 모달들 */}
       <DayPanel

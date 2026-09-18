@@ -3,6 +3,7 @@ import { Box, Typography, Stack, Drawer, TextField, Button } from '@mui/material
 import { db } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { vibrate } from './touchEffects';
+import { calendarColor as CC } from './lib/calendarTokens';
 
 const B = {
   pants: '#7B4FA6', skin: '#F5B8A0', cream: '#FFF8F2', peach: '#FFE4D4',
@@ -25,6 +26,19 @@ function getTempMeta(v) {
 
 function toIso(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// [신규] 일정의 writer/participants 필드로 "지수"/"현하"/"둘 다" 작성자 배지를 만든다.
+// 필드가 없는 기존 문서는 null을 반환해 배지를 숨긴다(폴백).
+function getWriterBadge(s) {
+  if (s.participants === '둘다') return { label: '둘 다', who: 'both' };
+  if (!s.writer) return null;
+  if (s.participants === '상대방만') {
+    const other = s.writer === '지수' ? '현하' : '지수';
+    return { label: other, who: other === '현하' ? 'hyunha' : 'jisu' };
+  }
+  // '나만' 이거나 participants 필드 자체가 없는 오래된 문서는 작성자 본인으로 표시
+  return { label: s.writer, who: s.writer === '현하' ? 'hyunha' : 'jisu' };
 }
 
 const GLASS_CARD = {
@@ -193,6 +207,12 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
               {schedules.map(s => {
                 const catColor = CATEGORY_COLORS[s.category] || B.pants;
                 const catEmoji = CATEGORY_EMOJIS[s.category] || '📅';
+                const badge = getWriterBadge(s);
+                const badgeBg = badge?.who === 'both'
+                  ? `linear-gradient(90deg, ${CC.person.jisu.to}, ${CC.person.hyunha.to})`
+                  : badge?.who === 'hyunha'
+                    ? `linear-gradient(150deg, ${CC.person.hyunha.from}, ${CC.person.hyunha.to})`
+                    : `linear-gradient(150deg, ${CC.person.jisu.from}, ${CC.person.jisu.to})`;
                 return (
                   <Box key={s.id} sx={{
                     ...GLASS_CARD,
@@ -212,6 +232,16 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                         }}>
                           {s.isImportant && '⭐ '}{s.title}
                         </Typography>
+                        {badge && (
+                          <Box sx={{
+                            flexShrink: 0, px: '7px', py: '2px', borderRadius: 999,
+                            background: badgeBg, color: '#fff',
+                            fontSize: '0.56rem', fontWeight: 700,
+                            fontFamily: "'Noto Sans KR',sans-serif",
+                          }}>
+                            {badge.label}
+                          </Box>
+                        )}
                       </Stack>
                       {s.location && (
                         <Typography sx={{ fontSize: '0.63rem', color: '#aaa', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>

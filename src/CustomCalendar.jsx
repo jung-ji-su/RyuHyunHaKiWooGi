@@ -6,7 +6,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FavoriteIcon     from '@mui/icons-material/Favorite';
 import LockIcon         from '@mui/icons-material/Lock';
 import { vibrate } from './touchEffects';
-import { calendarColor as C, calendarFont as F, TOUCH_MIN } from './lib/calendarTokens';
+import { calendarColor as C, calendarFont as F, TOUCH_MIN, glassSmallSx } from './lib/calendarTokens';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -45,19 +45,21 @@ function getCalendarDays(year, month) {
 const PRIORITY = ['기념일', '데이트', '개인일정'];
 
 // 일정 카테고리를 색 + 모양 두 가지로 함께 표현 — 색만으로 구분하지 않기 위함(접근성).
+// 작은 네온 글로우(box-shadow, blur-filter 아님)로 입체감만 살짝 추가.
 function ShapeDot({ category, dim, size = 5 }) {
   const meta = C.category[category] || { hue: C.accent, shape: 'circle' };
   const bg = dim ? `${meta.hue}99` : meta.hue;
+  const glow = { boxShadow: `0 0 4px ${meta.hue}99` };
   if (meta.shape === 'diamond') {
-    return <Box sx={{ width: size - 1, height: size - 1, bgcolor: bg, borderRadius: '1px', transform: 'rotate(45deg)', flexShrink: 0 }} />;
+    return <Box sx={{ width: size - 1, height: size - 1, bgcolor: bg, borderRadius: '1px', transform: 'rotate(45deg)', flexShrink: 0, ...glow }} />;
   }
   if (meta.shape === 'square') {
-    return <Box sx={{ width: size, height: size, bgcolor: bg, borderRadius: '1px', flexShrink: 0 }} />;
+    return <Box sx={{ width: size, height: size, bgcolor: bg, borderRadius: '1px', flexShrink: 0, ...glow }} />;
   }
-  return <Box sx={{ width: size, height: size, bgcolor: bg, borderRadius: '50%', flexShrink: 0 }} />;
+  return <Box sx={{ width: size, height: size, bgcolor: bg, borderRadius: '50%', flexShrink: 0, ...glow }} />;
 }
 
-function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode, schedules, temperatures, capsules, today, onDateClick }) {
+function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, schedules, temperatures, capsules, today, onDateClick }) {
   const iso = toIso(d);
   const isSelected  = !multiSelectMode && selectedDate && isSameDay(d, selectedDate);
   const isMultiSel  = multiSelectMode && selectedDates.includes(d.toDateString());
@@ -75,20 +77,30 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
 
   const sorted = [...daySchedules].sort((a, b) => PRIORITY.indexOf(a.category) - PRIORITY.indexOf(b.category));
 
-  // 날짜 원: 오늘=채운 원, 선택=얇은 링. 오늘이면서 선택이면 채운 원 + 은은한 외곽 링으로 함께 표시.
+  // 날짜 원: 오늘=입체 그라데이션 채움, 선택=살짝 떠 있는 유리 배지(그림자로 표현).
+  // 오늘이면서 선택이면 채운 원 + 은은한 외곽 글로우 링으로 함께 표시.
   let circleSx = {};
   let numColor = C.textPrimary;
   if (isToday) {
     circleSx = {
-      bgcolor: C.accent,
-      boxShadow: isSelected && !multiSelectMode ? `0 0 0 3px ${C.accentSoft}` : 'none',
+      background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.person.jisu.to})`,
+      boxShadow: [
+        `0 6px 16px ${C.accent}55`,
+        'inset 0 1px 1px rgba(255,255,255,.5)',
+        'inset 0 -3px 4px rgba(0,0,0,.18)',
+        isSelected && !multiSelectMode ? `0 0 0 4px ${C.accentSoft}` : null,
+      ].filter(Boolean).join(', '),
     };
     numColor = C.onAccent;
   } else if (isMultiSel) {
     circleSx = { bgcolor: C.accentSoft };
     numColor = C.accent;
   } else if (isSelected) {
-    circleSx = { border: `2px solid ${C.accent}`, boxSizing: 'border-box' };
+    circleSx = {
+      bgcolor: 'rgba(255,255,255,.85)',
+      boxShadow: `0 6px 14px ${C.accent}28, 0 2px 4px ${C.accent}1f, inset 0 1px 0 rgba(255,255,255,.95)`,
+      transform: 'translateY(-1px)',
+    };
     numColor = C.accent;
   } else if (isHoliday && current) {
     numColor = C.holiday;
@@ -105,14 +117,18 @@ function DayCell({ d, current, idx, selectedDate, selectedDates, multiSelectMode
         alignItems: 'center',
         pt: '7px',
         pb: '5px',
+        borderRadius: '14px',
         opacity: current ? 1 : 0,
         pointerEvents: current ? 'auto' : 'none',
         cursor: current ? 'pointer' : 'default',
         WebkitTapHighlightColor: 'transparent',
-        '&:active': current ? { opacity: 0.6 } : {},
-        transition: 'opacity 0.15s',
-        borderRight: (idx + 1) % 7 === 0 ? 'none' : `1px solid ${C.divider}`,
-        borderBottom: `1px solid ${C.divider}`,
+        '&:active': current ? { transform: 'scale(0.92)' } : {},
+        transition: 'transform 0.12s ease',
+        // 일정이 있는 날만 살짝 뜬 유리 표면 — 선 대신 그림자로 경계를 그린다 (backdrop-filter 없음)
+        ...(daySchedules.length > 0 ? {
+          background: 'rgba(255,255,255,.4)',
+          boxShadow: '0 3px 10px rgba(123,79,166,.10), inset 0 1px 0 rgba(255,255,255,.7)',
+        } : {}),
       }}
     >
       {/* 날짜 원 */}
@@ -199,22 +215,23 @@ export default function CustomCalendar({
 
   const days = getCalendarDays(viewYear, viewMonth);
 
+  const NAV_BTN_SX = {
+    width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary,
+    ...glassSmallSx(),
+    '&:hover': { color: C.accent },
+    '&:active': { color: C.accent, transform: 'scale(0.86)' },
+    transition: 'transform .12s ease, color .12s ease',
+  };
+
   return (
     <Box
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       sx={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'pan-y' }}
     >
-      {/* ── 월 헤더: 화살표를 제목 옆에 작게, 터치 타겟은 44pt 유지 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.2, mb: 1.2 }}>
-        <IconButton
-          onClick={() => navigate(-1)}
-          sx={{
-            width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary,
-            '&:hover': { color: C.accent, bgcolor: 'transparent' },
-            '&:active': { color: C.accent, transform: 'scale(0.88)' },
-          }}
-        >
+      {/* ── 월 헤더: prev/title/next만 있는 하나의 행 — 제목 기준 좌우 대칭 유지, 터치 타겟 44pt */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1.4 }}>
+        <IconButton onClick={() => navigate(-1)} sx={NAV_BTN_SX}>
           <ChevronLeftIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
 
@@ -236,14 +253,7 @@ export default function CustomCalendar({
           </motion.div>
         </AnimatePresence>
 
-        <IconButton
-          onClick={() => navigate(1)}
-          sx={{
-            width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary,
-            '&:hover': { color: C.accent, bgcolor: 'transparent' },
-            '&:active': { color: C.accent, transform: 'scale(0.88)' },
-          }}
-        >
+        <IconButton onClick={() => navigate(1)} sx={NAV_BTN_SX}>
           <ChevronRightIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
       </Box>
@@ -262,8 +272,9 @@ export default function CustomCalendar({
         ))}
       </Box>
 
-      {/* ── 날짜 그리드 */}
-      <Box sx={{ position: 'relative', height: 324, overflow: 'hidden', border: `1px solid ${C.divider}`, borderRadius: '10px' }}>
+      {/* ── 날짜 그리드: 선 없이 여백 + 그림자 깊이로만 구조를 만든다.
+           (부모인 CoupleCalendar의 글래스 패널 위에 바로 얹히므로 여기서 별도 backdrop-filter/테두리 박스를 만들지 않음) */}
+      <Box sx={{ position: 'relative', height: 324, overflow: 'hidden' }}>
         <AnimatePresence initial={false}>
           <motion.div
             key={`${viewYear}-${viewMonth}`}
@@ -274,13 +285,14 @@ export default function CustomCalendar({
             style={{
               position: 'absolute', top: 0, left: 0, right: 0,
               display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)',
+              gap: '2px',
               willChange: 'transform, opacity',
             }}
           >
-            {days.map(({ date: d, current }, idx) => (
+            {days.map(({ date: d, current }) => (
               <DayCell
                 key={`${toIso(d)}-${current}`}
-                d={d} current={current} idx={idx}
+                d={d} current={current}
                 selectedDate={selectedDate}
                 selectedDates={selectedDates}
                 multiSelectMode={multiSelectMode}
@@ -295,13 +307,13 @@ export default function CustomCalendar({
         </AnimatePresence>
       </Box>
 
-      {/* ── 범례: 일정 카테고리를 dot과 동일한 색+모양으로 표시 */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '5px', justifyContent: 'center', mt: 1.4 }}>
+      {/* ── 범례: 일정 카테고리를 dot과 동일한 색+모양으로 표시. 작은 반복 요소라 backdrop-filter 없이 유리풍만 */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', mt: 1.6 }}>
         {Object.keys(C.category).map(label => (
           <Box key={label} sx={{
             display: 'flex', alignItems: 'center', gap: '5px',
-            px: '8px', py: '4px', borderRadius: '20px',
-            bgcolor: C.surface, border: `1px solid ${C.border}`,
+            px: '9px', py: '4px', borderRadius: '20px',
+            ...glassSmallSx(),
           }}>
             <ShapeDot category={label} size={6} />
             <Typography sx={{ fontSize: F.label, color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif" }}>

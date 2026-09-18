@@ -237,25 +237,41 @@ export default function CoupleDDay() {
           50%      { letter-spacing:4px; opacity:1; }
         }
         @keyframes ddayBorderGlow {
-          0%,100% { box-shadow: 0 8px 32px ${B.pants}22, 0 2px 8px ${B.skin}44, inset 0 1px 0 rgba(255,255,255,0.8); border-color: ${B.pants}33; }
-          33%     { box-shadow: 0 14px 48px #FF6B9D33, 0 0 30px ${B.pants}22, 0 0 0 4px #FF6B9D18, inset 0 1px 0 rgba(255,255,255,0.95); border-color: #FF6B9D44; }
-          66%     { box-shadow: 0 10px 40px ${B.accent}28, 0 0 24px ${B.accent}18, 0 0 0 3px ${B.accent}14, inset 0 1px 0 rgba(255,255,255,0.88); border-color: ${B.accent}33; }
+          0%,100% { box-shadow: 0 8px 32px ${B.pants}22, 0 2px 8px ${B.skin}44, inset 0 1px 0 rgba(255,255,255,0.85); }
+          33%     { box-shadow: 0 14px 48px #FF6B9D33, 0 0 30px ${B.pants}22, 0 0 0 4px #FF6B9D18, inset 0 1px 0 rgba(255,255,255,0.95); }
+          66%     { box-shadow: 0 10px 40px ${B.accent}28, 0 0 24px ${B.accent}18, 0 0 0 3px ${B.accent}14, inset 0 1px 0 rgba(255,255,255,0.88); }
         }
 
+        /* 리퀴드 글래스: 카드 자체 파스텔 정체성(크림→핑크→라벤더)을 유지하면서 반투명+블러로 —
+           캘린더 카드와 같은 blur 기법이지만 값은 이 카드 고유의 색으로 커스텀 */
         .dday-wrap {
           position: relative;
           width: 100%;
           border-radius: 28px;
           overflow: hidden;
-          background: linear-gradient(145deg, ${B.cream} 0%, #FFF0F8 40%, ${B.lavender} 100%);
-          border: 2.5px solid ${B.pants}33;
-          min-height: 136px;
+          background: linear-gradient(145deg, ${B.cream}c2 0%, #FFF0F8b8 40%, ${B.lavender}b0 100%);
+          backdrop-filter: blur(20px) saturate(160%);
+          -webkit-backdrop-filter: blur(20px) saturate(160%);
+          min-height: 120px;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           margin-bottom: 20px;
           animation: ddayBorderGlow 4s ease-in-out infinite;
+        }
+        /* 실선 테두리 대신, 위치별로 밝기가 다른 그라데이션 링을 오려내는 글래스 하이라이트 */
+        .dday-wrap::before {
+          content: "";
+          position: absolute; inset: 0;
+          border-radius: inherit;
+          padding: 1.5px;
+          background: linear-gradient(150deg, rgba(255,255,255,0.95), rgba(255,255,255,0.1) 35%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.55));
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          pointer-events: none;
+          z-index: 11;
         }
         .dday-canvas {
           position: absolute; top:0; left:0;
@@ -265,7 +281,7 @@ export default function CoupleDDay() {
         .dday-content {
           position: relative; z-index: 10;
           text-align: center;
-          padding: 14px 16px 10px;
+          padding: 12px 18px 12px;
           width: 100%;
           display: flex;
           flex-direction: column;
