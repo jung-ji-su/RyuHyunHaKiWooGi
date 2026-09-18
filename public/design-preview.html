@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>캘린더 디자인 프리뷰 — 리퀴드 글래스</title>
+<style>
+  /* ============================================================
+     디자인 프리뷰 전용 파일. 앱 코드/라우팅과 완전히 독립.
+     외부 폰트/스크립트/스타일시트 의존성 없음 — 전부 인라인.
+     ============================================================ */
+
+  :root {
+    /* ── 컬러 시스템: 두 사람 + 공통(D-Day)을 구분하는 3색 accent ── */
+    --c-jisu:    #7B4FA6;   /* 지수 — 보라 (기존 앱 메인 브랜드색 유지) */
+    --c-jisu-2:  #9B6FC7;
+    --c-hyunha:  #FF6B9D;   /* 현하 — 코랄핑크 */
+    --c-hyunha-2:#FF8FAB;
+    --c-dday:    #E8A93B;   /* 공통 / 기념일 / D-Day — 따뜻한 골드 */
+    --c-dday-2:  #FFC96B;
+
+    --ink-900: #2E2A38;     /* 본문 텍스트 */
+    --ink-600: #6B6478;     /* 보조 텍스트 */
+    --ink-400: #A79FB3;     /* 흐린 텍스트 */
+
+    --glass-fill-strong: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.32));
+    --glass-fill-soft:   linear-gradient(135deg, rgba(255,255,255,0.42), rgba(255,255,255,0.18));
+    --glass-border: rgba(255,255,255,0.75);
+
+    --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Apple SD Gothic Neo', 'Segoe UI', sans-serif;
+    /* ui-rounded: Safari/iOS의 SF Rounded 시스템 폰트 제네릭 키워드. 외부 폰트 파일 없이 둥글고 다정한 느낌을 낸다 */
+    --font-display: ui-rounded, -apple-system, 'SF Pro Rounded', 'Apple SD Gothic Neo', sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-ui);
+    color: var(--ink-900);
+    background: #FBF3EC;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── 배경 수채화 글로우: filter:blur()는 backdrop-filter와 달리
+     "뒤 콘텐츠를 실시간 샘플링"하지 않고 그 레이어 자체만 블러 처리되므로
+     transform 애니메이션을 걸어도 iOS에서 훨씬 저렴하다.
+     (성능 보고서 참고: 이 3개는 backdrop-filter 레이어 수에 포함하지 않음) ── */
+  .bg-glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+  }
+  .bg-glow--1 {
+    width: 340px; height: 340px; top: -120px; right: -100px;
+    background: radial-gradient(circle, var(--c-jisu-2), transparent 70%);
+    animation: drift1 18s ease-in-out infinite;
+  }
+  .bg-glow--2 {
+    width: 300px; height: 300px; bottom: 10%; left: -120px;
+    background: radial-gradient(circle, var(--c-hyunha-2), transparent 70%);
+    animation: drift2 22s ease-in-out infinite;
+  }
+  .bg-glow--3 {
+    width: 260px; height: 260px; bottom: -100px; right: 10%;
+    background: radial-gradient(circle, var(--c-dday-2), transparent 70%);
+    animation: drift3 26s ease-in-out infinite;
+  }
+  @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-24px,26px)} }
+  @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-18px)} }
+  @keyframes drift3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-18px,-22px)} }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: calc(18px + env(safe-area-inset-top)) 18px calc(110px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ============================================================
+     공용 글래스 패널 — "몇 겹의 backdrop-filter"를 셀 때 기준이 되는
+     실제 blur 레이어는 .glass-lg / .glass-modal 뿐이다.
+     칩·아바타·버튼 등 작은 반복 요소는 backdrop-filter 없이
+     반투명 solid + box-shadow만으로 "유리 느낌"을 낸다 (성능 절약).
+     ============================================================ */
+  .glass-lg {
+    position: relative;
+    background: var(--glass-fill-strong);
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    border-radius: 28px;
+    box-shadow:
+      0 10px 34px rgba(123,79,166,0.16),
+      0 2px 10px rgba(123,79,166,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.85);
+    animation: riseIn 0.55s cubic-bezier(.22,1,.36,1) both;
+  }
+  /* 리퀴드 글래스 특유의 "가장자리 하이라이트" — 실선 border 대신
+     위치별로 밝기가 다른 그라데이션 테두리를 mask로 오려내 만든다 */
+  .glass-lg::before {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(150deg, rgba(255,255,255,0.95), rgba(255,255,255,0.1) 35%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.55));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .glass-sm {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: 0 2px 8px rgba(123,79,166,0.14), inset 0 1px 0 rgba(255,255,255,0.9);
+    /* backdrop-filter 의도적으로 생략 — 작고 반복되는 요소라 solid+shadow로 대체 */
+  }
+
+  /* ── 상단 헤더 ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .nav-group {
+    display: flex; align-items: center; gap: 2px;
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .icon-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem;
+    color: var(--c-jisu);
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .icon-btn:active {
+    transform: scale(0.86);
+    box-shadow: inset 0 2px 6px rgba(123,79,166,0.25);
+  }
+  .month-title {
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--ink-900);
+    min-width: 108px;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+  .avatars { display: flex; align-items: center; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 0.86rem; color: #fff;
+    border: 2.5px solid #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.14);
+  }
+  .avatar--jisu   { background: linear-gradient(150deg, var(--c-jisu-2), var(--c-jisu)); margin-right: -12px; z-index: 2; }
+  .avatar--hyunha { background: linear-gradient(150deg, var(--c-hyunha-2), var(--c-hyunha)); z-index: 1; }
+
+  /* ── D-Day 카드 ── */
+  .dday-card {
+    padding: 20px 22px 22px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .dday-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em;
+    color: var(--c-jisu);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .dday-label .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--c-dday); box-shadow: 0 0 8px var(--c-dday); }
+  .dday-name {
+    margin-top: 6px;
+    font-size: 0.92rem; font-weight: 600; color: var(--ink-600);
+  }
+  .dday-count {
+    margin-top: 8px;
+    display: flex; align-items: baseline; justify-content: center; gap: 6px;
+  }
+  .dday-num {
+    font-family: var(--font-display);
+    font-size: 3.1rem; font-weight: 800; line-height: 1;
+    background: linear-gradient(180deg, var(--c-jisu-2), var(--c-jisu) 65%, #5F3880);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 3px 6px rgba(123,79,166,0.35));
+  }
+  .dday-unit { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--ink-900); }
+  .dday-heart { font-size: 1.2rem; color: var(--c-hyunha); filter: drop-shadow(0 2px 4px rgba(255,107,157,0.5)); }
+
+  /* ============================================================
+     캘린더 카드 — 회색 격자선 없이 "여백 + 깊이"만으로 구조를 만든다.
+     빈 칸은 완전히 평평, 일정이 있는 칸만 살짝 떠 있는 유리 조각처럼
+     표현(soft raised surface). 오늘/선택 상태도 입체감으로 구분.
+     ============================================================ */
+  .cal-card { padding: 18px 14px 16px; }
+  .weekday-row {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+  }
+  .weekday-row span {
+    text-align: center; font-size: 0.68rem; font-weight: 700;
+    color: var(--ink-400);
+  }
+  .weekday-row span.sun { color: var(--c-hyunha); opacity: 0.85; }
+
+  .day-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 3px 2px;
+  }
+  .day {
+    aspect-ratio: 1 / 1.06;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding-top: 5px;
+    border-radius: 16px;
+    cursor: pointer;
+    position: relative;
+    transition: transform .12s ease;
+  }
+  .day.empty { visibility: hidden; pointer-events: none; }
+  .day:active { transform: scale(0.9); }
+
+  /* 일정이 있는 날: 살짝 떠 있는 프로스티드 표면 — 선 대신 그림자로 경계를 그린다 */
+  .day.has-sched {
+    background: rgba(255,255,255,0.4);
+    box-shadow: 0 3px 10px rgba(123,79,166,0.10), inset 0 1px 0 rgba(255,255,255,0.7);
+  }
+
+  .day-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; font-weight: 600; color: var(--ink-900);
+    transition: all .18s ease;
+  }
+  .day.sun .day-num { color: var(--c-hyunha); }
+
+  /* 선택된 날 (오늘이 아닐 때): 살짝 들어올린 유리 배지 — 얇은 링이 아니라
+     실제 그림자로 "떠 있는" 느낌을 줘서 입체감을 표현 */
+  .day.selected .day-num {
+    background: rgba(255,255,255,0.85);
+    color: var(--c-jisu);
+    font-weight: 800;
+    box-shadow:
+      0 6px 14px rgba(123,79,166,0.28),
+      0 2px 4px rgba(123,79,166,0.14),
+      inset 0 1px 0 rgba(255,255,255,0.95);
+    transform: translateY(-1px);
+  }
+
+  /* 오늘: 그라데이션 채운 원 + 엠보스 — 눌린 듯한 입체 셰이딩 */
+  .day.today .day-num {
+    background: linear-gradient(150deg, var(--c-jisu-2), var(--c-jisu));
+    color: #fff; font-weight: 800;
+    box-shadow:
+      0 6px 16px rgba(123,79,166,0.5),
+      inset 0 1px 1px rgba(255,255,255,0.5),
+      inset 0 -3px 4px rgba(0,0,0,0.18);
+  }
+  /* 오늘이면서 동시에 선택된 경우: 은은한 외곽 글로우 링 추가 */
+  .day.today.selected .day-num {
+    box-shadow:
+      0 6px 16px rgba(123,79,166,0.5),
+      inset 0 1px 1px rgba(255,255,255,0.5),
+      inset 0 -3px 4px rgba(0,0,0,0.18),
+      0 0 0 4px rgba(123,79,166,0.18);
+  }
+
+  .day-dots { display: flex; gap: 3px; margin-top: 4px; height: 6px; }
+  .day-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    box-shadow: 0 0 4px currentColor;
+  }
+  .day-dot--jisu   { background: var(--c-jisu);   color: rgba(123,79,166,0.6); }
+  .day-dot--hyunha { background: var(--c-hyunha); color: rgba(255,107,157,0.6); }
+  .day-dot--both   { background: linear-gradient(90deg, var(--c-jisu), var(--c-hyunha)); color: rgba(123,79,166,0.5); }
+  .day-dot--dday   { background: linear-gradient(150deg, var(--c-dday-2), var(--c-dday)); color: rgba(232,169,59,0.7); width: 7px; height: 7px; }
+
+  .legend {
+    display: flex; justify-content: center; gap: 14px;
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid rgba(123,79,166,0.08);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.66rem; color: var(--ink-600); font-weight: 600; }
+  .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* ── 일정 목록 카드 ── */
+  .sched-card { padding: 18px 16px 16px; min-height: 128px; }
+  .sched-date { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--ink-900); margin-bottom: 12px; }
+  .sched-list { display: flex; flex-direction: column; gap: 9px; }
+
+  .sched-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 13px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.5);
+    box-shadow: 0 3px 10px rgba(123,79,166,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+    animation: slideIn .35s ease both;
+  }
+  @keyframes slideIn { from { opacity:0; transform: translateX(10px);} to { opacity:1; transform:translateX(0);} }
+
+  .sched-who {
+    width: 34px; height: 34px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem; color: #fff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.4);
+  }
+  .sched-who--jisu   { background: linear-gradient(150deg, var(--c-jisu-2), var(--c-jisu)); }
+  .sched-who--hyunha { background: linear-gradient(150deg, var(--c-hyunha-2), var(--c-hyunha)); }
+  .sched-who--both   { background: linear-gradient(135deg, var(--c-jisu-2), var(--c-hyunha)); }
+  .sched-who--dday   { background: linear-gradient(150deg, var(--c-dday-2), var(--c-dday)); }
+
+  .sched-body { flex: 1; min-width: 0; }
+  .sched-title { font-size: 0.88rem; font-weight: 700; color: var(--ink-900); }
+  .sched-meta { font-size: 0.68rem; color: var(--ink-400); margin-top: 2px; font-weight: 600; }
+  .sched-tag {
+    flex-shrink: 0; font-size: 0.62rem; font-weight: 700; padding: 4px 9px; border-radius: 999px;
+    color: #fff;
+  }
+  .sched-tag--jisu   { background: var(--c-jisu); }
+  .sched-tag--hyunha { background: var(--c-hyunha); }
+  .sched-tag--both   { background: linear-gradient(90deg, var(--c-jisu), var(--c-hyunha)); }
+  .sched-tag--dday   { background: linear-gradient(90deg, var(--c-dday), var(--c-dday-2)); color: var(--ink-900); }
+
+  .sched-empty {
+    text-align: center; padding: 22px 0; color: var(--ink-400); font-size: 0.82rem; font-weight: 600;
+  }
+
+  /* ── FAB ── */
+  .fab {
+    position: fixed;
+    right: max(22px, calc(50% - 240px + 22px));
+    bottom: calc(26px + env(safe-area-inset-bottom));
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(150deg, var(--c-hyunha-2), var(--c-jisu));
+    color: #fff; font-size: 1.8rem; font-weight: 300;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow:
+      0 12px 28px rgba(123,79,166,0.42),
+      0 4px 10px rgba(255,107,157,0.28),
+      inset 0 1px 2px rgba(255,255,255,0.55),
+      inset 0 -3px 5px rgba(0,0,0,0.15);
+    cursor: pointer;
+    z-index: 20;
+    transition: transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease;
+  }
+  .fab:active {
+    transform: scale(0.88) translateY(2px);
+    box-shadow:
+      0 4px 10px rgba(123,79,166,0.35),
+      inset 0 3px 8px rgba(0,0,0,0.25);
+  }
+
+  /* ── 모달 ── */
+  .modal-scrim {
+    position: fixed; inset: 0;
+    background: rgba(58,38,80,0.28);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .28s ease;
+    z-index: 40;
+  }
+  .modal-scrim.open { opacity: 1; pointer-events: auto; }
+
+  /* 모달이 열려 있는 동안엔 배경 패널들의 backdrop-filter를 꺼서
+     동시 활성 blur 레이어 수를 오히려 줄인다 (성능 보고서 참고) */
+  body.modal-open .glass-lg {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255,255,255,0.86);
+  }
+
+  .modal-sheet {
+    width: 100%; max-width: 480px;
+    border-radius: 32px 32px 0 0;
+    padding: 12px 20px calc(22px + env(safe-area-inset-bottom));
+    background: linear-gradient(165deg, rgba(255,255,255,0.8), rgba(255,255,255,0.55));
+    backdrop-filter: blur(28px) saturate(170%);
+    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    box-shadow: 0 -10px 40px rgba(123,79,166,0.28), inset 0 1px 0 rgba(255,255,255,0.9);
+    transform: translateY(100%);
+    transition: transform .32s cubic-bezier(.32,.72,0,1);
+    position: relative;
+  }
+  .modal-scrim.open .modal-sheet { transform: translateY(0); }
+  .modal-sheet::before {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 30%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .sheet-handle { width: 38px; height: 4px; border-radius: 3px; background: rgba(123,79,166,0.25); margin: 6px auto 14px; }
+  .sheet-title { font-family: var(--font-display); font-size: 1.12rem; font-weight: 800; margin-bottom: 14px; }
+
+  .who-select { display: flex; gap: 8px; margin-bottom: 14px; }
+  .who-chip {
+    flex: 1; min-height: 46px;
+    border-radius: 16px; border: 1.5px solid transparent;
+    background: rgba(255,255,255,0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 6px rgba(123,79,166,0.08);
+    font-size: 0.8rem; font-weight: 700; color: var(--ink-600);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .18s cubic-bezier(.34,1.56,.64,1);
+  }
+  .who-chip.active {
+    color: #fff; transform: scale(1.04);
+    box-shadow: 0 6px 16px rgba(123,79,166,0.35), inset 0 1px 1px rgba(255,255,255,0.4);
+  }
+  .who-chip[data-who="jisu"].active   { background: linear-gradient(150deg, var(--c-jisu-2), var(--c-jisu)); }
+  .who-chip[data-who="hyunha"].active { background: linear-gradient(150deg, var(--c-hyunha-2), var(--c-hyunha)); }
+  .who-chip[data-who="dday"].active   { background: linear-gradient(150deg, var(--c-dday-2), var(--c-dday)); }
+
+  .glass-input {
+    width: 100%; min-height: 48px;
+    border-radius: 16px; border: 1.5px solid rgba(123,79,166,0.14);
+    background: rgba(255,255,255,0.6);
+    padding: 0 16px; font-size: 0.92rem; color: var(--ink-900);
+    margin-bottom: 10px; font-family: var(--font-ui);
+    box-shadow: inset 0 1px 3px rgba(123,79,166,0.06);
+    outline: none;
+  }
+  .glass-input::placeholder { color: var(--ink-400); }
+  .glass-input:focus { border-color: var(--c-jisu); box-shadow: 0 0 0 3px rgba(123,79,166,0.14); }
+
+  .submit-btn {
+    width: 100%; min-height: 52px; margin-top: 6px;
+    border: none; border-radius: 18px;
+    background: linear-gradient(135deg, var(--c-jisu-2), var(--c-jisu));
+    color: #fff; font-family: var(--font-display); font-size: 1rem; font-weight: 800;
+    box-shadow: 0 8px 22px rgba(123,79,166,0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .submit-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 3px 8px rgba(123,79,166,0.35), inset 0 3px 8px rgba(0,0,0,0.2);
+  }
+
+  .close-btn {
+    position: absolute; top: 10px; right: 14px;
+    width: 44px; height: 44px; border: none; background: transparent;
+    color: var(--ink-400); font-size: 1.3rem; cursor: pointer;
+  }
+
+  .dev-note {
+    text-align: center; font-size: 0.62rem; color: var(--ink-400);
+    margin-top: 4px; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+  <div class="bg-glow bg-glow--1"></div>
+  <div class="bg-glow bg-glow--2"></div>
+  <div class="bg-glow bg-glow--3"></div>
+
+  <div class="app">
+
+    <header class="topbar">
+      <div class="nav-group">
+        <button class="icon-btn glass-sm" id="prevBtn" aria-label="이전 달">‹</button>
+        <div class="month-title" id="monthTitle">2026년 9월</div>
+        <button class="icon-btn glass-sm" id="nextBtn" aria-label="다음 달">›</button>
+      </div>
+      <div class="avatars">
+        <div class="avatar avatar--jisu">지</div>
+        <div class="avatar avatar--hyunha">현</div>
+      </div>
+    </header>
+
+    <section class="dday-card glass-lg">
+      <div class="dday-label"><span class="dot"></span>SPECIAL D-DAY<span class="dot"></span></div>
+      <div class="dday-name">1주년이세요 💜</div>
+      <div class="dday-count">
+        <span class="dday-num" id="ddayNum">318</span>
+        <span class="dday-unit">일째</span>
+        <span class="dday-heart">♥</span>
+      </div>
+    </section>
+
+    <section class="cal-card glass-lg">
+      <div class="weekday-row">
+        <span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+      </div>
+      <div class="day-grid" id="dayGrid"></div>
+      <div class="legend">
+        <span class="legend-item"><i class="legend-dot" style="background:var(--c-jisu)"></i>지수</span>
+        <span class="legend-item"><i class="legend-dot" style="background:var(--c-hyunha)"></i>현하</span>
+        <span class="legend-item"><i class="legend-dot" style="background:linear-gradient(90deg,var(--c-dday),var(--c-dday-2))"></i>공통·D-Day</span>
+      </div>
+    </section>
+
+    <section class="sched-card glass-lg" id="schedCard">
+      <div class="sched-date" id="schedDate">날짜를 선택해보세요</div>
+      <div class="sched-list" id="schedList"></div>
+    </section>
+
+    <div class="dev-note">디자인 프로토타입 · 실제 데이터 아님</div>
+  </div>
+
+  <button class="fab" id="fabBtn" aria-label="일정 추가">+</button>
+
+  <div class="modal-scrim" id="modalScrim">
+    <div class="modal-sheet" id="modalSheet">
+      <button class="close-btn" id="closeBtn" aria-label="닫기">✕</button>
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">✨ 새 일정 추가</div>
+      <div class="who-select" id="whoSelect">
+        <div class="who-chip active" data-who="jisu">지수</div>
+        <div class="who-chip" data-who="hyunha">현하</div>
+        <div class="who-chip" data-who="dday">공통</div>
+      </div>
+      <input class="glass-input" placeholder="일정 제목을 입력하세요 ✦">
+      <input class="glass-input" placeholder="📍 장소 (선택)">
+      <button class="submit-btn">일정 추가하기</button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── 더미 데이터 (실제 앱과 무관, 시각 확인용) ──────────────────
+  var TODAY = new Date(2026, 8, 18); // 2026-09-18, 오늘 날짜에 맞춤
+  var SCHEDULES = {
+    '2026-09-02': [{ title: '같이 저녁 약속', who: 'both', meta: '19:00' }],
+    '2026-09-05': [{ title: '현하 병원 예약', who: 'hyunha', meta: '오후 2시' }],
+    '2026-09-08': [{ title: '지수 헬스 PT', who: 'jisu', meta: '아침 7시' }],
+    '2026-09-12': [{ title: '영화 보기', who: 'both', meta: '주말' }],
+    '2026-09-18': [
+      { title: '현하 생일 선물 사기', who: 'jisu', meta: '오늘' },
+      { title: '저녁 데이트', who: 'both', meta: '18:30' },
+    ],
+    '2026-09-22': [{ title: '1주년 기념일', who: 'dday', meta: '⭐ 중요' }],
+    '2026-09-25': [{ title: '주말 나들이', who: 'both', meta: '종일' }],
+    '2026-09-29': [{ title: '지수 회식', who: 'jisu', meta: '저녁' }],
+    '2026-10-03': [{ title: '한글날 데이트', who: 'both', meta: '종일' }],
+    '2026-10-09': [{ title: '한글날 공휴일', who: 'dday', meta: '🎉' }],
+  };
+  var WHO_LABEL = { jisu: '지수', hyunha: '현하', both: '둘 다', dday: '기념일' };
+
+  var view = { year: TODAY.getFullYear(), month: TODAY.getMonth() };
+  var selected = { y: TODAY.getFullYear(), m: TODAY.getMonth(), d: TODAY.getDate() };
+
+  function toIso(y, m, d) {
+    return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+  }
+
+  function priorityOrder(items) {
+    var order = ['dday', 'both', 'jisu', 'hyunha'];
+    var present = Array.from(new Set(items.map(function (i) { return i.who; })));
+    present.sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); });
+    return present;
+  }
+
+  function renderCalendar() {
+    document.getElementById('monthTitle').textContent = view.year + '년 ' + (view.month + 1) + '월';
+
+    var firstDay = new Date(view.year, view.month, 1).getDay();
+    var lastDate = new Date(view.year, view.month + 1, 0).getDate();
+    var grid = document.getElementById('dayGrid');
+    grid.innerHTML = '';
+
+    for (var i = 0; i < firstDay; i++) {
+      var pad = document.createElement('div');
+      pad.className = 'day empty';
+      grid.appendChild(pad);
+    }
+
+    for (var d = 1; d <= lastDate; d++) {
+      var iso = toIso(view.year, view.month, d);
+      var items = SCHEDULES[iso] || [];
+      var isToday = (view.year === TODAY.getFullYear() && view.month === TODAY.getMonth() && d === TODAY.getDate());
+      var isSelected = (view.year === selected.y && view.month === selected.m && d === selected.d);
+      var isSun = (new Date(view.year, view.month, d).getDay() === 0);
+
+      var cell = document.createElement('div');
+      cell.className = 'day' + (items.length ? ' has-sched' : '') + (isToday ? ' today' : '') + (isSelected ? ' selected' : '') + (isSun ? ' sun' : '');
+      cell.dataset.d = d;
+
+      var num = document.createElement('div');
+      num.className = 'day-num';
+      num.textContent = d;
+      cell.appendChild(num);
+
+      if (items.length) {
+        var dots = document.createElement('div');
+        dots.className = 'day-dots';
+        priorityOrder(items).slice(0, 3).forEach(function (who) {
+          var dot = document.createElement('span');
+          dot.className = 'day-dot day-dot--' + who;
+          dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
+      }
+
+      cell.addEventListener('click', function () {
+        var dayNum = parseInt(this.dataset.d, 10);
+        selected = { y: view.year, m: view.month, d: dayNum };
+        renderCalendar();
+        renderSchedule();
+      });
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function renderSchedule() {
+    var iso = toIso(selected.y, selected.m, selected.d);
+    var items = SCHEDULES[iso] || [];
+    var dateEl = document.getElementById('schedDate');
+    var listEl = document.getElementById('schedList');
+
+    var wd = ['일', '월', '화', '수', '목', '금', '토'][new Date(selected.y, selected.m, selected.d).getDay()];
+    dateEl.textContent = (selected.m + 1) + '월 ' + selected.d + '일 (' + wd + ')';
+
+    listEl.innerHTML = '';
+    if (!items.length) {
+      var empty = document.createElement('div');
+      empty.className = 'sched-empty';
+      empty.textContent = '📭 이 날은 아직 비어있어요';
+      listEl.appendChild(empty);
+      return;
+    }
+
+    var icon = { jisu: '💜', hyunha: '🧡', both: '👫', dday: '⭐' };
+    items.forEach(function (item, idx) {
+      var row = document.createElement('div');
+      row.className = 'sched-item';
+      row.style.animationDelay = (idx * 0.05) + 's';
+      row.innerHTML =
+        '<div class="sched-who sched-who--' + item.who + '">' + icon[item.who] + '</div>' +
+        '<div class="sched-body">' +
+          '<div class="sched-title">' + item.title + '</div>' +
+          '<div class="sched-meta">' + item.meta + '</div>' +
+        '</div>' +
+        '<div class="sched-tag sched-tag--' + item.who + '">' + WHO_LABEL[item.who] + '</div>';
+      listEl.appendChild(row);
+    });
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', function () {
+    view.month -= 1;
+    if (view.month < 0) { view.month = 11; view.year -= 1; }
+    renderCalendar();
+  });
+  document.getElementById('nextBtn').addEventListener('click', function () {
+    view.month += 1;
+    if (view.month > 11) { view.month = 0; view.year += 1; }
+    renderCalendar();
+  });
+
+  // ── FAB / 모달 ──────────────────────────────────────────────
+  var scrim = document.getElementById('modalScrim');
+  function openModal() { scrim.classList.add('open'); document.body.classList.add('modal-open'); }
+  function closeModal() { scrim.classList.remove('open'); document.body.classList.remove('modal-open'); }
+
+  document.getElementById('fabBtn').addEventListener('click', openModal);
+  document.getElementById('closeBtn').addEventListener('click', closeModal);
+  scrim.addEventListener('click', function (e) { if (e.target === scrim) closeModal(); });
+
+  document.getElementById('whoSelect').addEventListener('click', function (e) {
+    var chip = e.target.closest('.who-chip');
+    if (!chip) return;
+    Array.from(document.querySelectorAll('.who-chip')).forEach(function (c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+  });
+
+  document.querySelector('.submit-btn').addEventListener('click', function () {
+    closeModal();
+  });
+
+  // ── 초기 렌더 ────────────────────────────────────────────────
+  renderCalendar();
+  renderSchedule();
+})();
+</script>
+</body>
+</html>
