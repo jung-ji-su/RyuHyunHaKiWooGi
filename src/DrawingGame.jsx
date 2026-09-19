@@ -174,7 +174,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
 
     // ── 중복 없는 랜덤 단어 선택 ────────────────────
     const getRandomWordNoDuplicate = (difficulty, usedWordsList = []) => {
-        const wordList = WORD_SETS[difficulty || "normal"];
+        const wordList = WORD_SETS[difficulty] ?? WORD_SETS.normal;
         const availableWords = wordList.filter(word => !usedWordsList.includes(word));
 
         // 모든 단어를 다 썼으면 리셋
@@ -682,9 +682,11 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
 
             // 쿠폰 저장
             await addDoc(collection(db, "coupons"), {
-                owner: winner,
                 title: randomCoupon,
-                used: false,
+                cat: "etc",
+                sender: loser,
+                receiver: winner,
+                status: "available",
                 createdAt: serverTimestamp(),
                 fromGame: "그림 퀴즈",
             });
@@ -1217,7 +1219,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             { value: "easy", label: "쉬움", desc: "간단한 단어 (하트, 별, 꽃...)", emoji: "😊" },
                             { value: "normal", label: "보통", desc: "커플 일상 (데이트, 포옹...)", emoji: "💑" },
                             { value: "hard", label: "어려움", desc: "복잡한 상황 (백허그, 첫 뽀뽀...)", emoji: "🎨" },
-                            { value: "couple", label: "우리만", desc: "우리만의 추억 (첫 데이트...)", emoji: "💕" },
+                            { value: "hell", label: "지옥", desc: "헷갈리는 고난도 단어", emoji: "🔥" },
                         ].map((diff) => (
                             <Paper
                                 key={diff.value}

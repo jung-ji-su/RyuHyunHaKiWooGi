@@ -10,57 +10,86 @@ const BASE = "https://ryuhyunhakiwoogi.web.app";
 const USERS = ["지수", "현하"];
 const TEST_SECRET = "buri2026";
 
-// ── 공용: 활성 FCM 토큰 맵 반환 ─────────────────────────────────
+// fcmTokens/{user} 문서: 구버전은 { token } 하나, 신버전은 { token(최근), tokens[](전체 기기) }.
+// 어느 형태든 읽을 수 있도록 두 필드를 합쳐서 중복 제거한다.
+function extractTokens(data) {
+  if (!data) return [];
+  const list = Array.isArray(data.tokens) ? data.tokens : [];
+  return [...new Set([...list, data.token].filter(t => typeof t === "string" && t))];
+}
+
+// 더 이상 유효하지 않은 토큰으로 판정하는 FCM 에러 코드
+const DEAD_TOKEN_CODES = new Set([
+  "messaging/registration-token-not-registered",
+  "messaging/invalid-registration-token",
+]);
+
+// ── 공용: 만료된 토큰 하나만 문서에서 제거 (남은 기기 토큰은 보존) ──
+async function pruneToken(user, deadToken) {
+  const ref = admin.firestore().doc(`fcmTokens/${user}`);
+  try {
+    await admin.firestore().runTransaction(async (tx) => {
+      const snap = await tx.get(ref);
+      if (!snap.exists) return;
+      const data = snap.data();
+      const remaining = extractTokens(data).filter(t => t !== deadToken);
+      if (remaining.length === 0) { tx.delete(ref); return; }
+      const latest = remaining.includes(data.token) ? data.token : remaining[remaining.length - 1];
+      tx.set(ref, { token: latest, tokens: remaining }, { merge: true });
+    });
+  } catch (e) {
+    console.error("FCM 토큰 정리 실패:", user, e);
+  }
+}
+
+// ── 공용: 토큰 하나에 전송, 만료 토큰이면 정리 (실패해도 throw 안 함) ──
+async function sendSafe(user, token, message) {
+  try {
+    await admin.messaging().send({ ...message, token });
+    return true;
+  } catch (e) {
+    console.error("FCM send error:", user, e.code || e);
+    if (DEAD_TOKEN_CODES.has(e.code)) await pruneToken(user, token);
+    return false;
+  }
+}
+
+// ── 공용: 활성 FCM 토큰 맵 반환 ({ 사용자: [토큰...] }) ─────────
 async function getActiveTokenMap() {
-  const snaps = await Promise.all(
-    USERS.map(u => admin.firestore().doc(`fcmTokens/${u}`).get())
-  );
   const map = {};
-  snaps.forEach((snap, i) => {
-    if (snap.exists) {
-      const { token } = snap.data();
-      if (token) map[USERS[i]] = token;
-    }
-  });
+  await Promise.all(
+    USERS.map(async (u) => {
+      try {
+        const snap = await admin.firestore().doc(`fcmTokens/${u}`).get();
+        const tokens = snap.exists ? extractTokens(snap.data()) : [];
+        if (tokens.length) map[u] = tokens;
+      } catch (e) {
+        console.error("FCM 토큰 조회 실패:", u, e);
+      }
+    })
+  );
   return map;
 }
 
-// ── 공용: 전체 토큰에 메시지 병렬 전송 ─────────────────────────
-async function sendToTokens(tokens, title, body, link = BASE) {
-  await Promise.all(
-    tokens.map(token =>
-      admin.messaging().send({
-        token,
-        notification: { title, body },
-        webpush: {
-          notification: {
-            icon: `${BASE}/icon.svg`,
-            badge: `${BASE}/icon.svg`,
-          },
-          fcmOptions: { link },
-        },
-      }).catch(e => console.error("FCM send error:", e))
-    )
-  );
+// { 사용자: [토큰...] } → [{ user, token }, ...]
+function flattenTokenMap(tokenMap) {
+  return Object.entries(tokenMap).flatMap(([user, tokens]) => tokens.map(token => ({ user, token })));
 }
 
-// ── 카카오 API 프록시 ────────────────────────────────────────────
-exports.kakaoProxy = onRequest(
-  { cors: true },
-  async (req, res) => {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "anthropic-version": "2023-06-01",
-        "anthropic-beta": "mcp-client-2025-04-04",
+// ── 공용: 전체 토큰에 메시지 병렬 전송 ─────────────────────────
+async function sendToTokens(targets, title, body, link = BASE) {
+  const message = {
+    notification: { title, body },
+    webpush: {
+      notification: {
+        icon: `${BASE}/icon.svg`,
+        badge: `${BASE}/icon.svg`,
       },
-      body: JSON.stringify(req.body),
-    });
-    const data = await response.json();
-    res.json(data);
-  }
-);
+      fcmOptions: { link },
+    },
+  };
+  await Promise.all(targets.map(({ user, token }) => sendSafe(user, token, message)));
+}
 
 // ── 알림 타입 → 이동 경로 매핑 ──────────────────────────────────
 const ROUTE = {
@@ -97,14 +126,13 @@ exports.sendPushOnNotification = onDocumentCreated(
     }
     if (!recipient) return null;
 
-    // FCM 토큰 조회
+    // FCM 토큰 조회 (기기 여러 대 지원)
     const tokenSnap = await admin.firestore().doc(`fcmTokens/${recipient}`).get();
     if (!tokenSnap.exists) return null;
-    const { token } = tokenSnap.data();
-    if (!token) return null;
+    const tokens = extractTokens(tokenSnap.data());
+    if (tokens.length === 0) return null;
 
     const message = {
-      token,
       notification: {
         title: "부리부리 미니홈피 🐷",
         body: data.content ?? "새로운 알림이 있어요!",
@@ -119,14 +147,7 @@ exports.sendPushOnNotification = onDocumentCreated(
       },
     };
 
-    try {
-      await admin.messaging().send(message);
-    } catch (e) {
-      console.error("FCM send error:", e);
-      if (e.code === "messaging/registration-token-not-registered") {
-        await admin.firestore().doc(`fcmTokens/${recipient}`).delete().catch(() => {});
-      }
-    }
+    await Promise.all(tokens.map(token => sendSafe(recipient, token, message)));
     return null;
   }
 );
@@ -174,9 +195,8 @@ async function fetchWeather(lat, lon) {
 exports.sendDailyWeather = onSchedule(
   { schedule: "0 6 * * *", timeZone: "Asia/Seoul" },
   async () => {
-    const tokenMap = await getActiveTokenMap();
-    if (Object.keys(tokenMap).length === 0) return null;
-    const tokens = Object.values(tokenMap);
+    const targets = flattenTokenMap(await getActiveTokenMap());
+    if (targets.length === 0) return null;
 
     await Promise.all(
       LOCATIONS.map(async (loc) => {
@@ -188,7 +208,7 @@ exports.sendDailyWeather = onSchedule(
             w.evening   && `🌙 저녁  ${w.evening}`,
             `📊 최고 ${w.maxTemp}° / 최저 ${w.minTemp}° · 강수 ${w.rainProb}%💧`,
           ].filter(Boolean).join("\n");
-          await sendToTokens(tokens, `📍 ${loc.name} 오늘 날씨`, body);
+          await sendToTokens(targets, `📍 ${loc.name} 오늘 날씨`, body);
         } catch (e) {
           console.error(`날씨 fetch 오류 ${loc.name}:`, e);
         }
@@ -213,67 +233,74 @@ function daysUntil(dateStr) {
 exports.sendDailyReminders = onSchedule(
   { schedule: "0 9 * * *", timeZone: "Asia/Seoul" },
   async () => {
-    const tokenMap = await getActiveTokenMap();
-    if (Object.keys(tokenMap).length === 0) return null;
-    const tokens = Object.values(tokenMap);
+    const targets = flattenTokenMap(await getActiveTokenMap());
+    if (targets.length === 0) return null;
 
-    // ① 기념일 카운트다운
-    const importantSnap = await admin.firestore()
-      .collection("schedules")
-      .where("isImportant", "==", true)
-      .get();
+    // ① 기념일 카운트다운 — ②와 독립적으로 실행(한쪽이 실패해도 나머지는 발송)
+    try {
+      const importantSnap = await admin.firestore()
+        .collection("schedules")
+        .where("isImportant", "==", true)
+        .get();
 
-    const seen = new Set();
-    for (const doc of importantSnap.docs) {
-      const { title, date } = doc.data();
-      const key = `${title}|${date}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
+      const seen = new Set();
+      for (const doc of importantSnap.docs) {
+        const { title, date } = doc.data();
+        const key = `${title}|${date}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
 
-      const days = daysUntil(date);
-      if (MILESTONES.includes(days)) {
-        const d = new Date(date);
-        const dateLabel = `${d.getMonth() + 1}월 ${d.getDate()}일 (${KO_DAYS[d.getDay()]})`;
-        await sendToTokens(tokens, `🎉 기념일 D-${days}`, `${title}\n${dateLabel}`);
+        const days = daysUntil(date);
+        if (MILESTONES.includes(days)) {
+          const d = new Date(date);
+          const dateLabel = `${d.getMonth() + 1}월 ${d.getDate()}일 (${KO_DAYS[d.getDay()]})`;
+          await sendToTokens(targets, `🎉 기념일 D-${days}`, `${title}\n${dateLabel}`);
+        }
       }
+    } catch (e) {
+      console.error("기념일 알림 실패:", e);
     }
 
     // ② 이번주 일정 브리핑 (월요일만)
-    const now = new Date();
-    if (now.getDay() === 1) {
-      const weekDates = Array.from({ length: 7 }, (_, i) => {
-        const d = new Date(now);
-        d.setDate(now.getDate() + i);
-        return d.toDateString();
-      });
+    try {
+      const now = new Date();
+      if (now.getDay() === 1) {
+        const weekDates = Array.from({ length: 7 }, (_, i) => {
+          const d = new Date(now);
+          d.setDate(now.getDate() + i);
+          return d.toDateString();
+        });
 
-      const schedSnap = await admin.firestore()
-        .collection("schedules")
-        .where("date", "in", weekDates)
-        .get();
+        const schedSnap = await admin.firestore()
+          .collection("schedules")
+          .where("date", "in", weekDates)
+          .get();
 
-      let body;
-      if (schedSnap.empty) {
-        body = "이번주 등록된 일정이 없어요 🕊️\n같이 뭔가 계획해봐요!";
-      } else {
-        const seenSched = new Set();
-        const lines = schedSnap.docs
-          .map(d => d.data())
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .filter(s => {
-            const k = `${s.date}|${s.title}`;
-            if (seenSched.has(k)) return false;
-            seenSched.add(k);
-            return true;
-          })
-          .map(s => {
-            const d = new Date(s.date);
-            return `${d.getMonth()+1}/${d.getDate()}(${KO_DAYS[d.getDay()]}) ${s.title}`;
-          });
-        body = lines.join("\n");
+        let body;
+        if (schedSnap.empty) {
+          body = "이번주 등록된 일정이 없어요 🕊️\n같이 뭔가 계획해봐요!";
+        } else {
+          const seenSched = new Set();
+          const lines = schedSnap.docs
+            .map(d => d.data())
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .filter(s => {
+              const k = `${s.date}|${s.title}`;
+              if (seenSched.has(k)) return false;
+              seenSched.add(k);
+              return true;
+            })
+            .map(s => {
+              const d = new Date(s.date);
+              return `${d.getMonth()+1}/${d.getDate()}(${KO_DAYS[d.getDay()]}) ${s.title}`;
+            });
+          body = lines.join("\n");
+        }
+
+        await sendToTokens(targets, "📅 이번주 일정 브리핑", body);
       }
-
-      await sendToTokens(tokens, "📅 이번주 일정 브리핑", body);
+    } catch (e) {
+      console.error("주간 브리핑 실패:", e);
     }
 
     return null;
@@ -287,12 +314,11 @@ exports.sendTestWeather = onRequest(
     const secret = req.query.secret || req.body?.secret;
     if (secret !== TEST_SECRET) { res.status(401).json({ error: "인증 실패" }); return; }
 
-    const tokenMap = await getActiveTokenMap();
-    if (Object.keys(tokenMap).length === 0) {
+    const targets = flattenTokenMap(await getActiveTokenMap());
+    if (targets.length === 0) {
       res.status(200).json({ ok: false, error: "등록된 FCM 토큰 없음" });
       return;
     }
-    const tokens = Object.values(tokenMap);
 
     const results = [];
     for (const loc of LOCATIONS) {
@@ -304,7 +330,7 @@ exports.sendTestWeather = onRequest(
           w.evening   && `저녁 ${w.evening}`,
         ].filter(Boolean).join("  /  ");
         const line2 = `최고 ${w.maxTemp}° / 최저 ${w.minTemp}° · 강수 ${w.rainProb}%💧`;
-        await sendToTokens(tokens, `📍 ${loc.name} 오늘 날씨 [테스트]`, `${line1}\n${line2}`);
+        await sendToTokens(targets, `📍 ${loc.name} 오늘 날씨 [테스트]`, `${line1}\n${line2}`);
         results.push({ loc: loc.name, ok: true, line1, line2 });
       } catch (e) {
         results.push({ loc: loc.name, ok: false, error: e.message });
@@ -326,7 +352,8 @@ exports.sendTestPush = onRequest(
 
     const tokenSnap = await admin.firestore().doc(`fcmTokens/${user}`).get();
     if (!tokenSnap.exists) { res.status(404).json({ error: "토큰 없음" }); return; }
-    const { token } = tokenSnap.data();
+    const tokenData = tokenSnap.data();
+    const token = tokenData.token || extractTokens(tokenData)[0];
     if (!token) { res.status(404).json({ error: "토큰 없음" }); return; }
 
     try {

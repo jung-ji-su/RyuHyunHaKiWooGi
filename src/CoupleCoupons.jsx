@@ -48,6 +48,18 @@ function daysLeft(createdAt) {
   return Math.max(0, diff);
 }
 
+// 게임 보상 쿠폰이 예전에 { owner, used } 스키마로 저장된 문서도 함께 보이도록 읽기 시점에 변환.
+// owner(이긴 사람)를 receiver로, 상대를 sender로 본다. 저장된 문서는 수정하지 않는다.
+function normalizeCoupon(c) {
+  if (!c.owner || c.receiver) return c;
+  return {
+    ...c,
+    receiver: c.owner,
+    sender: USERS.find(u => u !== c.owner) ?? c.owner,
+    status: c.status ?? (c.used ? "used" : "available"),
+  };
+}
+
 function isExpired(coupon) {
   if (coupon.status !== "available") return false;
   return daysLeft(coupon.createdAt) === 0;
@@ -438,7 +450,7 @@ const CoupleCoupons = ({ currentUser }) => {
   useEffect(() => {
     const q = query(collection(db, "coupons"), orderBy("createdAt", "desc"));
     const unsub = onSnapshot(q, snap => {
-      setCoupons(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setCoupons(snap.docs.map(d => normalizeCoupon({ id: d.id, ...d.data() })));
     });
     return () => unsub();
   }, []);

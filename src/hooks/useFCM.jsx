@@ -1,10 +1,23 @@
 import { useEffect, useCallback } from 'react';
 import { getApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const VAPID_KEY = import.meta.env.VITE_VAPID_KEY;
+
+// 기기별 토큰을 tokens[]에 누적한다. token 필드(최근 등록 기기)는 구버전 호환용으로 유지.
+// 예전 단일 token 문서라면 그 토큰도 tokens[]로 옮겨 담아 다른 기기의 등록이 사라지지 않게 한다.
+async function saveToken(user, token) {
+  const ref = doc(db, 'fcmTokens', user);
+  let legacy = null;
+  try {
+    const snap = await getDoc(ref);
+    legacy = snap.exists() ? snap.data()?.token ?? null : null;
+  } catch { /* 읽기 실패 시 현재 토큰만 저장 */ }
+  const toAdd = [...new Set([legacy, token].filter(Boolean))];
+  await setDoc(ref, { token, tokens: arrayUnion(...toAdd), updatedAt: serverTimestamp() }, { merge: true });
+}
 
 function urlBase64ToUint8Array(base64String) {
   const b = base64String.trim();
@@ -29,7 +42,7 @@ export function useFCM(currentUser) {
         const messaging = getMessaging(getApp());
         const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
         if (token) {
-          await setDoc(doc(db, 'fcmTokens', currentUser), { token, updatedAt: serverTimestamp() });
+          await saveToken(currentUser, token);
         }
         unsubMessage = onMessage(messaging, (payload) => {
           window.dispatchEvent(new CustomEvent('fcm-foreground', { detail: payload }));
@@ -76,7 +89,7 @@ export function useFCM(currentUser) {
     if (!token) throw new Error('토큰 발급 실패 (null)');
 
     // ⑥ Firestore 저장
-    await setDoc(doc(db, 'fcmTokens', currentUser), { token, updatedAt: serverTimestamp() });
+    await saveToken(currentUser, token);
     return token;
   }, [currentUser]);
 

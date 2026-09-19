@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.0.127",
+    "date": "2026-09-19T16:38:25.618Z",
+    "notes": "게임 보상 쿠폰 스키마 통일(쿠폰함 폴백 포함), 그림퀴즈 난이도 크래시 수정, 업데이트 시 강제 로그아웃 제거, 알림 다기기 지원/만료 토큰 정리/발송 안정화, 미사용 kakaoProxy 제거"
+  },
+  {
     "version": "1.0.126",
     "date": "2026-09-18T06:44:39.609Z",
     "notes": "DayPanel/ScheduleDetailDialog 바텀시트 앵커 버그 수정(하단 고정 복원), 홈 FAB 제거, 캘린더 마커 한 줄 정렬 + 범례 보강"
@@ -143,10 +148,5 @@
     "version": "1.0.98",
     "date": "2026-06-10T05:00:00.000Z",
     "notes": "Open-Meteo API 파라미터 수정 (weathercode → weather_code) — 날씨 자동알림 복구"
-  },
-  {
-    "version": "1.0.97",
-    "date": "2026-06-10T04:00:00.000Z",
-    "notes": "콕찌르기 Liquid Glass 버튼 + 파티클 애니메이션, Snackbar 팝업 제거"
   }
 ]

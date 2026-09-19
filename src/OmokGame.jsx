@@ -333,9 +333,11 @@ const OmokGame = ({ currentUser, opponentUser }) => {
     const randomCoupon = getRandomCoupon();
     
     await addDoc(collection(db, "coupons"), {
-      owner: winner,
       title: randomCoupon,
-      used: false,
+      cat: "etc",
+      sender: loser,
+      receiver: winner,
+      status: "available",
       createdAt: serverTimestamp(),
       fromGame: "오목",
     });

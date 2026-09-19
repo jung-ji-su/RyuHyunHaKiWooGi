@@ -8,8 +8,6 @@ import {
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import confetti from 'canvas-confetti';
-import { auth } from './firebase';
-import { signOut } from 'firebase/auth';
 
 import GlobalStyle          from './components/GlobalStyle';
 import LoginScreen          from './components/LoginScreen';
@@ -185,7 +183,6 @@ function AppInner() {
   }, [notifDrawerOpen]);
 
   const handleUpdateConfirm = async () => {
-    try { await signOut(auth); } catch {}
     // 브라우저 캐시 전체 삭제 후 강제 새로고침
     try {
       if ('caches' in window) {

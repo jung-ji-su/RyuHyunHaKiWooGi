@@ -132,7 +132,6 @@ public/
 | `sendDailyWeather` | 매일 오전 7시 KST | Open-Meteo 날씨 조회 → 알림 |
 | `sendDailyReminders` | 매일 오후 9시 KST | 기념일 카운트다운, 주간 브리핑 |
 | `sendTestPush` | HTTP POST | 테스트 발송 (`?secret=buri2026`) |
-| `kakaoProxy` | HTTP GET | 카카오맵 API CORS 프록시 |
 
 <br/>
 
@@ -149,7 +148,7 @@ public/
 | `buckets/{id}` | title, category, done, doneAt, checkedBy[] |
 | `travelPins/{id}` | lat, lng, name, writer, createdAt |
 | `notifications/{id}` | to, type, content, link, isRead, createdAt |
-| `fcmTokens/{userName}` | token, updatedAt |
+| `fcmTokens/{userName}` | token(최근 기기), tokens[](전체 기기), updatedAt |
 | `pets/{userName}` | 다마고치 펫 상태 전체 |
 | `accountBook/{id}` | amount, type, category, memo, writer, date |
 
