@@ -5,8 +5,6 @@ import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { UserContext } from '../lib/UserContext';
 import { useFCM } from '../hooks/useFCM';
-import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
 import { B } from '../lib/constants';
 
 const isStandalone = () =>
@@ -17,25 +15,17 @@ export default function NotifButton() {
   const { currentUser }          = useContext(UserContext);
   const { requestPermission }    = useFCM(currentUser);
 
-  const [perm,        setPerm]      = useState('default');
-  const [hasToken,    setHasToken]  = useState(false);
-  const [loading,     setLoading]   = useState(false);
-  const [errMsg,   setErrMsg]   = useState('');
+  const [perm,      setPerm]      = useState('default');
+  const [loading,   setLoading]   = useState(false);
+  const [errMsg,    setErrMsg]    = useState('');
 
   useEffect(() => {
     if (!('Notification' in window)) { setPerm('unsupported'); return; }
     setPerm(Notification.permission);
-
-    if (Notification.permission === 'granted' && currentUser) {
-      getDoc(doc(db, 'fcmTokens', currentUser))
-        .then(snap => setHasToken(snap.exists() && !!snap.data()?.token))
-        .catch(() => setHasToken(false));
-    }
   }, [currentUser]);
 
   if (!isStandalone()) return null;
   if (perm === 'unsupported') return null;
-  if (perm === 'granted' && hasToken) return null;
 
   const handleClick = async () => {
     if (perm === 'denied') return;
@@ -44,7 +34,6 @@ export default function NotifButton() {
     try {
       await requestPermission();
       setPerm('granted');
-      setHasToken(true);
     } catch (e) {
       setErrMsg(e?.message ?? String(e));
     } finally {
