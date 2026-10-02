@@ -5,6 +5,7 @@ import { Box, Typography, Stack, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import confetti from "canvas-confetti";
 import { shakeElement, vibrate } from "./touchEffects";
+import { calendarColor } from "./lib/calendarTokens";
 
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
@@ -22,7 +23,7 @@ const B = {
 const CATEGORY_META = {
   기념일:   { color: "#7B4FA6", bg: "#EDE0F5", emoji: "💜" },
   데이트:   { color: "#E8630A", bg: "#FFE4D4", emoji: "🧡" },
-  개인일정: { color: "#378ADD", bg: "#E6F1FB", emoji: "📌" },
+  개인일정: { color: calendarColor.category.개인일정.hue, bg: "#E6F1FB", emoji: "📌" },
 };
 
 // ── 유틸 ─────────────────────────────────────────────────────────

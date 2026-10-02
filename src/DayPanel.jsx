@@ -3,14 +3,19 @@ import { Box, Typography, Stack, Drawer, TextField, Button } from '@mui/material
 import { db } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { vibrate } from './touchEffects';
-import { glass, glassBorderSx, getWriterBadge, writerBadgeBg } from './lib/calendarTokens';
+import { glass, glassBorderSx, getWriterBadge, writerBadgeBg, calendarColor } from './lib/calendarTokens';
 
 const B = {
   pants: '#7B4FA6', skin: '#F5B8A0', cream: '#FFF8F2', peach: '#FFE4D4',
   lavender: '#EDE0F5', accent: '#E8630A', dark: '#3D1F00',
 };
 
-const CATEGORY_COLORS  = { 기념일: '#ffc628', 데이트: '#ff3434', 개인일정: '#4079f3' };
+// 캘린더 그리드 dot(calendarColor.category)과 같은 색을 쓰도록 값만 맞춤 — ScheduleDetailDialog와 동일 패턴
+const CATEGORY_COLORS  = {
+  기념일: calendarColor.category.기념일.hue,
+  데이트: calendarColor.category.데이트.hue,
+  개인일정: calendarColor.category.개인일정.hue,
+};
 const CATEGORY_EMOJIS  = { 기념일: '💖', 데이트: '🍕', 개인일정: '👤' };
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
