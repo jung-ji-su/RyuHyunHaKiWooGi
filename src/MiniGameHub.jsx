@@ -85,7 +85,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           <Box component="img" src={buri1} alt="" sx={{ width: 50, ml: 5 }} />
           <Box>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               fontSize: "1.3rem",
               color: B.accent,
             }}>
@@ -107,7 +107,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           border: `2px dashed ${B.pants}44`,
         }}>
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1.1rem",
             color: B.pants,
             mb: 1,
@@ -175,7 +175,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                   </Typography>
                   
                   <Typography sx={{
-                    fontFamily: "'Jua', sans-serif",
+                    fontFamily: "'Jua',sans-serif",
                     fontSize: "1.2rem",
                     color: game.color,
                     mb: 0.5,
@@ -228,7 +228,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           <Typography sx={{
             fontSize: "0.75rem",
             color: B.dark + "66",
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
           }}>
             더 많은 게임이 곧 추가될 예정이에요! 🎮
           </Typography>
@@ -262,7 +262,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
               <ChevronLeftIcon />
             </IconButton>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               color: B.pants,
               fontSize: "1.05rem",
             }}>
@@ -298,7 +298,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
               <ChevronLeftIcon />
             </IconButton>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               color: B.pants,
               fontSize: "1.05rem",
             }}>
@@ -334,7 +334,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
               <ChevronLeftIcon />
             </IconButton>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               color: B.pants,
               fontSize: "1.05rem",
             }}>

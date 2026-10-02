@@ -300,7 +300,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
       <Box sx={{ p: 3, textAlign: "center", py: 8 }}>
         <Box component="img" src={buri9} alt="" sx={{ width: 120, mb: 3, opacity: 0.5 }} />
         <Typography sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           fontSize: "1.3rem",
           color: B.dark,
           mb: 2,
@@ -347,7 +347,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           <Box component="img" src={buri5} alt="" sx={{ width: 45 }} />
           <Box>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               fontSize: "1.3rem",
               color: B.accent,
             }}>
@@ -372,7 +372,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           ◀
         </Button>
         <Typography sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           fontSize: "1.1rem",
           color: B.pants,
         }}>
@@ -401,7 +401,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                 </Typography>
               </Box>
               <Typography sx={{
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
                 fontSize: "1.3rem",
                 color: "#4CAF50",
               }}>
@@ -420,7 +420,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                 </Typography>
               </Box>
               <Typography sx={{
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
                 fontSize: "1.3rem",
                 color: "#F44336",
               }}>
@@ -440,7 +440,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                 잔액
               </Typography>
               <Typography sx={{
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
                 fontSize: "1.5rem",
                 color: balance >= 0 ? B.accent : "#F44336",
                 fontWeight: 700,
@@ -523,7 +523,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                   flex: 1,
                   bgcolor: filterType === filter.value ? B.pants : B.cream,
                   color: filterType === filter.value ? "white" : B.dark,
-                  fontFamily: "'Jua', sans-serif",
+                  fontFamily: "'Jua',sans-serif",
                   fontWeight: filterType === filter.value ? 700 : 400,
                   "&:hover": { bgcolor: filterType === filter.value ? B.pants : B.peach },
                 }}
@@ -552,7 +552,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
       {categoryData.length > 0 && (
         <Box sx={{ px: 2, mb: 2 }}>
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1rem",
             color: B.pants,
             mb: 1.5,
@@ -590,7 +590,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                   sx={{
                     bgcolor: item.color + "33",
                     color: item.color,
-                    fontSize: "0.7rem",
+                    fontSize: "0.72rem",
                     fontWeight: 600,
                     border: `1px solid ${item.color}`,
                   }}
@@ -605,7 +605,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
       <Box sx={{ px: 2 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1rem",
             color: B.pants,
           }}>
@@ -618,7 +618,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             sx={{
               fontSize: "0.75rem",
               color: B.accent,
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
             }}
           >
             💵 예산 설정
@@ -672,7 +672,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                               {categoryInfo?.icon}
                             </Typography>
                             <Typography sx={{
-                              fontFamily: "'Jua', sans-serif",
+                              fontFamily: "'Jua',sans-serif",
                               fontSize: "1rem",
                               color: B.dark,
                             }}>
@@ -691,7 +691,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
 
                         <Box sx={{ textAlign: "right" }}>
                           <Typography sx={{
-                            fontFamily: "'Jua', sans-serif",
+                            fontFamily: "'Jua',sans-serif",
                             fontSize: "1.2rem",
                             color: transaction.type === "income" ? "#4CAF50" : "#F44336",
                             mb: 0.5,
@@ -752,7 +752,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         }}
       >
         <DialogTitle sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           bgcolor: B.peach,
           color: B.dark,
         }}>
@@ -777,13 +777,13 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                 fullWidth
               >
                 <ToggleButton value="income" sx={{
-                  fontFamily: "'Jua', sans-serif",
+                  fontFamily: "'Jua',sans-serif",
                   "&.Mui-selected": { bgcolor: "#4CAF50", color: "white" },
                 }}>
                   💰 수입
                 </ToggleButton>
                 <ToggleButton value="expense" sx={{
-                  fontFamily: "'Jua', sans-serif",
+                  fontFamily: "'Jua',sans-serif",
                   "&.Mui-selected": { bgcolor: "#F44336", color: "white" },
                 }}>
                   💸 지출
@@ -803,7 +803,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  fontFamily: "'Jua', sans-serif",
+                  fontFamily: "'Jua',sans-serif",
                 },
               }}
             />
@@ -822,7 +822,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                     sx={{
                       bgcolor: category === cat.name ? cat.color : B.cream,
                       color: category === cat.name ? "white" : B.dark,
-                      fontFamily: "'Jua', sans-serif",
+                      fontFamily: "'Jua',sans-serif",
                       fontWeight: category === cat.name ? 700 : 400,
                       "&:hover": { bgcolor: cat.color + "88" },
                     }}
@@ -862,7 +862,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             variant="contained"
             sx={{
               bgcolor: B.accent,
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               "&:hover": { bgcolor: B.pants },
             }}
           >
@@ -882,7 +882,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         }}
       >
         <DialogTitle sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           bgcolor: B.peach,
           color: B.dark,
         }}>
@@ -904,7 +904,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  fontFamily: "'Jua', sans-serif",
+                  fontFamily: "'Jua',sans-serif",
                   fontSize: "1.2rem",
                 },
               }}
@@ -934,7 +934,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             variant="contained"
             sx={{
               bgcolor: B.accent,
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               "&:hover": { bgcolor: B.pants },
             }}
           >
@@ -954,7 +954,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         }}
       >
         <DialogTitle sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           bgcolor: B.lavender,
           color: B.dark,
         }}>
@@ -965,7 +965,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             <Stack spacing={2}>
               <Box>
                 <Typography sx={{
-                  fontFamily: "'Jua', sans-serif",
+                  fontFamily: "'Jua',sans-serif",
                   fontSize: "1rem",
                   color: B.pants,
                   mb: 1,
@@ -1004,7 +1004,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             sx={{
               borderColor: B.pants,
               color: B.pants,
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
             }}
           >
             닫기

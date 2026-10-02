@@ -151,7 +151,7 @@ function MonthHighlights({ records, currentUser, otherUser }) {
           }}>
             <Typography sx={{ fontSize: "1.3rem" }}>🏆</Typography>
             <Box>
-              <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.7rem", color: B.dark + "88" }}>
+              <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", color: B.dark + "88" }}>
                 내 이달 최고 온도
               </Typography>
               <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.88rem", color: getTempMeta(myBest.temp).color }}>
@@ -167,7 +167,7 @@ function MonthHighlights({ records, currentUser, otherUser }) {
           }}>
             <Typography sx={{ fontSize: "1.3rem" }}>💑</Typography>
             <Box>
-              <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.7rem", color: B.dark + "88" }}>
+              <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", color: B.dark + "88" }}>
                 함께 행복했던 날
               </Typography>
               <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.88rem", color: B.pants }}>
@@ -226,7 +226,7 @@ function WeeklyReport({ records, currentUser, otherUser }) {
             <Box sx={{
               px: 1.2, py: "2px", borderRadius: "20px",
               bgcolor: getTempMeta(myAvg).color + "22", color: getTempMeta(myAvg).color,
-              fontSize: "0.68rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif",
+              fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif",
             }}>내 평균 {myAvg}°</Box>
           )}
         </Stack>
@@ -260,7 +260,7 @@ function WeeklyReport({ records, currentUser, otherUser }) {
                   </Box>
                   <Stack direction="row" justifyContent="space-between" sx={{ mt: 0.4 }}>
                     <Typography sx={{ fontSize: "0.6rem", color: B.dark + "44" }}>0</Typography>
-                    <Typography sx={{ fontSize: "0.6rem", color: getTempMeta(avg).color, fontWeight: 700 }}>주간 평균 {avg}°</Typography>
+                    <Typography sx={{ fontSize: "0.72rem", color: getTempMeta(avg).color, fontWeight: 700 }}>주간 평균 {avg}°</Typography>
                     <Typography sx={{ fontSize: "0.6rem", color: B.dark + "44" }}>100</Typography>
                   </Stack>
                 </Box>
@@ -554,11 +554,11 @@ const EmotionThermometer = ({ currentUser }) => {
             <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>오늘 온도는? 🌡️</Typography>
             <Stack direction="row" gap={0.8}>
               {streak > 0 && (
-                <Box sx={{ px: 1.2, py: "2px", borderRadius: "20px", bgcolor: B.accent + "22", color: B.accent, fontSize: "0.65rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                <Box sx={{ px: 1.2, py: "2px", borderRadius: "20px", bgcolor: B.accent + "22", color: B.accent, fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
                   🔥 {streak}일 연속
                 </Box>
               )}
-              <Box sx={{ px: 1.2, py: "2px", borderRadius: "20px", bgcolor: B.lavender, color: B.pants, fontSize: "0.65rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
+              <Box sx={{ px: 1.2, py: "2px", borderRadius: "20px", bgcolor: B.lavender, color: B.pants, fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
                 {today.slice(5).replace("-", "/")}
               </Box>
             </Stack>
@@ -583,7 +583,7 @@ const EmotionThermometer = ({ currentUser }) => {
                 {meta.label}
               </Typography>
               {!submitted && (
-                <Typography sx={{ fontSize: "0.62rem", color: B.dark + "55", mt: 0.3, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55", mt: 0.3, fontFamily: "'Noto Sans KR',sans-serif" }}>
                   자정 전까지 기록 안 하면 💀 0도 패널티
                 </Typography>
               )}
@@ -615,7 +615,7 @@ const EmotionThermometer = ({ currentUser }) => {
               </Stack>
 
               {/* ⑧ 감정 태그 */}
-              <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.7rem", color: B.dark + "66", mb: 0.8 }}>
+              <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", color: B.dark + "66", mb: 0.8 }}>
                 오늘의 감정 태그 (선택)
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: "6px", mb: 1.5 }}>
@@ -623,7 +623,7 @@ const EmotionThermometer = ({ currentUser }) => {
                   <Chip key={tag} label={tag} size="small"
                     onClick={() => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
                     sx={{
-                      fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.7rem", height: 26,
+                      fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", height: 26,
                       bgcolor: selectedTags.includes(tag) ? B.pants : B.lavender + "88",
                       color:   selectedTags.includes(tag) ? "white"  : B.dark + "88",
                       border:  `1px solid ${selectedTags.includes(tag) ? B.pants : "transparent"}`,
@@ -659,7 +659,7 @@ const EmotionThermometer = ({ currentUser }) => {
               {myRec?.tags?.length > 0 && (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: "5px", mb: 1 }}>
                   {myRec.tags.map(tag => (
-                    <Box key={tag} sx={{ px: 1, py: "2px", borderRadius: "20px", bgcolor: B.pants + "15", border: `1px solid ${B.pants}30`, fontSize: "0.68rem", color: B.pants, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                    <Box key={tag} sx={{ px: 1, py: "2px", borderRadius: "20px", bgcolor: B.pants + "15", border: `1px solid ${B.pants}30`, fontSize: "0.72rem", color: B.pants, fontFamily: "'Noto Sans KR',sans-serif" }}>
                       {tag}
                     </Box>
                   ))}
@@ -780,12 +780,12 @@ const EmotionThermometer = ({ currentUser }) => {
           {[{ user: currentUser, color: B.pants }, { user: otherUser, color: B.accent }].map(({ user, color }) => (
             <Stack key={user} direction="row" alignItems="center" gap={0.6}>
               <Box sx={{ width: 18, height: 3, borderRadius: 2, bgcolor: color }} />
-              <Typography sx={{ fontSize: "0.7rem", color: B.dark + "77", fontFamily: "'Noto Sans KR',sans-serif" }}>{user}</Typography>
+              <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77", fontFamily: "'Noto Sans KR',sans-serif" }}>{user}</Typography>
             </Stack>
           ))}
         </Stack>
         {chartTab === "year" && (
-          <Typography sx={{ fontSize: "0.68rem", color: B.dark + "55", textAlign: "center", mt: 1, fontFamily: "'Noto Sans KR',sans-serif" }}>
+          <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55", textAlign: "center", mt: 1, fontFamily: "'Noto Sans KR',sans-serif" }}>
             * 연 그래프는 해당 월 평균 온도 (패널티 0° 제외)
           </Typography>
         )}

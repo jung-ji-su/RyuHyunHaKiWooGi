@@ -60,11 +60,11 @@ const StatCard = ({ emoji, label, value, sub, color, bgColor }) => (
     <Typography sx={{ fontSize: "1.4rem", fontFamily: "'Jua',sans-serif", color: color || B.pants, lineHeight: 1.2, mt: 0.5 }}>
       {value}
     </Typography>
-    <Typography sx={{ fontSize: "0.7rem", color: B.dark + "99", fontFamily: "'Noto Sans KR',sans-serif" }}>
+    <Typography sx={{ fontSize: "0.72rem", color: B.dark + "99", fontFamily: "'Noto Sans KR',sans-serif" }}>
       {label}
     </Typography>
     {sub && (
-      <Typography sx={{ fontSize: "0.65rem", color: B.dark + "55", fontFamily: "'Noto Sans KR',sans-serif" }}>
+      <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55", fontFamily: "'Noto Sans KR',sans-serif" }}>
         {sub}
       </Typography>
     )}
@@ -281,7 +281,7 @@ const LoveStats = ({ currentUser }) => {
                       color: getEmotionColor(topEmotion.label) }}>
                       요즘 기분은 "{topEmotion.label}"!
                     </Typography>
-                    <Typography sx={{ fontSize: "0.7rem", color: B.dark + "77",
+                    <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                       fontFamily: "'Noto Sans KR',sans-serif" }}>
                       전체 기록의 {Math.round((topEmotion.value / filteredDiaries.length) * 100)}% · {topEmotion.value}번
                     </Typography>
@@ -318,7 +318,7 @@ const LoveStats = ({ currentUser }) => {
                 <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.green }}>
                   {availCoupons.length}
                 </Typography>
-                <Typography sx={{ fontSize: "0.68rem", color: B.dark + "77",
+                <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                   fontFamily: "'Noto Sans KR',sans-serif" }}>사용 가능</Typography>
               </Box>
               <Box sx={{ flex: 1, bgcolor: B.pants + "15", borderRadius: 2, p: 1.2,
@@ -326,7 +326,7 @@ const LoveStats = ({ currentUser }) => {
                 <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.pants }}>
                   {usedCoupons.length}
                 </Typography>
-                <Typography sx={{ fontSize: "0.68rem", color: B.dark + "77",
+                <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                   fontFamily: "'Noto Sans KR',sans-serif" }}>사용 완료</Typography>
               </Box>
             </Stack>
@@ -359,7 +359,7 @@ const LoveStats = ({ currentUser }) => {
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: "#3A86FF" }}>
                     {filteredPins.length}
                   </Typography>
-                  <Typography sx={{ fontSize: "0.68rem", color: B.dark + "77",
+                  <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                     fontFamily: "'Noto Sans KR',sans-serif" }}>총 방문지</Typography>
                 </Box>
                 <Box sx={{ flex: 1, bgcolor: "#F0FBF6", borderRadius: 2, p: 1.2,
@@ -367,7 +367,7 @@ const LoveStats = ({ currentUser }) => {
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.green }}>
                     {pinCatData[0]?.emoji || "📍"} {pinCatData[0]?.label || "-"}
                   </Typography>
-                  <Typography sx={{ fontSize: "0.68rem", color: B.dark + "77",
+                  <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                     fontFamily: "'Noto Sans KR',sans-serif" }}>가장 많이 간 곳</Typography>
                 </Box>
               </Stack>
@@ -411,7 +411,7 @@ const LoveStats = ({ currentUser }) => {
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.green }}>
                     {doneBuckets.length}
                   </Typography>
-                  <Typography sx={{ fontSize: "0.68rem", color: B.dark + "77",
+                  <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                     fontFamily: "'Noto Sans KR',sans-serif" }}>달성 완료 🎉</Typography>
                 </Box>
                 <Box sx={{ flex: 1, bgcolor: B.peach, borderRadius: 2, p: 1.2,
@@ -419,7 +419,7 @@ const LoveStats = ({ currentUser }) => {
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.accent }}>
                     {buckets.length - doneBuckets.length}
                   </Typography>
-                  <Typography sx={{ fontSize: "0.68rem", color: B.dark + "77",
+                  <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                     fontFamily: "'Noto Sans KR',sans-serif" }}>도전 중 🔥</Typography>
                 </Box>
               </Stack>
@@ -457,7 +457,7 @@ const LoveStats = ({ currentUser }) => {
                    avgTemp >= 40 ? "🌤️ 보통이에요, 힘내요!" :
                    "🌧️ 요즘 좀 힘드나요? 파이팅!"}
                 </Typography>
-                <Typography sx={{ fontSize: "0.65rem", color: B.dark + "55",
+                <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55",
                   fontFamily: "'Noto Sans KR',sans-serif" }}>
                   최근 {recent14.length}개 기록 기준
                 </Typography>

@@ -74,13 +74,13 @@ export default function LoginScreen({ onLogin }) {
       {/* 타이틀 */}
       <Box sx={{ textAlign: 'center', mb: 4, position: 'relative', zIndex: 2 }}>
         <Typography sx={{
-          fontFamily: "'Jua', sans-serif", fontSize: '2.2rem', color: B.pants,
+          fontFamily: "'Jua',sans-serif", fontSize: '2.2rem', color: B.pants,
           textShadow: `3px 3px 0 ${B.skin}88, 0 0 30px ${B.pants}33`,
           animation: 'titleDrop 0.65s ease both', lineHeight: 1.2,
         }}>Who are you? 🕵️</Typography>
         <Typography sx={{
           fontSize: '0.82rem', color: B.dark + '88', mt: 0.8,
-          fontFamily: "'Noto Sans KR', sans-serif",
+          fontFamily: "'Noto Sans KR',sans-serif",
           animation: 'fadeInUp 0.5s ease 0.3s both',
         }}>부리부리가 기다리고 있어요 🐷</Typography>
       </Box>
@@ -112,7 +112,7 @@ export default function LoginScreen({ onLogin }) {
           </Box>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: B.dark, mb: 0.6 }}>지수</Typography>
           <Box sx={{
-            display: 'inline-block', fontSize: '0.65rem', fontWeight: 700,
+            display: 'inline-block', fontSize: '0.72rem', fontWeight: 700,
             px: 1.5, py: '3px', borderRadius: '20px',
             bgcolor: B.lavender, color: B.pants, fontFamily: "'Noto Sans KR',sans-serif",
           }}>💜 나야나</Box>
@@ -155,7 +155,7 @@ export default function LoginScreen({ onLogin }) {
           </Box>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: B.dark, mb: 0.6 }}>현하</Typography>
           <Box sx={{
-            display: 'inline-block', fontSize: '0.65rem', fontWeight: 700,
+            display: 'inline-block', fontSize: '0.72rem', fontWeight: 700,
             px: 1.5, py: '3px', borderRadius: '20px',
             bgcolor: B.peach, color: B.accent, fontFamily: "'Noto Sans KR',sans-serif",
           }}>🧡 나야나</Box>

@@ -215,7 +215,7 @@ const TodayMenu = () => {
                   {m.name}
                 </Typography>
                 <Typography sx={{
-                  fontSize: "0.68rem", color: B.dark + "66",
+                  fontSize: "0.72rem", color: B.dark + "66",
                   fontFamily: "'Noto Sans KR',sans-serif"
                 }}>
                   {m.cook_time} · {getTotalPrice(m.ingredients)}원
@@ -225,7 +225,7 @@ const TodayMenu = () => {
                 bgcolor: getDiffColor(m.difficulty) + "22",
                 color: getDiffColor(m.difficulty),
                 fontFamily: "'Noto Sans KR',sans-serif",
-                fontSize: "0.65rem", height: 20, fontWeight: 700,
+                fontSize: "0.72rem", height: 20, fontWeight: 700,
               }} />
             </Box>
           ))}
@@ -322,7 +322,7 @@ const TodayMenu = () => {
                 예상 장보기 비용
               </Typography>
               <Typography sx={{
-                fontSize: "0.7rem", color: B.dark + "66",
+                fontSize: "0.72rem", color: B.dark + "66",
                 fontFamily: "'Noto Sans KR',sans-serif"
               }}>
                 {menu.serving} 기준
@@ -411,7 +411,7 @@ const TodayMenu = () => {
                     {ing.name}
                   </Typography>
                   <Typography sx={{
-                    fontSize: "0.68rem", color: B.dark + "55",
+                    fontSize: "0.72rem", color: B.dark + "55",
                     fontFamily: "'Noto Sans KR',sans-serif"
                   }}>
                     {ing.amount}

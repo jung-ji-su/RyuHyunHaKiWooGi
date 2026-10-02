@@ -56,11 +56,11 @@ const NewMessageDialog = ({ open, onClose, messages }) => {
                     {isLast ? <DraftsIcon sx={{ fontSize: 70, color: "#ff9800" }} /> : <EmailIcon sx={{ fontSize: 70, color: "#ff4081" }} />}
                 </Box>
 
-                <Typography variant="body2" sx={{ color: "#ff4081", fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="body2" sx={{ color: "#ff4081", fontWeight: 700, mb: 1 }}>
                     일정 배달 [{currentIndex + 1} / {messages.length}]
                 </Typography>
 
-                <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: "#333", mb: 2 }}>
                     {currentMsg.writer}님의 소식!
                 </Typography>
 

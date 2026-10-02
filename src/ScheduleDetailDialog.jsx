@@ -84,7 +84,7 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
             <Box sx={{
               flexShrink: 0, px: '7px', py: '2px', borderRadius: 999,
               background: writerBadgeBg(badge.who), color: '#fff',
-              fontSize: '0.56rem', fontWeight: 700,
+              fontSize: '0.72rem', fontWeight: 700,
               fontFamily: "'Noto Sans KR',sans-serif",
             }}>
               {badge.label}
@@ -95,7 +95,7 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
           <Stack direction="row" alignItems="center" gap={0.3} sx={{ mt: 0.4 }}>
             <PlaceIcon sx={{ fontSize: "0.6rem", color: "#ccc" }} />
             <Typography sx={{
-              fontSize: "0.63rem", color: "#aaa", fontFamily: "'Noto Sans KR',sans-serif",
+              fontSize: "0.72rem", color: "#aaa", fontFamily: "'Noto Sans KR',sans-serif",
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 130,
             }}>
               {item.location}
@@ -104,7 +104,7 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
         )}
         {item.memo && (
           <Typography sx={{
-            fontSize: "0.62rem", color: "#bbb", mt: 0.35,
+            fontSize: "0.72rem", color: "#bbb", mt: 0.35,
             fontFamily: "'Noto Sans KR',sans-serif",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
@@ -180,7 +180,7 @@ export default function ScheduleDetailDialog({
           }}>
             💕 {date}
           </Typography>
-          <Typography sx={{ fontSize: "0.63rem", color: B.pants + "66", mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+          <Typography sx={{ fontSize: "0.72rem", color: B.pants + "66", mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
             {isMultiMode ? "선택한 날짜 전체에 일괄 등록됩니다" : "일정을 추가하거나 수정하세요"}
           </Typography>
         </Box>
@@ -219,7 +219,7 @@ export default function ScheduleDetailDialog({
                 }}>
                   아직 등록된 일정이 없어요
                 </Typography>
-                <Typography sx={{ fontSize: "0.64rem", color: "#ccc", fontFamily: "'Noto Sans KR',sans-serif" }}>
+                <Typography sx={{ fontSize: "0.72rem", color: "#ccc", fontFamily: "'Noto Sans KR',sans-serif" }}>
                   아래에서 새 일정을 추가해보세요 ✨
                 </Typography>
               </Box>
@@ -240,12 +240,12 @@ export default function ScheduleDetailDialog({
         {/* 구분선 */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, mb: 2.2 }}>
           <Box sx={{ flex: 1, height: 1, background: `linear-gradient(to right, transparent, ${B.pants}20)` }} />
-          <Typography sx={{ fontSize: "0.62rem", color: B.pants + "88", fontFamily: "'Jua',sans-serif", flexShrink: 0 }}>
+          <Typography sx={{ fontSize: "0.72rem", color: B.pants + "88", fontFamily: "'Jua',sans-serif", flexShrink: 0 }}>
             {isEditMode ? "✏️ 수정 중" : isMultiMode ? "✨ 기간 일정 추가" : "✨ 새 일정"}
           </Typography>
           {isEditMode && (
             <Button size="small" onClick={onCancelEdit} sx={{
-              fontSize: "0.6rem", color: "#bbb", py: 0.2, px: 0.9, minWidth: 0,
+              fontSize: "0.72rem", color: "#bbb", py: 0.2, px: 0.9, minWidth: 0,
               borderRadius: 2, border: "1px solid #e8e8e8",
               fontFamily: "'Noto Sans KR',sans-serif", flexShrink: 0,
             }}>
@@ -260,7 +260,7 @@ export default function ScheduleDetailDialog({
           {/* 카테고리 */}
           <Box>
             <Typography sx={{
-              fontSize: "0.62rem", color: B.pants + "88",
+              fontSize: "0.72rem", color: B.pants + "88",
               fontFamily: "'Noto Sans KR',sans-serif", mb: 1,
               fontWeight: 700, letterSpacing: "0.08em",
             }}>
@@ -292,7 +292,7 @@ export default function ScheduleDetailDialog({
                   >
                     <Typography sx={{ fontSize: "1.4rem", lineHeight: 1, mb: 0.4 }}>{cat.emoji}</Typography>
                     <Typography sx={{
-                      fontSize: "0.64rem", fontFamily: "'Noto Sans KR',sans-serif",
+                      fontSize: "0.72rem", fontFamily: "'Noto Sans KR',sans-serif",
                       fontWeight: active ? 700 : 400,
                       color: active ? cat.color : "#bbb", lineHeight: 1,
                     }}>
@@ -319,7 +319,7 @@ export default function ScheduleDetailDialog({
               >
                 <Typography sx={{ fontSize: "1.4rem", lineHeight: 1, mb: 0.4 }}>⭐</Typography>
                 <Typography sx={{
-                  fontSize: "0.6rem", fontFamily: "'Noto Sans KR',sans-serif",
+                  fontSize: "0.72rem", fontFamily: "'Noto Sans KR',sans-serif",
                   color: isImportant ? "#cc8800" : "#bbb", fontWeight: isImportant ? 700 : 400, lineHeight: 1,
                 }}>
                   중요
@@ -374,7 +374,7 @@ export default function ScheduleDetailDialog({
           {/* 참여자 */}
           <Box>
             <Typography sx={{
-              fontSize: "0.62rem", color: B.pants + "88",
+              fontSize: "0.72rem", color: B.pants + "88",
               fontFamily: "'Noto Sans KR',sans-serif", mb: 1,
               fontWeight: 700, letterSpacing: "0.08em",
             }}>

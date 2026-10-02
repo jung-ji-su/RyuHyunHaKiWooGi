@@ -361,7 +361,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
             </Typography>
             <Stack direction="row" alignItems="center" gap={0.8} sx={{ mt: 0.4 }}>
               <Typography sx={{
-                fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.68rem",
+                fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem",
                 color: B.dark + "55",
               }}>
                 From. {coupon.sender}
@@ -370,7 +370,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
                 <Box sx={{
                   px: 0.8, py: "1px", borderRadius: "10px",
                   bgcolor: "#FF525211", color: "#E53935",
-                  fontSize: "0.62rem", fontWeight: 700,
+                  fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   ⏰ {left}일 남음
@@ -380,7 +380,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
                 <Box sx={{
                   px: 0.8, py: "1px", borderRadius: "10px",
                   bgcolor: "#88888811", color: "#888",
-                  fontSize: "0.62rem", fontWeight: 700,
+                  fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   만료됨
@@ -390,7 +390,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
                 <Box sx={{
                   px: 0.8, py: "1px", borderRadius: "10px",
                   bgcolor: "#43A04711", color: "#43A047",
-                  fontSize: "0.62rem", fontWeight: 700,
+                  fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   ✓ 사용완료
@@ -426,7 +426,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
                   px: 1, py: "3px", borderRadius: "10px",
                   border: `1px solid ${B.lavender}`,
                   color: B.pants + "88",
-                  fontSize: "0.65rem", fontFamily: "'Noto Sans KR',sans-serif",
+                  fontSize: "0.72rem", fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   대기중
                 </Box>

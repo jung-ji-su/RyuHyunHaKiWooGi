@@ -133,7 +133,7 @@ function ScheduleDayCell({ d, current, today, schedule, isMultiSelected, onDateC
             flexShrink: 0,
           }}>
             <Typography sx={{
-              fontSize: '0.58rem', fontWeight: 700,
+              fontSize: '0.72rem', fontWeight: 700,
               color: 'white', lineHeight: 1,
               fontFamily: "'Noto Sans KR',sans-serif",
             }}>
@@ -284,7 +284,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
           <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.3 }}>
             {SCHEDULE_TYPES.map(s => counts[s.type] > 0 && (
               <Box key={s.type} sx={{ px: '5px', py: '1.5px', borderRadius: 10, bgcolor: s.color + '18' }}>
-                <Typography sx={{ fontSize: '0.52rem', color: s.color, fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                <Typography sx={{ fontSize: '0.72rem', color: s.color, fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
                   {s.emoji} {counts[s.type]}
                 </Typography>
               </Box>
@@ -436,12 +436,12 @@ export default function WorkScheduleCalendar({ onFlip }) {
             }
           </Typography>
           {!isMultiSelect && currentSchedule && (
-            <Typography sx={{ fontSize: '0.66rem', color: C.textFaint, mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Typography sx={{ fontSize: '0.72rem', color: C.textFaint, mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
               현재: {SCHEDULE_MAP[currentSchedule]?.emoji} {currentSchedule} ({SCHEDULE_MAP[currentSchedule]?.time})
             </Typography>
           )}
           {isMultiSelect && (
-            <Typography sx={{ fontSize: '0.66rem', color: C.textFaint, mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Typography sx={{ fontSize: '0.72rem', color: C.textFaint, mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
               선택한 날짜 전체에 같은 스케줄이 적용돼요
             </Typography>
           )}

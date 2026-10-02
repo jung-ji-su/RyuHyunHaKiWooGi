@@ -129,7 +129,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
               filter: `drop-shadow(0 2px 6px ${B.pants}44)`,
             }} />
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif", fontSize: "1.1rem",
+              fontFamily: "'Jua',sans-serif", fontSize: "1.1rem",
               color: B.pants, textShadow: `1px 1px 0 ${B.skin}88`,
             }}>
               우리의 소중한 기록들 📖
@@ -193,7 +193,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
             <Box sx={{ textAlign: "center", py: 8, opacity: 0.6 }}>
               <Typography sx={{ fontSize: "3rem", mb: 1.5 }}>🖼️</Typography>
               <Typography sx={{
-                fontFamily: "'Jua', sans-serif", color: B.dark + "88", fontSize: "0.9rem",
+                fontFamily: "'Jua',sans-serif", color: B.dark + "88", fontSize: "0.9rem",
               }}>
                 아직 사진이 없어요<br />기록에 사진을 추가해봐요!
               </Typography>
@@ -227,7 +227,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
                     p: 1,
                   }}>
                     <Typography sx={{
-                      fontSize: "0.65rem", color: "rgba(255,255,255,0.92)",
+                      fontSize: "0.72rem", color: "rgba(255,255,255,0.92)",
                       fontFamily: "'Noto Sans KR',sans-serif",
                     }}>
                       {item.emoji} {item.author}
@@ -262,7 +262,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
               <Box component="img" src={buriCouple} alt=""
                 sx={{ width: 90, mb: 1.5, animation: "headBob 3s ease-in-out infinite" }} />
               <Typography sx={{
-                fontFamily: "'Jua', sans-serif", color: B.dark + "88", fontSize: "0.9rem",
+                fontFamily: "'Jua',sans-serif", color: B.dark + "88", fontSize: "0.9rem",
               }}>
                 아직 기록이 없어요 🐷<br />첫 번째 추억을 남겨봐요!
               </Typography>
@@ -494,8 +494,8 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
 
           <Box flexGrow={1}>
             <Typography sx={{
-              fontWeight: "bold", color: B.dark, fontSize: "0.92rem",
-              fontFamily: "'Noto Sans KR', sans-serif",
+              fontWeight: 700, color: B.dark, fontSize: "0.92rem",
+              fontFamily: "'Noto Sans KR',sans-serif",
             }}>
               {item.author}
               {!editMode && item.emotion && EMOTION_BURI[item.emotion] && (
@@ -562,7 +562,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                       )}
                     </AnimatePresence>
                   </IconButton>
-                  <Typography sx={{ fontWeight: "bold", color: B.pants, fontSize: "0.78rem", minWidth: "12px" }}>
+                  <Typography sx={{ fontWeight: 700, color: B.pants, fontSize: "0.78rem", minWidth: "12px" }}>
                     {item.likes?.length || 0}
                   </Typography>
                 </Stack>
@@ -605,7 +605,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 3, bgcolor: B.cream,
-                  fontFamily: "'Noto Sans KR', sans-serif",
+                  fontFamily: "'Noto Sans KR',sans-serif",
                   "& fieldset": { borderColor: B.pants + "55" },
                   "&:hover fieldset": { borderColor: B.pants + "88" },
                   "&.Mui-focused fieldset": { borderColor: B.pants },
@@ -629,7 +629,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
               <Typography sx={{
                 whiteSpace: "pre-wrap", flex: 1, color: B.dark,
                 pt: 0.5, lineHeight: 1.7,
-                fontFamily: "'Noto Sans KR', sans-serif", fontSize: "0.95rem",
+                fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.95rem",
               }}>
                 {item.content}
               </Typography>
@@ -690,13 +690,13 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                 borderRadius: "15px", borderTopLeftRadius: "2px", maxWidth: "85%",
               }}>
                 <Typography sx={{
-                  fontWeight: "bold", display: "block", color: B.pants,
-                  fontSize: "0.7rem", fontFamily: "'Noto Sans KR', sans-serif",
+                  fontWeight: 700, display: "block", color: B.pants,
+                  fontSize: "0.72rem", fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   {c.author}
                 </Typography>
                 <Typography sx={{
-                  color: B.dark, fontSize: "0.85rem", fontFamily: "'Noto Sans KR', sans-serif",
+                  color: B.dark, fontSize: "0.85rem", fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   {c.text}
                 </Typography>
@@ -715,7 +715,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 5, bgcolor: B.cream,
-                fontFamily: "'Noto Sans KR', sans-serif",
+                fontFamily: "'Noto Sans KR',sans-serif",
                 "& fieldset": { borderColor: B.pants + "33" },
                 "&:hover fieldset": { borderColor: B.pants + "88" },
                 "&.Mui-focused fieldset": { borderColor: B.pants },

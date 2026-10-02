@@ -120,15 +120,15 @@ const BucketItem = ({ item, currentUser, index }) => {
           <Box sx={{
             px: 0.9, py: "1px", borderRadius: "10px",
             bgcolor: cat.bg, color: cat.color,
-            fontSize: "0.6rem", fontWeight: 700,
+            fontSize: "0.72rem", fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
           }}>{cat.label}</Box>
-          <Typography sx={{ fontSize: "0.62rem", color: B.dark + "55",
+          <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55",
             fontFamily: "'Noto Sans KR',sans-serif" }}>
             {item.writer} 등록
           </Typography>
           {isDone && item.doneAt && (
-            <Typography sx={{ fontSize: "0.62rem", color: B.teal,
+            <Typography sx={{ fontSize: "0.72rem", color: B.teal,
               fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
               · {fmtDate(item.doneAt)} 완료 🎉
             </Typography>
@@ -298,7 +298,7 @@ const BucketList = ({ currentUser }) => {
             <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>
               우리의 버킷리스트 🪣
             </Typography>
-            <Typography sx={{ fontSize: "0.68rem", color: B.dark + "66",
+            <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
               fontFamily: "'Noto Sans KR',sans-serif" }}>
               탭해서 완료 체크!
             </Typography>
@@ -308,7 +308,7 @@ const BucketList = ({ currentUser }) => {
               color: pct === 100 ? B.teal : B.pants, lineHeight: 1 }}>
               {pct}%
             </Typography>
-            <Typography sx={{ fontSize: "0.62rem", color: B.dark + "66",
+            <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
               fontFamily: "'Noto Sans KR',sans-serif" }}>
               {doneCount} / {total}개 완료
             </Typography>

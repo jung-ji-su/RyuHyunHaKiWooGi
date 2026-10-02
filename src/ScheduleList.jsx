@@ -222,7 +222,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                   <Box sx={{
                     px: 0.8, py: "1px", borderRadius: "10px",
                     background: `linear-gradient(120deg, ${meta.color}, #ff4daa)`,
-                    color: "white", fontSize: "0.58rem", fontWeight: 700,
+                    color: "white", fontSize: "0.72rem", fontWeight: 700,
                     fontFamily: "'Noto Sans KR',sans-serif",
                     animation: "importantBadge 1.8s ease-in-out infinite",
                     flexShrink: 0,
@@ -232,7 +232,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
 
               {/* 날짜 */}
               <Typography sx={{
-                fontSize: "0.68rem", color: B.dark+"55",
+                fontSize: "0.72rem", color: B.dark+"55",
                 fontFamily: "'Noto Sans KR',sans-serif", mb: 0.6,
               }}>
                 {formatDate(schedule.date)}
@@ -250,7 +250,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                     sx={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </Box>
                 <Typography sx={{
-                  fontSize: "0.65rem", fontWeight: 700,
+                  fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
                   color: isMySchedule ? B.pants : B.accent,
                 }}>
@@ -261,7 +261,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                 <Box sx={{
                   px: 0.8, py: "1px", borderRadius: "10px",
                   bgcolor: meta.bg, color: meta.color,
-                  fontSize: "0.6rem", fontWeight: 700,
+                  fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   {schedule.category}
@@ -276,7 +276,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                 bgcolor: dday === "D-Day"
                   ? meta.color : isPast ? "#E0E0E0" : meta.bg,
                 color: dday === "D-Day" ? "white" : isPast ? "#999" : meta.color,
-                fontSize: "0.7rem", fontWeight: 700,
+                fontSize: "0.72rem", fontWeight: 700,
                 fontFamily: "'Jua',sans-serif",
                 animation: dday === "D-Day" && !isPast ? "ddayPulse 1.2s ease-in-out infinite" : "none",
                 boxShadow: dday === "D-Day" ? `0 2px 10px ${meta.color}66` : "none",
@@ -348,10 +348,10 @@ const ScheduleList = ({ currentUser }) => {
             sx={{ width:36, animation:"buriJump 2.5s ease-in-out infinite",
               filter:`drop-shadow(0 2px 6px ${B.pants}44)` }}/>
           <Box>
-            <Typography sx={{ fontFamily:"'Jua',sans-serif", fontSize:"1.4rem",
+            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize:"1.4rem",
               color:B.pants, lineHeight:1 }}>{schedules.length}</Typography>
-            <Typography sx={{ fontSize:"0.63rem", color:B.dark+"66",
-              fontFamily:"'Noto Sans KR',sans-serif" }}>전체 일정</Typography>
+            <Typography sx={{ fontSize:"0.72rem", color:B.dark+"66",
+              fontFamily: "'Noto Sans KR',sans-serif" }}>전체 일정</Typography>
           </Box>
         </Box>
         <Box sx={{ bgcolor:"white", borderRadius:3, p:1.5,
@@ -361,10 +361,10 @@ const ScheduleList = ({ currentUser }) => {
             sx={{ width:36, animation:"buriJump 2.2s ease-in-out 0.5s infinite",
               filter:`drop-shadow(0 2px 6px ${B.accent}44)` }}/>
           <Box>
-            <Typography sx={{ fontFamily:"'Jua',sans-serif", fontSize:"1.4rem",
+            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize:"1.4rem",
               color:B.accent, lineHeight:1 }}>{importantCount}</Typography>
-            <Typography sx={{ fontSize:"0.63rem", color:B.dark+"66",
-              fontFamily:"'Noto Sans KR',sans-serif" }}>중요 일정</Typography>
+            <Typography sx={{ fontSize:"0.72rem", color:B.dark+"66",
+              fontFamily: "'Noto Sans KR',sans-serif" }}>중요 일정</Typography>
           </Box>
         </Box>
       </Box>
@@ -381,7 +381,7 @@ const ScheduleList = ({ currentUser }) => {
             onClick={() => { setFilter(key); vibrate(12); }}
             sx={{
               px:1.4, py:"5px", borderRadius:"20px", cursor:"pointer",
-              fontFamily:"'Noto Sans KR',sans-serif", fontSize:"0.75rem", fontWeight:700,
+              fontFamily: "'Noto Sans KR',sans-serif", fontSize:"0.75rem", fontWeight:700,
               bgcolor: filter===key ? color : "white",
               color:   filter===key ? "white" : color,
               border: `1.5px solid ${filter===key ? "transparent" : color+"44"}`,
@@ -397,7 +397,7 @@ const ScheduleList = ({ currentUser }) => {
           <Box component="img" src={buri9} alt=""
             sx={{ width:64, mb:1.5, animation:"headBob 2.5s ease-in-out infinite",
               filter:`drop-shadow(0 2px 8px ${B.pants}44)` }}/>
-          <Typography sx={{ fontFamily:"'Jua',sans-serif", color:B.dark+"88", fontSize:"0.88rem" }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color:B.dark+"88", fontSize:"0.88rem" }}>
             일정이 없어요 🐷<br/>캘린더에서 추가해봐요!
           </Typography>
         </Box>
@@ -419,13 +419,13 @@ const ScheduleList = ({ currentUser }) => {
                   bgcolor: groupLabel === "다가오는 일정" ? "#E8F5E9" : groupColor,
                   color: groupLabel === "다가오는 일정" ? "#639922" : "white",
                 }}>
-                  <Typography sx={{ fontFamily:"'Jua',sans-serif", fontSize:"0.75rem" }}>
+                  <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize:"0.75rem" }}>
                     {groupLabel}
                   </Typography>
                 </Box>
                 <Box sx={{ flex:1, height:"1px", bgcolor:B.lavender }}/>
-                <Typography sx={{ fontFamily:"'Noto Sans KR',sans-serif",
-                  fontSize:"0.68rem", color:B.dark+"55" }}>
+                <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif",
+                  fontSize:"0.72rem", color:B.dark+"55" }}>
                   {items.length}개
                 </Typography>
               </Stack>

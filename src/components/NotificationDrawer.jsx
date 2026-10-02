@@ -168,7 +168,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
               }}
             >
               <Typography sx={{
-                fontSize: '0.68rem', color: B.pants + 'bb',
+                fontSize: '0.72rem', color: B.pants + 'bb',
                 fontFamily: "'Noto Sans KR',sans-serif",
               }}>
                 모두 읽음 ✓
@@ -179,7 +179,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
 
         {unread === 0 && notifications.length > 0 && (
           <Typography sx={{
-            fontSize: '0.68rem', color: B.dark + '44',
+            fontSize: '0.72rem', color: B.dark + '44',
             fontFamily: "'Noto Sans KR',sans-serif",
             mt: 0.8, ml: 0.5,
           }}>
@@ -278,12 +278,12 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                         px: 0.8, py: 0.05, borderRadius: 4,
                         bgcolor: `${meta.color}14`,
                       }}>
-                        <Typography sx={{ fontSize: '0.6rem', color: meta.color, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                        <Typography sx={{ fontSize: '0.72rem', color: meta.color, fontFamily: "'Noto Sans KR',sans-serif" }}>
                           {meta.label}
                         </Typography>
                       </Box>
                       <Typography sx={{
-                        fontSize: '0.62rem', color: B.dark + '44',
+                        fontSize: '0.72rem', color: B.dark + '44',
                         fontFamily: "'Noto Sans KR',sans-serif",
                       }}>
                         {timeAgo(n.createdAt)}

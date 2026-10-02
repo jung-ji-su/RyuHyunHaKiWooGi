@@ -376,7 +376,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
         <Box component="img" src={buri2} alt="" sx={{ width: 50, height: 50 }} />
         <Box>
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1.3rem",
             color: B.accent,
           }}>
@@ -404,7 +404,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
               sx={{
                 bgcolor: B.accent,
                 color: "white",
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
                 fontSize: "1.1rem",
                 px: 4,
                 py: 1.5,
@@ -422,7 +422,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
               sx={{
                 borderColor: B.pants,
                 color: B.pants,
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
                 fontSize: "1.1rem",
                 px: 4,
                 py: 1.5,
@@ -446,7 +446,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           <Typography sx={{ 
             mb: 2, 
             color: B.pants,
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1.2rem",
           }}>
             상대방을 기다리는 중...
@@ -492,7 +492,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             <Box component="img" src={buri6} alt="" sx={{ width: 120, mb: 3 }} />
           </motion.div>
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1.5rem",
             color: B.accent,
             mb: 2,
@@ -525,7 +525,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
                 transition: "all 0.3s",
               }} />
               <Typography sx={{
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
                 fontSize: "0.9rem",
                 color: myColor === BLACK ? B.accent : B.dark + "88",
                 fontWeight: myColor === BLACK ? 700 : 400,
@@ -539,8 +539,8 @@ const OmokGame = ({ currentUser, opponentUser }) => {
                   sx={{ 
                     bgcolor: B.accent, 
                     color: "white",
-                    fontFamily: "'Jua', sans-serif",
-                    fontSize: "0.7rem",
+                    fontFamily: "'Jua',sans-serif",
+                    fontSize: "0.72rem",
                     mt: 0.5,
                   }} 
                 />
@@ -562,7 +562,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
                 transition: "all 0.3s",
               }} />
               <Typography sx={{
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
                 fontSize: "0.9rem",
                 color: myColor === WHITE ? B.pants : B.dark + "88",
                 fontWeight: myColor === WHITE ? 700 : 400,
@@ -576,8 +576,8 @@ const OmokGame = ({ currentUser, opponentUser }) => {
                   sx={{ 
                     bgcolor: B.pants, 
                     color: "white",
-                    fontFamily: "'Jua', sans-serif",
-                    fontSize: "0.7rem",
+                    fontFamily: "'Jua',sans-serif",
+                    fontSize: "0.72rem",
                     mt: 0.5,
                   }} 
                 />
@@ -594,7 +594,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             bgcolor: isMyTurn ? B.accent + "22" : B.dark + "11",
           }}>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               fontSize: "0.95rem",
               color: isMyTurn ? B.accent : B.dark + "66",
             }}>
@@ -710,7 +710,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           </motion.div>
           
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1.5rem",
             color: B.accent,
             mb: 1,
@@ -722,7 +722,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             fontSize: "1.1rem", 
             color: B.dark, 
             mb: 1,
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
           }}>
             승자: {winner === BLACK ? players.black : players.white}
           </Typography>
@@ -739,7 +739,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             sx={{
               borderColor: B.accent,
               color: B.accent,
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               "&:hover": { borderColor: B.pants, color: B.pants },
             }}
           >
@@ -751,7 +751,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
       {/* ── 소원 입력 다이얼로그 ──────────────────────── */}
       <Dialog open={wishDialogOpen} onClose={() => {}} maxWidth="sm" fullWidth>
         <DialogTitle sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           color: B.accent,
           textAlign: "center",
         }}>
@@ -772,7 +772,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2,
-                fontFamily: "'Jua', sans-serif",
+                fontFamily: "'Jua',sans-serif",
               },
             }}
           />
@@ -783,7 +783,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             onClick={handleWishSubmit}
             sx={{
               bgcolor: B.accent,
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               px: 4,
               "&:hover": { bgcolor: B.pants },
             }}
@@ -811,7 +811,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           </motion.div>
           
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1.5rem",
             color: B.accent,
             mb: 2,
@@ -827,7 +827,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             mb: 3,
           }}>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               fontSize: "1.3rem",
               color: B.pants,
             }}>
@@ -849,7 +849,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             fullWidth
             sx={{
               bgcolor: B.accent,
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               "&:hover": { bgcolor: B.pants },
             }}
           >

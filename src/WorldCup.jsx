@@ -326,7 +326,7 @@ export default function WorldCup({ currentUser }) {
                   {t.name}
                 </Typography>
                 <Typography sx={{
-                  fontSize: '0.65rem', color: B.dark + '66',
+                  fontSize: '0.72rem', color: B.dark + '66',
                   fontFamily: "'Noto Sans KR',sans-serif", mt: 0.4,
                 }}>
                   {t.description}

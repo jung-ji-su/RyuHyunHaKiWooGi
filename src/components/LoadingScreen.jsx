@@ -43,7 +43,7 @@ export default function LoadingScreen() {
     }}>
       {/* 타이틀 */}
       <Typography sx={{
-        fontFamily: "'Jua', sans-serif", fontSize: '1.15rem',
+        fontFamily: "'Jua',sans-serif", fontSize: '1.15rem',
         color: B.pants, letterSpacing: 2,
         textShadow: `2px 2px 0 ${B.skin}88`,
         animation: 'fadeInUp 0.5s ease both',

@@ -53,7 +53,7 @@ function SectionLabel({ icon, children, action }) {
   return (
     <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
       <Typography sx={{
-        fontSize: '0.61rem', fontWeight: 700, color: B.pants + '88',
+        fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
         letterSpacing: '0.09em', fontFamily: "'Noto Sans KR',sans-serif",
       }}>
         {icon} {children}
@@ -166,7 +166,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                   }}>
                     <Typography sx={{ fontSize: '1.5rem', lineHeight: 1 }}>{meta.emoji}</Typography>
                     <Box>
-                      <Typography sx={{ fontSize: '0.58rem', fontFamily: "'Noto Sans KR',sans-serif", color: '#bbb', lineHeight: 1, mb: 0.2 }}>
+                      <Typography sx={{ fontSize: '0.72rem', fontFamily: "'Noto Sans KR',sans-serif", color: '#bbb', lineHeight: 1, mb: 0.2 }}>
                         {t.author}
                       </Typography>
                       <Typography sx={{ fontSize: '0.8rem', fontFamily: "'Jua',sans-serif", color: meta.color, lineHeight: 1 }}>
@@ -196,7 +196,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                   transition: 'all 0.15s',
                 }}
               >
-                <Typography sx={{ fontSize: '0.65rem', color: 'white', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
+                <Typography sx={{ fontSize: '0.72rem', color: 'white', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
                   + 추가
                 </Typography>
               </Box>
@@ -236,7 +236,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                           <Box sx={{
                             flexShrink: 0, px: '7px', py: '2px', borderRadius: 999,
                             background: writerBadgeBg(badge.who), color: '#fff',
-                            fontSize: '0.56rem', fontWeight: 700,
+                            fontSize: '0.72rem', fontWeight: 700,
                             fontFamily: "'Noto Sans KR',sans-serif",
                           }}>
                             {badge.label}
@@ -244,13 +244,13 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                         )}
                       </Stack>
                       {s.location && (
-                        <Typography sx={{ fontSize: '0.63rem', color: '#aaa', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
+                        <Typography sx={{ fontSize: '0.72rem', color: '#aaa', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
                           📍 {s.location}
                         </Typography>
                       )}
                       {s.memo && (
                         <Typography sx={{
-                          fontSize: '0.62rem', color: '#bbb', mt: 0.3,
+                          fontSize: '0.72rem', color: '#bbb', mt: 0.3,
                           fontFamily: "'Noto Sans KR',sans-serif",
                           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                         }}>
@@ -325,7 +325,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                       <Typography sx={{ fontSize: '0.74rem', fontFamily: "'Noto Sans KR',sans-serif", color: B.pants, fontWeight: 700 }}>
                         {c.author}의 타임캡슐
                       </Typography>
-                      <Typography sx={{ fontSize: '0.62rem', color: B.dark + '55', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.2 }}>
+                      <Typography sx={{ fontSize: '0.72rem', color: B.dark + '55', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.2 }}>
                         {isoStr}에 공개돼요
                       </Typography>
                     </Box>

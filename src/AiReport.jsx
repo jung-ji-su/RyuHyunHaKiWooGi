@@ -87,7 +87,7 @@ const StatCard = ({ emoji, label, value, color = B.pants }) => (
     <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.1rem', color, lineHeight: 1 }}>
       {value}
     </Typography>
-    <Typography sx={{ fontSize: '0.56rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3, lineHeight: 1.3 }}>
+    <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3, lineHeight: 1.3 }}>
       {label}
     </Typography>
   </Box>
@@ -154,7 +154,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
         <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: B.pants }}>
           📊 우리 연애 리포트
         </Typography>
-        <Typography sx={{ fontSize: '0.65rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
+        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
           지금까지의 기록을 분석했어요 🐷
         </Typography>
       </Box>
@@ -178,7 +178,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
         {/* AI 인사이트 메시지 */}
         <Box sx={{ mb: 2 }}>
           <Typography sx={{
-            fontSize: '0.65rem', fontWeight: 700, color: B.pants + '88',
+            fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
             letterSpacing: '1.5px', mb: 1, fontFamily: "'Noto Sans KR',sans-serif",
           }}>
             AI 분석 결과
@@ -210,7 +210,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
         {stats.topEmotion && (
           <Box>
             <Typography sx={{
-              fontSize: '0.65rem', fontWeight: 700, color: B.pants + '88',
+              fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
               letterSpacing: '1.5px', mb: 1, fontFamily: "'Noto Sans KR',sans-serif",
             }}>
               가장 많이 기록한 감정
@@ -232,7 +232,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
                     <Typography sx={{ fontSize: '0.75rem', fontFamily: "'Noto Sans KR',sans-serif", color: isTop ? 'white' : B.dark }}>
                       {label}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.65rem', color: isTop ? 'rgba(255,255,255,0.7)' : '#bbb', fontFamily: "'Noto Sans KR',sans-serif" }}>
+                    <Typography sx={{ fontSize: '0.72rem', color: isTop ? 'rgba(255,255,255,0.7)' : '#bbb', fontFamily: "'Noto Sans KR',sans-serif" }}>
                       {count}
                     </Typography>
                   </Box>

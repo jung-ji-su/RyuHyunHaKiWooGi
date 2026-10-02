@@ -213,7 +213,7 @@ const LetterCard = ({ letter, currentUser }) => {
           <Box flex={1}>
             {/* 발신자 */}
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif", fontSize: "0.92rem", color: B.dark,
+              fontFamily: "'Jua',sans-serif", fontSize: "0.92rem", color: B.dark,
             }}>
               {letter.isAnonymous && !isOpened ? "🎭 부리부리의 편지" : `💌 ${letter.from}의 편지`}
             </Typography>
@@ -257,7 +257,7 @@ const LetterCard = ({ letter, currentUser }) => {
                 onClick={handleOpen}
                 sx={{
                   bgcolor: c.border, borderRadius: "20px", px: 4, py: 1,
-                  fontFamily: "'Jua', sans-serif", fontSize: "0.95rem",
+                  fontFamily: "'Jua',sans-serif", fontSize: "0.95rem",
                   position: "relative", overflow: "hidden",
                   boxShadow: `0 4px 16px ${c.border}55`,
                   animation: "avatarPulseA 1.5s ease-in-out infinite",
@@ -277,7 +277,7 @@ const LetterCard = ({ letter, currentUser }) => {
                 <Box component="img" src={buri6} alt=""
                   sx={{ width: 52, mb: 1, animation: "headBob 2s ease-in-out infinite",
                     filter: `drop-shadow(0 2px 8px ${c.border}44)` }} />
-                <Typography sx={{ fontFamily: "'Jua', sans-serif", fontSize: "0.82rem", color: c.border }}>
+                <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.82rem", color: c.border }}>
                   {remaining} 기다려주세요 🐷
                 </Typography>
               </Box>
@@ -294,7 +294,7 @@ const LetterCard = ({ letter, currentUser }) => {
           }}>
             <Box component="img" src={buri2} alt=""
               sx={{ width: 44, mb: 0.5, opacity: 0.5, animation: "buriFloat1 3s ease-in-out infinite" }} />
-            <Typography sx={{ fontSize: "0.75rem", color: B.dark + "66", fontFamily: "'Noto Sans KR', sans-serif" }}>
+            <Typography sx={{ fontSize: "0.75rem", color: B.dark + "66", fontFamily: "'Noto Sans KR',sans-serif" }}>
               상대방이 열기 전이에요 🔒
             </Typography>
           </Box>
@@ -318,7 +318,7 @@ const LetterCard = ({ letter, currentUser }) => {
                 }} />
               ))}
               <Typography sx={{
-                fontFamily: "'Noto Sans KR', sans-serif",
+                fontFamily: "'Noto Sans KR',sans-serif",
                 fontSize: "0.88rem", color: B.dark,
                 lineHeight: 1.8, whiteSpace: "pre-wrap",
                 position: "relative", zIndex: 1,
@@ -334,12 +334,12 @@ const LetterCard = ({ letter, currentUser }) => {
                 border: `1.5px solid ${c.border}44`,
                 mb: 1,
               }}>
-                <Typography sx={{ fontSize: "0.68rem", color: c.border, fontWeight: 700,
-                  fontFamily: "'Noto Sans KR', sans-serif", mb: 0.5 }}>
+                <Typography sx={{ fontSize: "0.72rem", color: c.border, fontWeight: 700,
+                  fontFamily: "'Noto Sans KR',sans-serif", mb: 0.5 }}>
                   💌 답장
                 </Typography>
                 <Typography sx={{ fontSize: "0.83rem", color: B.dark,
-                  fontFamily: "'Noto Sans KR', sans-serif", lineHeight: 1.6 }}>
+                  fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1.6 }}>
                   {letter.reply}
                 </Typography>
               </Box>
@@ -357,7 +357,7 @@ const LetterCard = ({ letter, currentUser }) => {
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 5, bgcolor: "white",
-                      fontFamily: "'Noto Sans KR', sans-serif",
+                      fontFamily: "'Noto Sans KR',sans-serif",
                       "& fieldset": { borderColor: c.border + "44" },
                       "&:hover fieldset": { borderColor: c.border },
                       "&.Mui-focused fieldset": { borderColor: c.border },
@@ -456,7 +456,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           <Box component="img" src={buri2} alt=""
             sx={{ width: 32, animation: "headBob 2s ease-in-out infinite",
               filter: `drop-shadow(0 2px 6px ${B.pants}44)` }} />
-          <Typography sx={{ fontFamily: "'Jua', sans-serif", color: B.pants, fontSize: "1rem" }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>
             몰래 편지 쓰기 ✍️
           </Typography>
         </Stack>
@@ -470,7 +470,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
         {/* 봉투 색상 선택 */}
         <Box>
           <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: B.dark + "88",
-            fontFamily: "'Noto Sans KR', sans-serif", mb: 1 }}>
+            fontFamily: "'Noto Sans KR',sans-serif", mb: 1 }}>
             봉투 색상 선택
           </Typography>
           <Stack direction="row" gap={1}>
@@ -501,7 +501,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           sx={{
             "& .MuiOutlinedInput-root": {
               bgcolor: "white", borderRadius: 3,
-              fontFamily: "'Noto Sans KR', sans-serif",
+              fontFamily: "'Noto Sans KR',sans-serif",
               fontSize: "0.9rem",
               "& fieldset": { borderColor: B.pants + "33" },
               "&:hover fieldset": { borderColor: B.pants + "88" },
@@ -513,7 +513,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
         {/* 공개 시간 */}
         <Box>
           <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: B.dark + "88",
-            fontFamily: "'Noto Sans KR', sans-serif", mb: 1 }}>
+            fontFamily: "'Noto Sans KR',sans-serif", mb: 1 }}>
             언제 열릴까요? 🔒
           </Typography>
           <Stack direction="row" flexWrap="wrap" gap={0.8}>
@@ -522,7 +522,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
                 onClick={() => setOpenPreset(i)}
                 sx={{
                   px: 1.5, py: 0.6, borderRadius: "20px", cursor: "pointer",
-                  fontFamily: "'Noto Sans KR', sans-serif", fontSize: "0.75rem", fontWeight: 700,
+                  fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.75rem", fontWeight: 700,
                   bgcolor: openPreset === i ? B.pants : B.lavender,
                   color: openPreset === i ? "white" : B.pants,
                   transition: "all 0.15s",
@@ -566,11 +566,11 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           <Stack direction="row" alignItems="center" gap={1}>
             <Typography sx={{ fontSize: "16px" }}>🎭</Typography>
             <Box>
-              <Typography sx={{ fontFamily: "'Jua', sans-serif", fontSize: "0.85rem", color: B.dark }}>
+              <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.85rem", color: B.dark }}>
                 익명으로 보내기
               </Typography>
-              <Typography sx={{ fontSize: "0.68rem", color: B.dark + "66",
-                fontFamily: "'Noto Sans KR', sans-serif" }}>
+              <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
+                fontFamily: "'Noto Sans KR',sans-serif" }}>
                 열기 전까지 누가 썼는지 몰라요
               </Typography>
             </Box>
@@ -601,12 +601,12 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
         }}>
           <EnvelopeSVG color={envColor} isOpen={false} size={44} />
           <Box>
-            <Typography sx={{ fontFamily: "'Jua', sans-serif", fontSize: "0.8rem",
+            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.8rem",
               color: ENVELOPE_COLORS.find(c => c.id === envColor)?.border }}>
               {isAnonymous ? "🎭 부리부리의 편지" : `💌 ${currentUser}의 편지`}
             </Typography>
-            <Typography sx={{ fontSize: "0.68rem", color: B.dark + "77",
-              fontFamily: "'Noto Sans KR', sans-serif" }}>
+            <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
+              fontFamily: "'Noto Sans KR',sans-serif" }}>
               {OPEN_PRESETS[openPreset].type === "custom" && customDate
                 ? `${new Date(customDate).toLocaleString("ko-KR")}에 열려요`
                 : OPEN_PRESETS[openPreset].type === "midnight"
@@ -627,7 +627,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           onPointerDown={(e) => { if (content.trim()) createBuriPang(e); }}
           sx={{
             bgcolor: B.pants, borderRadius: "20px", py: 1.2,
-            fontFamily: "'Jua', sans-serif", fontSize: "1rem",
+            fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             position: "relative", overflow: "hidden",
             boxShadow: `0 4px 16px ${B.pants}44`,
             transition: "transform 0.1s",
@@ -669,14 +669,14 @@ const SecretLetter = ({ currentUser }) => {
           <Box component="img" src={buri9} alt=""
             sx={{ width: 30, animation: "headBob 2.5s ease-in-out infinite",
               filter: `drop-shadow(0 2px 4px ${B.pants}44)` }} />
-          <Typography sx={{ fontFamily: "'Jua', sans-serif", color: B.pants, fontSize: "1rem" }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>
             몰래 편지함 💌
             {unreadCount > 0 && (
               <Box component="span" sx={{
                 ml: 0.8, display: "inline-flex", alignItems: "center", justifyContent: "center",
                 width: 20, height: 20, borderRadius: "50%",
                 bgcolor: B.accent, color: "white",
-                fontSize: "0.6rem", fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 700,
+                fontSize: "0.6rem", fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                 verticalAlign: "middle",
               }}>
                 {unreadCount}
@@ -692,7 +692,7 @@ const SecretLetter = ({ currentUser }) => {
           sx={{
             bgcolor: showWrite ? B.skin : B.pants,
             borderRadius: "20px", px: 2,
-            fontFamily: "'Jua', sans-serif", fontSize: "0.8rem",
+            fontFamily: "'Jua',sans-serif", fontSize: "0.8rem",
             position: "relative", overflow: "hidden",
             boxShadow: `0 3px 10px ${B.pants}33`,
             transition: "all 0.15s",
@@ -717,7 +717,7 @@ const SecretLetter = ({ currentUser }) => {
           <Box component="img" src={buri2} alt=""
             sx={{ width: 64, mb: 1.5, animation: "headBob 2.5s ease-in-out infinite",
               filter: `drop-shadow(0 2px 8px ${B.pants}44)` }} />
-          <Typography sx={{ fontFamily: "'Jua', sans-serif", color: B.dark + "88", fontSize: "0.88rem" }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.dark + "88", fontSize: "0.88rem" }}>
             아직 편지가 없어요 🐷<br />첫 번째 몰래 편지를 써봐요!
           </Typography>
         </Box>

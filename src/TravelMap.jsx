@@ -228,12 +228,12 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                                 📍 {item.display_name}
                             </Typography>
                             {item.address && item.address !== item.display_name && (
-                                <Typography sx={{ fontSize: "0.7rem", color: B.dark + "66", mt: 0.2 }}>
+                                <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66", mt: 0.2 }}>
                                     {item.address}
                                 </Typography>
                             )}
                             {item.category && (
-                                <Typography sx={{ fontSize: "0.65rem", color: B.pants + "99", mt: 0.1 }}>
+                                <Typography sx={{ fontSize: "0.72rem", color: B.pants + "99", mt: 0.1 }}>
                                     {item.category.split(" > ").pop()}
                                 </Typography>
                             )}
@@ -562,7 +562,7 @@ const TravelMap = ({ currentUser }) => {
                     <Chip label={`총 ${pins.length}곳`} size="small"
                         sx={{
                             bgcolor: B.pants, color: "white", fontWeight: 700,
-                            fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.68rem", height: 20
+                            fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", height: 20
                         }} />
                 </Stack>
                 <Stack direction="row" gap={0.5}>
@@ -621,7 +621,7 @@ const TravelMap = ({ currentUser }) => {
                     bgcolor: "white", borderRadius: 2, px: 1.4, py: 0.6,
                     boxShadow: "0 2px 10px rgba(0,0,0,0.12)",
                 }}>
-                    <Typography sx={{ fontSize: "0.68rem", color: "#555", fontFamily: "'Noto Sans KR',sans-serif" }}>
+                    <Typography sx={{ fontSize: "0.72rem", color: "#555", fontFamily: "'Noto Sans KR',sans-serif" }}>
                         지도 탭 → 핀 추가 📍
                     </Typography>
                 </Box>
@@ -633,7 +633,7 @@ const TravelMap = ({ currentUser }) => {
                         display: "flex", alignItems: "center", gap: 1,
                     }}>
                         <CircularProgress size={12} sx={{ color: B.pants }} />
-                        <Typography sx={{ fontSize: "0.68rem", color: B.pants, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                        <Typography sx={{ fontSize: "0.72rem", color: B.pants, fontFamily: "'Noto Sans KR',sans-serif" }}>
                             위치 찾는 중...
                         </Typography>
                     </Box>
@@ -701,7 +701,7 @@ const TravelMap = ({ currentUser }) => {
                                         <Chip label={cat.label} size="small"
                                             sx={{
                                                 bgcolor: cat.color + "18", color: cat.color, fontWeight: 700,
-                                                fontSize: "0.65rem", height: 18, fontFamily: "'Noto Sans KR',sans-serif"
+                                                fontSize: "0.72rem", height: 18, fontFamily: "'Noto Sans KR',sans-serif"
                                             }} />
                                     </Stack>
                                     {pin.memo && (
@@ -713,7 +713,7 @@ const TravelMap = ({ currentUser }) => {
                                             {pin.memo}
                                         </Typography>
                                     )}
-                                    <Typography sx={{ fontSize: "0.68rem", color: B.dark + "55", mt: 0.4 }}>
+                                    <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55", mt: 0.4 }}>
                                         {pin.addedBy} · {date}
                                     </Typography>
                                 </Box>

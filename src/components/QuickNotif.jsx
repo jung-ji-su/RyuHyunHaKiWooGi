@@ -188,10 +188,10 @@ export default function QuickNotif() {
 
               {/* ── 라벨 ────────────────────────────────────────── */}
               <Typography sx={{
-                fontSize: '0.66rem',
+                fontSize: '0.72rem',
                 fontWeight: 700,
                 color: isCool ? B.pants + '80' : B.dark + 'cc',
-                fontFamily: "'Noto Sans KR', sans-serif",
+                fontFamily: "'Noto Sans KR',sans-serif",
                 whiteSpace: 'nowrap',
                 position: 'relative',
                 zIndex: 1,

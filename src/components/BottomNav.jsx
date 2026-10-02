@@ -69,7 +69,7 @@ export default function BottomNav({ logout }) {
               }}>
                 메뉴 🐷
               </Typography>
-              <Typography sx={{ fontSize: '0.68rem', color: B.dark + '66', mt: 0.3 }}>
+              <Typography sx={{ fontSize: '0.72rem', color: B.dark + '66', mt: 0.3 }}>
                 부리부리와 함께하는 우리의 공간 💜
               </Typography>
             </Box>
@@ -85,7 +85,7 @@ export default function BottomNav({ logout }) {
         {/* 메뉴 그리드 */}
         <Box sx={{ px: 1.6, pt: 2, flex: 1, overflowY: 'auto' }}>
           <Typography sx={{
-            fontSize: '0.6rem', fontWeight: 700, color: B.pants + '88',
+            fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
             letterSpacing: '2px', mb: 1.2, px: 0.5,
             fontFamily: "'Noto Sans KR',sans-serif",
           }}>MENU</Typography>
@@ -115,7 +115,7 @@ export default function BottomNav({ logout }) {
                     color: isActive ? 'white' : B.dark, lineHeight: 1.2,
                   }}>{item.name}</Typography>
                   <Typography sx={{
-                    fontSize: '0.6rem',
+                    fontSize: '0.72rem',
                     color: isActive ? 'rgba(255,255,255,0.7)' : B.dark + '55',
                     fontFamily: "'Noto Sans KR',sans-serif",
                   }}>{item.sub}</Typography>
@@ -176,7 +176,7 @@ export default function BottomNav({ logout }) {
           </Box>
           <Box onClick={logout} sx={{ cursor: 'pointer' }}>
             <Typography sx={{
-              fontSize: '0.65rem', color: B.dark + '44',
+              fontSize: '0.72rem', color: B.dark + '44',
               fontFamily: "'Noto Sans KR',sans-serif",
               '&:hover': { color: B.accent },
             }}>
@@ -228,7 +228,7 @@ export default function BottomNav({ logout }) {
                 </Typography>
               )}
               <Typography sx={{
-                fontSize: '0.62rem',
+                fontSize: '0.72rem',
                 fontWeight: active ? 700 : 400,
                 fontFamily: "'Noto Sans KR',sans-serif",
                 color: active ? B.pants : B.dark + '66',

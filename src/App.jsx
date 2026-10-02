@@ -225,7 +225,7 @@ function AppInner() {
             onPointerDown={e => { createRipple(e); createBuriPang(e); }}
             sx={{
               bgcolor: B.pants, borderRadius: 10, px: 4,
-              fontFamily: "'Jua',sans-serif", fontWeight: 'bold', fontSize: '1rem',
+              fontFamily: "'Jua',sans-serif", fontWeight: 700, fontSize: '1rem',
               position: 'relative', overflow: 'hidden',
               boxShadow: `0 4px 16px ${B.pants}55`, transition: 'transform 0.1s',
               '&:active': { transform: 'scale(0.94)' },
@@ -281,7 +281,7 @@ function AppInner() {
         <Alert
           icon={<Box component="img" src={buri9} sx={{ width: 24, height: 24, objectFit: 'contain' }} />}
           sx={{
-            width: '100%', bgcolor: B.pants, color: 'white', fontWeight: 'bold',
+            width: '100%', bgcolor: B.pants, color: 'white', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif", borderRadius: 3,
             boxShadow: `0 4px 20px ${B.pants}66`,
             '& .MuiAlert-icon': { alignItems: 'center' },
@@ -306,7 +306,7 @@ function AppInner() {
           icon={<Box component="img" src={buriGirl} sx={{ width: 24, height: 24, objectFit: 'contain' }} />}
           onClose={(e) => { e.stopPropagation(); setToastOpen(false); }}
           sx={{
-            width: '100%', bgcolor: B.accent, color: 'white', fontWeight: 'bold',
+            width: '100%', bgcolor: B.accent, color: 'white', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif", borderRadius: 3,
             boxShadow: `0 4px 20px ${B.accent}66`,
             '& .MuiAlert-icon': { alignItems: 'center' },

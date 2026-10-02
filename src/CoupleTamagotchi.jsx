@@ -246,10 +246,10 @@ function MiniStat({ emoji, label, value, color }) {
   return (
     <Box>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: '2px' }}>
-        <Typography sx={{ fontSize: '0.54rem', color: B.dark+'88', fontFamily: "'Noto Sans KR'", lineHeight: 1 }}>
+        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'88', fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1 }}>
           {emoji} {label}
         </Typography>
-        <Typography sx={{ fontSize: '0.56rem', fontFamily: "'Jua'", color, lineHeight: 1 }}>
+        <Typography sx={{ fontSize: '0.72rem', fontFamily: "'Jua',sans-serif", color, lineHeight: 1 }}>
           {Math.round(value)}
         </Typography>
       </Stack>
@@ -273,7 +273,7 @@ function XPHistorySparkline({ history, color }) {
   if (recent.length < 2) {
     return (
       <Box sx={{ mb: '8px', p: '6px 8px', borderRadius: '8px', bgcolor: color+'0c', border: `1px dashed ${color}33` }}>
-        <Typography sx={{ fontSize: '0.5rem', color: B.dark+'66', fontFamily: "'Noto Sans KR'" }}>
+        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif" }}>
           📈 며칠 더 기록이 쌓이면 성장 그래프가 보여요
         </Typography>
       </Box>
@@ -301,10 +301,10 @@ function XPHistorySparkline({ history, color }) {
   return (
     <Box sx={{ mb: '8px', p: '6px 8px', borderRadius: '8px', bgcolor: color+'0a', border: `1px solid ${color}22` }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: '3px' }}>
-        <Typography sx={{ fontSize: '0.5rem', color: B.dark+'77', fontFamily: "'Noto Sans KR'", fontWeight: 700 }}>
+        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'77', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
           📈 최근 성장 추이
         </Typography>
-        <Typography sx={{ fontSize: '0.5rem', color: trendUp ? '#43A047' : B.dark+'55', fontFamily: "'Jua'" }}>
+        <Typography sx={{ fontSize: '0.72rem', color: trendUp ? '#43A047' : B.dark+'55', fontFamily: "'Jua',sans-serif" }}>
           {trendUp ? '▲' : delta < 0 ? '▼' : '━'} {Math.abs(Math.round(delta))} XP
         </Typography>
       </Stack>
@@ -602,7 +602,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {/* 내 뱃지 */}
       {isMe && (
         <Box sx={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', px: 1, py: '1px', borderRadius: 10, bgcolor: stage.color }}>
-          <Typography sx={{ fontSize: '0.48rem', color: 'white', fontFamily: "'Noto Sans KR'", fontWeight: 700 }}>나</Typography>
+          <Typography sx={{ fontSize: '0.48rem', color: 'white', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>나</Typography>
         </Box>
       )}
 
@@ -660,25 +660,25 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 
       {/* 이름 + 단계 뱃지 한 줄 */}
       <Stack direction="row" justifyContent="center" alignItems="center" gap={0.5} sx={{ mb: '3px' }}>
-        <Typography sx={{ fontFamily: "'Jua'", fontSize: '0.82rem', color: stage.color, lineHeight: 1 }}>
+        <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '0.82rem', color: stage.color, lineHeight: 1 }}>
           {user}
         </Typography>
         <Box sx={{ px: '5px', py: '1px', borderRadius: 10, bgcolor: `${stage.color}20` }}>
-          <Typography sx={{ fontSize: '0.52rem', color: stage.color, fontFamily: "'Noto Sans KR'", fontWeight: 700, lineHeight: 1 }}>
+          <Typography sx={{ fontSize: '0.72rem', color: stage.color, fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1 }}>
             Lv.{data.level}
           </Typography>
         </Box>
       </Stack>
 
       {/* 단계명 */}
-      <Typography sx={{ fontSize: '0.58rem', color: stage.color, fontFamily: "'Noto Sans KR'", fontWeight: 700, mb: '5px', opacity: 0.8 }}>
+      <Typography sx={{ fontSize: '0.72rem', color: stage.color, fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, mb: '5px', opacity: 0.8 }}>
         {stage.name}
       </Typography>
 
       {/* XP 바 */}
       <Stack direction="row" justifyContent="space-between" sx={{ mb: '2px' }}>
-        <Typography sx={{ fontSize: '0.5rem', color: B.dark+'66', fontFamily: "'Noto Sans KR'" }}>XP</Typography>
-        <Typography sx={{ fontSize: '0.5rem', color: stage.color, fontFamily: "'Jua'" }}>{data.xp}/{xpNeeded}</Typography>
+        <Typography sx={{ fontSize: '0.5rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif" }}>XP</Typography>
+        <Typography sx={{ fontSize: '0.72rem', color: stage.color, fontFamily: "'Jua',sans-serif" }}>{data.xp}/{xpNeeded}</Typography>
       </Stack>
       <Box sx={{ height: 5, borderRadius: 3, bgcolor: `${stage.color}22`, overflow: 'hidden', mb: '8px' }}>
         <motion.div
@@ -699,7 +699,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 
       {/* 스트릭 */}
       <Typography sx={{
-        fontSize: '0.58rem', mb: '8px', fontFamily: "'Noto Sans KR'",
+        fontSize: '0.72rem', mb: '8px', fontFamily: "'Noto Sans KR',sans-serif",
         fontWeight: mult > 1 ? 700 : 400,
         color: mult > 1 ? '#FF6B35' : B.dark+'44',
       }}>
@@ -712,7 +712,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {/* [신규] 사망 안내 문구 (5일 이상 미접속) */}
       {isDead && (
         <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000008', border: `1px dashed ${B.dark}33`, mb: '8px' }}>
-          <Typography sx={{ fontSize: '0.56rem', color: B.dark+'99', fontFamily: "'Noto Sans KR'", fontWeight: 700, lineHeight: 1.5 }}>
+          <Typography sx={{ fontSize: '0.72rem', color: B.dark+'99', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.5 }}>
             💀 5일 동안 돌봄을 받지 못해 떠났어요.{isMe ? ' 아래 버튼으로 다시 살릴 수 있어요.' : ''}
           </Typography>
         </Box>
@@ -722,9 +722,9 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {isDead && isMe && (
         <Button size="small" onClick={() => onReviveUser(user)}
           sx={{
-            width: '100%', borderRadius: 10, fontSize: '0.62rem', py: '5px', mb: '8px',
+            width: '100%', borderRadius: 10, fontSize: '0.72rem', py: '5px', mb: '8px',
             bgcolor: stage.color, color: 'white',
-            fontFamily: "'Noto Sans KR'", fontWeight: 700,
+            fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
             boxShadow: `0 2px 8px ${stage.color}44`,
             '&:hover': { bgcolor: stage.color+'dd' },
             '&:active': { transform: 'scale(0.96)' },
@@ -735,7 +735,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 
       {/* 오늘 체크인 표시 (상대방) */}
       {!isMe && !isDead && (
-        <Typography sx={{ fontSize: '0.58rem', color: B.dark+'44', fontFamily: "'Noto Sans KR'", mb: '6px' }}>
+        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'44', fontFamily: "'Noto Sans KR',sans-serif", mb: '6px' }}>
           {hasPoop ? <span style={{ color:'#E65100', fontWeight:700 }}>💩 치워야 해요!</span> : (data.todayFed === today ? '✅ 오늘 돌봄 완료' : '⬜ 아직 안 돌봄')}
         </Typography>
       )}
@@ -746,28 +746,28 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           {stage.btnLabel && (
             <Button size="small" onClick={handleInteract} disabled={!canInteract}
               sx={{
-                borderRadius: 10, fontSize: '0.64rem', py: '5px',
+                borderRadius: 10, fontSize: '0.72rem', py: '5px',
                 bgcolor: canInteract ? stage.color : B.dark+'0e',
                 color: canInteract ? 'white' : B.dark+'33',
-                fontFamily: "'Noto Sans KR'", fontWeight: 700,
+                fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                 boxShadow: canInteract ? `0 2px 8px ${stage.color}44` : 'none',
                 '&:hover': { bgcolor: canInteract ? stage.color+'dd' : undefined },
                 '&:active': { transform: 'scale(0.93)' },
                 '&.Mui-disabled': { bgcolor: B.dark+'0e', color: B.dark+'2a' },
               }}>
               {stage.btnEmoji} {stage.btnLabel}
-              {!canInteract && <Typography component="span" sx={{ fontSize: '0.48rem', ml: 0.4, opacity: 0.5 }}>완료</Typography>}
+              {!canInteract && <Typography component="span" sx={{ fontSize: '0.72rem', ml: 0.4, opacity: 0.5 }}>완료</Typography>}
             </Button>
           )}
 
           <Stack direction="row" gap="5px">
             <Button size="small" onClick={() => { spawnParticles(['🍖','😊','✨']); onAction('feed'); }} disabled={!canFeed}
               sx={{
-                flex: 1, borderRadius: 10, fontSize: '0.6rem', py: '4px',
+                flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
                 bgcolor: canFeed ? '#FF9A3C15' : 'transparent',
                 border: `1px solid ${canFeed ? '#FF9A3C55' : B.dark+'0e'}`,
                 color: canFeed ? '#FF9A3C' : B.dark+'2a',
-                fontFamily: "'Noto Sans KR'", fontWeight: 700,
+                fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                 '&:hover': { bgcolor: '#FF9A3C25' },
                 '&.Mui-disabled': { color: B.dark+'1a' },
               }}>
@@ -775,11 +775,11 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             </Button>
             <Button size="small" onClick={() => { spawnParticles(['🌰','😋','💕','⚠️']); onAction('snack'); }} disabled={!canSnack}
               sx={{
-                flex: 1, borderRadius: 10, fontSize: '0.6rem', py: '4px',
+                flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
                 bgcolor: canSnack ? '#FF6B9D15' : 'transparent',
                 border: `1px solid ${canSnack ? '#FF6B9D55' : B.dark+'0e'}`,
                 color: canSnack ? '#FF6B9D' : B.dark+'2a',
-                fontFamily: "'Noto Sans KR'", fontWeight: 700,
+                fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                 '&:hover': { bgcolor: '#FF6B9D25' },
                 '&.Mui-disabled': { color: B.dark+'1a' },
               }}>
@@ -791,9 +791,9 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             <Button size="small"
               onClick={() => { spawnParticles(['🧹','💨','✨','😌']); onAction('cleanPoop'); }}
               sx={{
-                borderRadius: 10, fontSize: '0.62rem', py: '4px',
+                borderRadius: 10, fontSize: '0.72rem', py: '4px',
                 bgcolor: '#FF930015', border: '1.5px solid #FF930055',
-                color: '#E65100', fontFamily: "'Noto Sans KR'", fontWeight: 700,
+                color: '#E65100', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                 animation: 'bellShake 1.2s ease-in-out infinite',
                 '&:hover': { bgcolor: '#FF930025' },
               }}>
@@ -803,7 +803,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 
           {data.weight >= 90 && (
             <Box sx={{ p: '5px 8px', borderRadius: '8px', bgcolor: '#FFF3E015', border: '1px dashed #FF9800' }}>
-              <Typography sx={{ fontSize: '0.52rem', color: '#E65100', fontFamily: "'Noto Sans KR'", fontWeight: 700, lineHeight: 1.4 }}>
+              <Typography sx={{ fontSize: '0.72rem', color: '#E65100', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.4 }}>
                 🚨 비만 위험! 간식 그만 줘요
               </Typography>
             </Box>
@@ -813,20 +813,20 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
               내 펫/상대방 펫 둘 중 하나를 골라 되돌릴 수 있음 */}
           {resetTarget ? (
             <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000006', border: `1px dashed ${B.dark}44` }}>
-              <Typography sx={{ fontSize: '0.54rem', color: B.dark+'aa', fontFamily: "'Noto Sans KR'", fontWeight: 700, mb: '5px' }}>
+              <Typography sx={{ fontSize: '0.72rem', color: B.dark+'aa', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, mb: '5px' }}>
                 정말 {resetTarget === 'self' ? '내' : otherUser} 펫을 처음부터 다시 시작할까요? 지금까지의 진행이 모두 사라져요.
               </Typography>
               <Stack direction="row" gap="5px">
                 <Button size="small" onClick={() => setResetTarget(null)}
-                  sx={{ flex: 1, borderRadius: 10, fontSize: '0.58rem', py: '4px',
-                    bgcolor: B.dark+'0e', color: B.dark+'88', fontFamily: "'Noto Sans KR'", fontWeight: 700 }}>
+                  sx={{ flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                    bgcolor: B.dark+'0e', color: B.dark+'88', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
                   취소
                 </Button>
                 <Button size="small"
                   onClick={() => { onResetUser(resetTarget === 'self' ? user : otherUser); setResetTarget(null); }}
-                  sx={{ flex: 1, borderRadius: 10, fontSize: '0.58rem', py: '4px',
+                  sx={{ flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
                     bgcolor: '#E5393515', border: '1px solid #E5393555',
-                    color: '#C62828', fontFamily: "'Noto Sans KR'", fontWeight: 700 }}>
+                    color: '#C62828', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
                   확인
                 </Button>
               </Stack>
@@ -835,18 +835,18 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             <Stack direction="row" gap="5px">
               <Button size="small" onClick={() => setResetTarget('self')}
                 sx={{
-                  flex: 1, borderRadius: 10, fontSize: '0.56rem', py: '4px',
+                  flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
                   bgcolor: 'transparent', border: `1px dashed ${B.dark}33`,
-                  color: B.dark+'66', fontFamily: "'Noto Sans KR'", fontWeight: 700,
+                  color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                   '&:hover': { bgcolor: B.dark+'08' },
                 }}>
                 🔄 내 알로
               </Button>
               <Button size="small" onClick={() => setResetTarget('partner')}
                 sx={{
-                  flex: 1, borderRadius: 10, fontSize: '0.56rem', py: '4px',
+                  flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
                   bgcolor: 'transparent', border: `1px dashed ${B.dark}33`,
-                  color: B.dark+'66', fontFamily: "'Noto Sans KR'", fontWeight: 700,
+                  color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                   '&:hover': { bgcolor: B.dark+'08' },
                 }}>
                 🔄 {otherUser} 알로
@@ -860,11 +860,11 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {!isMe && (
         <Button size="small" onClick={handleCheer} disabled={!canCheer}
           sx={{
-            width: '100%', borderRadius: 10, fontSize: '0.62rem', py: '5px',
+            width: '100%', borderRadius: 10, fontSize: '0.72rem', py: '5px',
             bgcolor: canCheer ? '#FFD70020' : 'transparent',
             border: `1.5px solid ${canCheer ? '#FFC107aa' : B.dark+'0e'}`,
             color: canCheer ? '#B8860B' : B.dark+'2a',
-            fontFamily: "'Noto Sans KR'", fontWeight: 700,
+            fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
             '&:hover': { bgcolor: '#FFD70035' },
             '&.Mui-disabled': { color: B.dark+'1a' },
           }}>
@@ -1036,9 +1036,9 @@ export default function CoupleTamagotchi({ currentUser }) {
   if (loadError && !allData) {
     return (
       <Box sx={{ textAlign: 'center', py: 6 }}>
-        <Typography sx={{ fontFamily: "'Jua'", color: B.pants }}>😿 불러오지 못했어요</Typography>
+        <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>😿 불러오지 못했어요</Typography>
         <Button size="small" onClick={() => setRetryKey(k => k + 1)}
-          sx={{ mt: 1, fontFamily: "'Noto Sans KR'", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
+          sx={{ mt: 1, fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
           다시 시도
         </Button>
       </Box>
@@ -1048,7 +1048,7 @@ export default function CoupleTamagotchi({ currentUser }) {
   if (loading || !allData) {
     return (
       <Box sx={{ textAlign: 'center', py: 6 }}>
-        <Typography sx={{ fontFamily: "'Jua'", color: B.pants }}>🐹 햄찌 깨우는 중...</Typography>
+        <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>🐹 햄찌 깨우는 중...</Typography>
       </Box>
     );
   }
@@ -1091,14 +1091,14 @@ export default function CoupleTamagotchi({ currentUser }) {
                 {evolved.isLegendary ? '🌈✨👑✨🌈' : '🎉✨🎉'}
               </Typography>
               <Typography sx={{
-                fontFamily: "'Jua'", fontSize: evolved.isLegendary ? '1.35rem' : '1.05rem',
+                fontFamily: "'Jua',sans-serif", fontSize: evolved.isLegendary ? '1.35rem' : '1.05rem',
                 color: evolved.isLegendary ? '#FFD700' : evolved.color,
                 lineHeight: 1.4,
               }}>
                 {evolved.name}(으)로 진화했어요!
               </Typography>
               {evolved.isLegendary && (
-                <Typography sx={{ fontSize: '0.68rem', color: '#E0D0FF', fontFamily: "'Noto Sans KR'", fontWeight: 700, mt: '2px' }}>
+                <Typography sx={{ fontSize: '0.72rem', color: '#E0D0FF', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, mt: '2px' }}>
                   🏆 마침내 전설이 되었습니다 🏆
                 </Typography>
               )}
@@ -1116,14 +1116,14 @@ export default function CoupleTamagotchi({ currentUser }) {
       }}>
         {/* 헤더 */}
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: '12px' }}>
-          <Typography sx={{ fontFamily: "'Jua'", color: B.pants, fontSize: '0.9rem' }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '0.9rem' }}>
             🐾 커플 다마고치
           </Typography>
           <Chip
             label={isTie ? '🤝 동률' : iWin ? '👑 내가 앞서는 중' : `👑 ${otherUser}가 앞서는 중`}
             size="small"
             sx={{
-              fontFamily: "'Noto Sans KR'", fontWeight: 700, fontSize: '0.58rem', height: 22,
+              fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, fontSize: '0.72rem', height: 22,
               bgcolor: isTie ? B.dark+'15' : iWin ? B.pants : '#FF6B9D',
               color: isTie ? B.dark+'aa' : 'white',
             }}
@@ -1151,7 +1151,7 @@ export default function CoupleTamagotchi({ currentUser }) {
 
         {/* 하단 안내 (접혀있게) */}
         <Box sx={{ mt: '10px', p: '8px 10px', borderRadius: '10px', bgcolor: B.pants+'08' }}>
-          <Typography sx={{ fontSize: '0.54rem', color: B.dark+'66', fontFamily: "'Noto Sans KR'", lineHeight: 1.8 }}>
+          <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1.8 }}>
             💡 방문 +10 · 상호작용 +5 · 밥 +3 · 간식 +2 · 응원 보내기 +4 XP (×스트릭 배율)<br />
             🔥 4일+ 연속 ×1.5 → 8일+ ×2.0 → 15일+ ×2.5 · 3일 이상 미방문 시 스트릭 리셋<br />
             🥚 알→아기 약 7일 · 아기→햄찌 약 14일 · 햄찌→통통 약 30일 · 통통→왕 약 60일 · 왕→전설 약 90일<br />

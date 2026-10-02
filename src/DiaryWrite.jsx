@@ -159,7 +159,7 @@ const DiaryWrite = ({ currentUser }) => {
       {/* 타이틀 */}
       <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 2.5 }}>
         <Typography sx={{
-          fontFamily: "'Jua', sans-serif", fontSize: "1.1rem", color: B.accent,
+          fontFamily: "'Jua',sans-serif", fontSize: "1.1rem", color: B.accent,
           textShadow: `1px 1px 0 ${B.skin}88`,
         }}>
           오늘의 기록 ✍️
@@ -169,8 +169,8 @@ const DiaryWrite = ({ currentUser }) => {
       {/* ── 감정 선택 (부리 이미지 그리드) ────────────────────── */}
       <Box sx={{ mb: 3 }}>
         <Typography sx={{
-          mb: 1.2, color: B.dark + "88", fontWeight: "bold",
-          fontSize: "0.82rem", fontFamily: "'Noto Sans KR', sans-serif",
+          mb: 1.2, color: B.dark + "88", fontWeight: 700,
+          fontSize: "0.82rem", fontFamily: "'Noto Sans KR',sans-serif",
         }}>
           지금 기분은 어떤가요?
         </Typography>
@@ -216,9 +216,9 @@ const DiaryWrite = ({ currentUser }) => {
                   }}
                 />
                 <Typography sx={{
-                  fontSize: "0.62rem", lineHeight: 1,
+                  fontSize: "0.72rem", lineHeight: 1,
                   color: isSelected ? "white" : B.dark + "99",
-                  fontFamily: "'Noto Sans KR', sans-serif",
+                  fontFamily: "'Noto Sans KR',sans-serif",
                   fontWeight: isSelected ? 700 : 400,
                 }}>
                   {em.label}
@@ -238,7 +238,7 @@ const DiaryWrite = ({ currentUser }) => {
             <Box component="img" src={selectedEm.buriImg} alt=""
               sx={{ width: 28, height: 28, objectFit: "contain" }} />
             <Typography sx={{
-              fontFamily: "'Noto Sans KR', sans-serif",
+              fontFamily: "'Noto Sans KR',sans-serif",
               fontSize: "0.78rem", color: B.pants, fontWeight: 600,
             }}>
               {selectedEm.emoji} 오늘의 기분: <b>{selectedEm.label}</b>
@@ -257,7 +257,7 @@ const DiaryWrite = ({ currentUser }) => {
           mb: 2,
           "& .MuiOutlinedInput-root": {
             bgcolor: "#fff", borderRadius: 3,
-            fontFamily: "'Noto Sans KR', sans-serif",
+            fontFamily: "'Noto Sans KR',sans-serif",
             "& fieldset": { borderColor: B.pants + "33" },
             "&:hover fieldset": { borderColor: B.pants + "88" },
             "&.Mui-focused fieldset": { borderColor: B.pants },
@@ -304,7 +304,7 @@ const DiaryWrite = ({ currentUser }) => {
           </label>
           <Typography sx={{
             fontSize: "0.72rem", color: B.dark + "55",
-            fontFamily: "'Noto Sans KR', sans-serif",
+            fontFamily: "'Noto Sans KR',sans-serif",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
             {file ? file.name : "사진 첨부"}
@@ -319,7 +319,7 @@ const DiaryWrite = ({ currentUser }) => {
           onPointerDown={(e) => { createRipple(e); if (!loading) createBuriPang(e); }}
           sx={{
             bgcolor: B.pants, borderRadius: "20px", px: 3, py: 1.2,
-            fontFamily: "'Jua', sans-serif", fontSize: "1rem",
+            fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             width: "100%",
             position: "relative", overflow: "hidden",
             boxShadow: `0 4px 14px ${B.pants}44`,

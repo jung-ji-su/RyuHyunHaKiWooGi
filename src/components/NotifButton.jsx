@@ -76,7 +76,7 @@ export default function NotifButton() {
 
       {errMsg !== '' && (
         <Typography sx={{
-          fontSize: '0.7rem', color: '#cc0000',
+          fontSize: '0.72rem', color: '#cc0000',
           fontFamily: "'Noto Sans KR',sans-serif",
           maxWidth: 320, textAlign: 'center', px: 1,
         }}>

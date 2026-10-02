@@ -274,7 +274,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
                 <Box component="img" src={bubble.catImg} alt=""
                   sx={{ width: 46, height: 46, objectFit: 'contain', mt: 0.3 }} />
                 <Typography sx={{
-                  fontFamily: "'Jua', sans-serif",
+                  fontFamily: "'Jua',sans-serif",
                   fontSize: '0.74rem',
                   color: stage.color,
                   lineHeight: 1.35,
@@ -340,7 +340,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
 
       {/* 단계 칩 */}
       <Box sx={{ display: 'inline-block', px: 0.8, py: 0.2, borderRadius: 10, mt: 0.4, mb: 0.8, bgcolor: `${stage.color}18` }}>
-        <Typography sx={{ fontSize: '0.58rem', color: stage.color, fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
+        <Typography sx={{ fontSize: '0.72rem', color: stage.color, fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
           {stage.emoji} {stage.label}
         </Typography>
       </Box>
@@ -348,7 +348,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
       {/* HP 바 */}
       <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.4 }}>
         <Typography sx={{ fontSize: '0.56rem', color: B.dark + '66', fontFamily: "'Noto Sans KR',sans-serif" }}>HP</Typography>
-        <Typography sx={{ fontSize: '0.6rem', fontFamily: "'Jua',sans-serif", color: stage.color }}>{hp}</Typography>
+        <Typography sx={{ fontSize: '0.72rem', fontFamily: "'Jua',sans-serif", color: stage.color }}>{hp}</Typography>
       </Stack>
       <Box sx={{ height: 7, borderRadius: 4, bgcolor: `${stage.color}1a`, overflow: 'hidden', mb: 0.8 }}>
         <motion.div
@@ -373,7 +373,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
         {checkedIn ? '✅' : '⬜'}
       </Typography>
       <Typography sx={{
-        fontSize: '0.56rem', mt: 0.2,
+        fontSize: '0.72rem', mt: 0.2,
         color: checkedIn ? '#43A047' : B.dark + '44',
         fontFamily: "'Noto Sans KR',sans-serif",
         fontWeight: checkedIn ? 700 : 400,
@@ -484,7 +484,7 @@ export default function CharacterPet({ currentUser }) {
       <Box sx={{ textAlign: 'center', py: 3 }}>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>😿 불러오지 못했어요</Typography>
         <Button size="small" onClick={() => setRetryKey(k => k + 1)}
-          sx={{ mt: 1, fontFamily: "'Noto Sans KR'", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
+          sx={{ mt: 1, fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
           다시 시도
         </Button>
       </Box>
@@ -537,7 +537,7 @@ export default function CharacterPet({ currentUser }) {
                 borderRadius: 10,
                 bgcolor: B.pants,
                 color: 'white',
-                fontSize: '0.62rem',
+                fontSize: '0.72rem',
                 fontFamily: "'Noto Sans KR',sans-serif",
                 fontWeight: 700,
                 px: 1.2, py: 0.35,
@@ -572,7 +572,7 @@ export default function CharacterPet({ currentUser }) {
               bgcolor: '#E8F5E9', border: '1px solid #A5D6A7',
               display: 'inline-flex', alignItems: 'center', gap: 0.5,
             }}>
-              <Typography sx={{ fontSize: '0.68rem', color: '#2E7D32', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
+              <Typography sx={{ fontSize: '0.72rem', color: '#2E7D32', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
                 💑 오늘 둘 다 기록 완료!
               </Typography>
             </Box>
@@ -604,7 +604,7 @@ export default function CharacterPet({ currentUser }) {
             disabled={jiltaSent}
             onClick={sendJilta}
             sx={{
-              borderRadius: 10, fontSize: '0.7rem', px: 1.8, py: 0.5,
+              borderRadius: 10, fontSize: '0.72rem', px: 1.8, py: 0.5,
               fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
               borderColor: jiltaSent ? 'transparent' : B.accent + '66',
               color: jiltaSent ? B.dark + '55' : B.accent,
@@ -624,7 +624,7 @@ export default function CharacterPet({ currentUser }) {
           bgcolor: '#FFF3E0', border: '1.5px dashed #FF9800',
           textAlign: 'center',
         }}>
-          <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.7rem', color: '#E65100' }}>
+          <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem', color: '#E65100' }}>
             💀 {otherUser}가 해골이에요! 얼른 기록하라고 알려줘요! 📣
           </Typography>
         </Box>
@@ -641,10 +641,10 @@ export default function CharacterPet({ currentUser }) {
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '0.88rem', color: '#E65100', mb: 0.5 }}>
             {myMission.emoji} 부활 미션 — {myMission.label}
           </Typography>
-          <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.68rem', color: '#795548', lineHeight: 1.5 }}>
+          <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem', color: '#795548', lineHeight: 1.5 }}>
             {myMission.detail}
           </Typography>
-          <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.65rem', color: B.accent, mt: 0.8, fontWeight: 600 }}>
+          <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem', color: B.accent, mt: 0.8, fontWeight: 600 }}>
             ✨ 기록하면 해골직전으로 부활해요!
           </Typography>
         </Box>
@@ -676,7 +676,7 @@ export default function CharacterPet({ currentUser }) {
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
             💬 말풍선 문구 관리
           </Typography>
-          <Typography sx={{ fontSize: '0.66rem', color: '#bbb', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+          <Typography sx={{ fontSize: '0.72rem', color: '#bbb', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
             고양이 클릭 시 여기서 랜덤하게 나와요 · 두 사람이 함께 공유해요
           </Typography>
         </Box>
@@ -744,7 +744,7 @@ export default function CharacterPet({ currentUser }) {
               }}
               InputProps={{
                 endAdornment: (
-                  <Typography sx={{ fontSize: '0.58rem', color: '#ccc', whiteSpace: 'nowrap', pl: 0.5 }}>
+                  <Typography sx={{ fontSize: '0.72rem', color: '#ccc', whiteSpace: 'nowrap', pl: 0.5 }}>
                     {newPhrase.length}/30
                   </Typography>
                 ),
@@ -788,7 +788,7 @@ export default function CharacterPet({ currentUser }) {
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
             💬 말풍선 문구 추가
           </Typography>
-          <Typography sx={{ fontSize: '0.66rem', color: '#bbb', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+          <Typography sx={{ fontSize: '0.72rem', color: '#bbb', mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
             새 문구를 추가하면 두 사람 모두에게 공유돼요
           </Typography>
         </Box>
@@ -812,7 +812,7 @@ export default function CharacterPet({ currentUser }) {
               }}
               InputProps={{
                 endAdornment: (
-                  <Typography sx={{ fontSize: '0.58rem', color: '#ccc', whiteSpace: 'nowrap', pl: 0.5 }}>
+                  <Typography sx={{ fontSize: '0.72rem', color: '#ccc', whiteSpace: 'nowrap', pl: 0.5 }}>
                     {newPhrase.length}/30
                   </Typography>
                 ),

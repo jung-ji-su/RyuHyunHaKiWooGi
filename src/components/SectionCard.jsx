@@ -34,7 +34,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
             {icon} {title}
           </Typography>
           {sub && (
-            <Typography sx={{ fontSize: '0.68rem', color: B.dark + '66' }}>{sub}</Typography>
+            <Typography sx={{ fontSize: '0.72rem', color: B.dark + '66' }}>{sub}</Typography>
           )}
         </Box>
         {onMore && (
@@ -43,7 +43,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
             px: 1.2, py: '3px', borderRadius: '20px',
             bgcolor: (borderColor || B.pants) + '18',
             color: borderColor || B.pants,
-            fontSize: '0.68rem', fontWeight: 700,
+            fontSize: '0.72rem', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
             cursor: 'pointer', flexShrink: 0,
             transition: 'all 0.15s',

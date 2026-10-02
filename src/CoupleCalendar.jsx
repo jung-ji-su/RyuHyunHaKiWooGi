@@ -326,12 +326,12 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
 
               {/* 리포트 라인 */}
               <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Typography sx={{ fontSize: '0.7rem', color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif", flex: 1 }}>
+                <Typography sx={{ fontSize: '0.72rem', color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif", flex: 1 }}>
                   {getRecapMessage(syncRate, avgTemp, monthSchedules.length)}
                 </Typography>
                 <Button size="small" startIcon={<BarChartIcon sx={{ fontSize: '0.85rem' }} />} onClick={() => setReportOpen(true)}
                   sx={{
-                    fontSize: '0.66rem', color: C.accent, fontFamily: "'Noto Sans KR',sans-serif",
+                    fontSize: '0.72rem', color: C.accent, fontFamily: "'Noto Sans KR',sans-serif",
                     px: 1, minWidth: TOUCH_MIN, minHeight: TOUCH_MIN, borderRadius: 2, flexShrink: 0,
                     '&:hover': { bgcolor: C.accentSoft },
                   }}>

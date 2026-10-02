@@ -75,7 +75,7 @@ const GameWishList = ({ currentUser }) => {
         <Box component="img" src={buri8} alt="" sx={{ width: 50, height: 50 }} />
         <Box>
           <Typography sx={{
-            fontFamily: "'Jua', sans-serif",
+            fontFamily: "'Jua',sans-serif",
             fontSize: "1.3rem",
             color: B.accent,
           }}>
@@ -97,7 +97,7 @@ const GameWishList = ({ currentUser }) => {
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               fontSize: "2rem",
               color: B.accent,
             }}>
@@ -117,7 +117,7 @@ const GameWishList = ({ currentUser }) => {
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               fontSize: "2rem",
               color: B.pants,
             }}>
@@ -137,7 +137,7 @@ const GameWishList = ({ currentUser }) => {
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
             <Typography sx={{
-              fontFamily: "'Jua', sans-serif",
+              fontFamily: "'Jua',sans-serif",
               fontSize: "2rem",
               color: B.accent,
             }}>
@@ -153,7 +153,7 @@ const GameWishList = ({ currentUser }) => {
       {/* ── 내가 들어줘야 할 소원 ──────────────────────── */}
       <Box sx={{ mb: 4 }}>
         <Typography sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           fontSize: "1.2rem",
           color: B.pants,
           mb: 2,
@@ -197,7 +197,7 @@ const GameWishList = ({ currentUser }) => {
                       <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
                         <Box flex={1}>
                           <Typography sx={{
-                            fontFamily: "'Jua', sans-serif",
+                            fontFamily: "'Jua',sans-serif",
                             fontSize: "0.9rem",
                             color: B.dark + "88",
                             mb: 0.5,
@@ -205,7 +205,7 @@ const GameWishList = ({ currentUser }) => {
                             {wish.gameType} • {new Date(wish.playedAt?.toDate()).toLocaleDateString()}
                           </Typography>
                           <Typography sx={{
-                            fontFamily: "'Jua', sans-serif",
+                            fontFamily: "'Jua',sans-serif",
                             fontSize: "1.1rem",
                             color: B.dark,
                             mb: 1,
@@ -218,7 +218,7 @@ const GameWishList = ({ currentUser }) => {
                             sx={{
                               bgcolor: wish.wishCompleted ? B.accent : B.pants,
                               color: "white",
-                              fontFamily: "'Jua', sans-serif",
+                              fontFamily: "'Jua',sans-serif",
                             }}
                           />
                         </Box>
@@ -229,7 +229,7 @@ const GameWishList = ({ currentUser }) => {
                             onClick={() => handleCompleteWish(wish.id)}
                             sx={{
                               bgcolor: B.accent,
-                              fontFamily: "'Jua', sans-serif",
+                              fontFamily: "'Jua',sans-serif",
                               ml: 2,
                               "&:hover": { bgcolor: B.pants },
                             }}
@@ -253,7 +253,7 @@ const GameWishList = ({ currentUser }) => {
       {/* ── 내가 받은 소원 ──────────────────────────────── */}
       <Box>
         <Typography sx={{
-          fontFamily: "'Jua', sans-serif",
+          fontFamily: "'Jua',sans-serif",
           fontSize: "1.2rem",
           color: B.accent,
           mb: 2,
@@ -297,7 +297,7 @@ const GameWishList = ({ currentUser }) => {
                   }}>
                     <CardContent>
                       <Typography sx={{
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         fontSize: "0.9rem",
                         color: B.dark + "88",
                         mb: 0.5,
@@ -305,7 +305,7 @@ const GameWishList = ({ currentUser }) => {
                         {wish.gameType} • {new Date(wish.playedAt?.toDate()).toLocaleDateString()}
                       </Typography>
                       <Typography sx={{
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         fontSize: "1.1rem",
                         color: B.dark,
                         mb: 1,
@@ -318,7 +318,7 @@ const GameWishList = ({ currentUser }) => {
                         sx={{
                           bgcolor: wish.wishCompleted ? B.accent : B.pants,
                           color: "white",
-                          fontFamily: "'Jua', sans-serif",
+                          fontFamily: "'Jua',sans-serif",
                         }}
                       />
                     </CardContent>

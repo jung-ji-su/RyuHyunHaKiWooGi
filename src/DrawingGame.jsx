@@ -751,7 +751,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                 <Box component="img" src={buri2} alt="" sx={{ width: 50 }} />
                 <Box>
                     <Typography sx={{
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         fontSize: "1.3rem",
                         color: B.accent,
                     }}>
@@ -775,7 +775,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             startIcon={<PersonAddIcon />}
                             sx={{
                                 bgcolor: B.accent,
-                                fontFamily: "'Jua', sans-serif",
+                                fontFamily: "'Jua',sans-serif",
                                 fontSize: "1.1rem",
                                 "&:hover": { bgcolor: B.pants },
                             }}
@@ -790,7 +790,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             sx={{
                                 borderColor: B.pants,
                                 color: B.pants,
-                                fontFamily: "'Jua', sans-serif",
+                                fontFamily: "'Jua',sans-serif",
                                 "&:hover": { bgcolor: B.peach + "33" },
                             }}
                         >
@@ -805,7 +805,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                 <Box sx={{ textAlign: "center", py: 4 }}>
                     <Box component="img" src={buri1} alt="" sx={{ width: 100, mb: 3 }} />
                     <Typography sx={{
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         fontSize: "1.2rem",
                         color: B.pants,
                         mb: 2,
@@ -826,7 +826,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         <Box component="img" src={buri6} alt="" sx={{ width: 120, mb: 3 }} />
                     </motion.div>
                     <Typography sx={{
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         fontSize: "1.5rem",
                         color: B.accent,
                     }}>
@@ -875,7 +875,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     }}
                                 >
                                     <Typography sx={{
-                                        fontFamily: "'Jua', sans-serif",
+                                        fontFamily: "'Jua',sans-serif",
                                         fontSize: "1rem",
                                         color: recentMessage.isCorrect ? "white" : B.dark,
                                         fontWeight: 700,
@@ -901,7 +901,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                 라운드 {round} / 10
                             </Typography>
                             <Typography sx={{
-                                fontFamily: "'Jua', sans-serif",
+                                fontFamily: "'Jua',sans-serif",
                                 fontSize: "1.3rem",
                                 color: timeLeft <= 10 ? B.accent : B.pants,
                             }}>
@@ -949,7 +949,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                 제시어
                             </Typography>
                             <Typography sx={{
-                                fontFamily: "'Jua', sans-serif",
+                                fontFamily: "'Jua',sans-serif",
                                 fontSize: "1.5rem",
                                 color: B.accent,
                             }}>
@@ -968,7 +968,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             bgcolor: B.pants + "22",
                         }}>
                             <Typography sx={{
-                                fontFamily: "'Jua', sans-serif",
+                                fontFamily: "'Jua',sans-serif",
                                 fontSize: "1.2rem",
                                 color: B.pants,
                             }}>
@@ -1047,7 +1047,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     size="small"
                                     onClick={() => setIsEraser(!isEraser)}
                                     sx={{
-                                        fontFamily: "'Jua', sans-serif",
+                                        fontFamily: "'Jua',sans-serif",
                                         bgcolor: isEraser ? B.dark : "transparent",
                                         color: isEraser ? "white" : B.dark,
                                     }}
@@ -1085,7 +1085,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     <Typography
                                         key={i}
                                         sx={{
-                                            fontSize: "0.7rem",
+                                            fontSize: "0.72rem",
                                             color: msg.isCorrect ? B.accent : B.dark + "88",
                                             fontWeight: msg.isCorrect ? 700 : 400,
                                         }}
@@ -1129,7 +1129,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     }}
                                     sx={{
                                         "& .MuiOutlinedInput-root": {
-                                            fontFamily: "'Jua', sans-serif",
+                                            fontFamily: "'Jua',sans-serif",
                                             bgcolor: "white",
                                         },
                                         "& input": {
@@ -1144,7 +1144,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     variant="contained"
                                     sx={{
                                         bgcolor: B.pants,
-                                        fontFamily: "'Jua', sans-serif",
+                                        fontFamily: "'Jua',sans-serif",
                                         "&:hover": { bgcolor: B.accent },
                                         minWidth: 60,
                                     }}
@@ -1168,7 +1168,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                     </motion.div>
 
                     <Typography sx={{
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         fontSize: "1.8rem",
                         color: B.accent,
                         mb: 2,
@@ -1188,7 +1188,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                     <Typography sx={{
                         fontSize: "1.3rem",
                         color: B.accent,
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         mb: 3,
                     }}>
                         🏆 승자: {scores[players.drawer] > scores[players.guesser] ? players.drawer : players.guesser}
@@ -1200,7 +1200,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         sx={{
                             borderColor: B.accent,
                             color: B.accent,
-                            fontFamily: "'Jua', sans-serif",
+                            fontFamily: "'Jua',sans-serif",
                         }}
                     >
                         다시 하기
@@ -1210,7 +1210,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
 
             {/* 난이도 선택 다이얼로그 */}
             <Dialog open={difficultyDialogOpen} onClose={() => setDifficultyDialogOpen(false)}>
-                <DialogTitle sx={{ fontFamily: "'Jua', sans-serif", color: B.pants }}>
+                <DialogTitle sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>
                     난이도 선택
                 </DialogTitle>
                 <DialogContent>
@@ -1242,7 +1242,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     <Typography sx={{ fontSize: "2rem" }}>{diff.emoji}</Typography>
                                     <Box>
                                         <Typography sx={{
-                                            fontFamily: "'Jua', sans-serif",
+                                            fontFamily: "'Jua',sans-serif",
                                             fontSize: "1.1rem",
                                             color: B.pants,
                                         }}>
@@ -1264,7 +1264,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         variant="contained"
                         sx={{
                             bgcolor: B.accent,
-                            fontFamily: "'Jua', sans-serif",
+                            fontFamily: "'Jua',sans-serif",
                             "&:hover": { bgcolor: B.pants },
                         }}
                     >
@@ -1290,7 +1290,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                     </motion.div>
 
                     <Typography sx={{
-                        fontFamily: "'Jua', sans-serif",
+                        fontFamily: "'Jua',sans-serif",
                         fontSize: "1.5rem",
                         color: B.accent,
                         mb: 2,
@@ -1306,7 +1306,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         mb: 3,
                     }}>
                         <Typography sx={{
-                            fontFamily: "'Jua', sans-serif",
+                            fontFamily: "'Jua',sans-serif",
                             fontSize: "1.3rem",
                             color: B.pants,
                         }}>
@@ -1328,7 +1328,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         fullWidth
                         sx={{
                             bgcolor: B.accent,
-                            fontFamily: "'Jua', sans-serif",
+                            fontFamily: "'Jua',sans-serif",
                             "&:hover": { bgcolor: B.pants },
                         }}
                     >
