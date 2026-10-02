@@ -377,12 +377,12 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
             )}
 
             {!isFutureDate && dayCapsules.map(c => (
+              // 반복 리스트 카드라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
               <Box key={c.id} sx={{
                 borderRadius: '14px', p: '14px',
                 background: `linear-gradient(135deg, ${B.peach}88 0%, ${B.lavender}55 100%)`,
                 border: `1.5px solid ${B.accent}33`,
                 boxShadow: `0 4px 18px ${B.accent}14`,
-                backdropFilter: 'blur(8px)',
               }}>
                 <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 0.8 }}>
                   <Typography sx={{ fontSize: '1.1rem' }}>📬</Typography>

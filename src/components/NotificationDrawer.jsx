@@ -130,7 +130,6 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                 color: B.dark + '88',
                 bgcolor: 'rgba(255,255,255,0.7)',
                 border: `1px solid ${B.pants}22`,
-                backdropFilter: 'blur(8px)',
                 '&:hover': { bgcolor: B.lavender, borderColor: B.pants + '44' },
               }}>
               <CloseIcon sx={{ fontSize: '1rem' }} />
@@ -161,7 +160,6 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                 bgcolor: 'rgba(255,255,255,0.6)',
                 border: `1px solid ${B.pants}22`,
                 cursor: 'pointer', userSelect: 'none',
-                backdropFilter: 'blur(8px)',
                 '&:hover': { bgcolor: B.lavender + '88' },
                 '&:active': { transform: 'scale(0.95)' },
                 transition: 'all 0.15s',
@@ -217,11 +215,10 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                   onClick={() => handleNotifClick(n)}
                   sx={{
                     borderRadius: '14px',
+                    // 반복 리스트 아이템이라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
                     background: n.isRead
                       ? 'rgba(255,255,255,0.55)'
                       : 'rgba(255,255,255,0.82)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
                     border: n.isRead
                       ? '1px solid rgba(255,255,255,0.7)'
                       : `1px solid ${meta.color}28`,

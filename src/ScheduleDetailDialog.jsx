@@ -37,8 +37,8 @@ const B = {
 const GLASS_INPUT = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
+    // 작은 반복 요소(입력창)라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
     background: "rgba(255,255,255,0.72)",
-    backdropFilter: "blur(8px)",
     transition: "all 0.2s ease",
     "& fieldset": { borderColor: "rgba(123,79,166,0.14)" },
     "&:hover fieldset": { borderColor: `${B.pants}44` },
@@ -189,7 +189,6 @@ export default function ScheduleDetailDialog({
             color: B.pants + "55",
             bgcolor: "rgba(255,255,255,0.82)",
             border: `1px solid ${B.pants}18`,
-            backdropFilter: "blur(8px)",
             "&:active": { transform: "scale(0.85)" },
           }}>
           <CloseIcon fontSize="small" />
@@ -285,7 +284,6 @@ export default function ScheduleDetailDialog({
                         ? `0 4px 18px ${cat.color}30, 0 0 0 3px ${cat.color}14`
                         : "0 2px 8px rgba(123,79,166,0.06)",
                       transform: active ? "scale(1.05)" : "scale(1)",
-                      backdropFilter: "blur(8px)",
                       WebkitTapHighlightColor: "transparent",
                       "&:active": { transform: "scale(0.95)" },
                     }}
@@ -312,7 +310,6 @@ export default function ScheduleDetailDialog({
                   border: isImportant ? "1.5px solid #ffd70066" : "1.5px solid rgba(255,255,255,0.8)",
                   boxShadow: isImportant ? "0 4px 18px #ffd70030, 0 0 0 3px #ffd70014" : "0 2px 8px rgba(123,79,166,0.06)",
                   transform: isImportant ? "scale(1.05)" : "scale(1)",
-                  backdropFilter: "blur(8px)",
                   WebkitTapHighlightColor: "transparent",
                   "&:active": { transform: "scale(0.95)" },
                 }}
@@ -342,8 +339,8 @@ export default function ScheduleDetailDialog({
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "14px", fontSize: "0.96rem", fontWeight: 600,
+                // 작은 반복 요소(입력창)라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
                 background: "rgba(255,255,255,0.8)",
-                backdropFilter: "blur(8px)",
                 transition: "all 0.2s ease",
                 "& fieldset": { borderColor: "rgba(123,79,166,0.16)" },
                 "&:hover fieldset": { borderColor: `${B.pants}44` },
@@ -397,7 +394,6 @@ export default function ScheduleDetailDialog({
                       border: active ? "none" : "1px solid rgba(123,79,166,0.12)",
                       boxShadow: active ? `0 4px 16px ${B.pants}44` : "0 1px 6px rgba(123,79,166,0.07)",
                       transform: active ? "scale(1.03)" : "scale(1)",
-                      backdropFilter: "blur(8px)",
                       WebkitTapHighlightColor: "transparent",
                       "&:active": { transform: "scale(0.96)" },
                     }}
