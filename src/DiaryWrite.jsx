@@ -25,16 +25,7 @@ import buriLove    from "./assets/KakaoTalk_20260424_173810950.png"; // 하트�
 import buriTired   from "./assets/KakaoTalk_20260424_173840927.png"; // 졸린 (피곤)
 import buriLucky   from "./assets/KakaoTalk_20260424_173734582.png"; // 네잎클로버 (최고)
 import buriCouple  from "./assets/KakaoTalk_20260424_173657493.png"; // 커플 (장식)
-
-const B = {
-  pants:    "#7B4FA6",
-  skin:     "#F5B8A0",
-  cream:    "#FFF8F2",
-  peach:    "#FFE4D4",
-  lavender: "#EDE0F5",
-  accent:   "#E8630A",
-  dark:     "#3D1F00",
-};
+import { B } from "./lib/constants";
 
 const emotions = [
   { label: "행복", emoji: "🥰", buriImg: buriHappy   },
@@ -256,7 +247,7 @@ const DiaryWrite = ({ currentUser }) => {
         sx={{
           mb: 2,
           "& .MuiOutlinedInput-root": {
-            bgcolor: "#fff", borderRadius: 3,
+            bgcolor: B.surface, borderRadius: 3,
             fontFamily: "'Noto Sans KR',sans-serif",
             "& fieldset": { borderColor: B.pants + "33" },
             "&:hover fieldset": { borderColor: B.pants + "88" },
@@ -291,7 +282,7 @@ const DiaryWrite = ({ currentUser }) => {
             <IconButton component="span"
               onPointerDown={(e) => createRipple(e)}
               sx={{
-                color: B.pants, bgcolor: "#fff",
+                color: B.pants, bgcolor: B.surface,
                 boxShadow: `0 2px 8px ${B.pants}22`,
                 border: `1px solid ${B.pants}33`,
                 position: "relative", overflow: "hidden",

@@ -259,7 +259,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 감정 분석 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.accent}22` }}>
+        <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p: 2, border: `1.5px solid ${B.accent}22` }}>
           <SectionHeader icon="🥰" title="감정 분석" />
           {filteredDiaries.length === 0 ? (
             <Typography sx={{ textAlign: "center", color: B.dark + "55", fontSize: "0.8rem", py: 2,
@@ -294,7 +294,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 쿠폰 통계 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.pants}22` }}>
+        <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p: 2, border: `1.5px solid ${B.pants}22` }}>
           <SectionHeader icon="🎟️" title="쿠폰 현황" />
           <Stack spacing={1.5}>
             <Box>
@@ -344,7 +344,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 여행 지도 통계 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: "1.5px solid #3A86FF22" }}>
+        <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p: 2, border: "1.5px solid #3A86FF22" }}>
           <SectionHeader icon="🗺️" title="우리가 간 곳들" />
           {filteredPins.length === 0 ? (
             <Typography sx={{ textAlign: "center", color: B.dark + "55", fontSize: "0.8rem", py: 2,
@@ -379,7 +379,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 버킷리스트 현황 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.green}22` }}>
+        <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p: 2, border: `1.5px solid ${B.green}22` }}>
           <SectionHeader icon="🪣" title="버킷리스트 현황" />
           {buckets.length === 0 ? (
             <Typography sx={{ textAlign: "center", color: B.dark + "55", fontSize: "0.8rem", py: 2,
@@ -437,7 +437,7 @@ const LoveStats = ({ currentUser }) => {
 
         {/* ── 감정 온도 통계 ── */}
         {avgTemp !== null && (
-          <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.skin}66` }}>
+          <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p: 2, border: `1.5px solid ${B.skin}66` }}>
             <SectionHeader icon="🌡️" title="감정 온도" />
             <Stack direction="row" gap={1} alignItems="center">
               <Box sx={{ flex: 1, bgcolor: B.peach, borderRadius: 2, p: 1.5,
@@ -470,7 +470,7 @@ const LoveStats = ({ currentUser }) => {
         {topLiked && (topLiked.likes?.length || 0) > 0 && (
           <Box sx={{ bgcolor: "#FFF0F8", borderRadius: '14px', p: 2, border: `1.5px solid ${B.pink}33` }}>
             <SectionHeader icon="❤️" title="가장 사랑받은 기록" />
-            <Box sx={{ bgcolor: "white", borderRadius: 2.5, p: 1.5, border: `1px solid ${B.pink}22` }}>
+            <Box sx={{ bgcolor: B.surface, borderRadius: 2.5, p: 1.5, border: `1px solid ${B.pink}22` }}>
               <Stack direction="row" alignItems="center" gap={1} mb={0.8}>
                 <Typography sx={{ fontSize: "1.2rem" }}>{getEmoji(topLiked.emotion)}</Typography>
                 <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.85rem", color: B.dark }}>

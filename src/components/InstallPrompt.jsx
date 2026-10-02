@@ -115,7 +115,7 @@ export default function InstallPrompt({ onRequestPermission }) {
             부리부리를 앱으로 설치하면 더 빠르고<br />알림도 바로 받을 수 있어요! 🐷
           </Typography>
           <Button onClick={handleInstall} sx={{
-            bgcolor: 'white', color: B.pants, borderRadius: 3,
+            bgcolor: B.surface, color: B.pants, borderRadius: 3,
             fontFamily: "'Jua',sans-serif", fontSize: '0.9rem',
             boxShadow: 'none', '&:hover': { bgcolor: '#f0e8f8' },
           }}>
@@ -133,7 +133,7 @@ export default function InstallPrompt({ onRequestPermission }) {
             상대방이 기록이나 편지를 남기면<br />바로 알림을 받을 수 있어요! 💜
           </Typography>
           <Button onClick={handleEnableNotif} startIcon={<NotificationsIcon />} sx={{
-            bgcolor: 'white', color: B.pants, borderRadius: 3,
+            bgcolor: B.surface, color: B.pants, borderRadius: 3,
             fontFamily: "'Jua',sans-serif", fontSize: '0.9rem',
             boxShadow: 'none', '&:hover': { bgcolor: '#f0e8f8' },
           }}>

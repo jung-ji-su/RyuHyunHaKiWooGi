@@ -18,11 +18,7 @@ import ListIcon from "@mui/icons-material/List";
 import SearchIcon from "@mui/icons-material/Search";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 
-const B = {
-    pants: "#7B4FA6", skin: "#F5B8A0", cream: "#FFF8F2",
-    peach: "#FFE4D4", lavender: "#EDE0F5", accent: "#E8630A",
-    dark: "#3D1F00", pink: "#FF8FAB",
-};
+import { B } from "./lib/constants";
 
 const CATEGORY_LIST = [
     { label: "카페", emoji: "☕", color: "#A0522D" },
@@ -191,7 +187,7 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                             </InputAdornment>
                         ),
                         sx: {
-                            borderRadius: 2.5, bgcolor: "white", fontSize: "0.82rem",
+                            borderRadius: 2.5, bgcolor: B.surface, fontSize: "0.82rem",
                             "& fieldset": { borderColor: B.pants + "44" },
                             "&:hover fieldset": { borderColor: B.pants + "88" },
                             "&.Mui-focused fieldset": { borderColor: B.pants },
@@ -201,7 +197,7 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                 <IconButton onClick={onMyLocation}
                     sx={{
                         width: 40, height: 40, borderRadius: 2.5, flexShrink: 0,
-                        bgcolor: "white", border: `1.5px solid ${B.pants}44`, color: B.pants,
+                        bgcolor: B.surface, border: `1.5px solid ${B.pants}44`, color: B.pants,
                         "&:hover": { bgcolor: B.lavender }, "&:active": { transform: "scale(0.9)" },
                     }}>
                     <MyLocationIcon sx={{ fontSize: 18 }} />
@@ -211,7 +207,7 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
             {showList && results.length > 0 && (
                 <Box sx={{
                     position: "absolute", top: "100%", left: 0, right: 0, mt: 0.5,
-                    bgcolor: "white", borderRadius: 2.5, overflow: "hidden",
+                    bgcolor: B.surface, borderRadius: 2.5, overflow: "hidden",
                     border: `1.5px solid ${B.pants}22`,
                     boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 2000,
                 }}>
@@ -316,10 +312,10 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
                     </Box>
                     <TextField label="장소 이름" value={title} onChange={(e) => setTitle(e.target.value)}
                         fullWidth size="small" placeholder="예: 성수동 어니언 베이커리"
-                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: "white" } }} />
+                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: B.surface } }} />
                     <TextField label="메모 (선택)" value={memo} onChange={(e) => setMemo(e.target.value)}
                         fullWidth size="small" multiline rows={2} placeholder="여기서 뭐 했어? 어땠어? 🐷"
-                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: "white" } }} />
+                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: B.surface } }} />
                     <Box>
                         <Typography sx={{ fontSize: "0.72rem", color: B.dark + "88", mb: 0.8 }}>사진 (선택)</Typography>
                         <Stack direction="row" alignItems="center" gap={1.5}>
@@ -337,7 +333,7 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
                                     <Box component="img" src={preview} alt=""
                                         sx={{ width: 56, height: 56, borderRadius: 2, objectFit: "cover", border: `2px solid ${B.pants}44` }} />
                                     <IconButton size="small" onClick={() => { setFile(null); setPreview(null); }}
-                                        sx={{ position: "absolute", top: -8, right: -8, bgcolor: "white", width: 18, height: 18, border: `1px solid ${B.pants}44` }}>
+                                        sx={{ position: "absolute", top: -8, right: -8, bgcolor: B.surface, width: 18, height: 18, border: `1px solid ${B.pants}44` }}>
                                         <CloseIcon sx={{ fontSize: 11 }} />
                                     </IconButton>
                                 </Box>
@@ -618,7 +614,7 @@ const TravelMap = ({ currentUser }) => {
                 }} />
                 <Box sx={{
                     position: "absolute", bottom: 14, left: 14, zIndex: 800,
-                    bgcolor: "white", borderRadius: 2, px: 1.4, py: 0.6,
+                    bgcolor: B.surface, borderRadius: 2, px: 1.4, py: 0.6,
                     boxShadow: "0 2px 10px rgba(0,0,0,0.12)",
                 }}>
                     <Typography sx={{ fontSize: "0.72rem", color: "#555", fontFamily: "'Noto Sans KR',sans-serif" }}>
@@ -628,7 +624,7 @@ const TravelMap = ({ currentUser }) => {
                 {locLoading && (
                     <Box sx={{
                         position: "absolute", top: 14, right: 52, zIndex: 800,
-                        bgcolor: "white", borderRadius: 2, px: 1.4, py: 0.8,
+                        bgcolor: B.surface, borderRadius: 2, px: 1.4, py: 0.8,
                         boxShadow: "0 2px 10px rgba(0,0,0,0.12)",
                         display: "flex", alignItems: "center", gap: 1,
                     }}>
@@ -676,7 +672,7 @@ const TravelMap = ({ currentUser }) => {
                             <Box key={pin.id} onClick={() => flyToPin(pin)}
                                 sx={{
                                     display: "flex", gap: 1.5, alignItems: "flex-start",
-                                    bgcolor: "white", borderRadius: '14px', p: 1.5,
+                                    bgcolor: B.surface, borderRadius: '14px', p: 1.5,
                                     border: `1px solid ${B.pants}18`, cursor: "pointer", transition: "all 0.15s",
                                     boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
                                     "&:active": { transform: "scale(0.98)", bgcolor: B.lavender + "44" },

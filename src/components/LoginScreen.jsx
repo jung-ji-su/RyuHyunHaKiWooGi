@@ -90,7 +90,7 @@ export default function LoginScreen({ onLogin }) {
         {/* 지수 카드 */}
         <Box component="button" onPointerDown={e => handleSelect('지수', e)}
           sx={{
-            width: 148, background: 'white', borderRadius: '28px',
+            width: 148, background: B.surface, borderRadius: '28px',
             p: '22px 16px 18px', textAlign: 'center', cursor: 'pointer',
             border: `2.5px solid ${B.pants}55`, boxShadow: `0 8px 28px ${B.pants}22`,
             position: 'relative', overflow: 'visible',
@@ -133,7 +133,7 @@ export default function LoginScreen({ onLogin }) {
         {/* 현하 카드 */}
         <Box component="button" onPointerDown={e => handleSelect('현하', e)}
           sx={{
-            width: 148, background: 'white', borderRadius: '28px',
+            width: 148, background: B.surface, borderRadius: '28px',
             p: '22px 16px 18px', textAlign: 'center', cursor: 'pointer',
             border: `2.5px solid ${B.skin}`, boxShadow: `0 8px 28px ${B.skin}44`,
             position: 'relative', overflow: 'visible',

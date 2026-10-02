@@ -4,11 +4,7 @@ import { db } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { vibrate } from './touchEffects';
 import { glass, glassBorderSx, getWriterBadge, writerBadgeBg, calendarColor } from './lib/calendarTokens';
-
-const B = {
-  pants: '#7B4FA6', skin: '#F5B8A0', cream: '#FFF8F2', peach: '#FFE4D4',
-  lavender: '#EDE0F5', accent: '#E8630A', dark: '#3D1F00',
-};
+import { B } from './lib/constants';
 
 // 캘린더 그리드 dot(calendarColor.category)과 같은 색을 쓰도록 값만 맞춤 — ScheduleDetailDialog와 동일 패턴
 const CATEGORY_COLORS  = {

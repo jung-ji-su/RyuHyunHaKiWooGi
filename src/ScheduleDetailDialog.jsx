@@ -29,10 +29,7 @@ const PARTICIPANT_OPTIONS = [
   { value: "상대방만", label: "💌 상대방만" },
 ];
 
-const B = {
-  pants: "#7B4FA6", lavender: "#EDE0F5",
-  cream: "#FFF8F2", dark: "#3D1F00", skin: "#F5B8A0",
-};
+import { B } from "./lib/constants";
 
 const GLASS_INPUT = {
   "& .MuiOutlinedInput-root": {

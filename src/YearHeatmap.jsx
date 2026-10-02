@@ -1,6 +1,5 @@
 import { Box, Typography, Stack } from '@mui/material';
-
-const B = { pants: '#7B4FA6', accent: '#E8630A', dark: '#3D1F00' };
+import { B } from './lib/constants';
 const MONTH_NAMES = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
 function getHeatColor(avg) {

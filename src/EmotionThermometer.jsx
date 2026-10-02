@@ -19,11 +19,7 @@ import { recordCheckin } from "./CharacterPet";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png";
 
-const B = {
-  pants: "#7B4FA6", skin: "#F5B8A0", cream: "#FFF8F2",
-  peach: "#FFE4D4", lavender: "#EDE0F5", accent: "#E8630A",
-  dark: "#3D1F00", danger: "#E53935", green: "#43A047",
-};
+import { B } from "./lib/constants";
 const USERS = ["지수", "현하"];
 
 const EMOTION_TAGS = [
@@ -138,7 +134,7 @@ function MonthHighlights({ records, currentUser, otherUser }) {
   const fmt = iso => { const d = new Date(iso); return `${d.getMonth()+1}/${d.getDate()}`; };
 
   return (
-    <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.2 }}>
+    <Box sx={{ bgcolor: B.surface, borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.2 }}>
       <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "0.95rem", mb: 1.5 }}>
         ✨ 이달의 하이라이트
       </Typography>
@@ -204,7 +200,7 @@ function WeeklyReport({ records, currentUser, otherUser }) {
       .filter(v => v !== null && v > 0);
     if (vals.length < 2) return null;
     const diff = vals[vals.length - 1] - vals[0];
-    if (diff > 10)  return { icon: "📈", text: "점점 좋아지는 중!", color: B.green };
+    if (diff > 10)  return { icon: "📈", text: "점점 좋아지는 중!", color: B.successBright };
     if (diff < -10) return { icon: "📉", text: "조금 힘들어지고 있어요", color: "#85B7EB" };
     return { icon: "➡️", text: "안정적인 한 주", color: B.dark + "88" };
   };
@@ -212,7 +208,7 @@ function WeeklyReport({ records, currentUser, otherUser }) {
   const myTrend = getTrend(currentUser), otherTrend = getTrend(otherUser);
 
   return (
-    <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, overflow: "hidden" }}>
+    <Box sx={{ bgcolor: B.surface, borderRadius: '14px', border: `1.5px solid ${B.lavender}`, overflow: "hidden" }}>
       <Box onClick={() => setOpen(o => !o)} sx={{
         p: 2, cursor: "pointer", display: "flex", alignItems: "center",
         justifyContent: "space-between",
@@ -306,7 +302,7 @@ function EmpathyCard({ records, currentUser, otherUser, today }) {
 
   return (
     <Box sx={{
-      bgcolor: "white", borderRadius: '14px', border: `2px solid ${B.accent}44`, p: 2.2,
+      bgcolor: B.surface, borderRadius: '14px', border: `2px solid ${B.accent}44`, p: 2.2,
       background: `linear-gradient(135deg, ${B.peach}44 0%, white 60%)`,
       position: "relative", overflow: "hidden",
     }}>
@@ -322,12 +318,12 @@ function EmpathyCard({ records, currentUser, otherUser, today }) {
           </Typography>
           {!isLowMe && (
             <Button variant="contained" disabled={hugging || alreadyHugged} onClick={handleHug} sx={{
-              mt: 1, bgcolor: alreadyHugged ? B.green : B.accent,
+              mt: 1, bgcolor: alreadyHugged ? B.successBright : B.accent,
               borderRadius: '999px', px: 2.5, py: 0.8,
               fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
               boxShadow: alreadyHugged ? "none" : `0 4px 12px ${B.accent}44`,
-              "&:hover": { bgcolor: alreadyHugged ? B.green : "#C8550A" },
-              "&.Mui-disabled": { bgcolor: B.green, color: "white" },
+              "&:hover": { bgcolor: alreadyHugged ? B.successBright : "#C8550A" },
+              "&.Mui-disabled": { bgcolor: B.successBright, color: "white" },
             }}>
               {hugging ? "전송 중..." : alreadyHugged ? "✓ 토닥여줬어요! 💜" : "❤️ 토닥토닥"}
             </Button>
@@ -401,7 +397,7 @@ function StreakDangerBanner({ streak, submitted, currentUser, otherUser, records
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <Box sx={{ bgcolor: "white", borderRadius: 2.5, p: "8px 12px", border: `1.5px solid ${B.lavender}`, boxShadow: `0 4px 16px ${B.pants}18` }}>
+    <Box sx={{ bgcolor: B.surface, borderRadius: 2.5, p: "8px 12px", border: `1.5px solid ${B.lavender}`, boxShadow: `0 4px 16px ${B.pants}18` }}>
       <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.72rem", color: B.dark + "88", mb: 0.3 }}>{label}</Typography>
       {payload.map(({ name, value, color }) => value == null ? null : (
         <Stack key={name} direction="row" alignItems="center" gap={0.6}>
@@ -537,7 +533,7 @@ const EmotionThermometer = ({ currentUser }) => {
 
       {/* ── 오늘 입력 카드 ── */}
       <Box sx={{
-        bgcolor: "white", borderRadius: '14px',
+        bgcolor: B.surface, borderRadius: '14px',
         border: `2px solid ${B.pants}22`,
         boxShadow: `0 4px 20px ${B.pants}10`,
         position: "relative", overflow: "visible",
@@ -679,14 +675,14 @@ const EmotionThermometer = ({ currentUser }) => {
             onPointerDown={e => !submitted && createBuriPang(e)}
             onClick={handleSubmit}
             sx={{
-              bgcolor: submitted ? B.green : B.pants,
+              bgcolor: submitted ? B.successBright : B.pants,
               borderRadius: "14px", py: 1,
               fontFamily: "'Jua',sans-serif", fontSize: "0.95rem",
               boxShadow: submitted ? "none" : `0 4px 14px ${B.pants}44`,
               transition: "transform 0.1s",
               "&:active": { transform: "scale(0.96)" },
-              "&:hover": { bgcolor: submitted ? B.green : "#6A3D96" },
-              "&.Mui-disabled": { bgcolor: B.green, color: "white" },
+              "&:hover": { bgcolor: submitted ? B.successBright : "#6A3D96" },
+              "&.Mui-disabled": { bgcolor: B.successBright, color: "white" },
             }}
           >
             {submitted ? `✓ 오늘 온도 기록 완료! (${myRec?.temp ?? todayTemp}°)` : "🌡️ 오늘 온도 기록하기"}
@@ -702,7 +698,7 @@ const EmotionThermometer = ({ currentUser }) => {
                   </Typography>
                 </Box>
               ) : (
-                <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.82rem", color: B.green }}>
+                <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.82rem", color: B.successBright }}>
                   ✓ 둘 다 기록 완료! 💑
                 </Typography>
               )}
@@ -715,7 +711,7 @@ const EmotionThermometer = ({ currentUser }) => {
       <WeeklyReport records={records} currentUser={currentUser} otherUser={otherUser} />
 
       {/* ④ 오늘 비교 — 원형 게이지 */}
-      <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.5 }}>
+      <Box sx={{ bgcolor: B.surface, borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.5 }}>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "0.95rem", mb: 2 }}>💜 오늘 둘의 온도</Typography>
         <Stack direction="row" justifyContent="space-around" alignItems="flex-end" sx={{ mb: 2 }}>
           <CircleGauge value={myRec?.temp ?? 0} color={myRec ? getTempMeta(myRec.temp).color : B.lavender} size={96} label={currentUser} />
@@ -740,7 +736,7 @@ const EmotionThermometer = ({ currentUser }) => {
       <MonthHighlights records={records} currentUser={currentUser} otherUser={otherUser} />
 
       {/* ⑤ recharts 그래프 */}
-      <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.5, position: "relative", overflow: "visible" }}>
+      <Box sx={{ bgcolor: B.surface, borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.5, position: "relative", overflow: "visible" }}>
         <Box component="img" src={buri2} alt="" sx={{ position: "absolute", top: -20, right: 10, width: 40, animation: "headBob 2.5s ease-in-out infinite", filter: `drop-shadow(0 2px 6px ${B.accent}44)`, pointerEvents: "none" }} />
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "0.95rem" }}>📈 온도 히스토리</Typography>

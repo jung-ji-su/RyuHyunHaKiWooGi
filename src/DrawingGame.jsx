@@ -21,11 +21,7 @@ import { getRandomCoupon } from "./gameCoupons.js";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png"; //기본
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png"; //웃음
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png"; // 승리
-
-const B = {
-    pants: "#7B4FA6", skin: "#F5B8A0", cream: "#FFF8F2",
-    peach: "#FFE4D4", lavender: "#EDE0F5", accent: "#E8630A", dark: "#3D1F00",
-};
+import { B } from "./lib/constants";
 
 // ────────────────────────────────────────────────────────────
 // 제시어 데이터베이스
@@ -994,7 +990,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                 display: "block",
                                 width: "100%",
                                 cursor: myRole === "drawer" ? "crosshair" : "default",
-                                backgroundColor: "#FFF",
+                                backgroundColor: B.surface,
                                 touchAction: "none",
                             }}
                         />
@@ -1130,7 +1126,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     sx={{
                                         "& .MuiOutlinedInput-root": {
                                             fontFamily: "'Jua',sans-serif",
-                                            bgcolor: "white",
+                                            bgcolor: B.surface,
                                         },
                                         "& input": {
                                             cursor: "text !important",

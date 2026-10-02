@@ -6,19 +6,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import confetti from "canvas-confetti";
 import { shakeElement, vibrate } from "./touchEffects";
 import { calendarColor } from "./lib/calendarTokens";
+import { B } from "./lib/constants";
 
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
 import buri9 from "./assets/KakaoTalk_20260316_133007779.png";
 import meImg  from "./assets/JS.jpg";
 import gfImg  from "./assets/HY.jpg";
-
-const B = {
-  pants:   "#7B4FA6", skin:    "#F5B8A0",
-  cream:   "#FFF8F2", peach:   "#FFE4D4",
-  lavender:"#EDE0F5", accent:  "#E8630A",
-  dark:    "#3D1F00",
-};
 
 const CATEGORY_META = {
   기념일:   { color: "#7B4FA6", bg: "#EDE0F5", emoji: "💜" },
@@ -341,7 +335,7 @@ const ScheduleList = ({ currentUser }) => {
 
       {/* 요약 카드 */}
       <Box sx={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap: 1, mb:2.5 }}>
-        <Box sx={{ bgcolor:"white", borderRadius: '14px', p:1.5,
+        <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p:1.5,
           border:`1.5px solid ${B.pants}22`,
           display:"flex", alignItems:"center", gap: 1 }}>
           <Box component="img" src={buri6} alt=""
@@ -354,7 +348,7 @@ const ScheduleList = ({ currentUser }) => {
               fontFamily: "'Noto Sans KR',sans-serif" }}>전체 일정</Typography>
           </Box>
         </Box>
-        <Box sx={{ bgcolor:"white", borderRadius: '14px', p:1.5,
+        <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p:1.5,
           border:`1.5px solid ${B.accent}22`,
           display:"flex", alignItems:"center", gap: 1 }}>
           <Box component="img" src={buri1} alt=""

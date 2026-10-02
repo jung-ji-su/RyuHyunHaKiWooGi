@@ -18,11 +18,7 @@ import catTongue from './assets/KakaoTalk_20260518_145359042.png'; // 보통    
 import catGrumpy from './assets/KakaoTalk_20260518_144400884.png'; // 마른    (30-44)
 import catScruff from './assets/KakaoTalk_20260518_145513803.png'; // 해골직전 (15-29)
 import catStatue from './assets/KakaoTalk_20260518_145131598.png'; // 해골    (0-14)
-
-const B = {
-  pants: '#7B4FA6', skin: '#F5B8A0', cream: '#FFF8F2',
-  peach: '#FFE4D4', lavender: '#EDE0F5', accent: '#E8630A', dark: '#3D1F00',
-};
+import { B } from './lib/constants';
 
 const COUPLE_ID = 'jisu_hyunha';
 const USERS = ['지수', '현하'];
@@ -248,7 +244,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
               {/* 말풍선 본체 */}
               <Box sx={{
                 position: 'relative',
-                bgcolor: '#ffffff',
+                bgcolor: B.surface,
                 border: `2px solid ${stage.color}70`,
                 borderRadius: '18px',
                 px: 1.5, py: 1,
@@ -305,7 +301,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
                   left: isLeft ? '50%' : '68%',
                   transform: 'translateX(-50%) rotate(45deg)',
                   width: 10, height: 10,
-                  bgcolor: 'white',
+                  bgcolor: B.surface,
                 }} />
               </Box>
             </motion.div>
@@ -693,7 +689,7 @@ export default function CharacterPet({ currentUser }) {
           {bubbles.map((phrase, idx) => (
             <Box key={idx} sx={{
               display: 'flex', alignItems: 'center', gap: 1,
-              bgcolor: 'white', borderRadius: 2.5, px: 1.5, py: 1, mb: 0.8,
+              bgcolor: B.surface, borderRadius: 2.5, px: 1.5, py: 1, mb: 0.8,
               border: `1.5px solid ${B.pants}0e`,
               boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
             }}>
@@ -736,7 +732,7 @@ export default function CharacterPet({ currentUser }) {
               sx={{
                 flex: 1,
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: 2.5, fontSize: '0.85rem', bgcolor: 'white',
+                  borderRadius: 2.5, fontSize: '0.85rem', bgcolor: B.surface,
                   '& fieldset': { borderColor: `${B.pants}28` },
                   '&:hover fieldset': { borderColor: `${B.pants}66` },
                   '&.Mui-focused fieldset': { borderColor: B.pants },
@@ -804,7 +800,7 @@ export default function CharacterPet({ currentUser }) {
               sx={{
                 flex: 1,
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: 2.5, fontSize: '0.85rem', bgcolor: 'white',
+                  borderRadius: 2.5, fontSize: '0.85rem', bgcolor: B.surface,
                   '& fieldset': { borderColor: `${B.pants}28` },
                   '&:hover fieldset': { borderColor: `${B.pants}66` },
                   '&.Mui-focused fieldset': { borderColor: B.pants },

@@ -34,6 +34,7 @@ import buriSurprise from "./assets/KakaoTalk_20260424_173832207.png";
 import buriFunny    from "./assets/KakaoTalk_20260424_173712715.png";
 
 import { createHeartPang, shakeElement, vibrate } from "./touchEffects";
+import { B } from "./lib/constants";
 
 const EMOTION_BURI = {
   "행복": buriHappy, "신남": buriExcited, "울음": buriCry, "슬픔": buriCry,
@@ -49,10 +50,6 @@ const EMOTIONS = [
   { emoji: "😮", label: "당황" },
 ];
 
-const B = {
-  pants: "#7B4FA6", skin: "#F5B8A0", cream: "#FFF8F2",
-  peach: "#FFE4D4", lavender: "#EDE0F5", accent: "#E8630A", dark: "#3D1F00",
-};
 
 // ── 스켈레톤 카드 ────────────────────────────────────────────
 const SkeletonCard = () => (

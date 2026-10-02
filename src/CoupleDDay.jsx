@@ -7,17 +7,7 @@ import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
 
 import buriExcited from "./assets/KakaoTalk_20260424_173800871.png"; // 꽃 들고 (신남)
 import buriLove from "./assets/KakaoTalk_20260424_173810950.png"; // 하트눈 (설렘)
-
-const B = {
-  pants: "#7B4FA6",
-  skin: "#F5B8A0",
-  cream: "#FFF8F2",
-  peach: "#FFE4D4",
-  lavender: "#EDE0F5",
-  accent: "#E8630A",
-  dark: "#3D1F00",
-  pink: "#FF6B9D",
-};
+import { B } from "./lib/constants";
 
 // ── 떠다니는 파티클 캔버스 (부드러운 하트/별) ────────────────────
 const FloatingCanvas = ({ canvasRef, wrapRef }) => null; // 훅에서 처리
@@ -96,7 +86,7 @@ export default function CoupleDDay() {
 
     // 떠다니는 파티클 생성
     const SHAPES = ['heart', 'heart', 'heart', 'star', 'circle'];
-    const COLORS = [B.pants, B.pink, B.accent, B.skin, '#FFB3D9', '#C9A7E8', '#FFD6E7'];
+    const COLORS = [B.pants, B.pinkVivid, B.accent, B.skin, '#FFB3D9', '#C9A7E8', '#FFD6E7'];
 
     const makeParticle = () => ({
       x: Math.random() * canvas.width,

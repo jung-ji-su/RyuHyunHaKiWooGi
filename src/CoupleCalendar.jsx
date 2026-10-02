@@ -28,13 +28,7 @@ import {
   calendarColor as C, calendarRadius, calendarFont as F, TOUCH_MIN,
   glassPanelSx, glassBorderSx, glassSmallSx,
 } from "./lib/calendarTokens";
-
-const B = {
-  pants:    '#7B4FA6', skin:    '#F5B8A0',
-  cream:    '#FFF8F2', peach:   '#FFE4D4',
-  lavender: '#EDE0F5', accent:  '#E8630A',
-  dark:     '#3D1F00',
-};
+import { B } from "./lib/constants";
 
 // 리퀴드 글래스 카드 — CoupleCalendar 앞/뒷면(근무 스케줄) 공용, 화면당 backdrop-filter 패널은 이거 하나뿐.
 const CARD_SX = {

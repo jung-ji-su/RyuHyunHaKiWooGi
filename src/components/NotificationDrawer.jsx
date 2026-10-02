@@ -4,11 +4,7 @@ import { Box, Typography, Drawer, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { db } from '../firebase';
 import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
-
-const B = {
-  pants: '#7B4FA6', cream: '#FFF8F2', lavender: '#EDE0F5',
-  accent: '#E8630A', dark: '#3D1F00',
-};
+import { B } from '../lib/constants';
 
 const PAGE_SIZE = 20;
 

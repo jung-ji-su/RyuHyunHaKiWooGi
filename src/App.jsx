@@ -245,7 +245,7 @@ function AppInner() {
           <IconButton
             onClick={() => setNotifDrawerOpen(true)}
             sx={{
-              bgcolor: 'white', width: 44, height: 44,
+              bgcolor: B.surface, width: 44, height: 44,
               boxShadow: `0 2px 14px ${B.pants}33`,
               border: `1.5px solid ${B.pants}22`,
               '&:hover': { bgcolor: B.lavender },

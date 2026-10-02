@@ -123,7 +123,7 @@ export default function BottomNav({ logout }) {
                     <Box sx={{
                       position: 'absolute', top: 8, right: 8,
                       width: 7, height: 7, borderRadius: '50%',
-                      bgcolor: 'white', opacity: 0.8,
+                      bgcolor: B.surface, opacity: 0.8,
                     }} />
                   )}
                 </Box>

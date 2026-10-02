@@ -160,7 +160,7 @@ function MatchCard({ item, onClick, side, disabled }) {
         borderRadius: '20px', overflow: 'hidden',
         border: `2px solid rgba(255,255,255,0.3)`,
         boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-        background: 'white',
+        background: B.surface,
         userSelect: 'none',
         height: '100%',
       }}>

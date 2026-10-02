@@ -14,16 +14,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
 import buri8 from "./assets/KakaoTalk_20260316_132954818.png";
 
-// 부리부리 컬러 팔레트
-const B = {
-  pants:   "#7B4FA6",
-  skin:    "#F5B8A0",
-  cream:   "#FFF8F2",
-  peach:   "#FFE4D4",
-  lavender:"#EDE0F5",
-  accent:  "#E8630A",
-  dark:    "#3D1F00",
-};
+import { B } from "./lib/constants";
 
 const GameWishList = ({ currentUser }) => {
   const [gameResults, setGameResults] = useState([]);

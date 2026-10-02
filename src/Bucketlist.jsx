@@ -16,19 +16,14 @@ import { createBuriPang, shakeElement, vibrate } from "./touchEffects";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png";
 import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
-
-const B = {
-  pants: "#7B4FA6", skin: "#F5B8A0", cream: "#FFF8F2",
-  peach: "#FFE4D4", lavender: "#EDE0F5", accent: "#E8630A",
-  dark: "#3D1F00", pink: "#FF8FAB", teal: "#1D9E75",
-};
+import { B } from "./lib/constants";
 
 const CATEGORIES = [
   { key: "전체",   label: "🐷 전체",   color: B.pants,   bg: B.lavender },
   { key: "데이트", label: "🧡 데이트", color: B.accent,  bg: B.peach    },
   { key: "여행",   label: "✈️ 여행",   color: "#185FA5", bg: "#E6F1FB"  },
   { key: "도전",   label: "💪 도전",   color: "#FF4081", bg: "#FFF0F8"  },
-  { key: "일상",   label: "☀️ 일상",   color: B.teal,    bg: "#E1F5EE"  },
+  { key: "일상",   label: "☀️ 일상",   color: B.green,    bg: "#E1F5EE"  },
 ];
 
 function getCatMeta(key) {
@@ -85,7 +80,7 @@ const BucketItem = ({ item, currentUser, index }) => {
       display: "flex", alignItems: "center", gap: 1,
       bgcolor: isDone ? "#F4FFF8" : "white",
       borderRadius: "14px",
-      border: isDone ? `1.5px solid ${B.teal}55` : `1.5px solid ${cat.color}22`,
+      border: isDone ? `1.5px solid ${B.green}55` : `1.5px solid ${cat.color}22`,
       px: 1.5, py: 1.5,
       cursor: "pointer", position: "relative", overflow: "hidden",
       transition: "transform 0.12s",
@@ -94,14 +89,14 @@ const BucketItem = ({ item, currentUser, index }) => {
       "&::before": isDone ? {
         content: '""', position: "absolute",
         left: 0, top: 0, bottom: 0, width: "4px",
-        bgcolor: B.teal, borderRadius: "4px 0 0 4px",
+        bgcolor: B.green, borderRadius: "4px 0 0 4px",
       } : {},
     }}>
       {/* 체크 원 */}
       <Box sx={{
         width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-        border: isDone ? `2px solid ${B.teal}` : `2px solid ${B.lavender}`,
-        bgcolor: isDone ? B.teal : "transparent",
+        border: isDone ? `2px solid ${B.green}` : `2px solid ${B.lavender}`,
+        bgcolor: isDone ? B.green : "transparent",
         display: "flex", alignItems: "center", justifyContent: "center",
         color: "white", fontSize: "14px", transition: "all 0.2s",
       }}>
@@ -128,7 +123,7 @@ const BucketItem = ({ item, currentUser, index }) => {
             {item.writer} 등록
           </Typography>
           {isDone && item.doneAt && (
-            <Typography sx={{ fontSize: "0.72rem", color: B.teal,
+            <Typography sx={{ fontSize: "0.72rem", color: B.green,
               fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
               · {fmtDate(item.doneAt)} 완료 🎉
             </Typography>
@@ -178,7 +173,7 @@ const AddForm = ({ currentUser, onClose }) => {
 
   return (
     <Box sx={{
-      bgcolor: "white", borderRadius: '14px',
+      bgcolor: B.surface, borderRadius: '14px',
       border: `1.5px solid ${B.pants}33`,
       p: 2, mb: 1.5,
       animation: "fadeInUp 0.25s ease both",
@@ -281,7 +276,7 @@ const BucketList = ({ currentUser }) => {
 
       {/* 진행률 카드 */}
       <Box sx={{
-        bgcolor: "white", borderRadius: '14px',
+        bgcolor: B.surface, borderRadius: '14px',
         border: `1.5px solid ${B.lavender}`,
         p: 2.2, mb: 2,
         backgroundImage: `radial-gradient(circle at 95% 5%, ${B.lavender} 0%, transparent 40%)`,
@@ -305,7 +300,7 @@ const BucketList = ({ currentUser }) => {
           </Box>
           <Box sx={{ textAlign: "right" }}>
             <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "2rem",
-              color: pct === 100 ? B.teal : B.pants, lineHeight: 1 }}>
+              color: pct === 100 ? B.green : B.pants, lineHeight: 1 }}>
               {pct}%
             </Typography>
             <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
@@ -317,16 +312,16 @@ const BucketList = ({ currentUser }) => {
         <Box sx={{ height: 10, bgcolor: B.lavender, borderRadius: '999px', overflow: "hidden", mb: 1 }}>
           <Box sx={{
             height: "100%", borderRadius: '999px',
-            bgcolor: pct === 100 ? B.teal : B.pants,
+            bgcolor: pct === 100 ? B.green : B.pants,
             width: `${pct}%`, transition: "width 0.8s ease",
           }} />
         </Box>
         {pct === 100 && total > 0 && (
           <Box sx={{
             textAlign: "center", py: 0.8, bgcolor: "#E8FFF2",
-            borderRadius: 2, border: `1px dashed ${B.teal}66`,
+            borderRadius: 2, border: `1px dashed ${B.green}66`,
           }}>
-            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.82rem", color: B.teal }}>
+            <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.82rem", color: B.green }}>
               🎉 모든 버킷리스트 완료! 최고의 커플 🐷💜
             </Typography>
           </Box>

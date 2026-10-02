@@ -7,30 +7,32 @@
 // 칩·배지 등)는 절대 backdrop-filter를 쓰지 않는다 — 대신 반투명 solid + box-shadow로 흉내낸다.
 // 화면당 동시 활성 backdrop-filter 패널은 3개를 넘기지 않는 것을 원칙으로 한다.
 
+// src/index.css의 CSS 변수를 가리키는 단일 소스 — 값은 기존과 동일, var() 참조만 됨
+// (다크 모드는 index.css의 [data-theme="dark"] 블록이 전파, 이 파일은 안 바뀜).
 export const calendarColor = {
-  accent: '#7B4FA6',
-  accentSoft: '#7B4FA61f',
-  onAccent: '#FFFFFF',
-  surface: '#FFFFFF',
-  border: '#E7E2ED',
-  divider: '#EFEBF3',
-  textPrimary: '#2E2A38',
-  textSecondary: '#8A8398',
-  textFaint: '#B7B0C4',
-  holiday: '#E2574F',
+  accent: 'var(--cal-accent)',
+  accentSoft: 'var(--cal-accent-soft)',
+  onAccent: 'var(--cal-on-accent)',
+  surface: 'var(--cal-surface)',
+  border: 'var(--cal-border)',
+  divider: 'var(--cal-divider)',
+  textPrimary: 'var(--cal-text-1)',
+  textSecondary: 'var(--cal-text-2)',
+  textFaint: 'var(--cal-text-3)',
+  holiday: 'var(--cal-holiday)',
 
   // 일정 카테고리 — 그리드 dot과 범례에 쓰는 색+모양 축(기존 유지 결정).
   category: {
-    기념일:   { hue: '#F0A93B', shape: 'circle' },
-    데이트:   { hue: '#EF5A5A', shape: 'square' },
-    개인일정: { hue: '#3B82F6', shape: 'diamond' },
+    기념일:   { hue: 'var(--cal-cat-anniversary)', shape: 'circle' },
+    데이트:   { hue: 'var(--cal-cat-date)', shape: 'square' },
+    개인일정: { hue: 'var(--cal-cat-personal)', shape: 'diamond' },
   },
 
   // 작성자(지수/현하/둘다) — 일정 "목록"의 작성자 배지 전용. 그리드 dot에는 안 씀.
   person: {
-    jisu:   { from: '#9B6FC7', to: '#7B4FA6' },
-    hyunha: { from: '#FF8FAB', to: '#FF6B9D' },
-    both:   { from: '#9B6FC7', to: '#FF6B9D' },
+    jisu:   { from: 'var(--cal-person-jisu-from)', to: 'var(--cal-person-jisu-to)' },
+    hyunha: { from: 'var(--cal-person-hyunha-from)', to: 'var(--cal-person-hyunha-to)' },
+    both:   { from: 'var(--cal-person-both-from)', to: 'var(--cal-person-both-to)' },
   },
 };
 

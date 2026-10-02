@@ -1,7 +1,22 @@
+// 의미 기반 색 토큰(src/index.css의 CSS 변수)을 가리키는 단일 소스.
+// 값 자체는 전부 기존에 각 화면에서 실제 쓰이던 리터럴 그대로다 — 여기서 var() 참조로
+// 바꾼다고 화면 색이 달라지지 않는다. 다크 모드는 index.css의 [data-theme="dark"]
+// 블록이 같은 변수 이름에 다른 값을 덮어써서 전파된다(이 파일은 안 바뀜).
+//
+// pink/green은 이름이 같은데 실제 쓰던 값이 2종류였다(한 번 더 확인: CoupleDDay.jsx·
+// CoupleCoupons.jsx의 "B.pink"는 person(현하) 식별색이 아니라 범용 비비드 포인트색,
+// EmotionThermometer.jsx의 "B.green"은 온도 게이지가 아니라 범용 성공/완료 신호색 —
+// 둘 다 같은 역할인데 값만 다르다. 현재 화면 색을 유지하려고 병합하지 않고 별도
+// 토큰(pinkVivid / successBright)으로 분리했다.
 export const B = {
-  skin: "#F5B8A0", pants: "#7B4FA6", dark: "#3D1F00",
-  cream: "#FFF8F2", peach: "#FFE4D4", lavender: "#EDE0F5",
-  accent: "#E8630A", pink: "#FF8FAB", green: "#1D9E75",
+  skin: "var(--c-skin)", pants: "var(--c-pants)", dark: "var(--c-dark)",
+  cream: "var(--c-cream)", peach: "var(--c-peach)", lavender: "var(--c-lavender)",
+  accent: "var(--c-accent)",
+  pink: "var(--c-pink)", pinkVivid: "var(--c-pink-vivid)",
+  green: "var(--c-success)", successBright: "var(--c-success-bright)",
+  error: "var(--c-error)", danger: "var(--c-error)",
+  warning: "var(--c-warning)", orange: "var(--c-orange)",
+  surface: "var(--c-surface-card)",
 };
 
 export const ROUTES = {

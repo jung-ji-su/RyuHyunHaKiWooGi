@@ -11,17 +11,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import confetti from "canvas-confetti";
 import { vibrate } from "./touchEffects";
-
-const B = {
-  pants:   "#7B4FA6",
-  skin:    "#F5B8A0",
-  cream:   "#FFF8F2",
-  peach:   "#FFE4D4",
-  lavender:"#EDE0F5",
-  accent:  "#E8630A",
-  dark:    "#3D1F00",
-  pink:    "#FF6B9D",
-};
+import { B } from "./lib/constants";
 
 const USERS = ["지수", "현하"];
 
@@ -83,7 +73,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
       setSpinning(false);
       vibrate([20, 10, 30, 10, 50]);
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.5 },
-        colors: [B.pants, B.pink, B.accent, "#fff"] });
+        colors: [B.pants, B.pinkVivid, B.accent, "#fff"] });
     }, 1200);
   };
 
@@ -95,7 +85,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
       px: 3,
     }} onClick={onClose}>
       <Box onClick={e => e.stopPropagation()} sx={{
-        bgcolor: "white", borderRadius: 5, p: 3.5, width: "100%", maxWidth: 340,
+        bgcolor: B.surface, borderRadius: 5, p: 3.5, width: "100%", maxWidth: 340,
         background: `linear-gradient(135deg, ${B.cream} 0%, white 60%)`,
         border: `2px solid ${B.lavender}`,
         boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
@@ -170,10 +160,10 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
             <Button fullWidth variant="outlined"
               onClick={() => { onUse(picked.id); onClose(); }}
               sx={{
-                borderColor: B.pink, color: B.pink,
+                borderColor: B.pinkVivid, color: B.pinkVivid,
                 borderRadius: "14px", py: 1,
                 fontFamily: "'Jua',sans-serif", fontSize: "0.9rem",
-                "&:hover": { bgcolor: B.pink + "11" },
+                "&:hover": { bgcolor: B.pinkVivid + "11" },
               }}
             >
               ✓ 이 쿠폰 바로 사용하기
@@ -210,7 +200,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
     await onIssue(title.trim(), cat);
     setText(""); setSelCat("wish"); setOpen(false); setLoading(false);
     confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 },
-      colors: [B.pants, B.pink, "#fff"] });
+      colors: [B.pants, B.pinkVivid, "#fff"] });
     vibrate([15, 10, 25]);
   };
 
@@ -280,7 +270,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
             onKeyDown={e => e.key === "Enter" && handleIssue(text, selCat)}
             sx={{
               "& .MuiOutlinedInput-root": {
-                borderRadius: 2, bgcolor: "white",
+                borderRadius: 2, bgcolor: B.surface,
                 fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.85rem",
                 "& fieldset": { borderColor: B.lavender },
                 "&:hover fieldset": { borderColor: B.pants },
@@ -334,7 +324,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
           : catMeta.key === "food"  ? "#FF8A65"
           : catMeta.key === "date"  ? B.pants
           : catMeta.key === "chore" ? "#66BB6A"
-          : catMeta.key === "hug"   ? B.pink
+          : catMeta.key === "hug"   ? B.pinkVivid
           : catMeta.key === "wish"  ? B.accent
           : "#90CAF9",
       }} />
@@ -411,10 +401,10 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
               <Button variant="contained" size="small"
                 onClick={() => onUse(coupon.id)}
                 sx={{
-                  bgcolor: B.pink, borderRadius: "10px",
+                  bgcolor: B.pinkVivid, borderRadius: "10px",
                   fontFamily: "'Jua',sans-serif", fontSize: "0.78rem",
                   px: 1.5, py: 0.5, minWidth: 0,
-                  boxShadow: `0 2px 8px ${B.pink}44`,
+                  boxShadow: `0 2px 8px ${B.pinkVivid}44`,
                   "&:hover": { bgcolor: "#E05588" },
                 }}
               >

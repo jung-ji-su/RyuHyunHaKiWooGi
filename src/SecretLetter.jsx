@@ -16,16 +16,7 @@ import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a4368
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png";
 import buri9 from "./assets/KakaoTalk_20260316_133007779.png";
 
-// ── 부리부리 팔레트 ───────────────────────────────────────────────
-const B = {
-  pants:   "#7B4FA6",
-  skin:    "#F5B8A0",
-  cream:   "#FFF8F2",
-  peach:   "#FFE4D4",
-  lavender:"#EDE0F5",
-  accent:  "#E8630A",
-  dark:    "#3D1F00",
-};
+import { B } from "./lib/constants";
 
 // 봉투 색상 옵션
 const ENVELOPE_COLORS = [
@@ -304,7 +295,7 @@ const LetterCard = ({ letter, currentUser }) => {
         {isOpened && (
           <Box>
             <Box sx={{
-              bgcolor: "white", borderRadius: '14px', p: 2,
+              bgcolor: B.surface, borderRadius: '14px', p: 2,
               border: `1.5px solid ${c.border}33`,
               mb: letter.reply ? 1.5 : 0,
               position: "relative",
@@ -356,7 +347,7 @@ const LetterCard = ({ letter, currentUser }) => {
                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) handleReply(); }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      borderRadius: 5, bgcolor: "white",
+                      borderRadius: 5, bgcolor: B.surface,
                       fontFamily: "'Noto Sans KR',sans-serif",
                       "& fieldset": { borderColor: c.border + "44" },
                       "&:hover fieldset": { borderColor: c.border },
@@ -500,7 +491,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           onChange={(e) => setContent(e.target.value)}
           sx={{
             "& .MuiOutlinedInput-root": {
-              bgcolor: "white", borderRadius: 3,
+              bgcolor: B.surface, borderRadius: 3,
               fontFamily: "'Noto Sans KR',sans-serif",
               fontSize: "0.9rem",
               "& fieldset": { borderColor: B.pants + "33" },
@@ -543,7 +534,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
               sx={{
                 mt: 1,
                 "& .MuiOutlinedInput-root": {
-                  borderRadius: 3, bgcolor: "white",
+                  borderRadius: 3, bgcolor: B.surface,
                   "& fieldset": { borderColor: B.pants + "44" },
                   "&.Mui-focused fieldset": { borderColor: B.pants },
                 }
@@ -557,7 +548,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           onClick={() => setIsAnonymous(!isAnonymous)}
           sx={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
-            bgcolor: "white", borderRadius: 3, px: 2, py: 1.5,
+            bgcolor: B.surface, borderRadius: 3, px: 2, py: 1.5,
             border: `1.5px solid ${B.pants}22`, cursor: "pointer",
             "&:active": { transform: "scale(0.98)" },
             transition: "transform 0.1s",
@@ -584,7 +575,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           }}>
             <Box sx={{
               position: "absolute", width: 18, height: 18,
-              borderRadius: "50%", bgcolor: "white",
+              borderRadius: "50%", bgcolor: B.surface,
               top: 3, left: isAnonymous ? 24 : 3,
               transition: "left 0.25s",
               boxShadow: "0 1px 4px #0002",

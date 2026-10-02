@@ -1,71 +1,75 @@
+/* ============================================================
+   의미 기반(semantic) 색 토큰 — 라이트/다크 전환의 단일 소스.
+   역할 이름(surface/text/accent/state 등) 기준. 색 이름 기준 아님.
+   다크 값은 B단계에서 [data-theme="dark"] 블록에 추가한다.
+   라이트 값은 기존 앱 전체에서 실제 쓰이던 리터럴을 그대로 옮긴 것이라
+   이 커밋 자체는 화면에 보이는 색이 바뀌지 않는다.
+   ============================================================ */
+:root {
+  color-scheme: light;
+
+  /* 브랜드 코어 */
+  --c-pants: #7B4FA6;
+  --c-accent: #E8630A;
+  --c-dark: #3D1F00;
+  --c-skin: #F5B8A0;
+  --c-cream: #FFF8F2;
+  --c-peach: #FFE4D4;
+  --c-lavender: #EDE0F5;
+
+  /* 핑크 2종 — 역할이 달라 병합하지 않음(소프트 액센트 / 비비드 액센트) */
+  --c-pink: #FF8FAB;
+  --c-pink-vivid: #FF6B9D;
+
+  /* 상태색 — success 2종도 실제 쓰임이 달라(일반 성공 / 감정온도 쪽의 밝은 초록) 병합 안 함 */
+  --c-success: #1D9E75;
+  --c-success-bright: #43A047;
+  --c-error: #E53935;
+  --c-warning: #FFB830;
+  --c-orange: #FF6B35;
+
+  /* surface — 불투명 카드/패널 배경 (page 배경은 GlobalStyle의 그라디언트, 손대지 않음) */
+  --c-surface-card: #ffffff;
+
+  /* 캘린더 전용 토큰(calendarTokens.js) — 기존 값 그대로 var화 */
+  --cal-accent: #7B4FA6;
+  --cal-accent-soft: #7B4FA61f;
+  --cal-on-accent: #FFFFFF;
+  --cal-surface: #FFFFFF;
+  --cal-border: #E7E2ED;
+  --cal-divider: #EFEBF3;
+  --cal-text-1: #2E2A38;
+  --cal-text-2: #8A8398;
+  --cal-text-3: #B7B0C4;
+  --cal-holiday: #E2574F;
+  --cal-cat-anniversary: #F0A93B;
+  --cal-cat-date: #EF5A5A;
+  --cal-cat-personal: #3B82F6;
+  --cal-person-jisu-from: #9B6FC7;
+  --cal-person-jisu-to: #7B4FA6;
+  --cal-person-hyunha-from: #FF8FAB;
+  --cal-person-hyunha-to: #FF6B9D;
+  --cal-person-both-from: #9B6FC7;
+  --cal-person-both-to: #FF6B9D;
+}
+
+/* Vite 기본 템플릿 리셋(폰트/렌더링)만 유지 — 색 관련 보일러플레이트는 제거(GlobalStyle.jsx의
+   실제 렌더링 배경과 충돌하던 죽은 규칙이었음, src/index.css 감사 결과) */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
 body {
   font-family: 'Gamja+Flower', 'Hi Melody', cursive !important;
-  background-color: #fff9fa;
-  /* 배경도 살짝 핑크빛 도는 화이트로 */
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
 }

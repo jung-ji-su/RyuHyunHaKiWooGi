@@ -1,10 +1,6 @@
 import { useMemo } from 'react';
 import { Box, Typography, Stack, Drawer, Divider } from '@mui/material';
-
-const B = {
-  pants: '#7B4FA6', accent: '#E8630A', cream: '#FFF8F2',
-  lavender: '#EDE0F5', dark: '#3D1F00', peach: '#FFE4D4',
-};
+import { B } from './lib/constants';
 
 const EMOTION_LABELS = ['행복','신남','울음','슬픔','화남','설렘','피곤','최고'];
 
@@ -79,7 +75,7 @@ function getBestMonth(temperatures) {
 
 const StatCard = ({ emoji, label, value, color = B.pants }) => (
   <Box sx={{
-    flex: 1, bgcolor: 'white', borderRadius: 2.5, p: '12px 8px',
+    flex: 1, bgcolor: B.surface, borderRadius: 2.5, p: '12px 8px',
     textAlign: 'center', border: `1.5px solid ${color}18`,
     boxShadow: `0 2px 8px ${color}0a`,
   }}>
@@ -184,7 +180,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
             AI 분석 결과
           </Typography>
           <Box sx={{
-            bgcolor: 'white', borderRadius: '14px', p: '14px 16px',
+            bgcolor: B.surface, borderRadius: '14px', p: '14px 16px',
             border: `1.5px solid ${B.pants}22`,
             boxShadow: `0 2px 12px ${B.pants}0c`,
           }}>

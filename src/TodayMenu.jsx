@@ -11,12 +11,7 @@ import TimerIcon from "@mui/icons-material/Timer";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
-const B = {
-  pants: "#7B4FA6", skin: "#F5B8A0", cream: "#FFF8F2",
-  peach: "#FFE4D4", lavender: "#EDE0F5", accent: "#E8630A",
-  dark: "#3D1F00", pink: "#FF8FAB", green: "#1D9E75",
-  orange: "#FF6B35", yellow: "#FFB830",
-};
+import { B } from "./lib/constants";
 
 
 
@@ -153,7 +148,7 @@ const TodayMenu = () => {
       {rolling && menu && (
         <Box sx={{
           textAlign: "center", py: 3, mb: 2.5,
-          bgcolor: "white", borderRadius: '14px',
+          bgcolor: B.surface, borderRadius: '14px',
           border: `2px solid ${B.orange}44`,
           animation: "pulse 0.1s ease infinite",
         }}>
@@ -201,7 +196,7 @@ const TodayMenu = () => {
               onClick={() => { setMenu(m); setStep("result"); setChecked({}); }}
               sx={{
                 display: "flex", alignItems: "center", gap: 1.5,
-                bgcolor: "white", borderRadius: 2.5, px: 2, py: 1,
+                bgcolor: B.surface, borderRadius: 2.5, px: 2, py: 1,
                 border: `1px solid ${B.orange}18`, cursor: "pointer",
                 transition: "all 0.12s",
                 "&:active": { transform: "scale(0.98)", bgcolor: B.peach + "55" },
@@ -358,7 +353,7 @@ const TodayMenu = () => {
 
         {/* 재료 & 장보기 체크리스트 */}
         <Box sx={{
-          bgcolor: "white", borderRadius: '14px', p: 2, mb: 2.5,
+          bgcolor: B.surface, borderRadius: '14px', p: 2, mb: 2.5,
           border: `1px solid ${B.orange}22`
         }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
@@ -441,7 +436,7 @@ const TodayMenu = () => {
 
         {/* 레시피 단계 */}
         <Box sx={{
-          bgcolor: "white", borderRadius: '14px', p: 2,
+          bgcolor: B.surface, borderRadius: '14px', p: 2,
           border: `1px solid ${B.pants}22`
         }}>
           <Typography sx={{
