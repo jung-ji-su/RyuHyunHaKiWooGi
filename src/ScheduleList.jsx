@@ -220,7 +220,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                 {/* 중요 뱃지 */}
                 {isImportant && !isPast && (
                   <Box sx={{
-                    px: 0.8, py: "1px", borderRadius: "10px",
+                    px: 0.8, py: "1px", borderRadius: '999px',
                     background: `linear-gradient(120deg, ${meta.color}, #ff4daa)`,
                     color: "white", fontSize: "0.72rem", fontWeight: 700,
                     fontFamily: "'Noto Sans KR',sans-serif",
@@ -259,7 +259,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                 </Typography>
                 {/* 카테고리 칩 */}
                 <Box sx={{
-                  px: 0.8, py: "1px", borderRadius: "10px",
+                  px: 0.8, py: "1px", borderRadius: '999px',
                   bgcolor: meta.bg, color: meta.color,
                   fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
@@ -272,7 +272,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
             {/* 오른쪽: D-Day + 삭제 */}
             <Stack alignItems="flex-end" gap={0.6} sx={{ flexShrink: 0 }}>
               <Box sx={{
-                px: 1, py: "3px", borderRadius: "10px",
+                px: 1, py: "3px", borderRadius: '999px',
                 bgcolor: dday === "D-Day"
                   ? meta.color : isPast ? "#E0E0E0" : meta.bg,
                 color: dday === "D-Day" ? "white" : isPast ? "#999" : meta.color,
@@ -341,7 +341,7 @@ const ScheduleList = ({ currentUser }) => {
 
       {/* 요약 카드 */}
       <Box sx={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1.2, mb:2.5 }}>
-        <Box sx={{ bgcolor:"white", borderRadius:3, p:1.5,
+        <Box sx={{ bgcolor:"white", borderRadius: '14px', p:1.5,
           border:`1.5px solid ${B.pants}22`,
           display:"flex", alignItems:"center", gap:1.2 }}>
           <Box component="img" src={buri6} alt=""
@@ -354,7 +354,7 @@ const ScheduleList = ({ currentUser }) => {
               fontFamily: "'Noto Sans KR',sans-serif" }}>전체 일정</Typography>
           </Box>
         </Box>
-        <Box sx={{ bgcolor:"white", borderRadius:3, p:1.5,
+        <Box sx={{ bgcolor:"white", borderRadius: '14px', p:1.5,
           border:`1.5px solid ${B.accent}22`,
           display:"flex", alignItems:"center", gap:1.2 }}>
           <Box component="img" src={buri1} alt=""
@@ -380,7 +380,7 @@ const ScheduleList = ({ currentUser }) => {
           <Box key={key}
             onClick={() => { setFilter(key); vibrate(12); }}
             sx={{
-              px:1.4, py:"5px", borderRadius:"20px", cursor:"pointer",
+              px:1.4, py:"5px", borderRadius: '999px', cursor:"pointer",
               fontFamily: "'Noto Sans KR',sans-serif", fontSize:"0.75rem", fontWeight:700,
               bgcolor: filter===key ? color : "white",
               color:   filter===key ? "white" : color,
@@ -415,7 +415,7 @@ const ScheduleList = ({ currentUser }) => {
               {/* 그룹 헤더 */}
               <Stack direction="row" alignItems="center" gap={1} sx={{ mb:1.2 }}>
                 <Box sx={{
-                  px:1.4, py:"3px", borderRadius:"20px",
+                  px:1.4, py:"3px", borderRadius: '999px',
                   bgcolor: groupLabel === "다가오는 일정" ? "#E8F5E9" : groupColor,
                   color: groupLabel === "다가오는 일정" ? "#639922" : "white",
                 }}>

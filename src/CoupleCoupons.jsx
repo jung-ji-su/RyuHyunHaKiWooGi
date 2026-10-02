@@ -115,7 +115,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
 
         {/* 결과 박스 */}
         <Box sx={{
-          minHeight: 80, borderRadius: 3, mb: 2.5,
+          minHeight: 80, borderRadius: '14px', mb: 2.5,
           border: `2px dashed ${B.lavender}`,
           bgcolor: B.lavender + "33",
           display: "flex", alignItems: "center", justifyContent: "center",
@@ -220,12 +220,12 @@ const IssueForm = ({ currentUser, onIssue }) => {
       <Box sx={{
         display: "flex", gap: 1, overflowX: "auto", pb: 1, mb: 1,
         "&::-webkit-scrollbar": { height: "4px" },
-        "&::-webkit-scrollbar-thumb": { bgcolor: B.lavender, borderRadius: 10 },
+        "&::-webkit-scrollbar-thumb": { bgcolor: B.lavender, borderRadius: '999px' },
       }}>
         <Button size="small" variant="contained"
           onClick={() => { setOpen(o => !o); setTimeout(() => inputRef.current?.focus(), 150); }}
           sx={{
-            borderRadius: 20, whiteSpace: "nowrap", flexShrink: 0,
+            borderRadius: '999px', whiteSpace: "nowrap", flexShrink: 0,
             bgcolor: open ? B.accent : B.pants, px: 2,
             fontFamily: "'Jua',sans-serif", fontSize: "0.78rem",
             boxShadow: `0 2px 8px ${B.pants}33`,
@@ -239,7 +239,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
       {/* 직접 입력 폼 */}
       <Collapse in={open}>
         <Box sx={{
-          p: 2, borderRadius: 3,
+          p: 2, borderRadius: '14px',
           border: `1.5px solid ${B.lavender}`,
           bgcolor: B.cream,
           display: "flex", flexDirection: "column", gap: 1.5,
@@ -256,7 +256,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
               <Box key={cat.key}
                 onClick={() => setSelCat(cat.key)}
                 sx={{
-                  px: 1.2, py: "4px", borderRadius: "20px", cursor: "pointer",
+                  px: 1.2, py: "4px", borderRadius: '999px', cursor: "pointer",
                   border: `1.5px solid ${selCat === cat.key ? B.pants : B.lavender}`,
                   bgcolor: selCat === cat.key ? B.pants : "white",
                   color:   selCat === cat.key ? "white"  : B.dark + "88",
@@ -320,7 +320,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
 
   return (
     <Box sx={{
-      borderRadius: 3, overflow: "hidden",
+      borderRadius: '14px', overflow: "hidden",
       border: `2px dashed ${isUsed || expired ? "#DDD" : B.lavender}`,
       bgcolor: isUsed || expired ? "#F9F9F9" : "white",
       opacity: isUsed || expired ? 0.7 : 1,
@@ -368,7 +368,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
               </Typography>
               {isAvailable && left <= 3 && (
                 <Box sx={{
-                  px: 0.8, py: "1px", borderRadius: "10px",
+                  px: 0.8, py: "1px", borderRadius: '999px',
                   bgcolor: "#FF525211", color: "#E53935",
                   fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
@@ -378,7 +378,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
               )}
               {expired && (
                 <Box sx={{
-                  px: 0.8, py: "1px", borderRadius: "10px",
+                  px: 0.8, py: "1px", borderRadius: '999px',
                   bgcolor: "#88888811", color: "#888",
                   fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
@@ -388,7 +388,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
               )}
               {isUsed && (
                 <Box sx={{
-                  px: 0.8, py: "1px", borderRadius: "10px",
+                  px: 0.8, py: "1px", borderRadius: '999px',
                   bgcolor: "#43A04711", color: "#43A047",
                   fontSize: "0.72rem", fontWeight: 700,
                   fontFamily: "'Noto Sans KR',sans-serif",
@@ -423,7 +423,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
             ) : (
               !isUsed && !expired && (
                 <Box sx={{
-                  px: 1, py: "3px", borderRadius: "10px",
+                  px: 1, py: "3px", borderRadius: '999px',
                   border: `1px solid ${B.lavender}`,
                   color: B.pants + "88",
                   fontSize: "0.72rem", fontFamily: "'Noto Sans KR',sans-serif",
@@ -522,7 +522,7 @@ const CoupleCoupons = ({ currentUser }) => {
           size="small" variant="outlined"
           onClick={() => setShowRoulette(true)}
           sx={{
-            borderRadius: 20, borderColor: B.accent, color: B.accent,
+            borderRadius: '999px', borderColor: B.accent, color: B.accent,
             fontFamily: "'Jua',sans-serif", fontSize: "0.78rem", px: 1.8,
             "&:hover": { bgcolor: B.accent + "11" },
           }}
@@ -540,7 +540,7 @@ const CoupleCoupons = ({ currentUser }) => {
           <Box key={t.key}
             onClick={() => setTab(t.key)}
             sx={{
-              px: 1.6, py: "5px", borderRadius: "20px", cursor: "pointer",
+              px: 1.6, py: "5px", borderRadius: '999px', cursor: "pointer",
               bgcolor: tab === t.key ? B.pants : B.lavender,
               color:   tab === t.key ? "white"  : B.pants,
               fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,

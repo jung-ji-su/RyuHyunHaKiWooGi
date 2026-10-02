@@ -68,7 +68,7 @@ const GameWishList = ({ currentUser }) => {
       {/* ── 헤더 ──────────────────────────────────────── */}
       <Box sx={{
         display: "flex", alignItems: "center", gap: 2, mb: 3,
-        p: 2, borderRadius: 4,
+        p: 2, borderRadius: '14px',
         background: `linear-gradient(135deg, ${B.lavender} 0%, ${B.peach} 100%)`,
         border: `2px solid ${B.accent}`,
       }}>
@@ -93,7 +93,7 @@ const GameWishList = ({ currentUser }) => {
           flex: 1,
           bgcolor: B.cream,
           border: `2px solid ${B.accent}33`,
-          borderRadius: 3,
+          borderRadius: '14px',
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
             <Typography sx={{
@@ -113,7 +113,7 @@ const GameWishList = ({ currentUser }) => {
           flex: 1,
           bgcolor: B.lavender,
           border: `2px solid ${B.pants}33`,
-          borderRadius: 3,
+          borderRadius: '14px',
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
             <Typography sx={{
@@ -133,7 +133,7 @@ const GameWishList = ({ currentUser }) => {
           flex: 1,
           bgcolor: B.peach,
           border: `2px solid ${B.skin}`,
-          borderRadius: 3,
+          borderRadius: '14px',
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
             <Typography sx={{
@@ -169,7 +169,7 @@ const GameWishList = ({ currentUser }) => {
           <Card sx={{
             bgcolor: B.cream,
             border: `2px dashed ${B.pants}33`,
-            borderRadius: 3,
+            borderRadius: '14px',
             p: 3,
             textAlign: "center",
           }}>
@@ -190,7 +190,7 @@ const GameWishList = ({ currentUser }) => {
                   <Card sx={{
                     bgcolor: wish.wishCompleted ? B.cream : B.lavender,
                     border: `2px solid ${wish.wishCompleted ? B.dark + "22" : B.pants}`,
-                    borderRadius: 3,
+                    borderRadius: '14px',
                     opacity: wish.wishCompleted ? 0.6 : 1,
                   }}>
                     <CardContent>
@@ -269,7 +269,7 @@ const GameWishList = ({ currentUser }) => {
           <Card sx={{
             bgcolor: B.cream,
             border: `2px dashed ${B.accent}33`,
-            borderRadius: 3,
+            borderRadius: '14px',
             p: 3,
             textAlign: "center",
           }}>
@@ -292,7 +292,7 @@ const GameWishList = ({ currentUser }) => {
                   <Card sx={{
                     bgcolor: wish.wishCompleted ? B.cream : B.peach,
                     border: `2px solid ${wish.wishCompleted ? B.dark + "22" : B.accent}`,
-                    borderRadius: 3,
+                    borderRadius: '14px',
                     opacity: wish.wishCompleted ? 0.6 : 1,
                   }}>
                     <CardContent>

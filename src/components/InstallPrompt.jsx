@@ -80,7 +80,7 @@ export default function InstallPrompt({ onRequestPermission }) {
     <Box sx={{
       position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
       zIndex: 1400, width: '90%', maxWidth: 380,
-      bgcolor: B.pants, borderRadius: 4, p: 2,
+      bgcolor: B.pants, borderRadius: '14px', p: 2,
       boxShadow: `0 8px 32px ${B.pants}77`,
       display: 'flex', flexDirection: 'column', gap: 1.5,
     }}>

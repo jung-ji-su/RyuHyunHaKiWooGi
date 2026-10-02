@@ -5,7 +5,7 @@ import { B } from '../lib/constants';
 export default function SectionCard({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children, noPadding }) {
   return (
     <Box sx={{
-      bgcolor: bgColor || B.cream, borderRadius: 4,
+      bgcolor: bgColor || B.cream, borderRadius: '14px',
       border: `1.5px solid ${borderColor || B.pants}33`,
       position: 'relative', overflow: 'visible',
       animation: 'fadeInUp 0.4s ease both',
@@ -40,7 +40,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
         {onMore && (
           <Box onClick={onMore} sx={{
             display: 'flex', alignItems: 'center', gap: 0.4,
-            px: 1.2, py: '3px', borderRadius: '20px',
+            px: 1.2, py: '3px', borderRadius: '999px',
             bgcolor: (borderColor || B.pants) + '18',
             color: borderColor || B.pants,
             fontSize: '0.72rem', fontWeight: 700,

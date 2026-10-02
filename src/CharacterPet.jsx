@@ -197,7 +197,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
 
   return (
     <Box sx={{
-      flex: 1, borderRadius: 3, p: '12px 10px', textAlign: 'center',
+      flex: 1, borderRadius: '14px', p: '12px 10px', textAlign: 'center',
       bgcolor: isCurrentUser ? `${stage.color}0d` : 'white',
       border: `1.5px solid ${isCurrentUser ? stage.color + '44' : B.dark + '0e'}`,
       position: 'relative', transition: 'all 0.3s',
@@ -206,7 +206,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
       {isCurrentUser && (
         <Box sx={{
           position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%)',
-          px: 1.2, py: 0.1, borderRadius: 10, bgcolor: stage.color,
+          px: 1.2, py: 0.1, borderRadius: '999px', bgcolor: stage.color,
         }}>
           <Typography sx={{ fontSize: '0.52rem', color: 'white', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, whiteSpace: 'nowrap' }}>
             나
@@ -266,7 +266,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
                 {/* 반짝 하이라이트 */}
                 <Box sx={{
                   position: 'absolute', top: 4, left: 8,
-                  width: 18, height: 4, borderRadius: 10,
+                  width: 18, height: 4, borderRadius: '999px',
                   bgcolor: 'rgba(255,255,255,0.7)',
                   pointerEvents: 'none',
                 }} />
@@ -339,7 +339,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
       </Typography>
 
       {/* 단계 칩 */}
-      <Box sx={{ display: 'inline-block', px: 0.8, py: 0.2, borderRadius: 10, mt: 0.4, mb: 0.8, bgcolor: `${stage.color}18` }}>
+      <Box sx={{ display: 'inline-block', px: 0.8, py: 0.2, borderRadius: '999px', mt: 0.4, mb: 0.8, bgcolor: `${stage.color}18` }}>
         <Typography sx={{ fontSize: '0.72rem', color: stage.color, fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
           {stage.emoji} {stage.label}
         </Typography>
@@ -512,7 +512,7 @@ export default function CharacterPet({ currentUser }) {
 
   return (
     <Paper elevation={0} sx={{
-      p: 2, borderRadius: 4, overflow: 'visible',
+      p: 2, borderRadius: '14px', overflow: 'visible',
       bgcolor: B.cream,
       border: `1.5px solid ${B.pants}18`,
       backgroundImage: `radial-gradient(circle at 90% 5%, ${B.lavender}55 0%, transparent 40%)`,
@@ -534,7 +534,7 @@ export default function CharacterPet({ currentUser }) {
               }
               onClick={() => currentUser === ADMIN_USER ? setManageOpen(true) : setAddOpen(true)}
               sx={{
-                borderRadius: 10,
+                borderRadius: '999px',
                 bgcolor: B.pants,
                 color: 'white',
                 fontSize: '0.72rem',
@@ -552,7 +552,7 @@ export default function CharacterPet({ currentUser }) {
             </Button>
             <Box sx={{
               position: 'absolute', top: -5, right: -6,
-              bgcolor: '#FF4444', borderRadius: 10,
+              bgcolor: '#FF4444', borderRadius: '999px',
               px: '4px', py: '1px',
               border: '1.5px solid white',
               pointerEvents: 'none',
@@ -568,7 +568,7 @@ export default function CharacterPet({ currentUser }) {
         {bothCheckedIn && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 0.9 }}>
             <Box sx={{
-              px: 1.6, py: 0.35, borderRadius: 10,
+              px: 1.6, py: 0.35, borderRadius: '999px',
               bgcolor: '#E8F5E9', border: '1px solid #A5D6A7',
               display: 'inline-flex', alignItems: 'center', gap: 0.5,
             }}>
@@ -604,7 +604,7 @@ export default function CharacterPet({ currentUser }) {
             disabled={jiltaSent}
             onClick={sendJilta}
             sx={{
-              borderRadius: 10, fontSize: '0.72rem', px: 1.8, py: 0.5,
+              borderRadius: '999px', fontSize: '0.72rem', px: 1.8, py: 0.5,
               fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
               borderColor: jiltaSent ? 'transparent' : B.accent + '66',
               color: jiltaSent ? B.dark + '55' : B.accent,
@@ -633,7 +633,7 @@ export default function CharacterPet({ currentUser }) {
       {/* ── 내 부활 미션 카드 ────────────────────────────────── */}
       {mySkull && myMission && (
         <Box sx={{
-          p: 1.5, borderRadius: 3,
+          p: 1.5, borderRadius: '14px',
           bgcolor: '#FFF8E1', border: '1.5px solid #FFB300',
           position: 'relative', overflow: 'hidden',
         }}>

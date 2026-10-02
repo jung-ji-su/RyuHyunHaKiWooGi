@@ -193,7 +193,7 @@ const LetterCard = ({ letter, currentUser }) => {
   return (
     <Box ref={cardRef}
       sx={{
-        borderRadius: 4,
+        borderRadius: '14px',
         bgcolor: B.cream,
         border: `2px solid ${c.border}55`,
         overflow: "visible",
@@ -248,7 +248,7 @@ const LetterCard = ({ letter, currentUser }) => {
           <Box sx={{
             textAlign: "center", py: 2,
             border: `1.5px dashed ${c.border}66`,
-            borderRadius: 3, bgcolor: c.bg + "66",
+            borderRadius: '14px', bgcolor: c.bg + "66",
           }}>
             {isReady ? (
               <Button
@@ -256,7 +256,7 @@ const LetterCard = ({ letter, currentUser }) => {
                 onPointerDown={(e) => createBuriPang(e)}
                 onClick={handleOpen}
                 sx={{
-                  bgcolor: c.border, borderRadius: "20px", px: 4, py: 1,
+                  bgcolor: c.border, borderRadius: '999px', px: 4, py: 1,
                   fontFamily: "'Jua',sans-serif", fontSize: "0.95rem",
                   position: "relative", overflow: "hidden",
                   boxShadow: `0 4px 16px ${c.border}55`,
@@ -290,7 +290,7 @@ const LetterCard = ({ letter, currentUser }) => {
           <Box sx={{
             textAlign: "center", py: 2,
             border: `1.5px dashed ${c.border}44`,
-            borderRadius: 3, bgcolor: c.bg + "44",
+            borderRadius: '14px', bgcolor: c.bg + "44",
           }}>
             <Box component="img" src={buri2} alt=""
               sx={{ width: 44, mb: 0.5, opacity: 0.5, animation: "buriFloat1 3s ease-in-out infinite" }} />
@@ -304,7 +304,7 @@ const LetterCard = ({ letter, currentUser }) => {
         {isOpened && (
           <Box>
             <Box sx={{
-              bgcolor: "white", borderRadius: 3, p: 2,
+              bgcolor: "white", borderRadius: '14px', p: 2,
               border: `1.5px solid ${c.border}33`,
               mb: letter.reply ? 1.5 : 0,
               position: "relative",
@@ -330,7 +330,7 @@ const LetterCard = ({ letter, currentUser }) => {
             {/* 답장 표시 */}
             {letter.reply && (
               <Box sx={{
-                bgcolor: c.bg, borderRadius: 3, p: 1.5,
+                bgcolor: c.bg, borderRadius: '14px', p: 1.5,
                 border: `1.5px solid ${c.border}44`,
                 mb: 1,
               }}>
@@ -440,7 +440,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
 
   return (
     <Box sx={{
-      bgcolor: B.cream, borderRadius: 4,
+      bgcolor: B.cream, borderRadius: '14px',
       border: `2px solid ${B.pants}33`,
       overflow: "hidden",
       animation: "fadeInUp 0.35s ease both",
@@ -521,7 +521,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
               <Box key={i}
                 onClick={() => setOpenPreset(i)}
                 sx={{
-                  px: 1.5, py: 0.6, borderRadius: "20px", cursor: "pointer",
+                  px: 1.5, py: 0.6, borderRadius: '999px', cursor: "pointer",
                   fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.75rem", fontWeight: 700,
                   bgcolor: openPreset === i ? B.pants : B.lavender,
                   color: openPreset === i ? "white" : B.pants,
@@ -596,7 +596,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
         <Box sx={{
           display: "flex", alignItems: "center", gap: 1.5,
           bgcolor: ENVELOPE_COLORS.find(c => c.id === envColor)?.bg + "88",
-          borderRadius: 3, px: 2, py: 1.5,
+          borderRadius: '14px', px: 2, py: 1.5,
           border: `1.5px dashed ${ENVELOPE_COLORS.find(c => c.id === envColor)?.border}55`,
         }}>
           <EnvelopeSVG color={envColor} isOpen={false} size={44} />
@@ -626,7 +626,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           disabled={!content.trim() || loading}
           onPointerDown={(e) => { if (content.trim()) createBuriPang(e); }}
           sx={{
-            bgcolor: B.pants, borderRadius: "20px", py: 1.2,
+            bgcolor: B.pants, borderRadius: '999px', py: 1.2,
             fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             position: "relative", overflow: "hidden",
             boxShadow: `0 4px 16px ${B.pants}44`,
@@ -691,7 +691,7 @@ const SecretLetter = ({ currentUser }) => {
           onPointerDown={(e) => createBuriPang(e)}
           sx={{
             bgcolor: showWrite ? B.skin : B.pants,
-            borderRadius: "20px", px: 2,
+            borderRadius: '999px', px: 2,
             fontFamily: "'Jua',sans-serif", fontSize: "0.8rem",
             position: "relative", overflow: "hidden",
             boxShadow: `0 3px 10px ${B.pants}33`,

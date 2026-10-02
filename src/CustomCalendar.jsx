@@ -312,7 +312,7 @@ export default function CustomCalendar({
         {Object.keys(C.category).map(label => (
           <Box key={label} sx={{
             display: 'flex', alignItems: 'center', gap: '5px',
-            px: '9px', py: '4px', borderRadius: '20px',
+            px: '9px', py: '4px', borderRadius: '999px',
             ...glassSmallSx(),
           }}>
             <ShapeDot category={label} size={6} />
@@ -323,7 +323,7 @@ export default function CustomCalendar({
         ))}
         <Box sx={{
           display: 'flex', alignItems: 'center', gap: '5px',
-          px: '9px', py: '4px', borderRadius: '20px',
+          px: '9px', py: '4px', borderRadius: '999px',
           ...glassSmallSx(),
         }}>
           <FavoriteIcon sx={{ fontSize: 9, color: C.accent }} />
@@ -333,7 +333,7 @@ export default function CustomCalendar({
         </Box>
         <Box sx={{
           display: 'flex', alignItems: 'center', gap: '5px',
-          px: '9px', py: '4px', borderRadius: '20px',
+          px: '9px', py: '4px', borderRadius: '999px',
           ...glassSmallSx(),
         }}>
           <LockIcon sx={{ fontSize: 9, color: C.textFaint }} />

@@ -601,7 +601,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
     }}>
       {/* 내 뱃지 */}
       {isMe && (
-        <Box sx={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', px: 1, py: '1px', borderRadius: 10, bgcolor: stage.color }}>
+        <Box sx={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', px: 1, py: '1px', borderRadius: '999px', bgcolor: stage.color }}>
           <Typography sx={{ fontSize: '0.48rem', color: 'white', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>나</Typography>
         </Box>
       )}
@@ -663,7 +663,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
         <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '0.82rem', color: stage.color, lineHeight: 1 }}>
           {user}
         </Typography>
-        <Box sx={{ px: '5px', py: '1px', borderRadius: 10, bgcolor: `${stage.color}20` }}>
+        <Box sx={{ px: '5px', py: '1px', borderRadius: '999px', bgcolor: `${stage.color}20` }}>
           <Typography sx={{ fontSize: '0.72rem', color: stage.color, fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1 }}>
             Lv.{data.level}
           </Typography>
@@ -722,7 +722,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {isDead && isMe && (
         <Button size="small" onClick={() => onReviveUser(user)}
           sx={{
-            width: '100%', borderRadius: 10, fontSize: '0.72rem', py: '5px', mb: '8px',
+            width: '100%', borderRadius: '999px', fontSize: '0.72rem', py: '5px', mb: '8px',
             bgcolor: stage.color, color: 'white',
             fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
             boxShadow: `0 2px 8px ${stage.color}44`,
@@ -746,7 +746,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           {stage.btnLabel && (
             <Button size="small" onClick={handleInteract} disabled={!canInteract}
               sx={{
-                borderRadius: 10, fontSize: '0.72rem', py: '5px',
+                borderRadius: '999px', fontSize: '0.72rem', py: '5px',
                 bgcolor: canInteract ? stage.color : B.dark+'0e',
                 color: canInteract ? 'white' : B.dark+'33',
                 fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
@@ -763,7 +763,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           <Stack direction="row" gap="5px">
             <Button size="small" onClick={() => { spawnParticles(['🍖','😊','✨']); onAction('feed'); }} disabled={!canFeed}
               sx={{
-                flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                 bgcolor: canFeed ? '#FF9A3C15' : 'transparent',
                 border: `1px solid ${canFeed ? '#FF9A3C55' : B.dark+'0e'}`,
                 color: canFeed ? '#FF9A3C' : B.dark+'2a',
@@ -775,7 +775,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             </Button>
             <Button size="small" onClick={() => { spawnParticles(['🌰','😋','💕','⚠️']); onAction('snack'); }} disabled={!canSnack}
               sx={{
-                flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                 bgcolor: canSnack ? '#FF6B9D15' : 'transparent',
                 border: `1px solid ${canSnack ? '#FF6B9D55' : B.dark+'0e'}`,
                 color: canSnack ? '#FF6B9D' : B.dark+'2a',
@@ -791,7 +791,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             <Button size="small"
               onClick={() => { spawnParticles(['🧹','💨','✨','😌']); onAction('cleanPoop'); }}
               sx={{
-                borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                 bgcolor: '#FF930015', border: '1.5px solid #FF930055',
                 color: '#E65100', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                 animation: 'bellShake 1.2s ease-in-out infinite',
@@ -818,13 +818,13 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
               </Typography>
               <Stack direction="row" gap="5px">
                 <Button size="small" onClick={() => setResetTarget(null)}
-                  sx={{ flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                  sx={{ flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                     bgcolor: B.dark+'0e', color: B.dark+'88', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
                   취소
                 </Button>
                 <Button size="small"
                   onClick={() => { onResetUser(resetTarget === 'self' ? user : otherUser); setResetTarget(null); }}
-                  sx={{ flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                  sx={{ flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                     bgcolor: '#E5393515', border: '1px solid #E5393555',
                     color: '#C62828', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
                   확인
@@ -835,7 +835,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             <Stack direction="row" gap="5px">
               <Button size="small" onClick={() => setResetTarget('self')}
                 sx={{
-                  flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                  flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                   bgcolor: 'transparent', border: `1px dashed ${B.dark}33`,
                   color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                   '&:hover': { bgcolor: B.dark+'08' },
@@ -844,7 +844,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
               </Button>
               <Button size="small" onClick={() => setResetTarget('partner')}
                 sx={{
-                  flex: 1, borderRadius: 10, fontSize: '0.72rem', py: '4px',
+                  flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                   bgcolor: 'transparent', border: `1px dashed ${B.dark}33`,
                   color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                   '&:hover': { bgcolor: B.dark+'08' },
@@ -860,7 +860,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {!isMe && (
         <Button size="small" onClick={handleCheer} disabled={!canCheer}
           sx={{
-            width: '100%', borderRadius: 10, fontSize: '0.72rem', py: '5px',
+            width: '100%', borderRadius: '999px', fontSize: '0.72rem', py: '5px',
             bgcolor: canCheer ? '#FFD70020' : 'transparent',
             border: `1.5px solid ${canCheer ? '#FFC107aa' : B.dark+'0e'}`,
             color: canCheer ? '#B8860B' : B.dark+'2a',
@@ -1110,7 +1110,7 @@ export default function CoupleTamagotchi({ currentUser }) {
       {/* [신규] 진화 시 위젯 전체가 짧게 흔들리는 스크린쉐이크 */}
       <motion.div animate={shakeControls}>
       <Paper elevation={0} sx={{
-        p: '12px 10px', borderRadius: '16px',
+        p: '12px 10px', borderRadius: '14px',
         bgcolor: B.cream, border: `1.5px solid ${B.pants}18`,
         backgroundImage: `radial-gradient(circle at 85% 5%, ${B.lavender}55 0%, transparent 38%)`,
       }}>

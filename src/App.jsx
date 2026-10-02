@@ -224,7 +224,7 @@ function AppInner() {
           <Button onClick={handleUpdateConfirm} variant="contained"
             onPointerDown={e => { createRipple(e); createBuriPang(e); }}
             sx={{
-              bgcolor: B.pants, borderRadius: 10, px: 4,
+              bgcolor: B.pants, borderRadius: '999px', px: 4,
               fontFamily: "'Jua',sans-serif", fontWeight: 700, fontSize: '1rem',
               position: 'relative', overflow: 'hidden',
               boxShadow: `0 4px 16px ${B.pants}55`, transition: 'transform 0.1s',

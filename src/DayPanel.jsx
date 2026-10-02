@@ -188,7 +188,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
               <Box
                 onClick={() => { vibrate(15); onClose(); setTimeout(onAddSchedule, 180); }}
                 sx={{
-                  px: 1.2, py: 0.35, borderRadius: '20px', cursor: 'pointer',
+                  px: 1.2, py: 0.35, borderRadius: '999px', cursor: 'pointer',
                   background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
                   boxShadow: `0 3px 10px ${B.pants}44`,
                   WebkitTapHighlightColor: 'transparent',
@@ -234,7 +234,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                         </Typography>
                         {badge && (
                           <Box sx={{
-                            flexShrink: 0, px: '7px', py: '2px', borderRadius: 999,
+                            flexShrink: 0, px: '7px', py: '2px', borderRadius: '999px',
                             background: writerBadgeBg(badge.who), color: '#fff',
                             fontSize: '0.72rem', fontWeight: 700,
                             fontFamily: "'Noto Sans KR',sans-serif",
@@ -334,7 +334,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
 
                 <Box sx={{
                   ...GLASS_CARD,
-                  borderRadius: '16px', p: '14px',
+                  borderRadius: '14px', p: '14px',
                   border: `1px solid ${B.pants}20`,
                 }}>
                   <Typography sx={{ fontSize: '0.72rem', color: B.pants + '88', fontFamily: "'Noto Sans KR',sans-serif", mb: 1.2, fontWeight: 700 }}>
@@ -378,7 +378,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
 
             {!isFutureDate && dayCapsules.map(c => (
               <Box key={c.id} sx={{
-                borderRadius: '16px', p: '14px',
+                borderRadius: '14px', p: '14px',
                 background: `linear-gradient(135deg, ${B.peach}88 0%, ${B.lavender}55 100%)`,
                 border: `1.5px solid ${B.accent}33`,
                 boxShadow: `0 4px 18px ${B.accent}14`,

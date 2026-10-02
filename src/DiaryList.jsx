@@ -57,7 +57,7 @@ const B = {
 // ── 스켈레톤 카드 ────────────────────────────────────────────
 const SkeletonCard = () => (
   <Card elevation={0} sx={{
-    borderRadius: 4, bgcolor: B.cream,
+    borderRadius: '14px', bgcolor: B.cream,
     border: `1.5px solid ${B.pants}22`,
   }}>
     <CardContent sx={{ p: 2.5 }}>
@@ -150,7 +150,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
               <Box key={val}
                 onClick={() => setActiveTab(val)}
                 sx={{
-                  px: 2.5, py: 0.8, borderRadius: 10,
+                  px: 2.5, py: 0.8, borderRadius: '999px',
                   bgcolor: activeTab === val ? B.pants : B.lavender + "66",
                   color: activeTab === val ? "white" : B.pants,
                   cursor: "pointer",
@@ -438,7 +438,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
       id={`diary-${item.id}`}
       elevation={0}
       sx={{
-        borderRadius: 4,
+        borderRadius: '14px',
         bgcolor: B.cream,
         border: `1.5px solid ${isMyPost ? B.pants + "33" : B.skin + "88"}`,
         backgroundImage: isMyPost
@@ -582,7 +582,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                 <Box key={label}
                   onClick={() => { setEditEmotion(label); setEditEmoji(emoji); }}
                   sx={{
-                    px: 1.4, py: 0.4, borderRadius: 10,
+                    px: 1.4, py: 0.4, borderRadius: '999px',
                     bgcolor: editEmotion === label ? B.pants : B.lavender + "66",
                     color: editEmotion === label ? "white" : B.dark,
                     cursor: "pointer", fontSize: "0.78rem",

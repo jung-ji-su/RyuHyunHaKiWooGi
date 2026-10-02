@@ -184,7 +184,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
             AI 분석 결과
           </Typography>
           <Box sx={{
-            bgcolor: 'white', borderRadius: 3, p: '14px 16px',
+            bgcolor: 'white', borderRadius: '14px', p: '14px 16px',
             border: `1.5px solid ${B.pants}22`,
             boxShadow: `0 2px 12px ${B.pants}0c`,
           }}>

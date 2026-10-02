@@ -113,7 +113,7 @@ export default function LoginScreen({ onLogin }) {
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: B.dark, mb: 0.6 }}>지수</Typography>
           <Box sx={{
             display: 'inline-block', fontSize: '0.72rem', fontWeight: 700,
-            px: 1.5, py: '3px', borderRadius: '20px',
+            px: 1.5, py: '3px', borderRadius: '999px',
             bgcolor: B.lavender, color: B.pants, fontFamily: "'Noto Sans KR',sans-serif",
           }}>💜 나야나</Box>
           <Box component="img" src={buri1} alt="" sx={{
@@ -156,7 +156,7 @@ export default function LoginScreen({ onLogin }) {
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: B.dark, mb: 0.6 }}>현하</Typography>
           <Box sx={{
             display: 'inline-block', fontSize: '0.72rem', fontWeight: 700,
-            px: 1.5, py: '3px', borderRadius: '20px',
+            px: 1.5, py: '3px', borderRadius: '999px',
             bgcolor: B.peach, color: B.accent, fontFamily: "'Noto Sans KR',sans-serif",
           }}>🧡 나야나</Box>
           <Box component="img" src={buri7} alt="" sx={{

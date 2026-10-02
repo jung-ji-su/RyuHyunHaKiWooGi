@@ -64,7 +64,7 @@ const NewMessageDialog = ({ open, onClose, messages }) => {
                     {currentMsg.writer}님의 소식!
                 </Typography>
 
-                <Paper elevation={0} sx={{ bgcolor: "#fff0f3", p: 2, borderRadius: 3, mb: 2, border: '1px dashed #ff4081' }}>
+                <Paper elevation={0} sx={{ bgcolor: "#fff0f3", p: 2, borderRadius: '14px', mb: 2, border: '1px dashed #ff4081' }}>
                     <Typography variant="body1" sx={{ color: "#333", fontWeight: "500" }}>
                         "{currentMsg.title}"
                     </Typography>

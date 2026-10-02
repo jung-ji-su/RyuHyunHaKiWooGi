@@ -65,7 +65,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
         {/* 헤더 */}
         <Box sx={{
           display: "flex", alignItems: "center", gap: 2, mb: 3,
-          p: 2, borderRadius: 4,
+          p: 2, borderRadius: '14px',
           background: `linear-gradient(135deg, ${B.lavender} 0%, ${B.peach} 100%)`,
           border: `2px solid ${B.accent}`,
           position: "relative",
@@ -102,7 +102,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           textAlign: "center",
           mb: 3,
           p: 3,
-          borderRadius: 4,
+          borderRadius: '14px',
           bgcolor: B.cream,
           border: `2px dashed ${B.pants}44`,
         }}>
@@ -136,7 +136,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                 onClick={() => setSelectedGame(game.id)}
                 sx={{
                   cursor: "pointer",
-                  borderRadius: 4,
+                  borderRadius: '14px',
                   border: `2px solid ${game.color}33`,
                   position: "relative",
                   overflow: "visible",
@@ -197,7 +197,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                     gap: 0.5,
                     px: 2,
                     py: 0.5,
-                    borderRadius: 10,
+                    borderRadius: '999px',
                     bgcolor: game.color + "22",
                     color: game.color,
                     fontSize: "0.75rem",
@@ -217,7 +217,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           textAlign: "center",
           mt: 4,
           p: 2,
-          borderRadius: 3,
+          borderRadius: '14px',
           bgcolor: B.lavender + "44",
         }}>
           <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 1 }}>

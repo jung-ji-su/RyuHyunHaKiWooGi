@@ -287,7 +287,7 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs"
-            PaperProps={{ sx: { borderRadius: 4, bgcolor: B.cream, border: `1.5px solid ${B.pants}33` } }}>
+            PaperProps={{ sx: { borderRadius: '14px', bgcolor: B.cream, border: `1.5px solid ${B.pants}33` } }}>
             <DialogTitle sx={{
                 fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1.1rem",
                 display: "flex", alignItems: "center", justifyContent: "space-between", pb: 0
@@ -350,7 +350,7 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
                 <Button onClick={onClose} sx={{ color: B.dark + "77", fontFamily: "'Noto Sans KR',sans-serif" }}>취소</Button>
                 <Button onClick={handleSave} disabled={!title.trim() || loading} variant="contained"
                     sx={{
-                        bgcolor: B.pants, borderRadius: 10, px: 3, fontFamily: "'Jua',sans-serif", fontSize: "0.95rem",
+                        bgcolor: B.pants, borderRadius: '999px', px: 3, fontFamily: "'Jua',sans-serif", fontSize: "0.95rem",
                         boxShadow: `0 3px 12px ${B.pants}55`, "&:hover": { bgcolor: "#6A3D96" }, "&:active": { transform: "scale(0.95)" }
                     }}>
                     {loading ? <CircularProgress size={18} sx={{ color: "white" }} /> : "핀 꽂기 📍"}
@@ -369,7 +369,7 @@ const PinDetailDialog = ({ pin, open, onClose, onDelete }) => {
         : "";
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs"
-            PaperProps={{ sx: { borderRadius: 4, bgcolor: B.cream, border: `1.5px solid ${B.pants}33`, overflow: "hidden" } }}>
+            PaperProps={{ sx: { borderRadius: '14px', bgcolor: B.cream, border: `1.5px solid ${B.pants}33`, overflow: "hidden" } }}>
             {pin.photoURL && (
                 <Box component="img" src={pin.photoURL} alt="" sx={{ width: "100%", height: 190, objectFit: "cover" }} />
             )}
@@ -612,7 +612,7 @@ const TravelMap = ({ currentUser }) => {
             {/* 지도: 항상 DOM에 존재하고 display로 show/hide */}
             <Box sx={{ position: "relative", display: view === "map" ? "block" : "none" }}>
                 <Box ref={mapRef} sx={{
-                    width: "100%", height: 440, borderRadius: 3, overflow: "hidden",
+                    width: "100%", height: 440, borderRadius: '14px', overflow: "hidden",
                     border: `1px solid rgba(0,0,0,0.08)`,
                     boxShadow: "0 2px 16px rgba(0,0,0,0.10)",
                 }} />
@@ -641,7 +641,7 @@ const TravelMap = ({ currentUser }) => {
                 {!leafletLoaded && (
                     <Box sx={{
                         position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
-                        bgcolor: "#f8f8f8", borderRadius: 3,
+                        bgcolor: "#f8f8f8", borderRadius: '14px',
                     }}>
                         <Stack alignItems="center" gap={1}>
                             <CircularProgress sx={{ color: B.pants }} size={32} />
@@ -676,7 +676,7 @@ const TravelMap = ({ currentUser }) => {
                             <Box key={pin.id} onClick={() => flyToPin(pin)}
                                 sx={{
                                     display: "flex", gap: 1.5, alignItems: "flex-start",
-                                    bgcolor: "white", borderRadius: 3, p: 1.5,
+                                    bgcolor: "white", borderRadius: '14px', p: 1.5,
                                     border: `1px solid ${B.pants}18`, cursor: "pointer", transition: "all 0.15s",
                                     boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
                                     "&:active": { transform: "scale(0.98)", bgcolor: B.lavender + "44" },

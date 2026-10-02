@@ -314,7 +314,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           p: 3,
           bgcolor: B.cream,
           border: `2px dashed ${B.pants}44`,
-          borderRadius: 3,
+          borderRadius: '14px',
         }}>
           <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66" }}>
             💡 소유자에게 가계부 공개를 요청해보세요!
@@ -387,7 +387,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
       <Box sx={{ px: 2, mb: 2 }}>
         <Paper elevation={2} sx={{
           p: 2.5,
-          borderRadius: 4,
+          borderRadius: '14px',
           background: `linear-gradient(135deg, ${B.cream} 0%, ${B.peach}44 100%)`,
           border: `2px solid ${B.accent}33`,
         }}>
@@ -455,7 +455,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
       {/* 예산 진행률 */}
       {budget > 0 && (
         <Box sx={{ px: 2, mb: 2 }}>
-          <Paper elevation={2} sx={{ p: 2, borderRadius: 3 }}>
+          <Paper elevation={2} sx={{ p: 2, borderRadius: '14px' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
               <Typography sx={{
                 fontSize: "0.9rem",
@@ -559,7 +559,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           }}>
             📊 카테고리별 지출
           </Typography>
-          <Paper elevation={2} sx={{ p: 2, borderRadius: 3 }}>
+          <Paper elevation={2} sx={{ p: 2, borderRadius: '14px' }}>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie
@@ -630,7 +630,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             p: 4,
             textAlign: "center",
             bgcolor: B.cream,
-            borderRadius: 3,
+            borderRadius: '14px',
           }}>
             <Box component="img" src={buri1} alt="" sx={{ width: 80, mb: 2, opacity: 0.6 }} />
             <Typography sx={{ fontSize: "0.9rem", color: B.dark + "66" }}>
@@ -659,7 +659,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                       elevation={1}
                       sx={{
                         p: 2,
-                        borderRadius: 3,
+                        borderRadius: '14px',
                         borderLeft: `4px solid ${categoryInfo?.color || "#999"}`,
                         "&:active": { transform: "scale(0.98)" },
                         transition: "transform 0.1s",
@@ -748,7 +748,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         fullWidth
         maxWidth="sm"
         PaperProps={{
-          sx: { borderRadius: 4 },
+          sx: { borderRadius: '14px' },
         }}
       >
         <DialogTitle sx={{
@@ -878,7 +878,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         maxWidth="xs"
         fullWidth
         PaperProps={{
-          sx: { borderRadius: 4 },
+          sx: { borderRadius: '14px' },
         }}
       >
         <DialogTitle sx={{
@@ -950,7 +950,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         maxWidth="xs"
         fullWidth
         PaperProps={{
-          sx: { borderRadius: 4 },
+          sx: { borderRadius: '14px' },
         }}
       >
         <DialogTitle sx={{
@@ -961,7 +961,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           ⚙️ 가계부 설정
         </DialogTitle>
         <DialogContent sx={{ pt: 3 }}>
-          <Paper sx={{ p: 2, bgcolor: B.cream, borderRadius: 3 }}>
+          <Paper sx={{ p: 2, bgcolor: B.cream, borderRadius: '14px' }}>
             <Stack spacing={2}>
               <Box>
                 <Typography sx={{

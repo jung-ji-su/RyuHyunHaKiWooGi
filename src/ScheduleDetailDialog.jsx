@@ -82,7 +82,7 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
           </Typography>
           {badge && (
             <Box sx={{
-              flexShrink: 0, px: '7px', py: '2px', borderRadius: 999,
+              flexShrink: 0, px: '7px', py: '2px', borderRadius: '999px',
               background: writerBadgeBg(badge.who), color: '#fff',
               fontSize: '0.72rem', fontWeight: 700,
               fontFamily: "'Noto Sans KR',sans-serif",

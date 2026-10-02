@@ -125,7 +125,7 @@ function WinnerScreen({ winner, theme, onRestart }) {
 
         <Stack direction="row" gap={1.5} justifyContent="center" flexWrap="wrap">
           <Box onClick={onRestart} sx={{
-            px: 3, py: 1.4, borderRadius: 10,
+            px: 3, py: 1.4, borderRadius: '999px',
             background: `linear-gradient(135deg, ${B.pants}, #5A2080)`,
             color: 'white', fontFamily: "'Jua',sans-serif", fontSize: '0.95rem',
             cursor: 'pointer', boxShadow: `0 4px 16px ${B.pants}44`,

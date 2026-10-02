@@ -744,7 +744,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
             {/* 헤더 */}
             <Box sx={{
                 display: "flex", alignItems: "center", gap: 2, mb: 3,
-                p: 2, borderRadius: 4,
+                p: 2, borderRadius: '14px',
                 background: `linear-gradient(135deg, ${B.lavender} 0%, ${B.peach} 100%)`,
                 border: `2px solid ${B.accent}`,
             }}>
@@ -941,7 +941,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             textAlign: "center",
                             p: 2,
                             mb: 2,
-                            borderRadius: 3,
+                            borderRadius: '14px',
                             bgcolor: B.accent + "22",
                             border: `2px solid ${B.accent}`,
                         }}>
@@ -964,7 +964,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             textAlign: "center",
                             p: 2,
                             mb: 2,
-                            borderRadius: 3,
+                            borderRadius: '14px',
                             bgcolor: B.pants + "22",
                         }}>
                             <Typography sx={{
@@ -1302,7 +1302,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         p: 3,
                         bgcolor: B.peach + "33",
                         border: `2px solid ${B.accent}`,
-                        borderRadius: 3,
+                        borderRadius: '14px',
                         mb: 3,
                     }}>
                         <Typography sx={{

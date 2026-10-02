@@ -118,7 +118,7 @@ const BucketItem = ({ item, currentUser, index }) => {
         }}>{item.title}</Typography>
         <Stack direction="row" alignItems="center" gap={0.8} flexWrap="wrap">
           <Box sx={{
-            px: 0.9, py: "1px", borderRadius: "10px",
+            px: 0.9, py: "1px", borderRadius: '999px',
             bgcolor: cat.bg, color: cat.color,
             fontSize: "0.72rem", fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
@@ -178,7 +178,7 @@ const AddForm = ({ currentUser, onClose }) => {
 
   return (
     <Box sx={{
-      bgcolor: "white", borderRadius: 3,
+      bgcolor: "white", borderRadius: '14px',
       border: `1.5px solid ${B.pants}33`,
       p: 2, mb: 1.5,
       animation: "fadeInUp 0.25s ease both",
@@ -186,7 +186,7 @@ const AddForm = ({ currentUser, onClose }) => {
       <Stack direction="row" gap={0.7} sx={{ mb: 1.5, flexWrap: "wrap" }}>
         {CATEGORIES.slice(1).map(c => (
           <Box key={c.key} onClick={() => setCat(c.key)} sx={{
-            px: 1.2, py: "4px", borderRadius: "20px", cursor: "pointer",
+            px: 1.2, py: "4px", borderRadius: '999px', cursor: "pointer",
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
             bgcolor: cat === c.key ? c.color : c.bg,
             color:   cat === c.key ? "white" : c.color,
@@ -281,7 +281,7 @@ const BucketList = ({ currentUser }) => {
 
       {/* 진행률 카드 */}
       <Box sx={{
-        bgcolor: "white", borderRadius: 4,
+        bgcolor: "white", borderRadius: '14px',
         border: `1.5px solid ${B.lavender}`,
         p: 2.2, mb: 2,
         backgroundImage: `radial-gradient(circle at 95% 5%, ${B.lavender} 0%, transparent 40%)`,
@@ -314,9 +314,9 @@ const BucketList = ({ currentUser }) => {
             </Typography>
           </Box>
         </Stack>
-        <Box sx={{ height: 10, bgcolor: B.lavender, borderRadius: "10px", overflow: "hidden", mb: 1 }}>
+        <Box sx={{ height: 10, bgcolor: B.lavender, borderRadius: '999px', overflow: "hidden", mb: 1 }}>
           <Box sx={{
-            height: "100%", borderRadius: "10px",
+            height: "100%", borderRadius: '999px',
             bgcolor: pct === 100 ? B.teal : B.pants,
             width: `${pct}%`, transition: "width 0.8s ease",
           }} />
@@ -337,7 +337,7 @@ const BucketList = ({ currentUser }) => {
       <Stack direction="row" gap={0.7} sx={{ mb: 1.5, flexWrap: "wrap" }}>
         {CATEGORIES.map(c => (
           <Box key={c.key} onClick={() => { setFilter(c.key); vibrate(12); }} sx={{
-            px: 1.3, py: "5px", borderRadius: "20px", cursor: "pointer",
+            px: 1.3, py: "5px", borderRadius: '999px', cursor: "pointer",
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
             bgcolor: filter === c.key ? c.color : "white",
             color:   filter === c.key ? "white" : c.color,

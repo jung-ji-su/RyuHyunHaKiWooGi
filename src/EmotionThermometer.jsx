@@ -138,7 +138,7 @@ function MonthHighlights({ records, currentUser, otherUser }) {
   const fmt = iso => { const d = new Date(iso); return `${d.getMonth()+1}/${d.getDate()}`; };
 
   return (
-    <Box sx={{ bgcolor: "white", borderRadius: 4, border: `1.5px solid ${B.lavender}`, p: 2.2 }}>
+    <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.2 }}>
       <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "0.95rem", mb: 1.5 }}>
         ✨ 이달의 하이라이트
       </Typography>
@@ -212,7 +212,7 @@ function WeeklyReport({ records, currentUser, otherUser }) {
   const myTrend = getTrend(currentUser), otherTrend = getTrend(otherUser);
 
   return (
-    <Box sx={{ bgcolor: "white", borderRadius: 4, border: `1.5px solid ${B.lavender}`, overflow: "hidden" }}>
+    <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, overflow: "hidden" }}>
       <Box onClick={() => setOpen(o => !o)} sx={{
         p: 2, cursor: "pointer", display: "flex", alignItems: "center",
         justifyContent: "space-between",
@@ -224,7 +224,7 @@ function WeeklyReport({ records, currentUser, otherUser }) {
           <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "0.95rem" }}>이번 주 리포트</Typography>
           {myAvg !== null && (
             <Box sx={{
-              px: 1.2, py: "2px", borderRadius: "20px",
+              px: 1.2, py: "2px", borderRadius: '999px',
               bgcolor: getTempMeta(myAvg).color + "22", color: getTempMeta(myAvg).color,
               fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif",
             }}>내 평균 {myAvg}°</Box>
@@ -238,7 +238,7 @@ function WeeklyReport({ records, currentUser, otherUser }) {
             { user: currentUser, avg: myAvg,    tr: myTrend,    color: B.pants },
             { user: otherUser,   avg: otherAvg,  tr: otherTrend, color: B.accent },
           ].map(({ user, avg, tr, color }) => (
-            <Box key={user} sx={{ p: 1.8, borderRadius: 3, bgcolor: color + "0D", border: `1px solid ${color}22` }}>
+            <Box key={user} sx={{ p: 1.8, borderRadius: '14px', bgcolor: color + "0D", border: `1px solid ${color}22` }}>
               <Stack direction="row" alignItems="center" gap={0.8} sx={{ mb: 0.8 }}>
                 <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: color }} />
                 <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.85rem", color }}>{user}</Typography>
@@ -306,7 +306,7 @@ function EmpathyCard({ records, currentUser, otherUser, today }) {
 
   return (
     <Box sx={{
-      bgcolor: "white", borderRadius: 4, border: `2px solid ${B.accent}44`, p: 2.2,
+      bgcolor: "white", borderRadius: '14px', border: `2px solid ${B.accent}44`, p: 2.2,
       background: `linear-gradient(135deg, ${B.peach}44 0%, white 60%)`,
       position: "relative", overflow: "hidden",
     }}>
@@ -323,7 +323,7 @@ function EmpathyCard({ records, currentUser, otherUser, today }) {
           {!isLowMe && (
             <Button variant="contained" disabled={hugging || alreadyHugged} onClick={handleHug} sx={{
               mt: 1.2, bgcolor: alreadyHugged ? B.green : B.accent,
-              borderRadius: "20px", px: 2.5, py: 0.8,
+              borderRadius: '999px', px: 2.5, py: 0.8,
               fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
               boxShadow: alreadyHugged ? "none" : `0 4px 12px ${B.accent}44`,
               "&:hover": { bgcolor: alreadyHugged ? B.green : "#C8550A" },
@@ -365,7 +365,7 @@ function StreakDangerBanner({ streak, submitted, currentUser, otherUser, records
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       {showMy && streak > 0 && (
-        <Box sx={{ p: 1.8, borderRadius: 3, background: `linear-gradient(135deg, ${B.danger}18, ${B.accent}12)`, border: `1.5px solid ${B.danger}44`, display: "flex", alignItems: "center", gap: 1.5 }}>
+        <Box sx={{ p: 1.8, borderRadius: '14px', background: `linear-gradient(135deg, ${B.danger}18, ${B.accent}12)`, border: `1.5px solid ${B.danger}44`, display: "flex", alignItems: "center", gap: 1.5 }}>
           <Typography sx={{ fontSize: "1.5rem" }}>🔥</Typography>
           <Box>
             <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.88rem", color: B.danger }}>{streak}일 스트릭이 끊길 위기예요!</Typography>
@@ -374,7 +374,7 @@ function StreakDangerBanner({ streak, submitted, currentUser, otherUser, records
         </Box>
       )}
       {showMy && streak === 0 && (
-        <Box sx={{ p: 1.8, borderRadius: 3, background: `linear-gradient(135deg, #85B7EB18, ${B.lavender}44)`, border: `1.5px solid #85B7EB55`, display: "flex", alignItems: "center", gap: 1.5 }}>
+        <Box sx={{ p: 1.8, borderRadius: '14px', background: `linear-gradient(135deg, #85B7EB18, ${B.lavender}44)`, border: `1.5px solid #85B7EB55`, display: "flex", alignItems: "center", gap: 1.5 }}>
           <Typography sx={{ fontSize: "1.5rem" }}>😶</Typography>
           <Box>
             <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.88rem", color: "#5B8FBB" }}>오늘 아직 기록 전이에요</Typography>
@@ -383,7 +383,7 @@ function StreakDangerBanner({ streak, submitted, currentUser, otherUser, records
         </Box>
       )}
       {showOther && (
-        <Box sx={{ p: 1.8, borderRadius: 3, background: `linear-gradient(135deg, ${B.accent}12, ${B.peach}44)`, border: `1.5px solid ${B.accent}33`, display: "flex", alignItems: "center", gap: 1.5 }}>
+        <Box sx={{ p: 1.8, borderRadius: '14px', background: `linear-gradient(135deg, ${B.accent}12, ${B.peach}44)`, border: `1.5px solid ${B.accent}33`, display: "flex", alignItems: "center", gap: 1.5 }}>
           <Typography sx={{ fontSize: "1.5rem" }}>👀</Typography>
           <Box>
             <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.88rem", color: B.accent }}>{otherUser}가 아직 안 했어요!</Typography>
@@ -537,7 +537,7 @@ const EmotionThermometer = ({ currentUser }) => {
 
       {/* ── 오늘 입력 카드 ── */}
       <Box sx={{
-        bgcolor: "white", borderRadius: 4,
+        bgcolor: "white", borderRadius: '14px',
         border: `2px solid ${B.pants}22`,
         boxShadow: `0 4px 20px ${B.pants}10`,
         position: "relative", overflow: "visible",
@@ -554,11 +554,11 @@ const EmotionThermometer = ({ currentUser }) => {
             <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>오늘 온도는? 🌡️</Typography>
             <Stack direction="row" gap={0.8}>
               {streak > 0 && (
-                <Box sx={{ px: 1.2, py: "2px", borderRadius: "20px", bgcolor: B.accent + "22", color: B.accent, fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                <Box sx={{ px: 1.2, py: "2px", borderRadius: '999px', bgcolor: B.accent + "22", color: B.accent, fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
                   🔥 {streak}일 연속
                 </Box>
               )}
-              <Box sx={{ px: 1.2, py: "2px", borderRadius: "20px", bgcolor: B.lavender, color: B.pants, fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
+              <Box sx={{ px: 1.2, py: "2px", borderRadius: '999px', bgcolor: B.lavender, color: B.pants, fontSize: "0.72rem", fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
                 {today.slice(5).replace("-", "/")}
               </Box>
             </Stack>
@@ -659,7 +659,7 @@ const EmotionThermometer = ({ currentUser }) => {
               {myRec?.tags?.length > 0 && (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: "5px", mb: 1 }}>
                   {myRec.tags.map(tag => (
-                    <Box key={tag} sx={{ px: 1, py: "2px", borderRadius: "20px", bgcolor: B.pants + "15", border: `1px solid ${B.pants}30`, fontSize: "0.72rem", color: B.pants, fontFamily: "'Noto Sans KR',sans-serif" }}>
+                    <Box key={tag} sx={{ px: 1, py: "2px", borderRadius: '999px', bgcolor: B.pants + "15", border: `1px solid ${B.pants}30`, fontSize: "0.72rem", color: B.pants, fontFamily: "'Noto Sans KR',sans-serif" }}>
                       {tag}
                     </Box>
                   ))}
@@ -715,7 +715,7 @@ const EmotionThermometer = ({ currentUser }) => {
       <WeeklyReport records={records} currentUser={currentUser} otherUser={otherUser} />
 
       {/* ④ 오늘 비교 — 원형 게이지 */}
-      <Box sx={{ bgcolor: "white", borderRadius: 4, border: `1.5px solid ${B.lavender}`, p: 2.5 }}>
+      <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.5 }}>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "0.95rem", mb: 2 }}>💜 오늘 둘의 온도</Typography>
         <Stack direction="row" justifyContent="space-around" alignItems="flex-end" sx={{ mb: 2 }}>
           <CircleGauge value={myRec?.temp ?? 0} color={myRec ? getTempMeta(myRec.temp).color : B.lavender} size={96} label={currentUser} />
@@ -740,14 +740,14 @@ const EmotionThermometer = ({ currentUser }) => {
       <MonthHighlights records={records} currentUser={currentUser} otherUser={otherUser} />
 
       {/* ⑤ recharts 그래프 */}
-      <Box sx={{ bgcolor: "white", borderRadius: 4, border: `1.5px solid ${B.lavender}`, p: 2.5, position: "relative", overflow: "visible" }}>
+      <Box sx={{ bgcolor: "white", borderRadius: '14px', border: `1.5px solid ${B.lavender}`, p: 2.5, position: "relative", overflow: "visible" }}>
         <Box component="img" src={buri2} alt="" sx={{ position: "absolute", top: -20, right: 10, width: 40, animation: "headBob 2.5s ease-in-out infinite", filter: `drop-shadow(0 2px 6px ${B.accent}44)`, pointerEvents: "none" }} />
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "0.95rem" }}>📈 온도 히스토리</Typography>
           <Stack direction="row" gap={0.6}>
             {[{ key: "week", label: "주" }, { key: "month", label: "월" }, { key: "year", label: "년" }].map(({ key, label }) => (
               <Box key={key} onClick={() => { setChartTab(key); vibrate(12); }} sx={{
-                px: 1.4, py: "4px", borderRadius: "20px", cursor: "pointer",
+                px: 1.4, py: "4px", borderRadius: '999px', cursor: "pointer",
                 fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
                 bgcolor: chartTab === key ? B.pants : B.lavender,
                 color:   chartTab === key ? "white"  : B.pants,

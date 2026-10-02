@@ -142,7 +142,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
 
             {unread > 0 && (
               <Box sx={{
-                px: 1.2, py: 0.15, borderRadius: 10,
+                px: 1.2, py: 0.15, borderRadius: '999px',
                 background: 'linear-gradient(135deg, #E53935, #FF5252)',
                 boxShadow: '0 2px 8px rgba(229,57,53,0.4)',
               }}>

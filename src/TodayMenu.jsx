@@ -96,7 +96,7 @@ const TodayMenu = () => {
       {/* 헤더 */}
       <Box sx={{
         textAlign: "center", py: 3, px: 2, mb: 2.5,
-        borderRadius: 4, bgcolor: B.peach + "88",
+        borderRadius: '14px', bgcolor: B.peach + "88",
         border: `1.5px dashed ${B.orange}44`,
         position: "relative",
       }}>
@@ -153,7 +153,7 @@ const TodayMenu = () => {
       {rolling && menu && (
         <Box sx={{
           textAlign: "center", py: 3, mb: 2.5,
-          bgcolor: "white", borderRadius: 3,
+          bgcolor: "white", borderRadius: '14px',
           border: `2px solid ${B.orange}44`,
           animation: "pulse 0.1s ease infinite",
         }}>
@@ -268,7 +268,7 @@ const TodayMenu = () => {
 
         {/* 이모지 헤더 */}
         <Box sx={{
-          width: "100%", borderRadius: 3, mb: 2,
+          width: "100%", borderRadius: '14px', mb: 2,
           bgcolor: B.peach + "88",
           border: `1.5px solid ${B.orange}33`,
           py: 3, textAlign: "center",
@@ -308,7 +308,7 @@ const TodayMenu = () => {
 
         {/* 예상 비용 */}
         <Box sx={{
-          bgcolor: B.orange + "12", borderRadius: 3, p: 1.8, mb: 2,
+          bgcolor: B.orange + "12", borderRadius: '14px', p: 1.8, mb: 2,
           border: `1.5px solid ${B.orange}33`,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
@@ -339,7 +339,7 @@ const TodayMenu = () => {
 
         {/* 실패하지 않는 팁 */}
         <Box sx={{
-          bgcolor: B.lavender + "66", borderRadius: 3, p: 1.8, mb: 2.5,
+          bgcolor: B.lavender + "66", borderRadius: '14px', p: 1.8, mb: 2.5,
           border: `1.5px solid ${B.pants}22`,
         }}>
           <Typography sx={{
@@ -358,7 +358,7 @@ const TodayMenu = () => {
 
         {/* 재료 & 장보기 체크리스트 */}
         <Box sx={{
-          bgcolor: "white", borderRadius: 3, p: 2, mb: 2.5,
+          bgcolor: "white", borderRadius: '14px', p: 2, mb: 2.5,
           border: `1px solid ${B.orange}22`
         }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
@@ -381,9 +381,9 @@ const TodayMenu = () => {
             variant="determinate"
             value={totalIngredients > 0 ? (checkedCount / totalIngredients) * 100 : 0}
             sx={{
-              mb: 1.5, borderRadius: 99, height: 6,
+              mb: 1.5, borderRadius: '999px', height: 6,
               bgcolor: B.peach,
-              "& .MuiLinearProgress-bar": { bgcolor: B.orange, borderRadius: 99 },
+              "& .MuiLinearProgress-bar": { bgcolor: B.orange, borderRadius: '999px' },
             }}
           />
 
@@ -441,7 +441,7 @@ const TodayMenu = () => {
 
         {/* 레시피 단계 */}
         <Box sx={{
-          bgcolor: "white", borderRadius: 3, p: 2,
+          bgcolor: "white", borderRadius: '14px', p: 2,
           border: `1px solid ${B.pants}22`
         }}>
           <Typography sx={{

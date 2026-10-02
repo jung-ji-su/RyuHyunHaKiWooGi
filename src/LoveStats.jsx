@@ -30,9 +30,9 @@ const MiniBarChart = ({ data, maxVal, color }) => (
         <Typography sx={{ fontSize: "0.72rem", color: B.dark + "99", minWidth: 28, fontFamily: "'Noto Sans KR',sans-serif" }}>
           {label}
         </Typography>
-        <Box sx={{ flex: 1, bgcolor: B.peach, borderRadius: 99, height: 8, overflow: "hidden" }}>
+        <Box sx={{ flex: 1, bgcolor: B.peach, borderRadius: '999px', height: 8, overflow: "hidden" }}>
           <Box sx={{
-            height: "100%", borderRadius: 99,
+            height: "100%", borderRadius: '999px',
             bgcolor: color || getEmotionColor(label),
             width: `${maxVal > 0 ? Math.round((value / maxVal) * 100) : 0}%`,
             transition: "width 0.8s ease",
@@ -51,7 +51,7 @@ const MiniBarChart = ({ data, maxVal, color }) => (
 // ── 통계 카드 ────────────────────────────────────────────────────
 const StatCard = ({ emoji, label, value, sub, color, bgColor }) => (
   <Box sx={{
-    bgcolor: bgColor || "white", borderRadius: 3, p: 1.8,
+    bgcolor: bgColor || "white", borderRadius: '14px', p: 1.8,
     border: `1.5px solid ${color || B.pants}22`,
     flex: 1, minWidth: 0,
     display: "flex", flexDirection: "column", gap: 0.3,
@@ -207,7 +207,7 @@ const LoveStats = ({ currentUser }) => {
 
       {/* 헤더 */}
       <Box sx={{
-        textAlign: "center", mb: 3, py: 2.5, px: 2, borderRadius: 4,
+        textAlign: "center", mb: 3, py: 2.5, px: 2, borderRadius: '14px',
         bgcolor: B.lavender + "66", border: `1.5px dashed ${B.pants}33`,
       }}>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.5rem", color: B.pants }}>
@@ -259,7 +259,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 감정 분석 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: 3, p: 2, border: `1.5px solid ${B.accent}22` }}>
+        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.accent}22` }}>
           <SectionHeader icon="🥰" title="감정 분석" />
           {filteredDiaries.length === 0 ? (
             <Typography sx={{ textAlign: "center", color: B.dark + "55", fontSize: "0.8rem", py: 2,
@@ -294,7 +294,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 쿠폰 통계 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: 3, p: 2, border: `1.5px solid ${B.pants}22` }}>
+        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.pants}22` }}>
           <SectionHeader icon="🎟️" title="쿠폰 현황" />
           <Stack spacing={1.5}>
             <Box>
@@ -304,9 +304,9 @@ const LoveStats = ({ currentUser }) => {
                 <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: B.pants,
                   fontFamily: "'Noto Sans KR',sans-serif" }}>{couponRate}%</Typography>
               </Stack>
-              <Box sx={{ bgcolor: B.peach, borderRadius: 99, height: 10, overflow: "hidden" }}>
+              <Box sx={{ bgcolor: B.peach, borderRadius: '999px', height: 10, overflow: "hidden" }}>
                 <Box sx={{
-                  height: "100%", borderRadius: 99, bgcolor: B.pants,
+                  height: "100%", borderRadius: '999px', bgcolor: B.pants,
                   width: `${couponRate}%`, transition: "width 0.8s ease",
                   minWidth: couponRate > 0 ? 6 : 0,
                 }} />
@@ -344,7 +344,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 여행 지도 통계 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: 3, p: 2, border: "1.5px solid #3A86FF22" }}>
+        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: "1.5px solid #3A86FF22" }}>
           <SectionHeader icon="🗺️" title="우리가 간 곳들" />
           {filteredPins.length === 0 ? (
             <Typography sx={{ textAlign: "center", color: B.dark + "55", fontSize: "0.8rem", py: 2,
@@ -379,7 +379,7 @@ const LoveStats = ({ currentUser }) => {
         </Box>
 
         {/* ── 버킷리스트 현황 ── */}
-        <Box sx={{ bgcolor: "white", borderRadius: 3, p: 2, border: `1.5px solid ${B.green}22` }}>
+        <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.green}22` }}>
           <SectionHeader icon="🪣" title="버킷리스트 현황" />
           {buckets.length === 0 ? (
             <Typography sx={{ textAlign: "center", color: B.dark + "55", fontSize: "0.8rem", py: 2,
@@ -397,9 +397,9 @@ const LoveStats = ({ currentUser }) => {
                     {doneBuckets.length}/{buckets.length}개 · {bucketRate}%
                   </Typography>
                 </Stack>
-                <Box sx={{ bgcolor: B.peach, borderRadius: 99, height: 10, overflow: "hidden" }}>
+                <Box sx={{ bgcolor: B.peach, borderRadius: '999px', height: 10, overflow: "hidden" }}>
                   <Box sx={{
-                    height: "100%", borderRadius: 99, bgcolor: B.green,
+                    height: "100%", borderRadius: '999px', bgcolor: B.green,
                     width: `${bucketRate}%`, transition: "width 0.8s ease",
                     minWidth: bucketRate > 0 ? 6 : 0,
                   }} />
@@ -437,7 +437,7 @@ const LoveStats = ({ currentUser }) => {
 
         {/* ── 감정 온도 통계 ── */}
         {avgTemp !== null && (
-          <Box sx={{ bgcolor: "white", borderRadius: 3, p: 2, border: `1.5px solid ${B.skin}66` }}>
+          <Box sx={{ bgcolor: "white", borderRadius: '14px', p: 2, border: `1.5px solid ${B.skin}66` }}>
             <SectionHeader icon="🌡️" title="감정 온도" />
             <Stack direction="row" gap={1} alignItems="center">
               <Box sx={{ flex: 1, bgcolor: B.peach, borderRadius: 2, p: 1.5,
@@ -468,7 +468,7 @@ const LoveStats = ({ currentUser }) => {
 
         {/* ── 좋아요 많은 기록 ── */}
         {topLiked && (topLiked.likes?.length || 0) > 0 && (
-          <Box sx={{ bgcolor: "#FFF0F8", borderRadius: 3, p: 2, border: `1.5px solid ${B.pink}33` }}>
+          <Box sx={{ bgcolor: "#FFF0F8", borderRadius: '14px', p: 2, border: `1.5px solid ${B.pink}33` }}>
             <SectionHeader icon="❤️" title="가장 사랑받은 기록" />
             <Box sx={{ bgcolor: "white", borderRadius: 2.5, p: 1.5, border: `1px solid ${B.pink}22` }}>
               <Stack direction="row" alignItems="center" gap={1} mb={0.8}>

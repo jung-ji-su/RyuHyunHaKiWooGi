@@ -127,7 +127,7 @@ function ScheduleDayCell({ d, current, today, schedule, isMultiSelected, onDateC
       {sched ? (
         <>
           <Box sx={{
-            mt: '4px', px: '6px', py: '1.5px', borderRadius: 10,
+            mt: '4px', px: '6px', py: '1.5px', borderRadius: '999px',
             bgcolor: isMultiSelected ? `${sched.color}cc` : sched.color,
             boxShadow: `0 2px 6px ${sched.color}40`,
             flexShrink: 0,
@@ -283,7 +283,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
           </Typography>
           <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.3 }}>
             {SCHEDULE_TYPES.map(s => counts[s.type] > 0 && (
-              <Box key={s.type} sx={{ px: '5px', py: '1.5px', borderRadius: 10, bgcolor: s.color + '18' }}>
+              <Box key={s.type} sx={{ px: '5px', py: '1.5px', borderRadius: '999px', bgcolor: s.color + '18' }}>
                 <Typography sx={{ fontSize: '0.72rem', color: s.color, fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
                   {s.emoji} {counts[s.type]}
                 </Typography>
@@ -395,7 +395,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
         {SCHEDULE_TYPES.map(s => (
           <Box key={s.type} sx={{
             display: 'flex', alignItems: 'center', gap: '4px',
-            px: '8px', py: '4px', borderRadius: '20px',
+            px: '8px', py: '4px', borderRadius: '999px',
             ...glassSmallSx(),
             flexShrink: 0,
           }}>

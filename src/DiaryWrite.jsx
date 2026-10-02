@@ -141,7 +141,7 @@ const DiaryWrite = ({ currentUser }) => {
 
   return (
     <Paper elevation={0} sx={{
-      p: 3, width: "100%", boxSizing: "border-box", borderRadius: 4, maxWidth: "none",
+      p: 3, width: "100%", boxSizing: "border-box", borderRadius: '14px', maxWidth: "none",
       bgcolor: B.cream,
       border: `1.5px solid ${B.accent}33`,
       backgroundImage: `radial-gradient(circle at 5% 95%, ${B.peach}88 0%, transparent 40%)`,
@@ -318,7 +318,7 @@ const DiaryWrite = ({ currentUser }) => {
           disabled={loading}
           onPointerDown={(e) => { createRipple(e); if (!loading) createBuriPang(e); }}
           sx={{
-            bgcolor: B.pants, borderRadius: "20px", px: 3, py: 1.2,
+            bgcolor: B.pants, borderRadius: '999px', px: 3, py: 1.2,
             fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             width: "100%",
             position: "relative", overflow: "hidden",
