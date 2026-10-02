@@ -104,7 +104,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
       PaperProps={{
         sx: {
           width: '100%', maxWidth: 420,
-          background: 'linear-gradient(160deg, #FAF5FF 0%, #FFF8F2 55%, #F5F0FF 100%)',
+          background: 'var(--notif-sheet-bg)',
           boxShadow: '-8px 0 48px rgba(123,79,166,0.18)',
           display: 'flex', flexDirection: 'column',
           paddingTop: 'env(safe-area-inset-top, 0px)',
@@ -114,7 +114,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
       {/* ── 헤더 ─────────────────────────────────────────────── */}
       <Box sx={{
         px: 2, pt: 3, pb: 1.5, flexShrink: 0,
-        background: 'rgba(255,255,255,0.6)',
+        background: 'var(--notif-bar-bg)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderBottom: `1px solid ${alpha(B.pants, '14')}`,
@@ -124,7 +124,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
             <IconButton size="small" onClick={onClose}
               sx={{
                 color: alpha(B.dark, '88'),
-                bgcolor: 'rgba(255,255,255,0.7)',
+                bgcolor: alpha(B.surface, 'bb'),
                 border: `1px solid ${alpha(B.pants, '22')}`,
                 '&:hover': { bgcolor: B.lavender, borderColor: alpha(B.pants, '44') },
               }}>
@@ -153,7 +153,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
               onClick={onMarkAllRead}
               sx={{
                 px: 1.5, py: 0.5, borderRadius: 8,
-                bgcolor: 'rgba(255,255,255,0.6)',
+                bgcolor: alpha(B.surface, '99'),
                 border: `1px solid ${alpha(B.pants, '22')}`,
                 cursor: 'pointer', userSelect: 'none',
                 '&:hover': { bgcolor: alpha(B.lavender, '88') },
@@ -213,10 +213,10 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     borderRadius: '14px',
                     // 반복 리스트 아이템이라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
                     background: n.isRead
-                      ? 'rgba(255,255,255,0.55)'
-                      : 'rgba(255,255,255,0.82)',
+                      ? alpha(B.surface, '8c')
+                      : alpha(B.surface, 'd1'),
                     border: n.isRead
-                      ? '1px solid rgba(255,255,255,0.7)'
+                      ? `1px solid ${alpha(B.surface, 'bb')}`
                       : `1px solid ${alpha(meta.color, '28')}`,
                     boxShadow: n.isRead
                       ? '0 1px 6px rgba(123,79,166,0.05)'
@@ -228,7 +228,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     position: 'relative',
                     overflow: 'hidden',
                     '&:hover': {
-                      background: 'rgba(255,255,255,0.92)',
+                      background: alpha(B.surface, 'ea'),
                       transform: 'translateY(-1px)',
                       boxShadow: `0 4px 20px ${alpha(meta.color, '22')}`,
                     },
@@ -319,7 +319,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
       {totalPages > 1 && (
         <Box sx={{
           px: 2, py: 1.5, flexShrink: 0,
-          background: 'rgba(255,255,255,0.6)',
+          background: 'var(--notif-bar-bg)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           borderTop: `1px solid ${alpha(B.pants, '10')}`,
@@ -329,7 +329,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
             onClick={() => page > 0 && setPage(p => p - 1)}
             sx={{
               px: 2, py: 0.6, borderRadius: 8,
-              bgcolor: page === 0 ? 'transparent' : 'rgba(255,255,255,0.7)',
+              bgcolor: page === 0 ? 'transparent' : alpha(B.surface, 'bb'),
               border: `1px solid ${page === 0 ? alpha(B.pants, '18') : alpha(B.pants, '33')}`,
               color: page === 0 ? alpha(B.pants, '33') : B.pants,
               cursor: page === 0 ? 'default' : 'pointer',
@@ -347,7 +347,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
             onClick={() => page < totalPages - 1 && setPage(p => p + 1)}
             sx={{
               px: 2, py: 0.6, borderRadius: 8,
-              bgcolor: page >= totalPages - 1 ? 'transparent' : 'rgba(255,255,255,0.7)',
+              bgcolor: page >= totalPages - 1 ? 'transparent' : alpha(B.surface, 'bb'),
               border: `1px solid ${page >= totalPages - 1 ? alpha(B.pants, '18') : alpha(B.pants, '33')}`,
               color: page >= totalPages - 1 ? alpha(B.pants, '33') : B.pants,
               cursor: page >= totalPages - 1 ? 'default' : 'pointer',

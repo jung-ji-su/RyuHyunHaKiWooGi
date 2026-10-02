@@ -414,6 +414,7 @@ const TravelMap = ({ currentUser }) => {
     const mapRef = useRef(null);
     const leafletMap = useRef(null);
     const markersRef = useRef({});
+    const tileLayerRef = useRef(null);
     const myLocMarker = useRef(null);
 
     const [pins, setPins] = useState([]);
@@ -449,14 +450,36 @@ const TravelMap = ({ currentUser }) => {
             zoomControl: false, attributionControl: true,
         });
         L.control.zoom({ position: "bottomright" }).addTo(map);
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-            attribution: '© <a href="https://carto.com/">CARTO</a>',
-            subdomains: "abcd", maxZoom: 19,
-        }).addTo(map);
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        tileLayerRef.current = L.tileLayer(
+            `https://{s}.basemaps.cartocdn.com/rastertiles/${isDark ? 'dark_matter' : 'voyager'}/{z}/{x}/{y}{r}.png`,
+            { attribution: '© <a href="https://carto.com/">CARTO</a>', subdomains: "abcd", maxZoom: 19 }
+        ).addTo(map);
         map.on("click", (e) => {
             setAddDialog({ open: true, latlng: e.latlng, placeName: "" });
         });
         leafletMap.current = map;
+    }, [leafletLoaded]);
+
+    // 다크/라이트 전환 시 지도 타일도 같이 바꾼다 (라이트 지도 타일이 다크 모드에서
+    // 흰 사각형처럼 튀는 문제 방지 — CARTO가 같은 스타일 체계의 dark_matter 타일을 제공)
+    useEffect(() => {
+        if (!leafletLoaded) return;
+        const L = window.L;
+        const applyTileTheme = () => {
+            const map = leafletMap.current;
+            if (!map) return;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const url = `https://{s}.basemaps.cartocdn.com/rastertiles/${isDark ? 'dark_matter' : 'voyager'}/{z}/{x}/{y}{r}.png`;
+            if (tileLayerRef.current) tileLayerRef.current.remove();
+            tileLayerRef.current = L.tileLayer(url, {
+                attribution: '© <a href="https://carto.com/">CARTO</a>',
+                subdomains: "abcd", maxZoom: 19,
+            }).addTo(map);
+        };
+        const observer = new MutationObserver(applyTileTheme);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        return () => observer.disconnect();
     }, [leafletLoaded]);
 
     useEffect(() => {

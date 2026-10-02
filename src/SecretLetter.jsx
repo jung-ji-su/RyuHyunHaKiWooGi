@@ -329,7 +329,9 @@ const LetterCard = ({ letter, currentUser }) => {
                   fontFamily: "'Noto Sans KR',sans-serif", mb: 0.5 }}>
                   💌 답장
                 </Typography>
-                <Typography sx={{ fontSize: "0.83rem", color: B.dark,
+                {/* 이 박스 배경(c.bg)은 봉투 고유색이라 테마와 무관하게 항상 밝다 —
+                    텍스트도 테마를 안 타는 고정 어두운 색을 써야 다크 모드에서 안 묻힌다 */}
+                <Typography sx={{ fontSize: "0.83rem", color: '#3D1F00',
                   fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1.6 }}>
                   {letter.reply}
                 </Typography>
@@ -596,7 +598,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
               color: ENVELOPE_COLORS.find(c => c.id === envColor)?.border }}>
               {isAnonymous ? "🎭 부리부리의 편지" : `💌 ${currentUser}의 편지`}
             </Typography>
-            <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '77'),
+            <Typography sx={{ fontSize: "0.72rem", color: alpha('#3D1F00', '77'),
               fontFamily: "'Noto Sans KR',sans-serif" }}>
               {OPEN_PRESETS[openPreset].type === "custom" && customDate
                 ? `${new Date(customDate).toLocaleString("ko-KR")}에 열려요`

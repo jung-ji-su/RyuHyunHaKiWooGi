@@ -29,20 +29,22 @@ function toIso(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
+// index.css의 glass 토큰(라이트/다크 레시피 둘 다 이미 정의됨)을 그대로 가져다 쓴다 —
+// 예전엔 흰색 rgba를 직접 하드코딩해서 다크 모드에서 흰 카드로 떠 있었다.
 const GLASS_CARD = {
-  background: 'rgba(255,255,255,0.72)',
-  backdropFilter: 'blur(10px)',
-  WebkitBackdropFilter: 'blur(10px)',
-  border: '1px solid rgba(255,255,255,0.9)',
-  boxShadow: '0 2px 12px rgba(123,79,166,0.07)',
+  background: glass.panelBackground,
+  backdropFilter: glass.panelBlur,
+  WebkitBackdropFilter: glass.panelBlur,
+  border: glass.smallBorder,
+  boxShadow: glass.panelShadow,
 };
 
 // 일정 섹션(반복 리스트) 전용 — 작은 반복 요소는 backdrop-filter 없이 solid+shadow만 쓰는
 // 캘린더 성능 원칙에 맞춰, MOOD/DIARY/TIME CAPSULE 섹션의 GLASS_CARD(blur)와는 분리했다.
 const SCHED_ITEM_BASE = {
-  background: 'rgba(255,255,255,0.62)',
-  border: '1px solid rgba(255,255,255,0.9)',
-  boxShadow: '0 2px 12px rgba(123,79,166,0.07)',
+  background: glass.smallBackground,
+  border: glass.smallBorder,
+  boxShadow: glass.smallShadow,
 };
 
 function SectionLabel({ icon, children, action }) {
@@ -345,7 +347,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                       mb: 1,
                       '& .MuiOutlinedInput-root': {
                         borderRadius: '10px', fontSize: '0.82rem',
-                        background: 'rgba(255,255,255,0.8)',
+                        background: alpha(B.surface, 'cc'), color: B.dark,
                         '& fieldset': { borderColor: `${alpha(B.pants, '20')}` },
                         '&.Mui-focused fieldset': { borderColor: B.pants },
                       },

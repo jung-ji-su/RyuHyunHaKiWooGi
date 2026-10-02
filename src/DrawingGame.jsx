@@ -1205,7 +1205,8 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
             )}
 
             {/* 난이도 선택 다이얼로그 */}
-            <Dialog open={difficultyDialogOpen} onClose={() => setDifficultyDialogOpen(false)}>
+            <Dialog open={difficultyDialogOpen} onClose={() => setDifficultyDialogOpen(false)}
+                PaperProps={{ sx: { bgcolor: B.surface } }}>
                 <DialogTitle sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>
                     난이도 선택
                 </DialogTitle>
@@ -1275,6 +1276,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                 onClose={() => setCouponDialogOpen(false)}
                 maxWidth="sm"
                 fullWidth
+                PaperProps={{ sx: { bgcolor: B.surface } }}
             >
                 <DialogContent sx={{ textAlign: "center", py: 4 }}>
                     <motion.div

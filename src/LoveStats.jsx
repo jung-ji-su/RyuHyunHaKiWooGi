@@ -243,7 +243,7 @@ const LoveStats = ({ currentUser }) => {
           <Stack direction="row" gap={1}>
             <StatCard emoji="✍️" label="총 기록" value={`${filteredDiaries.length}개`}
               sub={`지수 ${jsuCount} · 현하 ${hyCount}`}
-              color={B.accent} bgColor="#FFF5EE" />
+              color={B.accent} bgColor={alpha(B.accent, '15')} />
             <StatCard emoji="🎟️" label="쿠폰 사용률" value={`${couponRate}%`}
               sub={`${usedCoupons.length}/${filteredCoupons.length}장`}
               color={B.pants} bgColor={alpha(B.lavender, '44')} />
@@ -251,10 +251,10 @@ const LoveStats = ({ currentUser }) => {
           <Stack direction="row" gap={1} mt={1}>
             <StatCard emoji="📍" label="방문 장소" value={`${filteredPins.length}곳`}
               sub={`지수 ${jsuPins} · 현하 ${hyPins}`}
-              color="#3A86FF" bgColor="#F0F7FF" />
+              color="#3A86FF" bgColor={alpha('#3A86FF', '15')} />
             <StatCard emoji="🪣" label="버킷리스트" value={`${bucketRate}%`}
               sub={`${doneBuckets.length}/${buckets.length}개 달성`}
-              color={B.green} bgColor="#F0FBF6" />
+              color={B.green} bgColor={alpha(B.green, '15')} />
           </Stack>
         </Box>
 
@@ -354,7 +354,7 @@ const LoveStats = ({ currentUser }) => {
           ) : (
             <Stack spacing={1.5}>
               <Stack direction="row" gap={1}>
-                <Box sx={{ flex: 1, bgcolor: "#F0F7FF", borderRadius: 2, p: 1,
+                <Box sx={{ flex: 1, bgcolor: alpha('#3A86FF', '15'), borderRadius: 2, p: 1,
                   textAlign: "center", border: "1px solid #3A86FF22" }}>
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: "#3A86FF" }}>
                     {filteredPins.length}
@@ -362,7 +362,7 @@ const LoveStats = ({ currentUser }) => {
                   <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '77'),
                     fontFamily: "'Noto Sans KR',sans-serif" }}>총 방문지</Typography>
                 </Box>
-                <Box sx={{ flex: 1, bgcolor: "#F0FBF6", borderRadius: 2, p: 1,
+                <Box sx={{ flex: 1, bgcolor: alpha(B.green, '15'), borderRadius: 2, p: 1,
                   textAlign: "center", border: `1px solid ${alpha(B.green, '33')}` }}>
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.green }}>
                     {pinCatData[0]?.emoji || "📍"} {pinCatData[0]?.label || "-"}
@@ -424,7 +424,7 @@ const LoveStats = ({ currentUser }) => {
                 </Box>
               </Stack>
               {bucketRate === 100 && (
-                <Box sx={{ textAlign: "center", py: 0.8, bgcolor: "#E8FFF2",
+                <Box sx={{ textAlign: "center", py: 0.8, bgcolor: alpha(B.green, '15'),
                   borderRadius: 2, border: `1px dashed ${alpha(B.green, '66')}` }}>
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.82rem", color: B.green }}>
                     🎉 모든 버킷리스트 완료! 최고의 커플 🐷💜
@@ -468,7 +468,7 @@ const LoveStats = ({ currentUser }) => {
 
         {/* ── 좋아요 많은 기록 ── */}
         {topLiked && (topLiked.likes?.length || 0) > 0 && (
-          <Box sx={{ bgcolor: "#FFF0F8", borderRadius: '14px', p: 2, border: `1.5px solid ${alpha(B.pink, '33')}` }}>
+          <Box sx={{ bgcolor: alpha(B.pink, '15'), borderRadius: '14px', p: 2, border: `1.5px solid ${alpha(B.pink, '33')}` }}>
             <SectionHeader icon="❤️" title="가장 사랑받은 기록" />
             <Box sx={{ bgcolor: B.surface, borderRadius: 2.5, p: 1.5, border: `1px solid ${alpha(B.pink, '22')}` }}>
               <Stack direction="row" alignItems="center" gap={1} mb={0.8}>

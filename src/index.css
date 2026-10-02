@@ -64,6 +64,10 @@
   --glass-sheet-blur: blur(26px) saturate(170%);
   --glass-sheet-shadow: 0 -10px 40px rgba(123,79,166,0.26), inset 0 1px 0 rgba(255,255,255,0.9);
 
+  /* 알림 드로어 전용 — NotificationDrawer.jsx */
+  --notif-sheet-bg: linear-gradient(160deg, #FAF5FF 0%, #FFF8F2 55%, #F5F0FF 100%);
+  --notif-bar-bg: rgba(255,255,255,0.6);
+
   /* RGB 트리플릿 — src/lib/color.js의 alpha()가 rgba(var(--x-rgb), N) 형태로 쓴다.
      기존에 전역적으로 쓰이던 `${B.pants}44` 같은 hex+알파 접미사 패턴이 B.pants가
      CSS 변수 문자열이 되면서 더는 유효한 CSS가 아니게 돼서(var(--c-pants)44는 무효),
@@ -172,6 +176,9 @@
   --glass-sheet-blur: blur(26px) saturate(150%);
   --glass-sheet-shadow: 0 -4px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
 
+  --notif-sheet-bg: linear-gradient(160deg, #2A2436 0%, #241F2E 55%, #2E2838 100%);
+  --notif-bar-bg: rgba(36,31,46,0.75);
+
   --c-pants-rgb: 167,127,209;
   --c-accent-rgb: 240,131,74;
   --c-dark-rgb: 236,230,245;
@@ -206,6 +213,36 @@
   --cal-person-hyunha-to-rgb: 224,98,138;
   --cal-person-both-from-rgb: 179,146,214;
   --cal-person-both-to-rgb: 224,98,138;
+}
+
+/* Leaflet 줌 컨트롤(+/-)이 다크 모드에서도 흰 버튼으로 남지 않도록 */
+:root[data-theme="dark"] .leaflet-control-zoom a {
+  background-color: #241F2E !important;
+  color: #E8E3F0 !important;
+  border-color: #3A3448 !important;
+}
+:root[data-theme="dark"] .leaflet-control-zoom a:hover {
+  background-color: #2E2838 !important;
+}
+
+/* MUI TextField/Select 기본 텍스트·라벨색은 항상 검정 계열(theme.palette.text)이라
+   다크 모드에서 배경만 어둡게 바꾼 입력창은 글자가 안 보이는 문제가 반복됐다
+   (DayPanel/ScheduleDetailDialog/AccountBook 등 각자 고쳤던 것과 같은 원인) —
+   한 곳에서 전역으로 막아 앞으로 추가되는 입력창도 자동으로 안전하게 한다. */
+:root[data-theme="dark"] .MuiInputBase-input,
+:root[data-theme="dark"] .MuiOutlinedInput-input,
+:root[data-theme="dark"] .MuiSelect-select {
+  color: #ECE6F5;
+}
+:root[data-theme="dark"] .MuiInputBase-input::placeholder {
+  color: rgba(236,230,245,0.4);
+  opacity: 1;
+}
+:root[data-theme="dark"] .MuiInputLabel-root {
+  color: rgba(236,230,245,0.6);
+}
+:root[data-theme="dark"] .MuiInputLabel-root.Mui-focused {
+  color: #A77FD1;
 }
 
 /* Vite 기본 템플릿 리셋(폰트/렌더링)만 유지 — 색 관련 보일러플레이트는 제거(GlobalStyle.jsx의

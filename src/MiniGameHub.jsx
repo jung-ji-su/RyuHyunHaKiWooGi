@@ -133,6 +133,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                 sx={{
                   cursor: "pointer",
                   borderRadius: '14px',
+                  bgcolor: B.surface,
                   border: `2px solid ${alpha(game.color, '33')}`,
                   position: "relative",
                   overflow: "visible",

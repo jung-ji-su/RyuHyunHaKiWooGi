@@ -451,7 +451,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
       {/* 예산 진행률 */}
       {budget > 0 && (
         <Box sx={{ px: 2, mb: 2 }}>
-          <Paper elevation={2} sx={{ p: 2, borderRadius: '14px' }}>
+          <Paper elevation={2} sx={{ p: 2, borderRadius: '14px', bgcolor: B.surface }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
               <Typography sx={{
                 fontSize: "0.9rem",
@@ -555,7 +555,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           }}>
             📊 카테고리별 지출
           </Typography>
-          <Paper elevation={2} sx={{ p: 2, borderRadius: '14px' }}>
+          <Paper elevation={2} sx={{ p: 2, borderRadius: '14px', bgcolor: B.surface }}>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie
@@ -656,6 +656,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                       sx={{
                         p: 2,
                         borderRadius: '14px',
+                        bgcolor: B.surface,
                         borderLeft: `4px solid ${categoryInfo?.color || "#999"}`,
                         "&:active": { transform: "scale(0.98)" },
                         transition: "transform 0.1s",
@@ -744,7 +745,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         fullWidth
         maxWidth="sm"
         PaperProps={{
-          sx: { borderRadius: '14px' },
+          sx: { borderRadius: '14px', bgcolor: B.surface },
         }}
       >
         <DialogTitle sx={{
@@ -874,7 +875,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         maxWidth="xs"
         fullWidth
         PaperProps={{
-          sx: { borderRadius: '14px' },
+          sx: { borderRadius: '14px', bgcolor: B.surface },
         }}
       >
         <DialogTitle sx={{
@@ -946,7 +947,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         maxWidth="xs"
         fullWidth
         PaperProps={{
-          sx: { borderRadius: '14px' },
+          sx: { borderRadius: '14px', bgcolor: B.surface },
         }}
       >
         <DialogTitle sx={{

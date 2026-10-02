@@ -740,7 +740,8 @@ const OmokGame = ({ currentUser, opponentUser }) => {
       )}
 
       {/* ── 소원 입력 다이얼로그 ──────────────────────── */}
-      <Dialog open={wishDialogOpen} onClose={() => {}} maxWidth="sm" fullWidth>
+      <Dialog open={wishDialogOpen} onClose={() => {}} maxWidth="sm" fullWidth
+        PaperProps={{ sx: { bgcolor: B.surface } }}>
         <DialogTitle sx={{
           fontFamily: "'Jua',sans-serif",
           color: B.accent,
@@ -786,11 +787,12 @@ const OmokGame = ({ currentUser, opponentUser }) => {
       </Dialog>
       
       {/* ── 쿠폰 받기 다이얼로그 ──────────────────────── */}
-      <Dialog 
-        open={couponDialogOpen} 
+      <Dialog
+        open={couponDialogOpen}
         onClose={() => setCouponDialogOpen(false)}
         maxWidth="sm"
         fullWidth
+        PaperProps={{ sx: { bgcolor: B.surface } }}
       >
         <DialogContent sx={{ textAlign: "center", py: 4 }}>
           <motion.div

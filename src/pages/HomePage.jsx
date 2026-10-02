@@ -52,7 +52,7 @@ export default function HomePage({ currentUser, logout }) {
         <SectionCard
           icon="✍️" title="오늘의 기록"
           sub="칼 든 부리부리처럼 기록해요 ⚔️"
-          buriImg={buri4} bgColor="#FFF0E8" borderColor={B.accent}>
+          buriImg={buri4} bgColor={alpha(B.accent, '15')} borderColor={B.accent}>
           <DiaryWrite currentUser={currentUser} />
         </SectionCard>
 
