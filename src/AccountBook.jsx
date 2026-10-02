@@ -24,7 +24,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recha
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png"; //기본
 import buri5 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png"; //웃음
 import buri9 from "./assets/KakaoTalk_20260316_132934584.png"; // 승리
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 // ────────────────────────────────────────────────────────────
 // 카테고리 설정
@@ -303,16 +303,16 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         }}>
           🔒 접근 권한이 없어요
         </Typography>
-        <Typography sx={{ fontSize: "0.9rem", color: B.dark + "88", mb: 3 }}>
+        <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '88'), mb: 3 }}>
           가계부 소유자가 공개 설정을 해야 사용할 수 있어요
         </Typography>
         <Paper sx={{
           p: 3,
           bgcolor: B.cream,
-          border: `2px dashed ${B.pants}44`,
+          border: `2px dashed ${alpha(B.pants, '44')}`,
           borderRadius: '14px',
         }}>
-          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66" }}>
+          <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '66') }}>
             💡 소유자에게 가계부 공개를 요청해보세요!
           </Typography>
         </Paper>
@@ -349,7 +349,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             }}>
               💰 가계부
             </Typography>
-            <Typography sx={{ fontSize: "0.75rem", color: B.dark + "88" }}>
+            <Typography sx={{ fontSize: "0.75rem", color: alpha(B.dark, '88') }}>
               {isPrivate ? "🔒 나만 보기" : "🔓 공개 중"}
             </Typography>
           </Box>
@@ -384,15 +384,15 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         <Paper elevation={2} sx={{
           p: 2.5,
           borderRadius: '14px',
-          background: `linear-gradient(135deg, ${B.cream} 0%, ${B.peach}44 100%)`,
-          border: `2px solid ${B.accent}33`,
+          background: `linear-gradient(135deg, ${B.cream} 0%, ${alpha(B.peach, '44')} 100%)`,
+          border: `2px solid ${alpha(B.accent, '33')}`,
         }}>
           <Stack spacing={2}>
             {/* 수입 */}
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <TrendingUpIcon sx={{ color: "#4CAF50", fontSize: 24 }} />
-                <Typography sx={{ fontSize: "0.9rem", color: B.dark + "88" }}>
+                <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '88') }}>
                   수입
                 </Typography>
               </Box>
@@ -411,7 +411,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <TrendingDownIcon sx={{ color: "#F44336", fontSize: 24 }} />
-                <Typography sx={{ fontSize: "0.9rem", color: B.dark + "88" }}>
+                <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '88') }}>
                   지출
                 </Typography>
               </Box>
@@ -488,7 +488,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             
             <Typography sx={{
               fontSize: "0.75rem",
-              color: B.dark + "66",
+              color: alpha(B.dark, '66'),
               textAlign: "right",
               mt: 0.5,
             }}>
@@ -584,7 +584,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                   label={`${item.name} ${((item.value / totalExpense) * 100).toFixed(0)}%`}
                   size="small"
                   sx={{
-                    bgcolor: item.color + "33",
+                    bgcolor: alpha(item.color, '33'),
                     color: item.color,
                     fontSize: "0.72rem",
                     fontWeight: 600,
@@ -629,7 +629,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
             borderRadius: '14px',
           }}>
             <Box component="img" src={buri1} alt="" sx={{ width: 80, mb: 2, opacity: 0.6 }} />
-            <Typography sx={{ fontSize: "0.9rem", color: B.dark + "66" }}>
+            <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '66') }}>
               {searchKeyword || filterType !== "all" 
                 ? "검색 결과가 없어요"
                 : "아직 거래 내역이 없어요"
@@ -676,11 +676,11 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                             </Typography>
                           </Stack>
                           {transaction.memo && (
-                            <Typography sx={{ fontSize: "0.8rem", color: B.dark + "66", mb: 0.5 }}>
+                            <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '66'), mb: 0.5 }}>
                               {transaction.memo}
                             </Typography>
                           )}
-                          <Typography sx={{ fontSize: "0.75rem", color: B.dark + "44" }}>
+                          <Typography sx={{ fontSize: "0.75rem", color: alpha(B.dark, '44') }}>
                             {transaction.date}
                           </Typography>
                         </Box>
@@ -758,7 +758,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           <Stack spacing={2.5}>
             {/* 수입/지출 선택 */}
             <Box>
-              <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88", mb: 1 }}>
+              <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '88'), mb: 1 }}>
                 구분
               </Typography>
               <ToggleButtonGroup
@@ -795,7 +795,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
               onChange={(e) => setAmount(e.target.value)}
               fullWidth
               InputProps={{
-                endAdornment: <Typography sx={{ color: B.dark + "66" }}>원</Typography>,
+                endAdornment: <Typography sx={{ color: alpha(B.dark, '66') }}>원</Typography>,
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
@@ -806,7 +806,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
 
             {/* 카테고리 */}
             <Box>
-              <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88", mb: 1 }}>
+              <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '88'), mb: 1 }}>
                 카테고리
               </Typography>
               <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
@@ -820,7 +820,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                       color: category === cat.name ? "white" : B.dark,
                       fontFamily: "'Jua',sans-serif",
                       fontWeight: category === cat.name ? 700 : 400,
-                      "&:hover": { bgcolor: cat.color + "88" },
+                      "&:hover": { bgcolor: alpha(cat.color, '88') },
                     }}
                   />
                 ))}
@@ -850,7 +850,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={resetForm} sx={{ color: B.dark + "88" }}>
+          <Button onClick={resetForm} sx={{ color: alpha(B.dark, '88') }}>
             취소
           </Button>
           <Button
@@ -886,7 +886,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
         </DialogTitle>
         <DialogContent sx={{ pt: 3 }}>
           <Stack spacing={2}>
-            <Typography sx={{ fontSize: "0.9rem", color: B.dark + "88" }}>
+            <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '88') }}>
               이번 달 지출 목표 금액을 설정하세요
             </Typography>
             <TextField
@@ -896,7 +896,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
               fullWidth
               autoFocus
               InputProps={{
-                endAdornment: <Typography sx={{ color: B.dark + "66" }}>원</Typography>,
+                endAdornment: <Typography sx={{ color: alpha(B.dark, '66') }}>원</Typography>,
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
@@ -912,14 +912,14 @@ const AccountBook = ({ currentUser, opponentUser }) => {
               id="budget-input"
             />
             <Paper sx={{ p: 2, bgcolor: B.cream, borderRadius: 2 }}>
-              <Typography sx={{ fontSize: "0.8rem", color: B.dark + "66" }}>
+              <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '66') }}>
                 💡 예산을 초과하면 빨간색으로 경고해드려요!
               </Typography>
             </Paper>
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => setBudgetDialogOpen(false)} sx={{ color: B.dark + "88" }}>
+          <Button onClick={() => setBudgetDialogOpen(false)} sx={{ color: alpha(B.dark, '88') }}>
             취소
           </Button>
           <Button
@@ -987,7 +987,7 @@ const AccountBook = ({ currentUser, opponentUser }) => {
                 />
               </Box>
               <Divider />
-              <Typography sx={{ fontSize: "0.8rem", color: B.dark + "66" }}>
+              <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '66') }}>
                 💡 공개하면 {opponentUser}님도 가계부를 볼 수 있어요
               </Typography>
             </Stack>

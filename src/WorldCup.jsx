@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Box, Typography, Stack, LinearProgress } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
-import { B } from './lib/constants';
+import { alpha, B } from './lib/constants';
 import { THEMES, calcBracketSize, shuffle, getRoundName } from './worldcupData';
 import { vibrate } from './touchEffects';
 
@@ -29,7 +29,7 @@ function RoundBanner({ roundName, onDone }) {
         position: 'fixed', inset: 0, zIndex: 2000,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        background: `linear-gradient(135deg, ${B.pants}f0 0%, #3A0080f0 100%)`,
+        background: `linear-gradient(135deg, ${alpha(B.pants, 'f0')} 0%, #3A0080f0 100%)`,
         backdropFilter: 'blur(12px)',
       }}
     >
@@ -80,7 +80,7 @@ function WinnerScreen({ winner, theme, onRestart }) {
       >
         <Typography sx={{ fontSize: '4rem', mb: 1 }}>🏆</Typography>
         <Typography sx={{
-          fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants + 'aa',
+          fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: alpha(B.pants, 'aa'),
           letterSpacing: 4, mb: 2,
         }}>
           최종 우승
@@ -89,8 +89,8 @@ function WinnerScreen({ winner, theme, onRestart }) {
         {/* 우승 카드 */}
         <Box sx={{
           borderRadius: '24px', overflow: 'hidden',
-          boxShadow: `0 12px 60px ${theme.color}44`,
-          border: `3px solid ${theme.color}66`,
+          boxShadow: `0 12px 60px ${alpha(theme.color, '44')}`,
+          border: `3px solid ${alpha(theme.color, '66')}`,
           maxWidth: 320, mx: 'auto', mb: 3,
         }}>
           <Box
@@ -101,7 +101,7 @@ function WinnerScreen({ winner, theme, onRestart }) {
           />
           <Box sx={{
             py: 2.5, px: 2,
-            background: `linear-gradient(135deg, ${theme.color}18, ${theme.color}08)`,
+            background: `linear-gradient(135deg, ${alpha(theme.color, '18')}, ${alpha(theme.color, '08')})`,
           }}>
             <Typography sx={{
               fontSize: '2.5rem', mb: 0.5, display: 'block',
@@ -118,7 +118,7 @@ function WinnerScreen({ winner, theme, onRestart }) {
 
         <Typography sx={{
           fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.9rem',
-          color: B.dark + '77', mb: 3,
+          color: alpha(B.dark, '77'), mb: 3,
         }}>
           {theme.emoji} {theme.name} 월드컵 최종 우승!
         </Typography>
@@ -128,7 +128,7 @@ function WinnerScreen({ winner, theme, onRestart }) {
             px: 3, py: 1.5, borderRadius: '999px',
             background: `linear-gradient(135deg, ${B.pants}, #5A2080)`,
             color: 'white', fontFamily: "'Jua',sans-serif", fontSize: '0.95rem',
-            cursor: 'pointer', boxShadow: `0 4px 16px ${B.pants}44`,
+            cursor: 'pointer', boxShadow: `0 4px 16px ${alpha(B.pants, '44')}`,
             '&:active': { transform: 'scale(0.95)' },
           }}>
             🔄 다시 하기
@@ -293,7 +293,7 @@ export default function WorldCup({ currentUser }) {
           </Typography>
           <Typography sx={{
             fontFamily: "'Noto Sans KR',sans-serif",
-            color: B.dark + '77', fontSize: '0.8rem', mt: 0.5,
+            color: alpha(B.dark, '77'), fontSize: '0.8rem', mt: 0.5,
           }}>
             테마를 선택하고 최애를 뽑아봐요!
           </Typography>
@@ -312,10 +312,10 @@ export default function WorldCup({ currentUser }) {
             >
               <Box sx={{
                 borderRadius: '18px',
-                background: `linear-gradient(135deg, ${t.color}22, ${t.color}10)`,
-                border: `2px solid ${t.color}33`,
+                background: `linear-gradient(135deg, ${alpha(t.color, '22')}, ${alpha(t.color, '10')})`,
+                border: `2px solid ${alpha(t.color, '33')}`,
                 p: 2.2, textAlign: 'center',
-                boxShadow: `0 4px 16px ${t.color}18`,
+                boxShadow: `0 4px 16px ${alpha(t.color, '18')}`,
                 transition: 'box-shadow 0.2s',
               }}>
                 <Typography sx={{ fontSize: '2.2rem', mb: 0.8 }}>{t.emoji}</Typography>
@@ -326,7 +326,7 @@ export default function WorldCup({ currentUser }) {
                   {t.name}
                 </Typography>
                 <Typography sx={{
-                  fontSize: '0.72rem', color: B.dark + '66',
+                  fontSize: '0.72rem', color: alpha(B.dark, '66'),
                   fontFamily: "'Noto Sans KR',sans-serif", mt: 0.4,
                 }}>
                   {t.description}
@@ -351,7 +351,7 @@ export default function WorldCup({ currentUser }) {
           {theme.name} 월드컵
         </Typography>
         <Typography sx={{
-          fontFamily: "'Noto Sans KR',sans-serif", color: B.dark + '77',
+          fontFamily: "'Noto Sans KR',sans-serif", color: alpha(B.dark, '77'),
           fontSize: '0.82rem', mb: 4,
         }}>
           대진 규모를 선택해주세요
@@ -362,10 +362,10 @@ export default function WorldCup({ currentUser }) {
             <motion.div key={s} whileTap={{ scale: 0.96 }}>
               <Box onClick={() => handleSizeSelect(s)} sx={{
                 py: 2, px: 3, borderRadius: '16px',
-                background: `linear-gradient(135deg, ${theme.color}22, ${theme.color}0a)`,
-                border: `2px solid ${theme.color}44`,
+                background: `linear-gradient(135deg, ${alpha(theme.color, '22')}, ${alpha(theme.color, '0a')})`,
+                border: `2px solid ${alpha(theme.color, '44')}`,
                 cursor: 'pointer',
-                boxShadow: `0 4px 16px ${theme.color}18`,
+                boxShadow: `0 4px 16px ${alpha(theme.color, '18')}`,
               }}>
                 <Typography sx={{
                   fontFamily: "'Jua',sans-serif", fontSize: '1.5rem',
@@ -374,7 +374,7 @@ export default function WorldCup({ currentUser }) {
                   {s}강
                 </Typography>
                 <Typography sx={{
-                  fontSize: '0.72rem', color: B.dark + '66',
+                  fontSize: '0.72rem', color: alpha(B.dark, '66'),
                   fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3,
                 }}>
                   {Math.log2(s)}라운드 · {s}개 중 최강자 선발
@@ -385,7 +385,7 @@ export default function WorldCup({ currentUser }) {
         </Stack>
 
         <Box onClick={() => setPhase('theme')} sx={{
-          mt: 3, cursor: 'pointer', color: B.dark + '55',
+          mt: 3, cursor: 'pointer', color: alpha(B.dark, '55'),
           fontSize: '0.8rem', fontFamily: "'Noto Sans KR',sans-serif",
           '&:active': { opacity: 0.6 },
         }}>
@@ -430,7 +430,7 @@ export default function WorldCup({ currentUser }) {
               {theme.emoji} {roundName}
             </Typography>
             <Typography sx={{
-              fontFamily: "'Noto Sans KR',sans-serif", color: B.dark + '55', fontSize: '0.72rem',
+              fontFamily: "'Noto Sans KR',sans-serif", color: alpha(B.dark, '55'), fontSize: '0.72rem',
             }}>
               {doneMatches + 1} / {totalMatches} 매치
             </Typography>
@@ -443,9 +443,9 @@ export default function WorldCup({ currentUser }) {
               value={Math.min(progress, 100)}
               sx={{
                 height: 6, borderRadius: 4,
-                bgcolor: `${theme.color}18`,
+                bgcolor: `${alpha(theme.color, '18')}`,
                 '& .MuiLinearProgress-bar': {
-                  background: `linear-gradient(90deg, ${theme.color}, ${theme.color}cc)`,
+                  background: `linear-gradient(90deg, ${theme.color}, ${alpha(theme.color, 'cc')})`,
                   borderRadius: 4,
                 },
               }}
@@ -507,7 +507,7 @@ export default function WorldCup({ currentUser }) {
           <Typography sx={{
             textAlign: 'center', mt: 2.5,
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.78rem',
-            color: B.dark + '55',
+            color: alpha(B.dark, '55'),
           }}>
             원하는 쪽을 탭해서 선택하세요!
           </Typography>

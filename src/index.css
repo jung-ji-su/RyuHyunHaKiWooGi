@@ -51,6 +51,161 @@
   --cal-person-hyunha-to: #FF6B9D;
   --cal-person-both-from: #9B6FC7;
   --cal-person-both-to: #FF6B9D;
+
+  /* 글래스모피즘 레시피(라이트) — calendarTokens.js의 glass 객체가 이 변수를 가리킨다 */
+  --glass-panel-bg: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.32));
+  --glass-panel-blur: blur(22px) saturate(170%);
+  --glass-panel-shadow: 0 10px 34px rgba(123,79,166,0.16), 0 2px 10px rgba(123,79,166,0.08), inset 0 1px 0 rgba(255,255,255,0.85);
+  --glass-panel-border: linear-gradient(150deg, rgba(255,255,255,0.95), rgba(255,255,255,0.1) 35%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.55));
+  --glass-small-bg: rgba(255,255,255,0.55);
+  --glass-small-border: 1px solid rgba(255,255,255,0.8);
+  --glass-small-shadow: 0 2px 8px rgba(123,79,166,0.14), inset 0 1px 0 rgba(255,255,255,0.9);
+  --glass-sheet-bg: linear-gradient(165deg, rgba(255,255,255,0.82), rgba(255,255,255,0.58));
+  --glass-sheet-blur: blur(26px) saturate(170%);
+  --glass-sheet-shadow: 0 -10px 40px rgba(123,79,166,0.26), inset 0 1px 0 rgba(255,255,255,0.9);
+
+  /* RGB 트리플릿 — src/lib/color.js의 alpha()가 rgba(var(--x-rgb), N) 형태로 쓴다.
+     기존에 전역적으로 쓰이던 `${B.pants}44` 같은 hex+알파 접미사 패턴이 B.pants가
+     CSS 변수 문자열이 되면서 더는 유효한 CSS가 아니게 돼서(var(--c-pants)44는 무효),
+     alpha() 경유로 돌아갈 수 있게 각 색의 R,G,B 성분을 별도로 들고 있는다. */
+  --c-pants-rgb: 123,79,166;
+  --c-accent-rgb: 232,99,10;
+  --c-dark-rgb: 61,31,0;
+  --c-skin-rgb: 245,184,160;
+  --c-cream-rgb: 255,248,242;
+  --c-peach-rgb: 255,228,212;
+  --c-lavender-rgb: 237,224,245;
+  --c-pink-rgb: 255,143,171;
+  --c-pink-vivid-rgb: 255,107,157;
+  --c-success-rgb: 29,158,117;
+  --c-success-bright-rgb: 67,160,71;
+  --c-error-rgb: 229,57,53;
+  --c-warning-rgb: 255,184,48;
+  --c-orange-rgb: 255,107,53;
+  --c-surface-card-rgb: 255,255,255;
+
+  --cal-accent-rgb: 123,79,166;
+  --cal-on-accent-rgb: 255,255,255;
+  --cal-surface-rgb: 255,255,255;
+  --cal-border-rgb: 231,226,237;
+  --cal-divider-rgb: 239,235,243;
+  --cal-text-1-rgb: 46,42,56;
+  --cal-text-2-rgb: 138,131,152;
+  --cal-text-3-rgb: 183,176,196;
+  --cal-holiday-rgb: 226,87,79;
+  --cal-cat-anniversary-rgb: 240,169,59;
+  --cal-cat-date-rgb: 239,90,90;
+  --cal-cat-personal-rgb: 59,130,246;
+  --cal-person-jisu-from-rgb: 155,111,199;
+  --cal-person-jisu-to-rgb: 123,79,166;
+  --cal-person-hyunha-from-rgb: 255,143,171;
+  --cal-person-hyunha-to-rgb: 255,107,157;
+  --cal-person-both-from-rgb: 155,111,199;
+  --cal-person-both-to-rgb: 255,107,157;
+}
+
+/* ============================================================
+   다크 모드 — 전부 명시적 [data-theme="dark"] 선택자에만 건다.
+   라이트/다크 둘 다 JS(useColorMode)가 "system" 설정을 직접 해석해서
+   data-theme 속성을 항상 light/dark 중 하나로 명시적으로 세팅하므로
+   CSS에는 @media (prefers-color-scheme) 분기를 따로 두지 않는다
+   (분기점 하나로 통일 — 유지보수 단순화, 깜빡임 방지는 index.html의
+   동기 스크립트가 React 마운트 전에 처리).
+
+   색 대비 원칙: 다크에서 채도 높은 라이트모드 값을 그대로 쓰면 눈이 아프므로
+   accent·state·category 계열은 전부 조금씩 톤다운/명도 조정했다.
+   글래스 레시피는 "흰 반투명 그대로"가 아니라 어두운 베이스 틴트 +
+   테두리 하이라이트로 다시 설계했다(그림자 대신 입체감 확보).
+   ============================================================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --c-pants: #A77FD1;
+  --c-accent: #F0834A;
+  --c-dark: #ECE6F5;
+  --c-skin: #E0A98C;
+  --c-cream: #241F2E;
+  --c-peach: #3A2E38;
+  --c-lavender: #2E2A40;
+
+  --c-pink: #E8809E;
+  --c-pink-vivid: #E0628A;
+
+  --c-success: #3BAE8A;
+  --c-success-bright: #5BAE5F;
+  --c-error: #E06A66;
+  --c-warning: #E0A83E;
+  --c-orange: #E07A50;
+
+  --c-surface-card: #241F2E;
+
+  --cal-accent: #A77FD1;
+  --cal-accent-soft: #A77FD126;
+  --cal-on-accent: #FFFFFF;
+  --cal-surface: #241F2E;
+  --cal-border: #3A3448;
+  --cal-divider: #2E2838;
+  --cal-text-1: #E8E3F0;
+  --cal-text-2: #9B93AC;
+  --cal-text-3: #6F6880;
+  --cal-holiday: #E8716A;
+  --cal-cat-anniversary: #E0A050;
+  --cal-cat-date: #E07070;
+  --cal-cat-personal: #6B9AF0;
+  --cal-person-jisu-from: #B392D6;
+  --cal-person-jisu-to: #A77FD1;
+  --cal-person-hyunha-from: #E8A5B8;
+  --cal-person-hyunha-to: #E0628A;
+  --cal-person-both-from: #B392D6;
+  --cal-person-both-to: #E0628A;
+
+  /* 다크 글래스 레시피 — 흰 반투명 대신 어두운 틴트 베이스 + 밝은 테두리 하이라이트.
+     그림자는 다크 배경에선 안 보이므로 보라색 glow + inset 하이라이트로 입체감을 낸다. */
+  --glass-panel-bg: linear-gradient(135deg, rgba(62,54,78,0.78), rgba(42,36,54,0.68));
+  --glass-panel-blur: blur(22px) saturate(150%);
+  --glass-panel-shadow: 0 0 0 1px rgba(167,127,209,0.12), 0 10px 34px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+  --glass-panel-border: linear-gradient(150deg, rgba(255,255,255,0.24), rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.02) 60%, rgba(255,255,255,0.14));
+  --glass-small-bg: rgba(255,255,255,0.07);
+  --glass-small-border: 1px solid rgba(255,255,255,0.14);
+  --glass-small-shadow: 0 2px 10px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+  --glass-sheet-bg: linear-gradient(165deg, rgba(40,34,52,0.94), rgba(28,24,38,0.9));
+  --glass-sheet-blur: blur(26px) saturate(150%);
+  --glass-sheet-shadow: 0 -4px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+
+  --c-pants-rgb: 167,127,209;
+  --c-accent-rgb: 240,131,74;
+  --c-dark-rgb: 236,230,245;
+  --c-skin-rgb: 224,169,140;
+  --c-cream-rgb: 36,31,46;
+  --c-peach-rgb: 58,46,56;
+  --c-lavender-rgb: 46,42,64;
+  --c-pink-rgb: 232,128,158;
+  --c-pink-vivid-rgb: 224,98,138;
+  --c-success-rgb: 59,174,138;
+  --c-success-bright-rgb: 91,174,95;
+  --c-error-rgb: 224,106,102;
+  --c-warning-rgb: 224,168,62;
+  --c-orange-rgb: 224,122,80;
+  --c-surface-card-rgb: 36,31,46;
+
+  --cal-accent-rgb: 167,127,209;
+  --cal-on-accent-rgb: 255,255,255;
+  --cal-surface-rgb: 36,31,46;
+  --cal-border-rgb: 58,52,72;
+  --cal-divider-rgb: 46,40,56;
+  --cal-text-1-rgb: 232,227,240;
+  --cal-text-2-rgb: 155,147,172;
+  --cal-text-3-rgb: 111,104,128;
+  --cal-holiday-rgb: 232,113,106;
+  --cal-cat-anniversary-rgb: 224,160,80;
+  --cal-cat-date-rgb: 224,112,112;
+  --cal-cat-personal-rgb: 107,154,240;
+  --cal-person-jisu-from-rgb: 179,146,214;
+  --cal-person-jisu-to-rgb: 167,127,209;
+  --cal-person-hyunha-from-rgb: 232,165,184;
+  --cal-person-hyunha-to-rgb: 224,98,138;
+  --cal-person-both-from-rgb: 179,146,214;
+  --cal-person-both-to-rgb: 224,98,138;
 }
 
 /* Vite 기본 템플릿 리셋(폰트/렌더링)만 유지 — 색 관련 보일러플레이트는 제거(GlobalStyle.jsx의
@@ -67,6 +222,15 @@
 
 body {
   font-family: 'Gamja+Flower', 'Hi Melody', cursive !important;
+}
+
+/* 테마 전환 순간에만 짧게 붙는 클래스(useColorMode가 토글 시 300ms만 부여) —
+   상시 transition을 모든 요소에 걸면 스크롤/애니메이션 성능에 영향을 주므로
+   전환되는 그 순간에만 한시적으로 적용한다. */
+.theme-transitioning,
+.theme-transitioning * {
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease,
+    box-shadow .25s ease, fill .25s ease !important;
 }
 
 h1 {

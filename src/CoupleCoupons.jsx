@@ -11,7 +11,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import confetti from "canvas-confetti";
 import { vibrate } from "./touchEffects";
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const USERS = ["지수", "현하"];
 
@@ -98,7 +98,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
         </Typography>
         <Typography sx={{
           fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.78rem",
-          color: B.dark + "88", textAlign: "center", mb: 2.5,
+          color: alpha(B.dark, '88'), textAlign: "center", mb: 2.5,
         }}>
           받은 쿠폰 중에서 랜덤으로 하나 뽑아요!
         </Typography>
@@ -107,7 +107,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
         <Box sx={{
           minHeight: 80, borderRadius: '14px', mb: 2.5,
           border: `2px dashed ${B.lavender}`,
-          bgcolor: B.lavender + "33",
+          bgcolor: alpha(B.lavender, '33'),
           display: "flex", alignItems: "center", justifyContent: "center",
           px: 2,
         }}>
@@ -128,7 +128,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
               </Typography>
               <Typography sx={{
                 fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem",
-                color: B.dark + "66", mt: 0.5,
+                color: alpha(B.dark, '66'), mt: 0.5,
               }}>
                 From. {picked.sender}
               </Typography>
@@ -136,7 +136,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
           ) : (
             <Typography sx={{
               fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.82rem",
-              color: B.dark + "55",
+              color: alpha(B.dark, '55'),
             }}>
               {available.length === 0 ? "사용 가능한 쿠폰이 없어요 😢" : "버튼을 눌러 뽑아요!"}
             </Typography>
@@ -150,7 +150,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
             sx={{
               bgcolor: B.pants, borderRadius: "14px", py: 1,
               fontFamily: "'Jua',sans-serif", fontSize: "1rem",
-              boxShadow: `0 4px 14px ${B.pants}44`,
+              boxShadow: `0 4px 14px ${alpha(B.pants, '44')}`,
               "&:hover": { bgcolor: "#6A3D96" },
             }}
           >
@@ -163,7 +163,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
                 borderColor: B.pinkVivid, color: B.pinkVivid,
                 borderRadius: "14px", py: 1,
                 fontFamily: "'Jua',sans-serif", fontSize: "0.9rem",
-                "&:hover": { bgcolor: B.pinkVivid + "11" },
+                "&:hover": { bgcolor: alpha(B.pinkVivid, '11') },
               }}
             >
               ✓ 이 쿠폰 바로 사용하기
@@ -171,7 +171,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
           )}
           <Button fullWidth onClick={onClose}
             sx={{
-              color: B.dark + "55", fontFamily: "'Noto Sans KR',sans-serif",
+              color: alpha(B.dark, '55'), fontFamily: "'Noto Sans KR',sans-serif",
               fontSize: "0.8rem",
             }}
           >
@@ -218,7 +218,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
             borderRadius: '999px', whiteSpace: "nowrap", flexShrink: 0,
             bgcolor: open ? B.accent : B.pants, px: 2,
             fontFamily: "'Jua',sans-serif", fontSize: "0.78rem",
-            boxShadow: `0 2px 8px ${B.pants}33`,
+            boxShadow: `0 2px 8px ${alpha(B.pants, '33')}`,
             "&:hover": { bgcolor: open ? "#C8550A" : "#6A3D96" },
           }}
         >
@@ -248,8 +248,8 @@ const IssueForm = ({ currentUser, onIssue }) => {
                 sx={{
                   px: 1, py: "4px", borderRadius: '999px', cursor: "pointer",
                   border: `1.5px solid ${selCat === cat.key ? B.pants : B.lavender}`,
-                  bgcolor: selCat === cat.key ? B.pants : "white",
-                  color:   selCat === cat.key ? "white"  : B.dark + "88",
+                  bgcolor: selCat === cat.key ? B.pants : B.surface,
+                  color:   selCat === cat.key ? "white"  : alpha(B.dark, '88'),
                   fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
                   transition: "all 0.15s",
                   userSelect: "none",
@@ -285,7 +285,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
             sx={{
               bgcolor: B.pants, borderRadius: "12px", py: 1,
               fontFamily: "'Jua',sans-serif", fontSize: "0.9rem",
-              boxShadow: `0 3px 10px ${B.pants}44`,
+              boxShadow: `0 3px 10px ${alpha(B.pants, '44')}`,
               "&:hover": { bgcolor: "#6A3D96" },
               "&.Mui-disabled": { bgcolor: B.lavender, color: "white" },
             }}
@@ -312,7 +312,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
     <Box sx={{
       borderRadius: '14px', overflow: "hidden",
       border: `2px dashed ${isUsed || expired ? "#DDD" : B.lavender}`,
-      bgcolor: isUsed || expired ? "#F9F9F9" : "white",
+      bgcolor: isUsed || expired ? "#F9F9F9" : B.surface,
       opacity: isUsed || expired ? 0.7 : 1,
       transition: "all 0.2s",
     }}>
@@ -352,7 +352,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
             <Stack direction="row" alignItems="center" gap={0.8} sx={{ mt: 0.4 }}>
               <Typography sx={{
                 fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem",
-                color: B.dark + "55",
+                color: alpha(B.dark, '55'),
               }}>
                 From. {coupon.sender}
               </Typography>
@@ -404,7 +404,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
                   bgcolor: B.pinkVivid, borderRadius: "10px",
                   fontFamily: "'Jua',sans-serif", fontSize: "0.78rem",
                   px: 1.5, py: 0.5, minWidth: 0,
-                  boxShadow: `0 2px 8px ${B.pinkVivid}44`,
+                  boxShadow: `0 2px 8px ${alpha(B.pinkVivid, '44')}`,
                   "&:hover": { bgcolor: "#E05588" },
                 }}
               >
@@ -415,7 +415,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
                 <Box sx={{
                   px: 1, py: "3px", borderRadius: '999px',
                   border: `1px solid ${B.lavender}`,
-                  color: B.pants + "88",
+                  color: alpha(B.pants, '88'),
                   fontSize: "0.72rem", fontFamily: "'Noto Sans KR',sans-serif",
                 }}>
                   대기중
@@ -514,7 +514,7 @@ const CoupleCoupons = ({ currentUser }) => {
           sx={{
             borderRadius: '999px', borderColor: B.accent, color: B.accent,
             fontFamily: "'Jua',sans-serif", fontSize: "0.78rem", px: 2,
-            "&:hover": { bgcolor: B.accent + "11" },
+            "&:hover": { bgcolor: alpha(B.accent, '11') },
           }}
         >
           🎰 랜덤 뽑기
@@ -548,7 +548,7 @@ const CoupleCoupons = ({ currentUser }) => {
       {tabData.length === 0 ? (
         <Box sx={{
           textAlign: "center", py: 5,
-          color: B.dark + "44",
+          color: alpha(B.dark, '44'),
           fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.85rem",
         }}>
           {tab === "received" ? "받은 쿠폰이 없어요 😢\n상대방한테 졸라보세요 ㅋㅋ"

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 
 const isIOS = () =>
   (/iPhone|iPad|iPod/.test(navigator.userAgent) ||
@@ -81,7 +81,7 @@ export default function InstallPrompt({ onRequestPermission }) {
       position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
       zIndex: 1400, width: '90%', maxWidth: 380,
       bgcolor: B.pants, borderRadius: '14px', p: 2,
-      boxShadow: `0 8px 32px ${B.pants}77`,
+      boxShadow: `0 8px 32px ${alpha(B.pants, '77')}`,
       display: 'flex', flexDirection: 'column', gap: 1.5,
     }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

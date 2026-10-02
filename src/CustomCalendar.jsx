@@ -6,7 +6,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FavoriteIcon     from '@mui/icons-material/Favorite';
 import LockIcon         from '@mui/icons-material/Lock';
 import { vibrate } from './touchEffects';
-import { calendarColor as C, calendarFont as F, TOUCH_MIN, glassSmallSx } from './lib/calendarTokens';
+import { alpha, calendarColor as C, calendarFont as F, TOUCH_MIN, glassSmallSx } from './lib/calendarTokens';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -48,8 +48,8 @@ const PRIORITY = ['기념일', '데이트', '개인일정'];
 // 작은 네온 글로우(box-shadow, blur-filter 아님)로 입체감만 살짝 추가.
 function ShapeDot({ category, dim, size = 5 }) {
   const meta = C.category[category] || { hue: C.accent, shape: 'circle' };
-  const bg = dim ? `${meta.hue}99` : meta.hue;
-  const glow = { boxShadow: `0 0 4px ${meta.hue}99` };
+  const bg = dim ? `${alpha(meta.hue, '99')}` : meta.hue;
+  const glow = { boxShadow: `0 0 4px ${alpha(meta.hue, '99')}` };
   if (meta.shape === 'diamond') {
     return <Box sx={{ width: size - 1, height: size - 1, bgcolor: bg, borderRadius: '1px', transform: 'rotate(45deg)', flexShrink: 0, ...glow }} />;
   }
@@ -85,7 +85,7 @@ function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, sch
     circleSx = {
       background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.person.jisu.to})`,
       boxShadow: [
-        `0 6px 16px ${C.accent}55`,
+        `0 6px 16px ${alpha(C.accent, '55')}`,
         'inset 0 1px 1px rgba(255,255,255,.5)',
         'inset 0 -3px 4px rgba(0,0,0,.18)',
         isSelected && !multiSelectMode ? `0 0 0 4px ${C.accentSoft}` : null,
@@ -98,7 +98,7 @@ function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, sch
   } else if (isSelected) {
     circleSx = {
       bgcolor: 'rgba(255,255,255,.85)',
-      boxShadow: `0 6px 14px ${C.accent}28, 0 2px 4px ${C.accent}1f, inset 0 1px 0 rgba(255,255,255,.95)`,
+      boxShadow: `0 6px 14px ${alpha(C.accent, '28')}, 0 2px 4px ${alpha(C.accent, '1f')}, inset 0 1px 0 rgba(255,255,255,.95)`,
       transform: 'translateY(-1px)',
     };
     numColor = C.accent;
@@ -263,7 +263,7 @@ export default function CustomCalendar({
           <Typography key={w} sx={{
             textAlign: 'center', fontSize: F.weekday, fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
-            color: i === 0 ? C.holiday + 'aa' : C.textFaint,
+            color: i === 0 ? alpha(C.holiday, 'aa') : C.textFaint,
             py: '4px',
           }}>
             {w}

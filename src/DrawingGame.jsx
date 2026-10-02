@@ -21,7 +21,7 @@ import { getRandomCoupon } from "./gameCoupons.js";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png"; //기본
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png"; //웃음
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png"; // 승리
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 // ────────────────────────────────────────────────────────────
 // 제시어 데이터베이스
@@ -753,7 +753,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                     }}>
                         🎨 스피드 그림 퀴즈
                     </Typography>
-                    <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88" }}>
+                    <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '88') }}>
                         30초 안에 그림 그리고 맞춰보세요!
                     </Typography>
                 </Box>
@@ -787,7 +787,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                 borderColor: B.pants,
                                 color: B.pants,
                                 fontFamily: "'Jua',sans-serif",
-                                "&:hover": { bgcolor: B.peach + "33" },
+                                "&:hover": { bgcolor: alpha(B.peach, '33') },
                             }}
                         >
                             입장하기
@@ -828,7 +828,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                     }}>
                         🎉 준비 완료!
                     </Typography>
-                    <Typography sx={{ mt: 1, color: B.dark + "88" }}>
+                    <Typography sx={{ mt: 1, color: alpha(B.dark, '88') }}>
                         곧 게임이 시작됩니다...
                     </Typography>
                 </Box>
@@ -863,7 +863,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                         px: 3,
                                         py: 1.5,
                                         borderRadius: 3,
-                                        bgcolor: recentMessage.isCorrect ? B.accent + "DD" : "white" + "DD",
+                                        bgcolor: recentMessage.isCorrect ? alpha(B.accent, 'DD') : "white" + "DD",
                                         border: `2px solid ${recentMessage.isCorrect ? B.accent : B.pants}`,
                                         boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
                                         backdropFilter: "blur(8px)",
@@ -893,7 +893,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                     {/* 상단 정보 */}
                     <Stack direction="row" spacing={2} sx={{ mb: 2, justifyContent: "space-between" }}>
                         <Box>
-                            <Typography sx={{ fontSize: "0.9rem", color: B.dark + "88" }}>
+                            <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '88') }}>
                                 라운드 {round} / 10
                             </Typography>
                             <Typography sx={{
@@ -906,10 +906,10 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         </Box>
 
                         <Box sx={{ textAlign: "right" }}>
-                            <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66" }}>
+                            <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '66') }}>
                                 {players.drawer}: {scores[players.drawer] || 0}점
                             </Typography>
-                            <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66" }}>
+                            <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '66') }}>
                                 {players.guesser}: {scores[players.guesser] || 0}점
                             </Typography>
                         </Box>
@@ -938,10 +938,10 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             p: 2,
                             mb: 2,
                             borderRadius: '14px',
-                            bgcolor: B.accent + "22",
+                            bgcolor: alpha(B.accent, '22'),
                             border: `2px solid ${B.accent}`,
                         }}>
-                            <Typography sx={{ fontSize: "0.8rem", color: B.dark + "66", mb: 0.5 }}>
+                            <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '66'), mb: 0.5 }}>
                                 제시어
                             </Typography>
                             <Typography sx={{
@@ -961,7 +961,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             p: 2,
                             mb: 2,
                             borderRadius: '14px',
-                            bgcolor: B.pants + "22",
+                            bgcolor: alpha(B.pants, '22'),
                         }}>
                             <Typography sx={{
                                 fontFamily: "'Jua',sans-serif",
@@ -970,7 +970,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             }}>
                                 {currentWord.split("").map((_, i) => "□").join(" ")}
                             </Typography>
-                            <Typography sx={{ fontSize: "0.75rem", color: B.dark + "66", mt: 0.5 }}>
+                            <Typography sx={{ fontSize: "0.75rem", color: alpha(B.dark, '66'), mt: 0.5 }}>
                                 ({currentWord.length}글자)
                             </Typography>
                         </Box>
@@ -1024,7 +1024,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                             </Stack>
 
                             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-                                <BrushIcon sx={{ color: B.dark + "88" }} />
+                                <BrushIcon sx={{ color: alpha(B.dark, '88') }} />
                                 <Slider
                                     value={brushWidth}
                                     onChange={(e, val) => setBrushWidth(val)}
@@ -1066,13 +1066,13 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         mb: 2,
                         maxHeight: 80,
                         overflowY: "auto",
-                        bgcolor: B.cream + "88",
+                        bgcolor: alpha(B.cream, '88'),
                         touchAction: "manipulation",
                         pointerEvents: "auto",
-                        border: `1px dashed ${B.pants}44`,
+                        border: `1px dashed ${alpha(B.pants, '44')}`,
                     }}>
                         {chatMessages.length === 0 ? (
-                            <Typography sx={{ fontSize: "0.75rem", color: B.dark + "44", textAlign: "center" }}>
+                            <Typography sx={{ fontSize: "0.75rem", color: alpha(B.dark, '44'), textAlign: "center" }}>
                                 {myRole === "drawer" ? "상대방의 답변이 위에 표시돼요" : "입력한 답변이 위에 표시돼요"}
                             </Typography>
                         ) : (
@@ -1082,7 +1082,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                         key={i}
                                         sx={{
                                             fontSize: "0.72rem",
-                                            color: msg.isCorrect ? B.accent : B.dark + "88",
+                                            color: msg.isCorrect ? B.accent : alpha(B.dark, '88'),
                                             fontWeight: msg.isCorrect ? 700 : 400,
                                         }}
                                     >
@@ -1226,7 +1226,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                     border: selectedDifficulty === diff.value
                                         ? `3px solid ${B.accent}`
                                         : `2px solid ${B.cream}`,
-                                    bgcolor: selectedDifficulty === diff.value ? B.peach + "33" : "white",
+                                    bgcolor: selectedDifficulty === diff.value ? alpha(B.peach, '33') : B.surface,
                                     transition: "all 0.2s",
                                     "&:hover": {
                                         transform: "translateY(-2px)",
@@ -1244,7 +1244,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                                         }}>
                                             {diff.label}
                                         </Typography>
-                                        <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88" }}>
+                                        <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '88') }}>
                                             {diff.desc}
                                         </Typography>
                                     </Box>
@@ -1296,7 +1296,7 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
 
                     <Paper sx={{
                         p: 3,
-                        bgcolor: B.peach + "33",
+                        bgcolor: alpha(B.peach, '33'),
                         border: `2px solid ${B.accent}`,
                         borderRadius: '14px',
                         mb: 3,
@@ -1310,10 +1310,10 @@ const DrawingGame = ({ currentUser, opponentUser }) => {
                         </Typography>
                     </Paper>
 
-                    <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88", mb: 1 }}>
+                    <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '88'), mb: 1 }}>
                         쿠폰이 쿠폰북에 추가되었어요!
                     </Typography>
-                    <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88" }}>
+                    <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '88') }}>
                         상대방에게 써먹어보세요! 😉
                     </Typography>
                 </DialogContent>

@@ -5,7 +5,7 @@ import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { UserContext } from '../lib/UserContext';
 import { useFCM } from '../hooks/useFCM';
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 
 const isStandalone = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
@@ -63,12 +63,12 @@ export default function NotifButton() {
         startIcon={<Icon />}
         size="small"
         sx={{
-          bgcolor: perm === 'denied' ? '#ffeeee' : B.pants + '15',
+          bgcolor: perm === 'denied' ? '#ffeeee' : alpha(B.pants, '15'),
           color:   perm === 'denied' ? '#cc0000' : B.pants,
           borderRadius: 3, px: 1.5, py: 0.6,
           fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.75rem',
-          border: `1px solid ${perm === 'denied' ? '#ffcccc' : B.pants + '33'}`,
-          '&:hover': { bgcolor: perm === 'denied' ? '#ffeeee' : B.pants + '25' },
+          border: `1px solid ${perm === 'denied' ? '#ffcccc' : alpha(B.pants, '33')}`,
+          '&:hover': { bgcolor: perm === 'denied' ? '#ffeeee' : alpha(B.pants, '25') },
         }}
       >
         {label}

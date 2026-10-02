@@ -11,7 +11,7 @@ import GameWishList from "./GameWishList";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png"; //기본
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png"; //웃음
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png"; // 승리
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 // ────────────────────────────────────────────────────────────
 // 게임 데이터
@@ -87,7 +87,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
             }}>
               🎮 미니게임 센터
             </Typography>
-            <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88" }}>
+            <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '88') }}>
               부리부리와 함께 즐거운 게임 타임!
             </Typography>
           </Box>
@@ -100,7 +100,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           p: 3,
           borderRadius: '14px',
           bgcolor: B.cream,
-          border: `2px dashed ${B.pants}44`,
+          border: `2px dashed ${alpha(B.pants, '44')}`,
         }}>
           <Typography sx={{
             fontFamily: "'Jua',sans-serif",
@@ -110,7 +110,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           }}>
             🐷 {currentUser}님, 어떤 게임을 할까요?
           </Typography>
-          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66" }}>
+          <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '66') }}>
             게임에서 이기면 상대방에게 소원을 요구할 수 있어요!
           </Typography>
         </Box>
@@ -133,13 +133,13 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                 sx={{
                   cursor: "pointer",
                   borderRadius: '14px',
-                  border: `2px solid ${game.color}33`,
+                  border: `2px solid ${alpha(game.color, '33')}`,
                   position: "relative",
                   overflow: "visible",
                   transition: "all 0.2s",
                   "&:hover": {
                     transform: "translateY(-4px)",
-                    boxShadow: `0 8px 24px ${game.color}44`,
+                    boxShadow: `0 8px 24px ${alpha(game.color, '44')}`,
                   },
                   "&:active": {
                     transform: "translateY(0)",
@@ -156,7 +156,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                     top: -20,
                     right: -10,
                     width: 60,
-                    filter: `drop-shadow(0 2px 8px ${game.color}55)`,
+                    filter: `drop-shadow(0 2px 8px ${alpha(game.color, '55')})`,
                     animation: "wobble 3s ease-in-out infinite",
                   }}
                 />
@@ -181,7 +181,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                   
                   <Typography sx={{
                     fontSize: "0.85rem",
-                    color: B.dark + "66",
+                    color: alpha(B.dark, '66'),
                     mb: 2,
                   }}>
                     {game.description}
@@ -194,7 +194,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
                     px: 2,
                     py: 0.5,
                     borderRadius: '999px',
-                    bgcolor: game.color + "22",
+                    bgcolor: alpha(game.color, '22'),
                     color: game.color,
                     fontSize: "0.75rem",
                     fontWeight: 700,
@@ -214,7 +214,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           mt: 4,
           p: 2,
           borderRadius: '14px',
-          bgcolor: B.lavender + "44",
+          bgcolor: alpha(B.lavender, '44'),
         }}>
           <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 1 }}>
             <Box component="img" src={buri1} alt="" sx={{ width: 30 }} />
@@ -223,7 +223,7 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
           </Stack>
           <Typography sx={{
             fontSize: "0.75rem",
-            color: B.dark + "66",
+            color: alpha(B.dark, '66'),
             fontFamily: "'Jua',sans-serif",
           }}>
             더 많은 게임이 곧 추가될 예정이에요! 🎮
@@ -242,9 +242,9 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
             position: "sticky",
             top: 0,
             zIndex: 100,
-            bgcolor: B.cream + "ee",
+            bgcolor: alpha(B.cream, 'ee'),
             backdropFilter: "blur(10px)",
-            borderBottom: `1px solid ${B.pants}22`,
+            borderBottom: `1px solid ${alpha(B.pants, '22')}`,
             px: 2,
             py: 1.5,
             display: "flex",
@@ -278,9 +278,9 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
             position: "sticky",
             top: 0,
             zIndex: 100,
-            bgcolor: B.cream + "ee",
+            bgcolor: alpha(B.cream, 'ee'),
             backdropFilter: "blur(10px)",
-            borderBottom: `1px solid ${B.pants}22`,
+            borderBottom: `1px solid ${alpha(B.pants, '22')}`,
             px: 2,
             py: 1.5,
             display: "flex",
@@ -314,9 +314,9 @@ const MiniGameHub = ({ currentUser, opponentUser, onBack }) => {
             position: "sticky",
             top: 0,
             zIndex: 100,
-            bgcolor: B.cream + "ee",
+            bgcolor: alpha(B.cream, 'ee'),
             backdropFilter: "blur(10px)",
-            borderBottom: `1px solid ${B.pants}22`,
+            borderBottom: `1px solid ${alpha(B.pants, '22')}`,
             px: 2,
             py: 1.5,
             display: "flex",

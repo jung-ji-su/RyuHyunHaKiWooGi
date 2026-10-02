@@ -1,4 +1,4 @@
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 
 export default function GlobalStyle() {
   return (
@@ -10,8 +10,8 @@ export default function GlobalStyle() {
         font-family: 'Noto Sans KR', sans-serif;
         background-color: ${B.cream};
         background-image:
-          radial-gradient(circle at 15% 20%, ${B.peach}99 0%, transparent 35%),
-          radial-gradient(circle at 85% 70%, ${B.lavender}88 0%, transparent 35%);
+          radial-gradient(circle at 15% 20%, ${alpha(B.peach, '99')} 0%, transparent 35%),
+          radial-gradient(circle at 85% 70%, ${alpha(B.lavender, '88')} 0%, transparent 35%);
         min-height: 100vh;
         overscroll-behavior: contain;
         scrollbar-gutter: stable;
@@ -21,7 +21,7 @@ export default function GlobalStyle() {
       }
       ::-webkit-scrollbar { width: 6px; }
       ::-webkit-scrollbar-track { background: ${B.peach}; }
-      ::-webkit-scrollbar-thumb { background: ${B.pants}88; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb { background: ${alpha(B.pants, '88')}; border-radius: 10px; }
       .MuiPaper-root, .MuiTypography-root, .MuiButton-root { font-family: 'Noto Sans KR', sans-serif !important; }
       .buri-float {
         position: fixed; pointer-events: none; z-index: 0; opacity: 0.10;
@@ -44,8 +44,8 @@ export default function GlobalStyle() {
       @keyframes loginBgShift { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
       @keyframes titleDrop { 0%{opacity:0;transform:translateY(-30px) scale(0.8);} 70%{transform:translateY(5px) scale(1.05);} 100%{opacity:1;transform:translateY(0) scale(1);} }
       @keyframes cardSlideUp { 0%{opacity:0;transform:translateY(40px) scale(0.88);} 70%{transform:translateY(-5px) scale(1.02);} 100%{opacity:1;transform:translateY(0) scale(1);} }
-      @keyframes avatarPulseA { 0%,100%{box-shadow:0 4px 18px ${B.pants}44,0 0 0 0 ${B.pants}22;} 50%{box-shadow:0 6px 24px ${B.pants}66,0 0 0 10px transparent;} }
-      @keyframes avatarPulseB { 0%,100%{box-shadow:0 4px 18px ${B.skin}66,0 0 0 0 ${B.skin}33;} 50%{box-shadow:0 6px 24px ${B.skin}88,0 0 0 10px transparent;} }
+      @keyframes avatarPulseA { 0%,100%{box-shadow:0 4px 18px ${alpha(B.pants, '44')},0 0 0 0 ${alpha(B.pants, '22')};} 50%{box-shadow:0 6px 24px ${alpha(B.pants, '66')},0 0 0 10px transparent;} }
+      @keyframes avatarPulseB { 0%,100%{box-shadow:0 4px 18px ${alpha(B.skin, '66')},0 0 0 0 ${alpha(B.skin, '33')};} 50%{box-shadow:0 6px 24px ${alpha(B.skin, '88')},0 0 0 10px transparent;} }
       @keyframes shineSlide { 0%,65%{left:-70%;} 80%{left:130%;} 100%{left:130%;} }
       @keyframes floatEmoji { 0%{transform:translateY(0) rotate(0deg);opacity:0.2;} 50%{opacity:0.45;} 100%{transform:translateY(-100px) rotate(20deg);opacity:0;} }
       @keyframes twinkleDot { 0%,100%{opacity:0.12;transform:scale(0.6);} 50%{opacity:0.7;transform:scale(1.3);} }
@@ -58,8 +58,8 @@ export default function GlobalStyle() {
       @keyframes buri-shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-7px) rotate(-2deg);} 40%{transform:translateX(7px) rotate(2deg);} 60%{transform:translateX(-5px) rotate(-1deg);} 80%{transform:translateX(4px) rotate(1deg);} }
       .buri-shake { animation: buri-shake 0.4s ease !important; }
       @keyframes hamPulse {
-        0%,100%{ box-shadow: 0 4px 18px ${B.pants}66, 0 0 0 0 ${B.pants}33; transform: scale(1); }
-        50%    { box-shadow: 0 6px 24px ${B.pants}88, 0 0 0 6px transparent; transform: scale(1.06); }
+        0%,100%{ box-shadow: 0 4px 18px ${alpha(B.pants, '66')}, 0 0 0 0 ${alpha(B.pants, '33')}; transform: scale(1); }
+        50%    { box-shadow: 0 6px 24px ${alpha(B.pants, '88')}, 0 0 0 6px transparent; transform: scale(1.06); }
       }
       @keyframes hamRing {
         0%  { transform: scale(1);   opacity: 0.7; }

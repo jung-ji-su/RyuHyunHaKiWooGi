@@ -1,6 +1,6 @@
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { B, ROUTES } from '../lib/constants';
+import { alpha, B, ROUTES } from '../lib/constants';
 import {
   buri3, buri4, buri6, buri8, buri9,
   buriCouple, buriSmile,
@@ -30,20 +30,20 @@ export default function HomePage({ currentUser, logout }) {
         <SectionCard
           icon="🐷" title= {currentUser}
           sub="매일 기록하면 HP가 올라가요 💗"
-          buriImg={buriSmile} bgColor={B.lavender + '44'} borderColor={B.pants}>
+          buriImg={buriSmile} bgColor={alpha(B.lavender, '44')} borderColor={B.pants}>
           <CharacterPet currentUser={currentUser} />
         </SectionCard>
 
         <SectionCard
           icon="💌" title="콕 찌르기"
           sub="버튼 하나로 상대방에게 알림 보내기 👉"
-          buriImg={buriSmile} bgColor={B.peach + '66'} borderColor={B.accent}>
+          buriImg={buriSmile} bgColor={alpha(B.peach, '66')} borderColor={B.accent}>
           <QuickNotif />
         </SectionCard>
 
         <SectionCard
           icon="📅" title="우리의 일정"
-          buriImg={buri6} bgColor={B.lavender + '44'} borderColor={B.pants}
+          buriImg={buri6} bgColor={alpha(B.lavender, '44')} borderColor={B.pants}
           onMore={() => navigate(ROUTES.SCHEDULE)}
           noPadding>
           <CoupleCalendar currentUser={currentUser} />
@@ -59,7 +59,7 @@ export default function HomePage({ currentUser, logout }) {
         <SectionCard
           icon="📖" title="최근 기록"
           sub="탐정 부리부리가 기억해요 🕵️"
-          buriImg={buri9} bgColor={B.lavender + '44'} borderColor={B.pants}
+          buriImg={buri9} bgColor={alpha(B.lavender, '44')} borderColor={B.pants}
           onMore={() => navigate(ROUTES.DIARY)}>
           <DiaryList currentUser={currentUser} pageSize={3} />
         </SectionCard>
@@ -72,7 +72,7 @@ export default function HomePage({ currentUser, logout }) {
           <Box component="img" src={buriCouple} alt="" sx={{ width: 72, animation: 'buriFloat1 5.5s ease-in-out 0.3s infinite' }} />
           <Box component="img" src={buri8} alt=""      sx={{ width: 56, animation: 'buriFloat1 5s ease-in-out infinite' }} />
         </Stack>
-        <Typography sx={{ fontSize: '0.72rem', color: B.dark + '66', mt: 1, fontFamily: "'Jua',sans-serif" }}>
+        <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '66'), mt: 1, fontFamily: "'Jua',sans-serif" }}>
           🐷 부리부리 미니홈피 🐷
         </Typography>
       </Box>

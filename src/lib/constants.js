@@ -19,6 +19,8 @@ export const B = {
   surface: "var(--c-surface-card)",
 };
 
+export { alpha } from './color';
+
 export const ROUTES = {
   HOME: "/",
   SCHEDULE: "/schedule",

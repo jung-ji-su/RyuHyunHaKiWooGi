@@ -16,7 +16,7 @@ import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a4368
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png";
 import buri9 from "./assets/KakaoTalk_20260316_133007779.png";
 
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 // 봉투 색상 옵션
 const ENVELOPE_COLORS = [
@@ -225,7 +225,7 @@ const LetterCard = ({ letter, currentUser }) => {
               </Typography>
             )}
             {isOpened && (
-              <Typography sx={{ fontSize: "0.72rem", color: B.pants + "88", mt: 0.4 }}>
+              <Typography sx={{ fontSize: "0.72rem", color: alpha(B.pants, '88'), mt: 0.4 }}>
                 {letter.openAt?.toDate
                   ? letter.openAt.toDate().toLocaleDateString("ko-KR")
                   : "열람됨"} · {isMyLetter ? "내가 보낸 편지" : "받은 편지"}
@@ -285,7 +285,7 @@ const LetterCard = ({ letter, currentUser }) => {
           }}>
             <Box component="img" src={buri2} alt=""
               sx={{ width: 44, mb: 0.5, opacity: 0.5, animation: "buriFloat1 3s ease-in-out infinite" }} />
-            <Typography sx={{ fontSize: "0.75rem", color: B.dark + "66", fontFamily: "'Noto Sans KR',sans-serif" }}>
+            <Typography sx={{ fontSize: "0.75rem", color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif" }}>
               상대방이 열기 전이에요 🔒
             </Typography>
           </Box>
@@ -432,7 +432,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
   return (
     <Box sx={{
       bgcolor: B.cream, borderRadius: '14px',
-      border: `2px solid ${B.pants}33`,
+      border: `2px solid ${alpha(B.pants, '33')}`,
       overflow: "hidden",
       animation: "fadeInUp 0.35s ease both",
     }}>
@@ -440,13 +440,13 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
       <Box sx={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         px: 2.5, py: 2,
-        borderBottom: `1.5px dashed ${B.pants}33`,
-        bgcolor: B.lavender + "66",
+        borderBottom: `1.5px dashed ${alpha(B.pants, '33')}`,
+        bgcolor: alpha(B.lavender, '66'),
       }}>
         <Stack direction="row" alignItems="center" gap={1}>
           <Box component="img" src={buri2} alt=""
             sx={{ width: 32, animation: "headBob 2s ease-in-out infinite",
-              filter: `drop-shadow(0 2px 6px ${B.pants}44)` }} />
+              filter: `drop-shadow(0 2px 6px ${alpha(B.pants, '44')})` }} />
           <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>
             몰래 편지 쓰기 ✍️
           </Typography>
@@ -460,7 +460,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
 
         {/* 봉투 색상 선택 */}
         <Box>
-          <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: B.dark + "88",
+          <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: alpha(B.dark, '88'),
             fontFamily: "'Noto Sans KR',sans-serif", mb: 1 }}>
             봉투 색상 선택
           </Typography>
@@ -494,8 +494,8 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
               bgcolor: B.surface, borderRadius: 3,
               fontFamily: "'Noto Sans KR',sans-serif",
               fontSize: "0.9rem",
-              "& fieldset": { borderColor: B.pants + "33" },
-              "&:hover fieldset": { borderColor: B.pants + "88" },
+              "& fieldset": { borderColor: alpha(B.pants, '33') },
+              "&:hover fieldset": { borderColor: alpha(B.pants, '88') },
               "&.Mui-focused fieldset": { borderColor: B.pants },
             }
           }}
@@ -503,7 +503,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
 
         {/* 공개 시간 */}
         <Box>
-          <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: B.dark + "88",
+          <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: alpha(B.dark, '88'),
             fontFamily: "'Noto Sans KR',sans-serif", mb: 1 }}>
             언제 열릴까요? 🔒
           </Typography>
@@ -535,7 +535,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
                 mt: 1,
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 3, bgcolor: B.surface,
-                  "& fieldset": { borderColor: B.pants + "44" },
+                  "& fieldset": { borderColor: alpha(B.pants, '44') },
                   "&.Mui-focused fieldset": { borderColor: B.pants },
                 }
               }}
@@ -549,7 +549,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           sx={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
             bgcolor: B.surface, borderRadius: 3, px: 2, py: 1.5,
-            border: `1.5px solid ${B.pants}22`, cursor: "pointer",
+            border: `1.5px solid ${alpha(B.pants, '22')}`, cursor: "pointer",
             "&:active": { transform: "scale(0.98)" },
             transition: "transform 0.1s",
           }}
@@ -560,7 +560,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
               <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.85rem", color: B.dark }}>
                 익명으로 보내기
               </Typography>
-              <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
+              <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '66'),
                 fontFamily: "'Noto Sans KR',sans-serif" }}>
                 열기 전까지 누가 썼는지 몰라요
               </Typography>
@@ -596,7 +596,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
               color: ENVELOPE_COLORS.find(c => c.id === envColor)?.border }}>
               {isAnonymous ? "🎭 부리부리의 편지" : `💌 ${currentUser}의 편지`}
             </Typography>
-            <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
+            <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '77'),
               fontFamily: "'Noto Sans KR',sans-serif" }}>
               {OPEN_PRESETS[openPreset].type === "custom" && customDate
                 ? `${new Date(customDate).toLocaleString("ko-KR")}에 열려요`
@@ -620,7 +620,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
             bgcolor: B.pants, borderRadius: '999px', py: 1,
             fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             position: "relative", overflow: "hidden",
-            boxShadow: `0 4px 16px ${B.pants}44`,
+            boxShadow: `0 4px 16px ${alpha(B.pants, '44')}`,
             transition: "transform 0.1s",
             "&:active": { transform: "scale(0.96)" },
             "&:hover": { bgcolor: "#6A3D96" },
@@ -659,7 +659,7 @@ const SecretLetter = ({ currentUser }) => {
         <Stack direction="row" alignItems="center" gap={1}>
           <Box component="img" src={buri9} alt=""
             sx={{ width: 30, animation: "headBob 2.5s ease-in-out infinite",
-              filter: `drop-shadow(0 2px 4px ${B.pants}44)` }} />
+              filter: `drop-shadow(0 2px 4px ${alpha(B.pants, '44')})` }} />
           <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>
             몰래 편지함 💌
             {unreadCount > 0 && (
@@ -685,7 +685,7 @@ const SecretLetter = ({ currentUser }) => {
             borderRadius: '999px', px: 2,
             fontFamily: "'Jua',sans-serif", fontSize: "0.8rem",
             position: "relative", overflow: "hidden",
-            boxShadow: `0 3px 10px ${B.pants}33`,
+            boxShadow: `0 3px 10px ${alpha(B.pants, '33')}`,
             transition: "all 0.15s",
             "&:active": { transform: "scale(0.93)" },
             "&:hover": { bgcolor: showWrite ? "#e0a090" : "#6A3D96" },
@@ -707,8 +707,8 @@ const SecretLetter = ({ currentUser }) => {
         <Box sx={{ textAlign: "center", py: 5, opacity: 0.5 }}>
           <Box component="img" src={buri2} alt=""
             sx={{ width: 64, mb: 1.5, animation: "headBob 2.5s ease-in-out infinite",
-              filter: `drop-shadow(0 2px 8px ${B.pants}44)` }} />
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.dark + "88", fontSize: "0.88rem" }}>
+              filter: `drop-shadow(0 2px 8px ${alpha(B.pants, '44')})` }} />
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: alpha(B.dark, '88'), fontSize: "0.88rem" }}>
             아직 편지가 없어요 🐷<br />첫 번째 몰래 편지를 써봐요!
           </Typography>
         </Box>

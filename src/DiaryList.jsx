@@ -34,7 +34,7 @@ import buriSurprise from "./assets/KakaoTalk_20260424_173832207.png";
 import buriFunny    from "./assets/KakaoTalk_20260424_173712715.png";
 
 import { createHeartPang, shakeElement, vibrate } from "./touchEffects";
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const EMOTION_BURI = {
   "행복": buriHappy, "신남": buriExcited, "울음": buriCry, "슬픔": buriCry,
@@ -55,7 +55,7 @@ const EMOTIONS = [
 const SkeletonCard = () => (
   <Card elevation={0} sx={{
     borderRadius: '14px', bgcolor: B.cream,
-    border: `1.5px solid ${B.pants}22`,
+    border: `1.5px solid ${alpha(B.pants, '22')}`,
   }}>
     <CardContent sx={{ p: 2.5 }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -66,7 +66,7 @@ const SkeletonCard = () => (
         </Box>
       </Box>
       <Skeleton variant="rounded" height={60} sx={{ bgcolor: B.lavender, mb: 1.5, borderRadius: 2 }} />
-      <Skeleton variant="rounded" height={160} sx={{ bgcolor: B.lavender + "99", borderRadius: 3 }} />
+      <Skeleton variant="rounded" height={160} sx={{ bgcolor: alpha(B.lavender, '99'), borderRadius: 3 }} />
     </CardContent>
   </Card>
 );
@@ -123,18 +123,18 @@ const DiaryList = ({ currentUser, pageSize }) => {
             <Box component="img" src={buri9} alt="" sx={{
               width: 32, objectFit: "contain",
               animation: "headBob 2.8s ease-in-out infinite",
-              filter: `drop-shadow(0 2px 6px ${B.pants}44)`,
+              filter: `drop-shadow(0 2px 6px ${alpha(B.pants, '44')})`,
             }} />
             <Typography sx={{
               fontFamily: "'Jua',sans-serif", fontSize: "1.1rem",
-              color: B.pants, textShadow: `1px 1px 0 ${B.skin}88`,
+              color: B.pants, textShadow: `1px 1px 0 ${alpha(B.skin, '88')}`,
             }}>
               우리의 소중한 기록들 📖
             </Typography>
             <Box component="img" src={buri9} alt="" sx={{
               width: 32, objectFit: "contain", transform: "scaleX(-1)",
               animation: "headBob 2.8s ease-in-out infinite",
-              filter: `drop-shadow(0 2px 6px ${B.pants}44)`,
+              filter: `drop-shadow(0 2px 6px ${alpha(B.pants, '44')})`,
             }} />
           </Stack>
 
@@ -148,12 +148,12 @@ const DiaryList = ({ currentUser, pageSize }) => {
                 onClick={() => setActiveTab(val)}
                 sx={{
                   px: 2.5, py: 0.8, borderRadius: '999px',
-                  bgcolor: activeTab === val ? B.pants : B.lavender + "66",
+                  bgcolor: activeTab === val ? B.pants : alpha(B.lavender, '66'),
                   color: activeTab === val ? "white" : B.pants,
                   cursor: "pointer",
                   fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
                   transition: "all 0.2s",
-                  border: `1.5px solid ${activeTab === val ? B.pants : B.pants + "22"}`,
+                  border: `1.5px solid ${activeTab === val ? B.pants : alpha(B.pants, '22')}`,
                   userSelect: "none",
                   "&:active": { transform: "scale(0.94)" },
                 }}
@@ -162,7 +162,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
                 {val === "gallery" && galleryItems.length > 0 && (
                   <Box component="span" sx={{
                     ml: 0.8, px: 0.8, py: 0.05, borderRadius: 5,
-                    bgcolor: activeTab === val ? "rgba(255,255,255,0.28)" : B.pants + "22",
+                    bgcolor: activeTab === val ? "rgba(255,255,255,0.28)" : alpha(B.pants, '22'),
                     fontSize: "0.7rem",
                   }}>
                     {galleryItems.length}
@@ -190,7 +190,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
             <Box sx={{ textAlign: "center", py: 8, opacity: 0.6 }}>
               <Typography sx={{ fontSize: "3rem", mb: 1.5 }}>🖼️</Typography>
               <Typography sx={{
-                fontFamily: "'Jua',sans-serif", color: B.dark + "88", fontSize: "0.9rem",
+                fontFamily: "'Jua',sans-serif", color: alpha(B.dark, '88'), fontSize: "0.9rem",
               }}>
                 아직 사진이 없어요<br />기록에 사진을 추가해봐요!
               </Typography>
@@ -204,10 +204,10 @@ const DiaryList = ({ currentUser, pageSize }) => {
                     borderRadius: 3, overflow: "hidden",
                     cursor: "pointer", position: "relative",
                     aspectRatio: "1",
-                    boxShadow: `0 4px 16px ${B.pants}22`,
-                    border: `1.5px solid ${B.pants}18`,
+                    boxShadow: `0 4px 16px ${alpha(B.pants, '22')}`,
+                    border: `1.5px solid ${alpha(B.pants, '18')}`,
                     transition: "all 0.2s",
-                    "&:hover": { transform: "scale(1.02)", boxShadow: `0 8px 28px ${B.pants}33` },
+                    "&:hover": { transform: "scale(1.02)", boxShadow: `0 8px 28px ${alpha(B.pants, '33')}` },
                     "&:active": { transform: "scale(0.96)" },
                   }}
                 >
@@ -259,7 +259,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
               <Box component="img" src={buriCouple} alt=""
                 sx={{ width: 90, mb: 1.5, animation: "headBob 3s ease-in-out infinite" }} />
               <Typography sx={{
-                fontFamily: "'Jua',sans-serif", color: B.dark + "88", fontSize: "0.9rem",
+                fontFamily: "'Jua',sans-serif", color: alpha(B.dark, '88'), fontSize: "0.9rem",
               }}>
                 아직 기록이 없어요 🐷<br />첫 번째 추억을 남겨봐요!
               </Typography>
@@ -280,7 +280,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
               sx={{
                 width: 36, height: 36, borderRadius: "50%",
                 bgcolor: disabled ? B.lavender : B.pants,
-                color: disabled ? B.pants + "55" : "white",
+                color: disabled ? alpha(B.pants, '55') : "white",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: disabled ? "default" : "pointer",
                 fontFamily: "'Jua',sans-serif", fontSize: "1.1rem",
@@ -437,17 +437,17 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
       sx={{
         borderRadius: '14px',
         bgcolor: B.cream,
-        border: `1.5px solid ${isMyPost ? B.pants + "33" : B.skin + "88"}`,
+        border: `1.5px solid ${isMyPost ? alpha(B.pants, '33') : alpha(B.skin, '88')}`,
         backgroundImage: isMyPost
-          ? `radial-gradient(circle at 100% 0%, ${B.lavender}55 0%, transparent 40%)`
-          : `radial-gradient(circle at 0% 100%, ${B.peach}66 0%, transparent 40%)`,
+          ? `radial-gradient(circle at 100% 0%, ${alpha(B.lavender, '55')} 0%, transparent 40%)`
+          : `radial-gradient(circle at 0% 100%, ${alpha(B.peach, '66')} 0%, transparent 40%)`,
         overflow: "visible",
         position: "relative",
         transition: "transform 0.15s, box-shadow 0.15s",
         cursor: editMode ? "default" : "pointer",
         ...(!editMode && {
-          "&:active": { transform: "scale(0.975) translateY(2px)", boxShadow: `0 1px 6px ${B.pants}18` },
-          "&:hover": { boxShadow: `0 6px 24px ${B.pants}22`, transform: "translateY(-2px)" },
+          "&:active": { transform: "scale(0.975) translateY(2px)", boxShadow: `0 1px 6px ${alpha(B.pants, '18')}` },
+          "&:hover": { boxShadow: `0 6px 24px ${alpha(B.pants, '22')}`, transform: "translateY(-2px)" },
           "&:hover .card-buri": { opacity: 0.7, transform: "translateY(-6px) rotate(8deg) scale(1.1)" },
         }),
       }}
@@ -464,7 +464,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
             position: "absolute", top: -24, right: 10, width: 52,
             objectFit: "contain", opacity: 0.35, pointerEvents: "none",
             transition: "all 0.3s ease",
-            filter: `drop-shadow(0 2px 8px ${B.pants}55)`,
+            filter: `drop-shadow(0 2px 8px ${alpha(B.pants, '55')})`,
             zIndex: 2,
           }}
         />
@@ -484,7 +484,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                 width: 18, height: 18, borderRadius: "50%",
                 bgcolor: B.cream, display: "flex", alignItems: "center",
                 justifyContent: "center", fontSize: "11px",
-                border: `1px solid ${B.pants}44`,
+                border: `1px solid ${alpha(B.pants, '44')}`,
               }}>🐷</Box>
             )}
           </Box>
@@ -507,7 +507,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                 </Box>
               )}
             </Typography>
-            <Typography variant="caption" sx={{ color: B.dark + "66" }}>
+            <Typography variant="caption" sx={{ color: alpha(B.dark, '66') }}>
               {item.createdAt?.toDate?.()?.toLocaleString("ko-KR")}
             </Typography>
           </Box>
@@ -518,12 +518,12 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                 <IconButton onClick={handleUpdateDiary} size="small"
                   sx={{
                     color: "white", bgcolor: B.pants,
-                    "&:hover": { bgcolor: B.pants + "cc" }, mr: 0.3,
+                    "&:hover": { bgcolor: alpha(B.pants, 'cc') }, mr: 0.3,
                   }}>
                   <CheckIcon fontSize="small" />
                 </IconButton>
                 <IconButton onClick={handleCancelEdit} size="small"
-                  sx={{ color: B.dark + "66", "&:hover": { color: B.dark } }}>
+                  sx={{ color: alpha(B.dark, '66'), "&:hover": { color: B.dark } }}>
                   <CloseIcon fontSize="small" />
                 </IconButton>
               </>
@@ -531,7 +531,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
               <>
                 {isMyPost && (
                   <IconButton onClick={handleEnterEditMode} size="small"
-                    sx={{ color: B.pants + "66", "&:hover": { color: B.pants }, mr: 0.2 }}>
+                    sx={{ color: alpha(B.pants, '66'), "&:hover": { color: B.pants }, mr: 0.2 }}>
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
@@ -580,7 +580,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                   onClick={() => { setEditEmotion(label); setEditEmoji(emoji); }}
                   sx={{
                     px: 1.4, py: 0.4, borderRadius: '999px',
-                    bgcolor: editEmotion === label ? B.pants : B.lavender + "66",
+                    bgcolor: editEmotion === label ? B.pants : alpha(B.lavender, '66'),
                     color: editEmotion === label ? "white" : B.dark,
                     cursor: "pointer", fontSize: "0.78rem",
                     fontFamily: "'Noto Sans KR',sans-serif",
@@ -603,8 +603,8 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 3, bgcolor: B.cream,
                   fontFamily: "'Noto Sans KR',sans-serif",
-                  "& fieldset": { borderColor: B.pants + "55" },
-                  "&:hover fieldset": { borderColor: B.pants + "88" },
+                  "& fieldset": { borderColor: alpha(B.pants, '55') },
+                  "&:hover fieldset": { borderColor: alpha(B.pants, '88') },
                   "&.Mui-focused fieldset": { borderColor: B.pants },
                 },
               }}
@@ -640,11 +640,11 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
             onClick={() => onOpenLightbox && onOpenLightbox(item.imageUrl)}
             sx={{
               mt: 1, mb: 2, borderRadius: 3, overflow: "hidden",
-              boxShadow: `0 4px 16px ${B.pants}22`,
-              border: `1.5px solid ${B.pants}22`,
+              boxShadow: `0 4px 16px ${alpha(B.pants, '22')}`,
+              border: `1.5px solid ${alpha(B.pants, '22')}`,
               cursor: "zoom-in", position: "relative",
               transition: "transform 0.2s",
-              "&:hover": { transform: "scale(1.01)", boxShadow: `0 8px 24px ${B.pants}33` },
+              "&:hover": { transform: "scale(1.01)", boxShadow: `0 8px 24px ${alpha(B.pants, '33')}` },
             }}
           >
             {!imgLoaded && (
@@ -652,7 +652,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
                 variant="rectangular"
                 height={200}
                 sx={{
-                  bgcolor: B.lavender + "66",
+                  bgcolor: alpha(B.lavender, '66'),
                   position: "absolute", top: 0, left: 0, right: 0, zIndex: 1,
                 }}
               />
@@ -674,14 +674,14 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
           </Box>
         )}
 
-        <Divider sx={{ my: 2, borderStyle: "dashed", borderColor: B.pants + "33" }} />
+        <Divider sx={{ my: 2, borderStyle: "dashed", borderColor: alpha(B.pants, '33') }} />
 
         {/* 댓글 목록 */}
         <Stack spacing={1.5} sx={{ mb: 2 }}>
           {comments.map((c) => (
             <Box key={c.id} sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}>
               <Avatar src={c.author === "현하" ? gfImg : meImg}
-                sx={{ width: 28, height: 28, border: `1.5px solid ${B.pants}44` }} />
+                sx={{ width: 28, height: 28, border: `1.5px solid ${alpha(B.pants, '44')}` }} />
               <Box sx={{
                 bgcolor: B.lavender, p: 1,
                 borderRadius: "15px", borderTopLeftRadius: "2px", maxWidth: "85%",
@@ -713,8 +713,8 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
               "& .MuiOutlinedInput-root": {
                 borderRadius: 5, bgcolor: B.cream,
                 fontFamily: "'Noto Sans KR',sans-serif",
-                "& fieldset": { borderColor: B.pants + "33" },
-                "&:hover fieldset": { borderColor: B.pants + "88" },
+                "& fieldset": { borderColor: alpha(B.pants, '33') },
+                "&:hover fieldset": { borderColor: alpha(B.pants, '88') },
                 "&.Mui-focused fieldset": { borderColor: B.pants },
               },
             }}

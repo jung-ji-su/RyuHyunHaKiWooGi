@@ -7,6 +7,8 @@
 // 칩·배지 등)는 절대 backdrop-filter를 쓰지 않는다 — 대신 반투명 solid + box-shadow로 흉내낸다.
 // 화면당 동시 활성 backdrop-filter 패널은 3개를 넘기지 않는 것을 원칙으로 한다.
 
+export { alpha } from './color';
+
 // src/index.css의 CSS 변수를 가리키는 단일 소스 — 값은 기존과 동일, var() 참조만 됨
 // (다크 모드는 index.css의 [data-theme="dark"] 블록이 전파, 이 파일은 안 바뀜).
 export const calendarColor = {
@@ -54,22 +56,25 @@ export const TOUCH_MIN = 44;
 // ============================================================
 // 글래스모피즘 — design-preview.html 프로토타입에서 검증된 값 그대로 흡수.
 // ============================================================
+// 값은 src/index.css의 CSS 변수(라이트/다크 각각 정의됨)를 가리킨다.
+// 다크 모드에서는 "흰 반투명을 그대로" 쓰지 않고 어두운 틴트 베이스 + 밝은 테두리
+// 하이라이트로 다시 설계된 별도 레시피가 자동으로 적용된다(index.css 참고).
 export const glass = {
   // 큰 패널(카드) 전용
-  panelBackground: 'linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.32))',
-  panelBlur: 'blur(22px) saturate(170%)',
-  panelShadow: '0 10px 34px rgba(123,79,166,0.16), 0 2px 10px rgba(123,79,166,0.08), inset 0 1px 0 rgba(255,255,255,0.85)',
-  panelBorderGradient: 'linear-gradient(150deg, rgba(255,255,255,0.95), rgba(255,255,255,0.1) 35%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.55))',
+  panelBackground: 'var(--glass-panel-bg)',
+  panelBlur: 'var(--glass-panel-blur)',
+  panelShadow: 'var(--glass-panel-shadow)',
+  panelBorderGradient: 'var(--glass-panel-border)',
 
   // 작은 반복 요소 전용 — backdrop-filter 없음, solid + shadow만
-  smallBackground: 'rgba(255,255,255,0.55)',
-  smallBorder: '1px solid rgba(255,255,255,0.8)',
-  smallShadow: '0 2px 8px rgba(123,79,166,0.14), inset 0 1px 0 rgba(255,255,255,0.9)',
+  smallBackground: 'var(--glass-small-bg)',
+  smallBorder: 'var(--glass-small-border)',
+  smallShadow: 'var(--glass-small-shadow)',
 
   // 모달/시트(바텀시트) 전용
-  sheetBackground: 'linear-gradient(165deg, rgba(255,255,255,0.82), rgba(255,255,255,0.58))',
-  sheetBlur: 'blur(26px) saturate(170%)',
-  sheetShadow: '0 -10px 40px rgba(123,79,166,0.26), inset 0 1px 0 rgba(255,255,255,0.9)',
+  sheetBackground: 'var(--glass-sheet-bg)',
+  sheetBlur: 'var(--glass-sheet-blur)',
+  sheetShadow: 'var(--glass-sheet-shadow)',
 };
 
 // 유리 패널에 바로 스프레드해서 쓰는 sx 프리셋 (position:relative 포함 — ::before 하이라이트 테두리 기준)

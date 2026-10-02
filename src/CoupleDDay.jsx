@@ -7,7 +7,7 @@ import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
 
 import buriExcited from "./assets/KakaoTalk_20260424_173800871.png"; // 꽃 들고 (신남)
 import buriLove from "./assets/KakaoTalk_20260424_173810950.png"; // 하트눈 (설렘)
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 // ── 떠다니는 파티클 캔버스 (부드러운 하트/별) ────────────────────
 const FloatingCanvas = ({ canvasRef, wrapRef }) => null; // 훅에서 처리
@@ -227,9 +227,9 @@ export default function CoupleDDay() {
           50%      { letter-spacing:4px; opacity:1; }
         }
         @keyframes ddayBorderGlow {
-          0%,100% { box-shadow: 0 8px 32px ${B.pants}22, 0 2px 8px ${B.skin}44, inset 0 1px 0 rgba(255,255,255,0.85); }
-          33%     { box-shadow: 0 14px 48px #FF6B9D33, 0 0 30px ${B.pants}22, 0 0 0 4px #FF6B9D18, inset 0 1px 0 rgba(255,255,255,0.95); }
-          66%     { box-shadow: 0 10px 40px ${B.accent}28, 0 0 24px ${B.accent}18, 0 0 0 3px ${B.accent}14, inset 0 1px 0 rgba(255,255,255,0.88); }
+          0%,100% { box-shadow: 0 8px 32px ${alpha(B.pants, '22')}, 0 2px 8px ${alpha(B.skin, '44')}, inset 0 1px 0 rgba(255,255,255,0.85); }
+          33%     { box-shadow: 0 14px 48px #FF6B9D33, 0 0 30px ${alpha(B.pants, '22')}, 0 0 0 4px #FF6B9D18, inset 0 1px 0 rgba(255,255,255,0.95); }
+          66%     { box-shadow: 0 10px 40px ${alpha(B.accent, '28')}, 0 0 24px ${alpha(B.accent, '18')}, 0 0 0 3px ${alpha(B.accent, '14')}, inset 0 1px 0 rgba(255,255,255,0.88); }
         }
 
         /* 리퀴드 글래스: 카드 자체 파스텔 정체성(크림→핑크→라벤더)을 유지하면서 반투명+블러로 —
@@ -239,7 +239,7 @@ export default function CoupleDDay() {
           width: 100%;
           border-radius: 28px;
           overflow: hidden;
-          background: linear-gradient(145deg, ${B.cream}c2 0%, #FFF0F8b8 40%, ${B.lavender}b0 100%);
+          background: linear-gradient(145deg, ${alpha(B.cream, 'c2')} 0%, #FFF0F8b8 40%, ${alpha(B.lavender, 'b0')} 100%);
           backdrop-filter: blur(20px) saturate(160%);
           -webkit-backdrop-filter: blur(20px) saturate(160%);
           min-height: 120px;
@@ -336,12 +336,12 @@ export default function CoupleDDay() {
           -webkit-text-fill-color: transparent;
           background-clip: text;
           animation: ddayShine 2.5s linear infinite;
-          filter: drop-shadow(0 2px 10px ${B.pants}55);
+          filter: drop-shadow(0 2px 10px ${alpha(B.pants, '55')});
         }
         .dday-day-label {
           font-family: 'Jua', sans-serif;
           font-size: 13px;
-          color: ${B.dark}88;
+          color: ${alpha(B.dark, '88')};
           line-height: 1;
         }
 
@@ -353,8 +353,8 @@ export default function CoupleDDay() {
           margin-top: 1px;
         }
         .dday-time-unit {
-          background: ${B.pants}15;
-          border: 1.5px solid ${B.pants}33;
+          background: ${alpha(B.pants, '15')};
+          border: 1.5px solid ${alpha(B.pants, '33')};
           border-radius: 8px;
           padding: 2px 7px;
           font-family: 'Jua', sans-serif;
@@ -366,13 +366,13 @@ export default function CoupleDDay() {
         .dday-time-unit.seconds {
           animation: ddaySecondTick 1s ease-out infinite;
           color: ${B.accent};
-          border-color: ${B.accent}44;
-          background: ${B.accent}11;
+          border-color: ${alpha(B.accent, '44')};
+          background: ${alpha(B.accent, '11')};
         }
         .dday-time-sep {
           font-family: 'Jua', sans-serif;
           font-size: 13px;
-          color: ${B.pants}66;
+          color: ${alpha(B.pants, '66')};
           margin: 0;
           animation: ddayPulse 1s ease-in-out infinite;
         }
@@ -394,7 +394,7 @@ export default function CoupleDDay() {
           position: absolute; bottom: 4px; left: 8px;
           width: 36px;
           animation: ddayBobLeft 3s ease-in-out infinite;
-          filter: drop-shadow(0 3px 6px ${B.pants}33);
+          filter: drop-shadow(0 3px 6px ${alpha(B.pants, '33')});
           pointer-events: none;
         }
         .dday-buri-left2 {
@@ -402,14 +402,14 @@ export default function CoupleDDay() {
           width: 36px;
           animation: ddayBobLeft 3s ease-in-out infinite;
           animation-delay: 0.5s;
-          filter: drop-shadow(0 3px 6px ${B.pants}33);
+          filter: drop-shadow(0 3px 6px ${alpha(B.pants, '33')});
           pointer-events: none;
         }
         .dday-buri-right {
           position: absolute; bottom: 4px; right: 8px;
           width: 36px;
           animation: ddayBobRight 3.4s ease-in-out infinite;
-          filter: drop-shadow(0 3px 6px ${B.accent}33);
+          filter: drop-shadow(0 3px 6px ${alpha(B.accent, '33')});
           pointer-events: none;
         }
         .dday-buri-right2 {
@@ -417,7 +417,7 @@ export default function CoupleDDay() {
           width: 36px;
           animation: ddayBobRight 3.4s ease-in-out infinite;
           animation-delay: 0.7s;
-          filter: drop-shadow(0 3px 6px ${B.accent}33);
+          filter: drop-shadow(0 3px 6px ${alpha(B.accent, '33')});
           pointer-events: none;
         }
 
@@ -425,7 +425,7 @@ export default function CoupleDDay() {
         .dday-shine-overlay {
           position: absolute; inset: 0;
           background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.35) 0%, transparent 60%),
-                      radial-gradient(ellipse at 70% 80%, ${B.lavender}44 0%, transparent 50%);
+                      radial-gradient(ellipse at 70% 80%, ${alpha(B.lavender, '44')} 0%, transparent 50%);
           pointer-events: none;
         }
 
@@ -433,7 +433,7 @@ export default function CoupleDDay() {
         .dday-empty {
           font-family: 'Jua', sans-serif;
           font-size: 15px;
-          color: ${B.dark}66;
+          color: ${alpha(B.dark, '66')};
         }
       `}</style>
 

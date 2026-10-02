@@ -11,7 +11,7 @@ import { collection, onSnapshot, doc, setDoc, deleteDoc, query, where, addDoc, s
 import { UserContext } from './lib/UserContext';
 import { vibrate } from './touchEffects';
 import {
-  calendarColor as C, calendarFont as F, TOUCH_MIN,
+  alpha, calendarColor as C, calendarFont as F, TOUCH_MIN,
   glass, glassSmallSx,
 } from './lib/calendarTokens';
 
@@ -75,7 +75,7 @@ function ScheduleDayCell({ d, current, today, schedule, isMultiSelected, onDateC
   } else if (isToday) {
     circleSx = {
       background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.person.jisu.to})`,
-      boxShadow: `0 6px 16px ${C.accent}55, inset 0 1px 1px rgba(255,255,255,.5), inset 0 -3px 4px rgba(0,0,0,.18)`,
+      boxShadow: `0 6px 16px ${alpha(C.accent, '55')}, inset 0 1px 1px rgba(255,255,255,.5), inset 0 -3px 4px rgba(0,0,0,.18)`,
     };
     numColor = C.onAccent;
   } else if (isHoliday && current) {
@@ -98,11 +98,11 @@ function ScheduleDayCell({ d, current, today, schedule, isMultiSelected, onDateC
         '&:active': current ? { transform: 'scale(0.92)' } : {},
         transition: 'transform .12s ease',
         ...(hasSched ? {
-          background: isMultiSelected ? `${C.accent}1f` : 'rgba(255,255,255,.4)',
+          background: isMultiSelected ? `${alpha(C.accent, '1f')}` : 'rgba(255,255,255,.4)',
           boxShadow: isMultiSelected
-            ? `inset 0 0 0 2px ${C.accent}55`
+            ? `inset 0 0 0 2px ${alpha(C.accent, '55')}`
             : '0 3px 10px rgba(123,79,166,.10), inset 0 1px 0 rgba(255,255,255,.7)',
-        } : (isMultiSelected ? { background: `${C.accent}14` } : {})),
+        } : (isMultiSelected ? { background: `${alpha(C.accent, '14')}` } : {})),
       }}
     >
       {/* 날짜 원 */}
@@ -128,8 +128,8 @@ function ScheduleDayCell({ d, current, today, schedule, isMultiSelected, onDateC
         <>
           <Box sx={{
             mt: '4px', px: '6px', py: '1.5px', borderRadius: '999px',
-            bgcolor: isMultiSelected ? `${sched.color}cc` : sched.color,
-            boxShadow: `0 2px 6px ${sched.color}40`,
+            bgcolor: isMultiSelected ? `${alpha(sched.color, 'cc')}` : sched.color,
+            boxShadow: `0 2px 6px ${alpha(sched.color, '40')}`,
             flexShrink: 0,
           }}>
             <Typography sx={{
@@ -261,7 +261,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
       ? {
           background: `linear-gradient(150deg, ${activeColor}, ${activeColor})`,
           color: '#fff',
-          boxShadow: `0 4px 14px ${activeColor}55, inset 0 1px 1px rgba(255,255,255,.4)`,
+          boxShadow: `0 4px 14px ${alpha(activeColor, '55')}, inset 0 1px 1px rgba(255,255,255,.4)`,
         }
       : { ...glassSmallSx(), color: C.textSecondary }
     ),
@@ -283,7 +283,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
           </Typography>
           <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 0.3 }}>
             {SCHEDULE_TYPES.map(s => counts[s.type] > 0 && (
-              <Box key={s.type} sx={{ px: '5px', py: '1.5px', borderRadius: '999px', bgcolor: s.color + '18' }}>
+              <Box key={s.type} sx={{ px: '5px', py: '1.5px', borderRadius: '999px', bgcolor: alpha(s.color, '18') }}>
                 <Typography sx={{ fontSize: '0.72rem', color: s.color, fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif" }}>
                   {s.emoji} {counts[s.type]}
                 </Typography>
@@ -313,9 +313,9 @@ export default function WorkScheduleCalendar({ onFlip }) {
             mb: 1.5, minHeight: TOUCH_MIN, borderRadius: 3,
             fontFamily: "'Jua',sans-serif",
             background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.accent})`,
-            boxShadow: `0 8px 22px ${C.accent}40, inset 0 1px 1px rgba(255,255,255,.4)`,
+            boxShadow: `0 8px 22px ${alpha(C.accent, '40')}, inset 0 1px 1px rgba(255,255,255,.4)`,
             '&:active': { transform: 'scale(0.96)' },
-            '&.Mui-disabled': { bgcolor: C.accent + '55', color: 'white' },
+            '&.Mui-disabled': { bgcolor: alpha(C.accent, '55'), color: 'white' },
           }}
         >
           {multiDates.length > 0 ? `${multiDates.length}개 날짜에 스케줄 적용` : '날짜를 선택하세요'}
@@ -352,7 +352,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
           <Typography key={w} sx={{
             textAlign: 'center', fontSize: F.weekday, fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
-            color: i === 0 ? C.holiday + 'aa' : C.textFaint,
+            color: i === 0 ? alpha(C.holiday, 'aa') : C.textFaint,
             py: '4px',
           }}>
             {w}
@@ -399,7 +399,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
             ...glassSmallSx(),
             flexShrink: 0,
           }}>
-            <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: s.color, boxShadow: `0 0 4px ${s.color}99`, flexShrink: 0 }} />
+            <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: s.color, boxShadow: `0 0 4px ${alpha(s.color, '99')}`, flexShrink: 0 }} />
             <Typography sx={{ fontSize: F.label, color: C.textSecondary, fontFamily: "'Noto Sans KR',sans-serif" }}>
               {s.emoji} <b>{s.label}</b> {s.time}
             </Typography>
@@ -425,7 +425,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.4, pb: 0.5, flexShrink: 0 }}>
-          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: C.accent + '33' }} />
+          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: alpha(C.accent, '33') }} />
         </Box>
 
         <Box sx={{ px: 2.5, pt: 0.5, pb: 1, borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
@@ -458,9 +458,9 @@ export default function WorkScheduleCalendar({ onFlip }) {
                   sx={{
                     borderRadius: 3, py: 1.5, px: 0.5, minHeight: TOUCH_MIN,
                     bgcolor: active ? s.color : s.bg,
-                    border: `2px solid ${active ? s.color : s.color + '44'}`,
+                    border: `2px solid ${active ? s.color : alpha(s.color, '44')}`,
                     textAlign: 'center', cursor: 'pointer',
-                    boxShadow: active ? `0 4px 14px ${s.color}44` : 'none',
+                    boxShadow: active ? `0 4px 14px ${alpha(s.color, '44')}` : 'none',
                     transition: 'all 0.15s',
                     '&:active': { transform: 'scale(0.95)', opacity: 0.8 },
                     WebkitTapHighlightColor: 'transparent',
@@ -475,7 +475,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
                   </Typography>
                   <Typography sx={{
                     fontSize: '0.55rem', mt: 0.3,
-                    color: active ? 'rgba(255,255,255,0.8)' : s.color + '99',
+                    color: active ? 'rgba(255,255,255,0.8)' : alpha(s.color, '99'),
                     fontFamily: "'Noto Sans KR',sans-serif",
                   }}>
                     {s.time}

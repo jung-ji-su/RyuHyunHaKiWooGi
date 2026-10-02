@@ -19,7 +19,7 @@ import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png"; //웃음
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png"; // 승리
 
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const BOARD_SIZE = 15;
 const EMPTY = null;
@@ -373,7 +373,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           }}>
             🎮 오목 대결
           </Typography>
-          <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88" }}>
+          <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '88') }}>
             5개를 먼저 이어서 승리하세요!
           </Typography>
         </Box>
@@ -418,7 +418,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
                 px: 4,
                 py: 1.5,
                 borderRadius: 3,
-                "&:hover": { borderColor: B.accent, bgcolor: B.peach + "33" },
+                "&:hover": { borderColor: B.accent, bgcolor: alpha(B.peach, '33') },
               }}
             >
               🚪 입장하기
@@ -442,7 +442,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           }}>
             상대방을 기다리는 중...
           </Typography>
-          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "66", mb: 3 }}>
+          <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '66'), mb: 3 }}>
             상대방이 입장하면 자동으로 시작돼요!
           </Typography>
 
@@ -490,7 +490,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           }}>
             🎉 준비 완료!
           </Typography>
-          <Typography sx={{ fontSize: "0.9rem", color: B.dark + "88" }}>
+          <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '88') }}>
             곧 게임이 시작됩니다...
           </Typography>
         </Box>
@@ -518,7 +518,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
               <Typography sx={{
                 fontFamily: "'Jua',sans-serif",
                 fontSize: "0.9rem",
-                color: myColor === BLACK ? B.accent : B.dark + "88",
+                color: myColor === BLACK ? B.accent : alpha(B.dark, '88'),
                 fontWeight: myColor === BLACK ? 700 : 400,
               }}>
                 {players.black}
@@ -555,7 +555,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
               <Typography sx={{
                 fontFamily: "'Jua',sans-serif",
                 fontSize: "0.9rem",
-                color: myColor === WHITE ? B.pants : B.dark + "88",
+                color: myColor === WHITE ? B.pants : alpha(B.dark, '88'),
                 fontWeight: myColor === WHITE ? 700 : 400,
               }}>
                 {players.white}
@@ -582,12 +582,12 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             mb: 2,
             p: 1,
             borderRadius: 2,
-            bgcolor: isMyTurn ? B.accent + "22" : B.dark + "11",
+            bgcolor: isMyTurn ? alpha(B.accent, '22') : alpha(B.dark, '11'),
           }}>
             <Typography sx={{
               fontFamily: "'Jua',sans-serif",
               fontSize: "0.95rem",
-              color: isMyTurn ? B.accent : B.dark + "66",
+              color: isMyTurn ? B.accent : alpha(B.dark, '66'),
             }}>
               {isMyTurn 
                 ? `내 턴! 클릭 2번으로 착수하세요 ${myColor === BLACK ? '●' : '○'}`
@@ -718,7 +718,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             승자: {winner === BLACK ? players.black : players.white}
           </Typography>
 
-          <Typography sx={{ fontSize: "0.9rem", color: B.dark + "88", mb: 3 }}>
+          <Typography sx={{ fontSize: "0.9rem", color: alpha(B.dark, '88'), mb: 3 }}>
             {winner === myColor
               ? "소원을 말해보세요! 상대방이 들어줘야 해요 💕"
               : "승자의 소원을 들어줘야 해요~"}
@@ -750,7 +750,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           <Typography variant="h6">축하합니다! 🎉</Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ mb: 2, textAlign: "center", color: B.dark + "88" }}>
+          <Typography sx={{ mb: 2, textAlign: "center", color: alpha(B.dark, '88') }}>
             이긴 사람의 특권! 소원을 말해보세요
           </Typography>
           <TextField
@@ -812,7 +812,7 @@ const OmokGame = ({ currentUser, opponentUser }) => {
           
           <Paper sx={{
             p: 3,
-            bgcolor: B.peach + "33",
+            bgcolor: alpha(B.peach, '33'),
             border: `2px solid ${B.accent}`,
             borderRadius: '14px',
             mb: 3,
@@ -826,10 +826,10 @@ const OmokGame = ({ currentUser, opponentUser }) => {
             </Typography>
           </Paper>
           
-          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88", mb: 1 }}>
+          <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '88'), mb: 1 }}>
             쿠폰이 쿠폰북에 추가되었어요!
           </Typography>
-          <Typography sx={{ fontSize: "0.85rem", color: B.dark + "88" }}>
+          <Typography sx={{ fontSize: "0.85rem", color: alpha(B.dark, '88') }}>
             상대방에게 써먹어보세요! 😉
           </Typography>
         </DialogContent>

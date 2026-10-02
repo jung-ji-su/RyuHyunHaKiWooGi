@@ -29,7 +29,7 @@ const PARTICIPANT_OPTIONS = [
   { value: "상대방만", label: "💌 상대방만" },
 ];
 
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const GLASS_INPUT = {
   "& .MuiOutlinedInput-root": {
@@ -38,10 +38,10 @@ const GLASS_INPUT = {
     background: "rgba(255,255,255,0.72)",
     transition: "all 0.2s ease",
     "& fieldset": { borderColor: "rgba(123,79,166,0.14)" },
-    "&:hover fieldset": { borderColor: `${B.pants}44` },
+    "&:hover fieldset": { borderColor: `${alpha(B.pants, '44')}` },
     "&.Mui-focused": {
       background: "rgba(255,255,255,0.96)",
-      boxShadow: `0 0 0 3px ${B.pants}14`,
+      boxShadow: `0 0 0 3px ${alpha(B.pants, '14')}`,
     },
     "&.Mui-focused fieldset": { borderColor: B.pants },
   },
@@ -60,13 +60,13 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
       borderRadius: "14px", overflow: "hidden",
       // 작은 반복 리스트 요소라 backdrop-filter 없이 solid+shadow만 (캘린더 성능 원칙)
       background: isEditing
-        ? `linear-gradient(135deg, ${catColor}12, ${catColor}06)`
+        ? `linear-gradient(135deg, ${alpha(catColor, '12')}, ${alpha(catColor, '06')})`
         : "rgba(255,255,255,0.82)",
-      border: isEditing ? `1.5px solid ${catColor}55` : "1px solid rgba(255,255,255,0.9)",
-      boxShadow: isEditing ? `0 4px 18px ${catColor}22` : "0 2px 10px rgba(123,79,166,0.07)",
+      border: isEditing ? `1.5px solid ${alpha(catColor, '55')}` : "1px solid rgba(255,255,255,0.9)",
+      boxShadow: isEditing ? `0 4px 18px ${alpha(catColor, '22')}` : "0 2px 10px rgba(123,79,166,0.07)",
       transition: "all 0.22s ease",
     }}>
-      <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${catColor}66)`, flexShrink: 0 }} />
+      <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${alpha(catColor, '66')})`, flexShrink: 0 }} />
       <Box sx={{ flex: 1, px: 1.5, py: 1, minWidth: 0 }}>
         <Stack direction="row" alignItems="center" gap={0.5}>
           {cat && <Typography sx={{ fontSize: "0.8rem", lineHeight: 1 }}>{cat.emoji}</Typography>}
@@ -161,7 +161,7 @@ export default function ScheduleDetailDialog({
     >
       {/* 드래그 핸들 */}
       <Box sx={{ display: "flex", justifyContent: "center", pt: 1.5, pb: 0.3, flexShrink: 0 }}>
-        <Box sx={{ width: 40, height: 4, borderRadius: 2, background: `linear-gradient(to right, ${B.pants}44, ${B.pants}22)` }} />
+        <Box sx={{ width: 40, height: 4, borderRadius: 2, background: `linear-gradient(to right, ${alpha(B.pants, '44')}, ${alpha(B.pants, '22')})` }} />
       </Box>
 
       {/* 헤더 */}
@@ -177,15 +177,15 @@ export default function ScheduleDetailDialog({
           }}>
             💕 {date}
           </Typography>
-          <Typography sx={{ fontSize: "0.72rem", color: B.pants + "66", mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
+          <Typography sx={{ fontSize: "0.72rem", color: alpha(B.pants, '66'), mt: 0.2, fontFamily: "'Noto Sans KR',sans-serif" }}>
             {isMultiMode ? "선택한 날짜 전체에 일괄 등록됩니다" : "일정을 추가하거나 수정하세요"}
           </Typography>
         </Box>
         <IconButton size="small" onClick={onClose}
           sx={{
-            color: B.pants + "55",
+            color: alpha(B.pants, '55'),
             bgcolor: "rgba(255,255,255,0.82)",
-            border: `1px solid ${B.pants}18`,
+            border: `1px solid ${alpha(B.pants, '18')}`,
             "&:active": { transform: "scale(0.85)" },
           }}>
           <CloseIcon fontSize="small" />
@@ -210,7 +210,7 @@ export default function ScheduleDetailDialog({
                 <Typography sx={{ fontSize: "2.2rem", mb: 0.8, lineHeight: 1 }}>🗓️</Typography>
                 <Typography sx={{
                   fontSize: "0.82rem", fontWeight: 700,
-                  color: B.pants + "66",
+                  color: alpha(B.pants, '66'),
                   fontFamily: "'Noto Sans KR',sans-serif", mb: 0.4,
                 }}>
                   아직 등록된 일정이 없어요
@@ -235,8 +235,8 @@ export default function ScheduleDetailDialog({
 
         {/* 구분선 */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2.2 }}>
-          <Box sx={{ flex: 1, height: 1, background: `linear-gradient(to right, transparent, ${B.pants}20)` }} />
-          <Typography sx={{ fontSize: "0.72rem", color: B.pants + "88", fontFamily: "'Jua',sans-serif", flexShrink: 0 }}>
+          <Box sx={{ flex: 1, height: 1, background: `linear-gradient(to right, transparent, ${alpha(B.pants, '20')})` }} />
+          <Typography sx={{ fontSize: "0.72rem", color: alpha(B.pants, '88'), fontFamily: "'Jua',sans-serif", flexShrink: 0 }}>
             {isEditMode ? "✏️ 수정 중" : isMultiMode ? "✨ 기간 일정 추가" : "✨ 새 일정"}
           </Typography>
           {isEditMode && (
@@ -248,7 +248,7 @@ export default function ScheduleDetailDialog({
               취소
             </Button>
           )}
-          <Box sx={{ flex: 1, height: 1, background: `linear-gradient(to left, transparent, ${B.pants}20)` }} />
+          <Box sx={{ flex: 1, height: 1, background: `linear-gradient(to left, transparent, ${alpha(B.pants, '20')})` }} />
         </Box>
 
         <Stack spacing={2.2}>
@@ -256,7 +256,7 @@ export default function ScheduleDetailDialog({
           {/* 카테고리 */}
           <Box>
             <Typography sx={{
-              fontSize: "0.72rem", color: B.pants + "88",
+              fontSize: "0.72rem", color: alpha(B.pants, '88'),
               fontFamily: "'Noto Sans KR',sans-serif", mb: 1,
               fontWeight: 700, letterSpacing: "0.08em",
             }}>
@@ -274,11 +274,11 @@ export default function ScheduleDetailDialog({
                       cursor: "pointer",
                       transition: "all 0.22s cubic-bezier(0.34,1.56,0.64,1)",
                       background: active
-                        ? `linear-gradient(135deg, ${cat.color}20, ${cat.color}0d)`
+                        ? `linear-gradient(135deg, ${alpha(cat.color, '20')}, ${alpha(cat.color, '0d')})`
                         : "rgba(255,255,255,0.7)",
-                      border: active ? `1.5px solid ${cat.color}66` : "1.5px solid rgba(255,255,255,0.8)",
+                      border: active ? `1.5px solid ${alpha(cat.color, '66')}` : "1.5px solid rgba(255,255,255,0.8)",
                       boxShadow: active
-                        ? `0 4px 18px ${cat.color}30, 0 0 0 3px ${cat.color}14`
+                        ? `0 4px 18px ${alpha(cat.color, '30')}, 0 0 0 3px ${alpha(cat.color, '14')}`
                         : "0 2px 8px rgba(123,79,166,0.06)",
                       transform: active ? "scale(1.05)" : "scale(1)",
                       WebkitTapHighlightColor: "transparent",
@@ -340,10 +340,10 @@ export default function ScheduleDetailDialog({
                 background: "rgba(255,255,255,0.8)",
                 transition: "all 0.2s ease",
                 "& fieldset": { borderColor: "rgba(123,79,166,0.16)" },
-                "&:hover fieldset": { borderColor: `${B.pants}44` },
+                "&:hover fieldset": { borderColor: `${alpha(B.pants, '44')}` },
                 "&.Mui-focused": {
                   background: "rgba(255,255,255,0.97)",
-                  boxShadow: `0 0 0 3px ${B.pants}14`,
+                  boxShadow: `0 0 0 3px ${alpha(B.pants, '14')}`,
                 },
                 "&.Mui-focused fieldset": { borderColor: B.pants },
               },
@@ -368,7 +368,7 @@ export default function ScheduleDetailDialog({
           {/* 참여자 */}
           <Box>
             <Typography sx={{
-              fontSize: "0.72rem", color: B.pants + "88",
+              fontSize: "0.72rem", color: alpha(B.pants, '88'),
               fontFamily: "'Noto Sans KR',sans-serif", mb: 1,
               fontWeight: 700, letterSpacing: "0.08em",
             }}>
@@ -389,7 +389,7 @@ export default function ScheduleDetailDialog({
                         ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
                         : "rgba(255,255,255,0.72)",
                       border: active ? "none" : "1px solid rgba(123,79,166,0.12)",
-                      boxShadow: active ? `0 4px 16px ${B.pants}44` : "0 1px 6px rgba(123,79,166,0.07)",
+                      boxShadow: active ? `0 4px 16px ${alpha(B.pants, '44')}` : "0 1px 6px rgba(123,79,166,0.07)",
                       transform: active ? "scale(1.03)" : "scale(1)",
                       WebkitTapHighlightColor: "transparent",
                       "&:active": { transform: "scale(0.96)" },
@@ -425,7 +425,7 @@ export default function ScheduleDetailDialog({
                   : `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`)
               : "rgba(200,200,200,0.35)",
             boxShadow: canSubmit
-              ? (isEditMode ? "0 6px 22px rgba(76,175,80,0.40)" : `0 6px 22px ${B.pants}44`)
+              ? (isEditMode ? "0 6px 22px rgba(76,175,80,0.40)" : `0 6px 22px ${alpha(B.pants, '44')}`)
               : "none",
             transition: "all 0.2s ease",
             WebkitTapHighlightColor: "transparent",

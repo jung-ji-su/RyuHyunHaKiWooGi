@@ -4,7 +4,7 @@ import { Box, Typography, Drawer, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { db } from '../firebase';
 import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 
 const PAGE_SIZE = 20;
 
@@ -117,16 +117,16 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
         background: 'rgba(255,255,255,0.6)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: `1px solid ${B.pants}14`,
+        borderBottom: `1px solid ${alpha(B.pants, '14')}`,
       }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Stack direction="row" alignItems="center" gap={1}>
             <IconButton size="small" onClick={onClose}
               sx={{
-                color: B.dark + '88',
+                color: alpha(B.dark, '88'),
                 bgcolor: 'rgba(255,255,255,0.7)',
-                border: `1px solid ${B.pants}22`,
-                '&:hover': { bgcolor: B.lavender, borderColor: B.pants + '44' },
+                border: `1px solid ${alpha(B.pants, '22')}`,
+                '&:hover': { bgcolor: B.lavender, borderColor: alpha(B.pants, '44') },
               }}>
               <CloseIcon sx={{ fontSize: '1rem' }} />
             </IconButton>
@@ -154,15 +154,15 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
               sx={{
                 px: 1.5, py: 0.5, borderRadius: 8,
                 bgcolor: 'rgba(255,255,255,0.6)',
-                border: `1px solid ${B.pants}22`,
+                border: `1px solid ${alpha(B.pants, '22')}`,
                 cursor: 'pointer', userSelect: 'none',
-                '&:hover': { bgcolor: B.lavender + '88' },
+                '&:hover': { bgcolor: alpha(B.lavender, '88') },
                 '&:active': { transform: 'scale(0.95)' },
                 transition: 'all 0.15s',
               }}
             >
               <Typography sx={{
-                fontSize: '0.72rem', color: B.pants + 'bb',
+                fontSize: '0.72rem', color: alpha(B.pants, 'bb'),
                 fontFamily: "'Noto Sans KR',sans-serif",
               }}>
                 모두 읽음 ✓
@@ -173,7 +173,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
 
         {unread === 0 && notifications.length > 0 && (
           <Typography sx={{
-            fontSize: '0.72rem', color: B.dark + '44',
+            fontSize: '0.72rem', color: alpha(B.dark, '44'),
             fontFamily: "'Noto Sans KR',sans-serif",
             mt: 0.8, ml: 0.5,
           }}>
@@ -189,13 +189,13 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
             <Typography sx={{ fontSize: '3.5rem', mb: 1.5, opacity: 0.4 }}>🔕</Typography>
             <Typography sx={{
               fontFamily: "'Jua',sans-serif",
-              color: B.dark + '55', fontSize: '0.95rem',
+              color: alpha(B.dark, '55'), fontSize: '0.95rem',
             }}>
               아직 알림이 없어요
             </Typography>
             <Typography sx={{
               fontFamily: "'Noto Sans KR',sans-serif",
-              color: B.dark + '33', fontSize: '0.75rem', mt: 0.5,
+              color: alpha(B.dark, '33'), fontSize: '0.75rem', mt: 0.5,
             }}>
               일정이나 일기를 작성하면 알림이 와요
             </Typography>
@@ -217,10 +217,10 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                       : 'rgba(255,255,255,0.82)',
                     border: n.isRead
                       ? '1px solid rgba(255,255,255,0.7)'
-                      : `1px solid ${meta.color}28`,
+                      : `1px solid ${alpha(meta.color, '28')}`,
                     boxShadow: n.isRead
                       ? '0 1px 6px rgba(123,79,166,0.05)'
-                      : `0 2px 14px ${meta.color}18, 0 1px 4px rgba(0,0,0,0.04)`,
+                      : `0 2px 14px ${alpha(meta.color, '18')}, 0 1px 4px rgba(0,0,0,0.04)`,
                     display: 'flex', alignItems: 'flex-start', gap: 1.5,
                     p: 1.5,
                     cursor: 'pointer',
@@ -230,7 +230,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     '&:hover': {
                       background: 'rgba(255,255,255,0.92)',
                       transform: 'translateY(-1px)',
-                      boxShadow: `0 4px 20px ${meta.color}22`,
+                      boxShadow: `0 4px 20px ${alpha(meta.color, '22')}`,
                     },
                     '&:active': { transform: 'scale(0.98)' },
                   }}
@@ -247,11 +247,11 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                   {/* 타입 아이콘 */}
                   <Box sx={{
                     width: 40, height: 40, borderRadius: '12px', flexShrink: 0,
-                    background: `linear-gradient(135deg, ${meta.color}22 0%, ${meta.color}0e 100%)`,
-                    border: `1.5px solid ${meta.color}28`,
+                    background: `linear-gradient(135deg, ${alpha(meta.color, '22')} 0%, ${alpha(meta.color, '0e')} 100%)`,
+                    border: `1.5px solid ${alpha(meta.color, '28')}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '1.05rem',
-                    boxShadow: `0 2px 8px ${meta.color}18`,
+                    boxShadow: `0 2px 8px ${alpha(meta.color, '18')}`,
                   }}>
                     {meta.icon}
                   </Box>
@@ -261,7 +261,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     <Typography sx={{
                       fontFamily: "'Noto Sans KR',sans-serif",
                       fontSize: '0.82rem', lineHeight: 1.5,
-                      color: n.isRead ? B.dark + '66' : B.dark,
+                      color: n.isRead ? alpha(B.dark, '66') : B.dark,
                       fontWeight: n.isRead ? 400 : 600,
                     }}>
                       {content}
@@ -269,14 +269,14 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     <Stack direction="row" alignItems="center" gap={0.8} sx={{ mt: 0.4 }}>
                       <Box sx={{
                         px: 0.8, py: 0.05, borderRadius: 4,
-                        bgcolor: `${meta.color}14`,
+                        bgcolor: `${alpha(meta.color, '14')}`,
                       }}>
                         <Typography sx={{ fontSize: '0.72rem', color: meta.color, fontFamily: "'Noto Sans KR',sans-serif" }}>
                           {meta.label}
                         </Typography>
                       </Box>
                       <Typography sx={{
-                        fontSize: '0.72rem', color: B.dark + '44',
+                        fontSize: '0.72rem', color: alpha(B.dark, '44'),
                         fontFamily: "'Noto Sans KR',sans-serif",
                       }}>
                         {timeAgo(n.createdAt)}
@@ -289,8 +289,8 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     {!n.isRead && (
                       <Box sx={{
                         width: 7, height: 7, borderRadius: '50%',
-                        background: `linear-gradient(135deg, ${meta.color}, ${meta.color}cc)`,
-                        boxShadow: `0 0 6px ${meta.color}88`,
+                        background: `linear-gradient(135deg, ${meta.color}, ${alpha(meta.color, 'cc')})`,
+                        boxShadow: `0 0 6px ${alpha(meta.color, '88')}`,
                         mt: 0.5,
                       }} />
                     )}
@@ -299,7 +299,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                       sx={{
                         width: 20, height: 20, borderRadius: '50%',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: B.dark + '44', fontSize: '0.75rem', lineHeight: 1,
+                        color: alpha(B.dark, '44'), fontSize: '0.75rem', lineHeight: 1,
                         cursor: 'pointer',
                         '&:hover': { bgcolor: '#ff000018', color: '#E53935' },
                         transition: 'all 0.15s',
@@ -322,7 +322,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
           background: 'rgba(255,255,255,0.6)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderTop: `1px solid ${B.pants}10`,
+          borderTop: `1px solid ${alpha(B.pants, '10')}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2,
         }}>
           <Box
@@ -330,17 +330,17 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
             sx={{
               px: 2, py: 0.6, borderRadius: 8,
               bgcolor: page === 0 ? 'transparent' : 'rgba(255,255,255,0.7)',
-              border: `1px solid ${page === 0 ? B.pants + '18' : B.pants + '33'}`,
-              color: page === 0 ? B.pants + '33' : B.pants,
+              border: `1px solid ${page === 0 ? alpha(B.pants, '18') : alpha(B.pants, '33')}`,
+              color: page === 0 ? alpha(B.pants, '33') : B.pants,
               cursor: page === 0 ? 'default' : 'pointer',
               fontFamily: "'Jua',sans-serif", fontSize: '0.85rem',
               transition: 'all 0.15s',
-              '&:hover': page > 0 ? { bgcolor: B.lavender + '66' } : {},
+              '&:hover': page > 0 ? { bgcolor: alpha(B.lavender, '66') } : {},
             }}
           >
             ‹ 이전
           </Box>
-          <Typography sx={{ fontSize: '0.75rem', color: B.dark + '66', fontFamily: "'Noto Sans KR',sans-serif" }}>
+          <Typography sx={{ fontSize: '0.75rem', color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif" }}>
             {page + 1} / {totalPages}
           </Typography>
           <Box
@@ -348,12 +348,12 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
             sx={{
               px: 2, py: 0.6, borderRadius: 8,
               bgcolor: page >= totalPages - 1 ? 'transparent' : 'rgba(255,255,255,0.7)',
-              border: `1px solid ${page >= totalPages - 1 ? B.pants + '18' : B.pants + '33'}`,
-              color: page >= totalPages - 1 ? B.pants + '33' : B.pants,
+              border: `1px solid ${page >= totalPages - 1 ? alpha(B.pants, '18') : alpha(B.pants, '33')}`,
+              color: page >= totalPages - 1 ? alpha(B.pants, '33') : B.pants,
               cursor: page >= totalPages - 1 ? 'default' : 'pointer',
               fontFamily: "'Jua',sans-serif", fontSize: '0.85rem',
               transition: 'all 0.15s',
-              '&:hover': page < totalPages - 1 ? { bgcolor: B.lavender + '66' } : {},
+              '&:hover': page < totalPages - 1 ? { bgcolor: alpha(B.lavender, '66') } : {},
             }}
           >
             다음 ›

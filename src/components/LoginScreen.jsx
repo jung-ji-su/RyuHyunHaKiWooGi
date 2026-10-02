@@ -1,5 +1,5 @@
 import { Box, Typography, Stack } from '@mui/material';
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 import {
   buri1, buri2, buri3, buri4, buri5, buri6, buri7, buri8, buri9,
   buriPig, buriGirl, buriTired, buriSmile, buriTongue, buriClover,
@@ -64,7 +64,7 @@ export default function LoginScreen({ onLogin }) {
         {topBuris.map(({ img, w, d, dl }, i) => (
           <Box key={i} component="img" src={img} alt="" sx={{
             width: w, objectFit: 'contain',
-            filter: `drop-shadow(0 4px 14px ${B.pants}55)`,
+            filter: `drop-shadow(0 4px 14px ${alpha(B.pants, '55')})`,
             animation: `loginBuriFloat ${d} ease-in-out infinite`,
             animationDelay: dl,
           }} />
@@ -75,11 +75,11 @@ export default function LoginScreen({ onLogin }) {
       <Box sx={{ textAlign: 'center', mb: 4, position: 'relative', zIndex: 2 }}>
         <Typography sx={{
           fontFamily: "'Jua',sans-serif", fontSize: '2.2rem', color: B.pants,
-          textShadow: `3px 3px 0 ${B.skin}88, 0 0 30px ${B.pants}33`,
+          textShadow: `3px 3px 0 ${alpha(B.skin, '88')}, 0 0 30px ${alpha(B.pants, '33')}`,
           animation: 'titleDrop 0.65s ease both', lineHeight: 1.2,
         }}>Who are you? 🕵️</Typography>
         <Typography sx={{
-          fontSize: '0.82rem', color: B.dark + '88', mt: 0.8,
+          fontSize: '0.82rem', color: alpha(B.dark, '88'), mt: 0.8,
           fontFamily: "'Noto Sans KR',sans-serif",
           animation: 'fadeInUp 0.5s ease 0.3s both',
         }}>부리부리가 기다리고 있어요 🐷</Typography>
@@ -92,7 +92,7 @@ export default function LoginScreen({ onLogin }) {
           sx={{
             width: 148, background: B.surface, borderRadius: '28px',
             p: '22px 16px 18px', textAlign: 'center', cursor: 'pointer',
-            border: `2.5px solid ${B.pants}55`, boxShadow: `0 8px 28px ${B.pants}22`,
+            border: `2.5px solid ${alpha(B.pants, '55')}`, boxShadow: `0 8px 28px ${alpha(B.pants, '22')}`,
             position: 'relative', overflow: 'visible',
             animation: 'cardSlideUp 0.55s ease 0.15s both',
             transition: 'transform 0.15s, box-shadow 0.15s',
@@ -119,13 +119,13 @@ export default function LoginScreen({ onLogin }) {
           <Box component="img" src={buri1} alt="" sx={{
             position: 'absolute', top: -22, right: -14, width: 46,
             objectFit: 'contain', pointerEvents: 'none',
-            filter: `drop-shadow(0 2px 8px ${B.pants}55)`,
+            filter: `drop-shadow(0 2px 8px ${alpha(B.pants, '55')})`,
             animation: 'buriWiggle 2.2s ease-in-out infinite',
           }} />
           <Box component="img" src={buriClover} alt="" sx={{
             position: 'absolute', bottom: -16, left: -12, width: 36,
             objectFit: 'contain', pointerEvents: 'none',
-            filter: `drop-shadow(0 2px 6px ${B.pants}44)`,
+            filter: `drop-shadow(0 2px 6px ${alpha(B.pants, '44')})`,
             animation: 'buriWiggle 2.8s ease-in-out 0.5s infinite',
           }} />
         </Box>
@@ -135,7 +135,7 @@ export default function LoginScreen({ onLogin }) {
           sx={{
             width: 148, background: B.surface, borderRadius: '28px',
             p: '22px 16px 18px', textAlign: 'center', cursor: 'pointer',
-            border: `2.5px solid ${B.skin}`, boxShadow: `0 8px 28px ${B.skin}44`,
+            border: `2.5px solid ${B.skin}`, boxShadow: `0 8px 28px ${alpha(B.skin, '44')}`,
             position: 'relative', overflow: 'visible',
             animation: 'cardSlideUp 0.55s ease 0.3s both',
             transition: 'transform 0.15s, box-shadow 0.15s',
@@ -162,21 +162,21 @@ export default function LoginScreen({ onLogin }) {
           <Box component="img" src={buri7} alt="" sx={{
             position: 'absolute', top: -22, right: -14, width: 46,
             objectFit: 'contain', pointerEvents: 'none',
-            filter: `drop-shadow(0 2px 8px ${B.skin}88)`,
+            filter: `drop-shadow(0 2px 8px ${alpha(B.skin, '88')})`,
             animation: 'buriWiggle 2.6s ease-in-out infinite',
             animationDelay: '0.4s',
           }} />
           <Box component="img" src={buriHeart} alt="" sx={{
             position: 'absolute', bottom: -16, left: -12, width: 36,
             objectFit: 'contain', pointerEvents: 'none',
-            filter: `drop-shadow(0 2px 6px ${B.skin}88)`,
+            filter: `drop-shadow(0 2px 6px ${alpha(B.skin, '88')})`,
             animation: 'buriWiggle 3s ease-in-out 0.8s infinite',
           }} />
         </Box>
       </Stack>
 
       <Typography sx={{
-        fontFamily: "'Jua',sans-serif", fontSize: '0.72rem', color: B.dark + '66',
+        fontFamily: "'Jua',sans-serif", fontSize: '0.72rem', color: alpha(B.dark, '66'),
         animation: 'hintPulse 2.5s ease-in-out infinite',
         position: 'relative', zIndex: 2, mb: 2.5,
       }}>✨ 나를 선택해서 입장하기 ✨</Typography>
@@ -189,7 +189,7 @@ export default function LoginScreen({ onLogin }) {
             width: 30, objectFit: 'contain',
             animation: `buriWiggle ${2 + i * 0.25}s ease-in-out infinite`,
             animationDelay: `${i * 0.2}s`,
-            filter: `drop-shadow(0 2px 6px ${B.pants}33)`,
+            filter: `drop-shadow(0 2px 6px ${alpha(B.pants, '33')})`,
           }} />
         ))}
       </Stack>

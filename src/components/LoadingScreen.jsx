@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 import {
   buri1, buri2, buri3, buri4, buri5, buri6, buri7, buri8, buri9,
   buriPig, buriGirl, buriTired, buriShocked, buriFire, buriHeart,
@@ -45,7 +45,7 @@ export default function LoadingScreen() {
       <Typography sx={{
         fontFamily: "'Jua',sans-serif", fontSize: '1.15rem',
         color: B.pants, letterSpacing: 2,
-        textShadow: `2px 2px 0 ${B.skin}88`,
+        textShadow: `2px 2px 0 ${alpha(B.skin, '88')}`,
         animation: 'fadeInUp 0.5s ease both',
       }}>
         🐷 부리부리 미니홈피 🐷
@@ -62,7 +62,7 @@ export default function LoadingScreen() {
             <Box key={i} component="img" src={img} alt="" sx={{
               width: w, objectFit: 'contain',
               animation: `fadeInUp 0.35s ease ${dl} both, headBob ${d} ease-in-out ${bounceDl} infinite`,
-              filter: `drop-shadow(0 3px 8px ${B.pants}33)`,
+              filter: `drop-shadow(0 3px 8px ${alpha(B.pants, '33')})`,
             }} />
           );
         })}

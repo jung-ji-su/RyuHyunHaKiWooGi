@@ -28,7 +28,7 @@ import {
   calendarColor as C, calendarRadius, calendarFont as F, TOUCH_MIN,
   glassPanelSx, glassBorderSx, glassSmallSx,
 } from "./lib/calendarTokens";
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 // 리퀴드 글래스 카드 — CoupleCalendar 앞/뒷면(근무 스케줄) 공용, 화면당 backdrop-filter 패널은 이거 하나뿐.
 const CARD_SX = {
@@ -225,7 +225,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
       ? {
           background: `linear-gradient(150deg, ${C.person.jisu.from}, ${C.person.jisu.to})`,
           color: C.onAccent,
-          boxShadow: `0 4px 14px ${C.accent}55, inset 0 1px 1px rgba(255,255,255,.4), inset 0 -2px 3px rgba(0,0,0,.15)`,
+          boxShadow: `0 4px 14px ${alpha(C.accent, '55')}, inset 0 1px 1px rgba(255,255,255,.4), inset 0 -2px 3px rgba(0,0,0,.15)`,
         }
       : { ...glassSmallSx(), color: C.textSecondary }
     ),
@@ -270,10 +270,10 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
                   sx={{
                     mb: 1.5, minHeight: TOUCH_MIN, borderRadius: 3, fontFamily: "'Jua',sans-serif",
                     background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.accent})`,
-                    boxShadow: `0 8px 22px ${C.accent}40, inset 0 1px 1px rgba(255,255,255,.4)`,
+                    boxShadow: `0 8px 22px ${alpha(C.accent, '40')}, inset 0 1px 1px rgba(255,255,255,.4)`,
                     '&:hover': { background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.accent})` },
-                    '&:active': { transform: 'scale(0.96)', boxShadow: `0 3px 8px ${C.accent}35, inset 0 3px 8px rgba(0,0,0,.2)` },
-                    '&.Mui-disabled': { bgcolor: C.accent + '55', color: 'white' },
+                    '&:active': { transform: 'scale(0.96)', boxShadow: `0 3px 8px ${alpha(C.accent, '35')}, inset 0 3px 8px rgba(0,0,0,.2)` },
+                    '&.Mui-disabled': { bgcolor: alpha(C.accent, '55'), color: 'white' },
                   }}>
                   {selectedDates.length > 0 ? `${selectedDates.length}개 날짜에 일정 추가` : '날짜를 선택하세요'}
                 </Button>
@@ -365,7 +365,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
             width: 52, height: 52, minHeight: 52,
             background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.person.jisu.to})`,
             color: '#fff',
-            boxShadow: `0 10px 24px ${C.accent}45, 0 3px 8px ${C.person.hyunha.to}35, inset 0 1px 2px rgba(255,255,255,.5), inset 0 -2px 4px rgba(0,0,0,.15)`,
+            boxShadow: `0 10px 24px ${alpha(C.accent, '45')}, 0 3px 8px ${alpha(C.person.hyunha.to, '35')}, inset 0 1px 2px rgba(255,255,255,.5), inset 0 -2px 4px rgba(0,0,0,.15)`,
             '&:hover': { background: `linear-gradient(150deg, ${C.person.hyunha.from}, ${C.person.jisu.to})` },
             '&:active': { transform: 'scale(0.9) translateY(2px)' },
             transition: 'transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease',

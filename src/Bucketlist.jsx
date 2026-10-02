@@ -16,7 +16,7 @@ import { createBuriPang, shakeElement, vibrate } from "./touchEffects";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
 import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png";
 import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const CATEGORIES = [
   { key: "전체",   label: "🐷 전체",   color: B.pants,   bg: B.lavender },
@@ -78,9 +78,9 @@ const BucketItem = ({ item, currentUser, index }) => {
   return (
     <Box onClick={handleToggle} sx={{
       display: "flex", alignItems: "center", gap: 1,
-      bgcolor: isDone ? "#F4FFF8" : "white",
+      bgcolor: isDone ? "#F4FFF8" : B.surface,
       borderRadius: "14px",
-      border: isDone ? `1.5px solid ${B.green}55` : `1.5px solid ${cat.color}22`,
+      border: isDone ? `1.5px solid ${alpha(B.green, '55')}` : `1.5px solid ${alpha(cat.color, '22')}`,
       px: 1.5, py: 1.5,
       cursor: "pointer", position: "relative", overflow: "hidden",
       transition: "transform 0.12s",
@@ -107,7 +107,7 @@ const BucketItem = ({ item, currentUser, index }) => {
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography sx={{
           fontFamily: "'Jua',sans-serif", fontSize: "0.9rem",
-          color: isDone ? B.dark + "55" : B.dark,
+          color: isDone ? alpha(B.dark, '55') : B.dark,
           textDecoration: isDone ? "line-through" : "none",
           mb: 0.3, lineHeight: 1.3,
         }}>{item.title}</Typography>
@@ -118,7 +118,7 @@ const BucketItem = ({ item, currentUser, index }) => {
             fontSize: "0.72rem", fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
           }}>{cat.label}</Box>
-          <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55",
+          <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '55'),
             fontFamily: "'Noto Sans KR',sans-serif" }}>
             {item.writer} 등록
           </Typography>
@@ -174,7 +174,7 @@ const AddForm = ({ currentUser, onClose }) => {
   return (
     <Box sx={{
       bgcolor: B.surface, borderRadius: '14px',
-      border: `1.5px solid ${B.pants}33`,
+      border: `1.5px solid ${alpha(B.pants, '33')}`,
       p: 2, mb: 1.5,
       animation: "fadeInUp 0.25s ease both",
     }}>
@@ -185,7 +185,7 @@ const AddForm = ({ currentUser, onClose }) => {
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
             bgcolor: cat === c.key ? c.color : c.bg,
             color:   cat === c.key ? "white" : c.color,
-            border: `1.5px solid ${cat === c.key ? "transparent" : c.color + "44"}`,
+            border: `1.5px solid ${cat === c.key ? "transparent" : alpha(c.color, '44')}`,
             transition: "all 0.15s", "&:active": { transform: "scale(0.93)" },
           }}>{c.label}</Box>
         ))}
@@ -200,8 +200,8 @@ const AddForm = ({ currentUser, onClose }) => {
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px", bgcolor: B.cream,
               fontFamily: "'Noto Sans KR',sans-serif",
-              "& fieldset": { borderColor: B.pants + "33" },
-              "&:hover fieldset": { borderColor: B.pants + "88" },
+              "& fieldset": { borderColor: alpha(B.pants, '33') },
+              "&:hover fieldset": { borderColor: alpha(B.pants, '88') },
               "&.Mui-focused fieldset": { borderColor: B.pants },
             }
           }}
@@ -212,7 +212,7 @@ const AddForm = ({ currentUser, onClose }) => {
           sx={{
             bgcolor: B.pants, borderRadius: "10px", px: 2, flexShrink: 0,
             fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
-            minWidth: 0, boxShadow: `0 3px 10px ${B.pants}33`,
+            minWidth: 0, boxShadow: `0 3px 10px ${alpha(B.pants, '33')}`,
             "&:hover": { bgcolor: "#6A3D96" },
             "&:disabled": { bgcolor: B.lavender },
             "&:active": { transform: "scale(0.94)" },
@@ -221,7 +221,7 @@ const AddForm = ({ currentUser, onClose }) => {
           {loading ? <CircularProgress size={16} sx={{ color: "white" }} /> : "추가"}
         </Button>
         <Button onClick={onClose} sx={{
-          color: B.dark + "55", borderRadius: "10px", minWidth: 0, px: 1,
+          color: alpha(B.dark, '55'), borderRadius: "10px", minWidth: 0, px: 1,
           "&:hover": { bgcolor: B.lavender },
         }}>✕</Button>
       </Stack>
@@ -285,7 +285,7 @@ const BucketList = ({ currentUser }) => {
         <Box component="img" src={buri1} alt="" sx={{
           position: "absolute", top: -22, right: 10, width: 46,
           animation: "buriJump 2.5s ease-in-out infinite",
-          filter: `drop-shadow(0 2px 8px ${B.pants}44)`,
+          filter: `drop-shadow(0 2px 8px ${alpha(B.pants, '44')})`,
           pointerEvents: "none",
         }} />
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between" sx={{ mb: 1.5 }}>
@@ -293,7 +293,7 @@ const BucketList = ({ currentUser }) => {
             <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1rem" }}>
               우리의 버킷리스트 🪣
             </Typography>
-            <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
+            <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '66'),
               fontFamily: "'Noto Sans KR',sans-serif" }}>
               탭해서 완료 체크!
             </Typography>
@@ -303,7 +303,7 @@ const BucketList = ({ currentUser }) => {
               color: pct === 100 ? B.green : B.pants, lineHeight: 1 }}>
               {pct}%
             </Typography>
-            <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66",
+            <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '66'),
               fontFamily: "'Noto Sans KR',sans-serif" }}>
               {doneCount} / {total}개 완료
             </Typography>
@@ -319,7 +319,7 @@ const BucketList = ({ currentUser }) => {
         {pct === 100 && total > 0 && (
           <Box sx={{
             textAlign: "center", py: 0.8, bgcolor: "#E8FFF2",
-            borderRadius: 2, border: `1px dashed ${B.green}66`,
+            borderRadius: 2, border: `1px dashed ${alpha(B.green, '66')}`,
           }}>
             <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "0.82rem", color: B.green }}>
               🎉 모든 버킷리스트 완료! 최고의 커플 🐷💜
@@ -334,9 +334,9 @@ const BucketList = ({ currentUser }) => {
           <Box key={c.key} onClick={() => { setFilter(c.key); vibrate(12); }} sx={{
             px: 1.5, py: "5px", borderRadius: '999px', cursor: "pointer",
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
-            bgcolor: filter === c.key ? c.color : "white",
+            bgcolor: filter === c.key ? c.color : B.surface,
             color:   filter === c.key ? "white" : c.color,
-            border: `1.5px solid ${filter === c.key ? "transparent" : c.color + "44"}`,
+            border: `1.5px solid ${filter === c.key ? "transparent" : alpha(c.color, '44')}`,
             transition: "all 0.15s", "&:active": { transform: "scale(0.93)" },
           }}>{c.label}</Box>
         ))}
@@ -352,7 +352,7 @@ const BucketList = ({ currentUser }) => {
           onPointerDown={e => createBuriPang(e)}
           sx={{
             mb: 1.5, borderRadius: "12px", py: 1,
-            borderColor: B.pants + "44", color: B.pants,
+            borderColor: alpha(B.pants, '44'), color: B.pants,
             fontFamily: "'Jua',sans-serif", fontSize: "0.88rem",
             position: "relative", overflow: "hidden",
             "&:hover": { bgcolor: B.lavender, borderColor: B.pants },
@@ -375,9 +375,9 @@ const BucketList = ({ currentUser }) => {
         <Box sx={{ textAlign: "center", py: 5, opacity: 0.5 }}>
           <Box component="img" src={buri7} alt="" sx={{
             width: 60, mb: 1.5, animation: "buriJump 2.5s ease-in-out infinite",
-            filter: `drop-shadow(0 2px 8px ${B.pants}44)`,
+            filter: `drop-shadow(0 2px 8px ${alpha(B.pants, '44')})`,
           }} />
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.dark + "88", fontSize: "0.88rem" }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: alpha(B.dark, '88'), fontSize: "0.88rem" }}>
             {filter === "전체"
               ? "아직 버킷리스트가 없어요 🪣\n첫 항목을 추가해봐요!"
               : `${filter} 카테고리 항목이 없어요 🐷`}

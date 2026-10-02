@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { UserContext } from '../lib/UserContext';
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 
 const OTHER = { '지수': '현하', '현하': '지수' };
 
@@ -190,7 +190,7 @@ export default function QuickNotif() {
               <Typography sx={{
                 fontSize: '0.72rem',
                 fontWeight: 700,
-                color: isCool ? B.pants + '80' : B.dark + 'cc',
+                color: isCool ? alpha(B.pants, '80') : alpha(B.dark, 'cc'),
                 fontFamily: "'Noto Sans KR',sans-serif",
                 whiteSpace: 'nowrap',
                 position: 'relative',

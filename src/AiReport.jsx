@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Box, Typography, Stack, Drawer, Divider } from '@mui/material';
-import { B } from './lib/constants';
+import { alpha, B } from './lib/constants';
 
 const EMOTION_LABELS = ['행복','신남','울음','슬픔','화남','설렘','피곤','최고'];
 
@@ -76,14 +76,14 @@ function getBestMonth(temperatures) {
 const StatCard = ({ emoji, label, value, color = B.pants }) => (
   <Box sx={{
     flex: 1, bgcolor: B.surface, borderRadius: 2.5, p: '12px 8px',
-    textAlign: 'center', border: `1.5px solid ${color}18`,
-    boxShadow: `0 2px 8px ${color}0a`,
+    textAlign: 'center', border: `1.5px solid ${alpha(color, '18')}`,
+    boxShadow: `0 2px 8px ${alpha(color, '0a')}`,
   }}>
     <Typography sx={{ fontSize: '1.2rem', lineHeight: 1, mb: 0.3 }}>{emoji}</Typography>
     <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.1rem', color, lineHeight: 1 }}>
       {value}
     </Typography>
-    <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3, lineHeight: 1.3 }}>
+    <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3, lineHeight: 1.3 }}>
       {label}
     </Typography>
   </Box>
@@ -137,25 +137,25 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
           borderRadius: '22px 22px 0 0',
           maxHeight: '82vh',
           bgcolor: B.cream,
-          backgroundImage: `radial-gradient(circle at 90% 0%, ${B.lavender}99 0%, transparent 35%)`,
+          backgroundImage: `radial-gradient(circle at 90% 0%, ${alpha(B.lavender, '99')} 0%, transparent 35%)`,
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
         },
       }}>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1, pb: 0.5, flexShrink: 0 }}>
-        <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '44' }} />
+        <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: alpha(B.pants, '44') }} />
       </Box>
 
       <Box sx={{ px: 2.5, pt: 0.5, pb: 1.5, flexShrink: 0 }}>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: B.pants }}>
           📊 우리 연애 리포트
         </Typography>
-        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
+        <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif", mt: 0.3 }}>
           지금까지의 기록을 분석했어요 🐷
         </Typography>
       </Box>
 
-      <Divider sx={{ borderStyle: 'dashed', borderColor: B.pants + '22', flexShrink: 0 }} />
+      <Divider sx={{ borderStyle: 'dashed', borderColor: alpha(B.pants, '22'), flexShrink: 0 }} />
 
       <Box sx={{ overflowY: 'auto', px: 2, py: 2, flex: 1 }}>
         {/* 핵심 통계 */}
@@ -174,15 +174,15 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
         {/* AI 인사이트 메시지 */}
         <Box sx={{ mb: 2 }}>
           <Typography sx={{
-            fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
+            fontSize: '0.72rem', fontWeight: 700, color: alpha(B.pants, '88'),
             letterSpacing: '1.5px', mb: 1, fontFamily: "'Noto Sans KR',sans-serif",
           }}>
             AI 분석 결과
           </Typography>
           <Box sx={{
             bgcolor: B.surface, borderRadius: '14px', p: '14px 16px',
-            border: `1.5px solid ${B.pants}22`,
-            boxShadow: `0 2px 12px ${B.pants}0c`,
+            border: `1.5px solid ${alpha(B.pants, '22')}`,
+            boxShadow: `0 2px 12px ${alpha(B.pants, '0c')}`,
           }}>
             <Stack gap={0.8}>
               {insightLines.map((line, i) => (
@@ -206,7 +206,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
         {stats.topEmotion && (
           <Box>
             <Typography sx={{
-              fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
+              fontSize: '0.72rem', fontWeight: 700, color: alpha(B.pants, '88'),
               letterSpacing: '1.5px', mb: 1, fontFamily: "'Noto Sans KR',sans-serif",
             }}>
               가장 많이 기록한 감정
@@ -221,7 +221,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
                 return (
                   <Box key={label} sx={{
                     px: 1.5, py: 0.5, borderRadius: 2,
-                    bgcolor: isTop ? B.pants : 'white',
+                    bgcolor: isTop ? B.pants : B.surface,
                     border: `1.5px solid ${isTop ? B.pants : '#e0d6ec'}`,
                     display: 'flex', alignItems: 'center', gap: 0.5,
                   }}>

@@ -1,19 +1,19 @@
 import { Box, Typography } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { B } from '../lib/constants';
+import { alpha, B } from '../lib/constants';
 
 export default function SectionCard({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children, noPadding }) {
   return (
     <Box sx={{
       bgcolor: bgColor || B.cream, borderRadius: '14px',
-      border: `1.5px solid ${borderColor || B.pants}33`,
+      border: `1.5px solid ${alpha(borderColor || B.pants, '33')}`,
       position: 'relative', overflow: 'visible',
       animation: 'fadeInUp 0.4s ease both',
     }}>
       <Box sx={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         px: 2, py: 1,
-        borderBottom: `1px dashed ${borderColor || B.pants}22`,
+        borderBottom: `1px dashed ${alpha(borderColor || B.pants, '22')}`,
         position: 'relative',
       }}>
         {buriImg && (
@@ -21,7 +21,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
             sx={{
               position: 'absolute', top: -18, left: 10, width: 38,
               objectFit: 'contain', pointerEvents: 'none',
-              filter: `drop-shadow(0 2px 6px ${borderColor || B.pants}44)`,
+              filter: `drop-shadow(0 2px 6px ${alpha(borderColor || B.pants, '44')})`,
               animation: 'headBob 2.5s ease-in-out infinite',
             }}
           />
@@ -34,14 +34,14 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
             {icon} {title}
           </Typography>
           {sub && (
-            <Typography sx={{ fontSize: '0.72rem', color: B.dark + '66' }}>{sub}</Typography>
+            <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '66') }}>{sub}</Typography>
           )}
         </Box>
         {onMore && (
           <Box onClick={onMore} sx={{
             display: 'flex', alignItems: 'center', gap: 0.4,
             px: 1, py: '3px', borderRadius: '999px',
-            bgcolor: (borderColor || B.pants) + '18',
+            bgcolor: alpha(borderColor || B.pants, '18'),
             color: borderColor || B.pants,
             fontSize: '0.72rem', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",

@@ -6,6 +6,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { UserContext } from '../lib/UserContext';
+import { alpha } from '../lib/color';
 
 const USERS = ['지수', '현하'];
 
@@ -56,7 +57,7 @@ const S = {
   card:  { background: '#fff', borderRadius: 14, padding: '14px 16px', marginBottom: 12, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' },
   h:     { margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: '#222', display: 'flex', alignItems: 'center', gap: 6 },
   row:   { display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' },
-  tag:   (color = '#888') => ({ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: color + '22', color, fontWeight: 600 }),
+  tag:   (color = '#888') => ({ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: alpha(color, '22'), color, fontWeight: 600 }),
   item:  { display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 10px', borderRadius: 9, marginBottom: 5 },
 };
 const btn = (bg = '#555', sm = false, disabled = false) => ({
@@ -333,9 +334,9 @@ export default function AdminPage() {
               { label: '알림', value: stats.notifications, emoji: '🔔', color: '#7B4FA6', sub: `미읽음 ${unreadCount}개` },
             ].map(item => (
               <div key={item.label} style={{
-                background: item.color + '11', borderRadius: 10,
+                background: alpha(item.color, '11'), borderRadius: 10,
                 padding: '10px 8px', textAlign: 'center',
-                border: `1px solid ${item.color}22`,
+                border: `1px solid ${alpha(item.color, '22')}`,
               }}>
                 <div style={{ fontSize: 18, marginBottom: 2 }}>{item.emoji}</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: item.color, lineHeight: 1 }}>{item.value}</div>

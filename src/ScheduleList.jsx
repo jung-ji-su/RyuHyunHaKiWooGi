@@ -6,7 +6,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import confetti from "canvas-confetti";
 import { shakeElement, vibrate } from "./touchEffects";
 import { calendarColor } from "./lib/calendarTokens";
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 import buri6 from "./assets/KakaoTalk_20260316_132934584.png";
 import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
@@ -163,12 +163,12 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
       sx={{
         position: "relative", overflow: "hidden",
         borderRadius: "14px",
-        bgcolor: isPast ? "#F5F5F5" : "white",
+        bgcolor: isPast ? "#F5F5F5" : B.surface,
         opacity: isPast ? 0.65 : 1,
         animation: isImportant && !isPast
           ? `scheduleSlideIn 0.35s ease ${index*0.06}s both, importantBorder 3s linear ${index*0.3}s infinite`
           : `scheduleSlideIn 0.35s ease ${index*0.06}s both`,
-        border: `2px solid ${meta.color}33`,
+        border: `2px solid ${alpha(meta.color, '33')}`,
         transition: "transform 0.12s",
         cursor: "pointer",
         "&:active": { transform: "scale(0.96)" },
@@ -205,7 +205,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                 </Typography>
                 <Typography sx={{
                   fontFamily: "'Jua',sans-serif", fontSize: "0.92rem",
-                  color: isPast ? B.dark+"55" : B.dark,
+                  color: isPast ? alpha(B.dark, '55') : B.dark,
                   textDecoration: isPast ? "line-through" : "none",
                   animation: isImportant && !isPast ? "importantTextGlow 2s ease-in-out infinite" : "none",
                 }}>
@@ -226,7 +226,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
 
               {/* 날짜 */}
               <Typography sx={{
-                fontSize: "0.72rem", color: B.dark+"55",
+                fontSize: "0.72rem", color: alpha(B.dark, '55'),
                 fontFamily: "'Noto Sans KR',sans-serif", mb: 0.6,
               }}>
                 {formatDate(schedule.date)}
@@ -273,7 +273,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
                 fontSize: "0.72rem", fontWeight: 700,
                 fontFamily: "'Jua',sans-serif",
                 animation: dday === "D-Day" && !isPast ? "ddayPulse 1.2s ease-in-out infinite" : "none",
-                boxShadow: dday === "D-Day" ? `0 2px 10px ${meta.color}66` : "none",
+                boxShadow: dday === "D-Day" ? `0 2px 10px ${alpha(meta.color, '66')}` : "none",
               }}>
                 {dday}
               </Box>
@@ -336,28 +336,28 @@ const ScheduleList = ({ currentUser }) => {
       {/* 요약 카드 */}
       <Box sx={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap: 1, mb:2.5 }}>
         <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p:1.5,
-          border:`1.5px solid ${B.pants}22`,
+          border:`1.5px solid ${alpha(B.pants, '22')}`,
           display:"flex", alignItems:"center", gap: 1 }}>
           <Box component="img" src={buri6} alt=""
             sx={{ width:36, animation:"buriJump 2.5s ease-in-out infinite",
-              filter:`drop-shadow(0 2px 6px ${B.pants}44)` }}/>
+              filter:`drop-shadow(0 2px 6px ${alpha(B.pants, '44')})` }}/>
           <Box>
             <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize:"1.4rem",
               color:B.pants, lineHeight:1 }}>{schedules.length}</Typography>
-            <Typography sx={{ fontSize:"0.72rem", color:B.dark+"66",
+            <Typography sx={{ fontSize:"0.72rem", color:alpha(B.dark, '66'),
               fontFamily: "'Noto Sans KR',sans-serif" }}>전체 일정</Typography>
           </Box>
         </Box>
         <Box sx={{ bgcolor: B.surface, borderRadius: '14px', p:1.5,
-          border:`1.5px solid ${B.accent}22`,
+          border:`1.5px solid ${alpha(B.accent, '22')}`,
           display:"flex", alignItems:"center", gap: 1 }}>
           <Box component="img" src={buri1} alt=""
             sx={{ width:36, animation:"buriJump 2.2s ease-in-out 0.5s infinite",
-              filter:`drop-shadow(0 2px 6px ${B.accent}44)` }}/>
+              filter:`drop-shadow(0 2px 6px ${alpha(B.accent, '44')})` }}/>
           <Box>
             <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize:"1.4rem",
               color:B.accent, lineHeight:1 }}>{importantCount}</Typography>
-            <Typography sx={{ fontSize:"0.72rem", color:B.dark+"66",
+            <Typography sx={{ fontSize:"0.72rem", color:alpha(B.dark, '66'),
               fontFamily: "'Noto Sans KR',sans-serif" }}>중요 일정</Typography>
           </Box>
         </Box>
@@ -376,9 +376,9 @@ const ScheduleList = ({ currentUser }) => {
             sx={{
               px: 1.5, py:"5px", borderRadius: '999px', cursor:"pointer",
               fontFamily: "'Noto Sans KR',sans-serif", fontSize:"0.75rem", fontWeight:700,
-              bgcolor: filter===key ? color : "white",
+              bgcolor: filter===key ? color : B.surface,
               color:   filter===key ? "white" : color,
-              border: `1.5px solid ${filter===key ? "transparent" : color+"44"}`,
+              border: `1.5px solid ${filter===key ? "transparent" : alpha(color, '44')}`,
               transition:"all 0.15s",
               "&:active":{ transform:"scale(0.93)" },
             }}>{label}</Box>
@@ -390,8 +390,8 @@ const ScheduleList = ({ currentUser }) => {
         <Box sx={{ textAlign:"center", py:6, opacity:0.5 }}>
           <Box component="img" src={buri9} alt=""
             sx={{ width:64, mb:1.5, animation:"headBob 2.5s ease-in-out infinite",
-              filter:`drop-shadow(0 2px 8px ${B.pants}44)` }}/>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", color:B.dark+"88", fontSize:"0.88rem" }}>
+              filter:`drop-shadow(0 2px 8px ${alpha(B.pants, '44')})` }}/>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color:alpha(B.dark, '88'), fontSize:"0.88rem" }}>
             일정이 없어요 🐷<br/>캘린더에서 추가해봐요!
           </Typography>
         </Box>
@@ -419,7 +419,7 @@ const ScheduleList = ({ currentUser }) => {
                 </Box>
                 <Box sx={{ flex:1, height:"1px", bgcolor:B.lavender }}/>
                 <Typography sx={{ fontFamily: "'Noto Sans KR',sans-serif",
-                  fontSize:"0.72rem", color:B.dark+"55" }}>
+                  fontSize:"0.72rem", color:alpha(B.dark, '55') }}>
                   {items.length}개
                 </Typography>
               </Stack>

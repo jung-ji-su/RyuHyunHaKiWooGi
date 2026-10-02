@@ -1,5 +1,5 @@
 import { Box, Typography, Stack } from '@mui/material';
-import { B } from './lib/constants';
+import { alpha, B } from './lib/constants';
 const MONTH_NAMES = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
 function getHeatColor(avg) {
@@ -32,11 +32,11 @@ export default function YearHeatmap({ temperatures, year }) {
     <Box sx={{ mt: 0.5 }}>
       {/* 색상 범례 */}
       <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.5} sx={{ mb: 1 }}>
-        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif" }}>낮음</Typography>
+        <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif" }}>낮음</Typography>
         {['#85B7EB','#EF9F27','#7B4FA6','#E8630A'].map((c, i) => (
           <Box key={i} sx={{ width: CELL, height: CELL, borderRadius: '2px', bgcolor: c }} />
         ))}
-        <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif" }}>높음</Typography>
+        <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif" }}>높음</Typography>
       </Stack>
 
       {/* 가로 스크롤 가능한 히트맵 */}
@@ -49,7 +49,7 @@ export default function YearHeatmap({ temperatures, year }) {
                 width: (n === 5 ? 5 : n === 10 ? 5 : 1) * (CELL + GAP) - (n === 5 ? GAP : 0),
                 textAlign: 'right', flexShrink: 0,
               }}>
-                <Typography sx={{ fontSize: '0.5rem', color: B.dark+'55', fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1 }}>
+                <Typography sx={{ fontSize: '0.5rem', color: alpha(B.dark, '55'), fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1 }}>
                   {n}
                 </Typography>
               </Box>
@@ -63,7 +63,7 @@ export default function YearHeatmap({ temperatures, year }) {
               <Box key={m} sx={{ display: 'flex', alignItems: 'center', gap: '4px', mb: `${GAP + 1}px` }}>
                 {/* 월 라벨 */}
                 <Typography sx={{
-                  width: 24, fontSize: '0.72rem', color: B.dark+'88', flexShrink: 0,
+                  width: 24, fontSize: '0.72rem', color: alpha(B.dark, '88'), flexShrink: 0,
                   textAlign: 'right', fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1,
                 }}>
                   {MONTH_NAMES[m]}
@@ -98,7 +98,7 @@ export default function YearHeatmap({ temperatures, year }) {
 
       <Typography sx={{
         textAlign: 'center', mt: 0.8, fontSize: '0.72rem',
-        color: B.dark+'55', fontFamily: "'Noto Sans KR',sans-serif",
+        color: alpha(B.dark, '55'), fontFamily: "'Noto Sans KR',sans-serif",
       }}>
         {year}년 감정 온도 · 좌우로 스크롤 가능해요
       </Typography>

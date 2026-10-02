@@ -25,7 +25,7 @@ import buriLove    from "./assets/KakaoTalk_20260424_173810950.png"; // 하트�
 import buriTired   from "./assets/KakaoTalk_20260424_173840927.png"; // 졸린 (피곤)
 import buriLucky   from "./assets/KakaoTalk_20260424_173734582.png"; // 네잎클로버 (최고)
 import buriCouple  from "./assets/KakaoTalk_20260424_173657493.png"; // 커플 (장식)
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const emotions = [
   { label: "행복", emoji: "🥰", buriImg: buriHappy   },
@@ -134,15 +134,15 @@ const DiaryWrite = ({ currentUser }) => {
     <Paper elevation={0} sx={{
       p: 3, width: "100%", boxSizing: "border-box", borderRadius: '14px', maxWidth: "none",
       bgcolor: B.cream,
-      border: `1.5px solid ${B.accent}33`,
-      backgroundImage: `radial-gradient(circle at 5% 95%, ${B.peach}88 0%, transparent 40%)`,
+      border: `1.5px solid ${alpha(B.accent, '33')}`,
+      backgroundImage: `radial-gradient(circle at 5% 95%, ${alpha(B.peach, '88')} 0%, transparent 40%)`,
       position: "relative", overflow: "visible",
     }}>
 
       {/* 코너 부리부리 (기존) */}
       <Box component="img" src={buri4} alt="" sx={{
         position: "absolute", top: -28, right: 12, width: 56,
-        filter: `drop-shadow(0 3px 8px ${B.accent}44)`,
+        filter: `drop-shadow(0 3px 8px ${alpha(B.accent, '44')})`,
         animation: "headBob 2s ease-in-out infinite",
         pointerEvents: "none",
       }} />
@@ -151,7 +151,7 @@ const DiaryWrite = ({ currentUser }) => {
       <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 2.5 }}>
         <Typography sx={{
           fontFamily: "'Jua',sans-serif", fontSize: "1.1rem", color: B.accent,
-          textShadow: `1px 1px 0 ${B.skin}88`,
+          textShadow: `1px 1px 0 ${alpha(B.skin, '88')}`,
         }}>
           오늘의 기록 ✍️
         </Typography>
@@ -160,7 +160,7 @@ const DiaryWrite = ({ currentUser }) => {
       {/* ── 감정 선택 (부리 이미지 그리드) ────────────────────── */}
       <Box sx={{ mb: 3 }}>
         <Typography sx={{
-          mb: 1, color: B.dark + "88", fontWeight: 700,
+          mb: 1, color: alpha(B.dark, '88'), fontWeight: 700,
           fontSize: "0.82rem", fontFamily: "'Noto Sans KR',sans-serif",
         }}>
           지금 기분은 어떤가요?
@@ -179,11 +179,11 @@ const DiaryWrite = ({ currentUser }) => {
                   gap: "4px", pt: 0.8, pb: 0.8, px: 0.4,
                   borderRadius: "14px", cursor: "pointer",
                   transition: "all 0.18s",
-                  bgcolor: isSelected ? B.pants : "white",
+                  bgcolor: isSelected ? B.pants : B.surface,
                   border: `2px solid ${isSelected ? B.pants : B.lavender}`,
                   boxShadow: isSelected
-                    ? `0 4px 14px ${B.pants}55`
-                    : `0 2px 6px ${B.skin}44`,
+                    ? `0 4px 14px ${alpha(B.pants, '55')}`
+                    : `0 2px 6px ${alpha(B.skin, '44')}`,
                   transform: isSelected ? "scale(1.07) translateY(-2px)" : "scale(1)",
                   "&:hover": {
                     bgcolor: isSelected ? "#6A3D96" : B.lavender,
@@ -208,7 +208,7 @@ const DiaryWrite = ({ currentUser }) => {
                 />
                 <Typography sx={{
                   fontSize: "0.72rem", lineHeight: 1,
-                  color: isSelected ? "white" : B.dark + "99",
+                  color: isSelected ? "white" : alpha(B.dark, '99'),
                   fontFamily: "'Noto Sans KR',sans-serif",
                   fontWeight: isSelected ? 700 : 400,
                 }}>
@@ -223,8 +223,8 @@ const DiaryWrite = ({ currentUser }) => {
         {selectedEm && (
           <Box sx={{
             mt: 1, display: "flex", alignItems: "center", gap: 1,
-            bgcolor: `${B.pants}11`, borderRadius: 3,
-            px: 1.5, py: 0.8, border: `1px solid ${B.pants}22`,
+            bgcolor: `${alpha(B.pants, '11')}`, borderRadius: 3,
+            px: 1.5, py: 0.8, border: `1px solid ${alpha(B.pants, '22')}`,
           }}>
             <Box component="img" src={selectedEm.buriImg} alt=""
               sx={{ width: 28, height: 28, objectFit: "contain" }} />
@@ -249,8 +249,8 @@ const DiaryWrite = ({ currentUser }) => {
           "& .MuiOutlinedInput-root": {
             bgcolor: B.surface, borderRadius: 3,
             fontFamily: "'Noto Sans KR',sans-serif",
-            "& fieldset": { borderColor: B.pants + "33" },
-            "&:hover fieldset": { borderColor: B.pants + "88" },
+            "& fieldset": { borderColor: alpha(B.pants, '33') },
+            "&:hover fieldset": { borderColor: alpha(B.pants, '88') },
             "&.Mui-focused fieldset": { borderColor: B.pants },
           },
         }}
@@ -261,7 +261,7 @@ const DiaryWrite = ({ currentUser }) => {
         <Box sx={{ position: "relative", width: "100%", mb: 2 }}>
           <img src={preview} alt="미리보기" style={{
             width: "100%", maxHeight: "250px", objectFit: "cover",
-            borderRadius: "12px", border: `1.5px solid ${B.pants}33`,
+            borderRadius: "12px", border: `1.5px solid ${alpha(B.pants, '33')}`,
           }} />
           <IconButton size="small" onClick={handleCancelFile} sx={{
             position: "absolute", top: 8, right: 8,
@@ -283,8 +283,8 @@ const DiaryWrite = ({ currentUser }) => {
               onPointerDown={(e) => createRipple(e)}
               sx={{
                 color: B.pants, bgcolor: B.surface,
-                boxShadow: `0 2px 8px ${B.pants}22`,
-                border: `1px solid ${B.pants}33`,
+                boxShadow: `0 2px 8px ${alpha(B.pants, '22')}`,
+                border: `1px solid ${alpha(B.pants, '33')}`,
                 position: "relative", overflow: "hidden",
                 transition: "transform 0.1s",
                 "&:hover": { bgcolor: B.lavender },
@@ -294,7 +294,7 @@ const DiaryWrite = ({ currentUser }) => {
             </IconButton>
           </label>
           <Typography sx={{
-            fontSize: "0.72rem", color: B.dark + "55",
+            fontSize: "0.72rem", color: alpha(B.dark, '55'),
             fontFamily: "'Noto Sans KR',sans-serif",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
@@ -313,9 +313,9 @@ const DiaryWrite = ({ currentUser }) => {
             fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             width: "100%",
             position: "relative", overflow: "hidden",
-            boxShadow: `0 4px 14px ${B.pants}44`,
+            boxShadow: `0 4px 14px ${alpha(B.pants, '44')}`,
             transition: "transform 0.1s, box-shadow 0.1s",
-            "&:hover": { bgcolor: "#6A3D96", boxShadow: `0 6px 18px ${B.pants}55` },
+            "&:hover": { bgcolor: "#6A3D96", boxShadow: `0 6px 18px ${alpha(B.pants, '55')}` },
             "&:active": { transform: "scale(0.94)" },
             "&:disabled": { bgcolor: B.skin },
           }}

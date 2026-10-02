@@ -11,7 +11,7 @@ import TimerIcon from "@mui/icons-material/Timer";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 
 
@@ -91,8 +91,8 @@ const TodayMenu = () => {
       {/* 헤더 */}
       <Box sx={{
         textAlign: "center", py: 3, px: 2, mb: 2.5,
-        borderRadius: '14px', bgcolor: B.peach + "88",
-        border: `1.5px dashed ${B.orange}44`,
+        borderRadius: '14px', bgcolor: alpha(B.peach, '88'),
+        border: `1.5px dashed ${alpha(B.orange, '44')}`,
         position: "relative",
       }}>
         <Typography sx={{ fontSize: "2.5rem", lineHeight: 1, mb: 1 }}>👨‍🍳</Typography>
@@ -103,7 +103,7 @@ const TodayMenu = () => {
           오늘 뭐 먹지?
         </Typography>
         <Typography sx={{
-          fontSize: "0.8rem", color: B.dark + "88", mt: 0.5,
+          fontSize: "0.8rem", color: alpha(B.dark, '88'), mt: 0.5,
           fontFamily: "'Noto Sans KR',sans-serif"
         }}>
           버튼 하나로 오늘 저녁 메뉴 해결! 🍳
@@ -137,7 +137,7 @@ const TodayMenu = () => {
                 transition: "all 0.15s",
                 height: 30, // 모바일에서 터치하기 편하게 살짝 키웠어
                 px: 0.5,
-                "&:hover": { bgcolor: filter === f.key ? B.orange : B.peach + "BB" }
+                "&:hover": { bgcolor: filter === f.key ? B.orange : alpha(B.peach, 'BB') }
               }}
             />
           ))}
@@ -149,7 +149,7 @@ const TodayMenu = () => {
         <Box sx={{
           textAlign: "center", py: 3, mb: 2.5,
           bgcolor: B.surface, borderRadius: '14px',
-          border: `2px solid ${B.orange}44`,
+          border: `2px solid ${alpha(B.orange, '44')}`,
           animation: "pulse 0.1s ease infinite",
         }}>
           <Typography sx={{ fontSize: "3rem", lineHeight: 1 }}>{menu.emoji}</Typography>
@@ -171,10 +171,10 @@ const TodayMenu = () => {
           ? <CircularProgress size={18} sx={{ color: "white" }} />
           : <ShuffleIcon />}
         sx={{
-          bgcolor: rolling ? B.orange + "88" : B.orange,
+          bgcolor: rolling ? alpha(B.orange, '88') : B.orange,
           color: "white", borderRadius: 3, py: 2,
           fontFamily: "'Jua',sans-serif", fontSize: "1.1rem",
-          boxShadow: `0 4px 20px ${B.orange}44`,
+          boxShadow: `0 4px 20px ${alpha(B.orange, '44')}`,
           transition: "all 0.15s",
           "&:hover": { bgcolor: "#e55a24" },
           "&:active": { transform: "scale(0.97)" },
@@ -185,7 +185,7 @@ const TodayMenu = () => {
       {/* 메뉴 리스트 미리보기 */}
       <Box sx={{ mt: 3 }}>
         <Typography sx={{
-          fontFamily: "'Jua',sans-serif", color: B.dark + "88",
+          fontFamily: "'Jua',sans-serif", color: alpha(B.dark, '88'),
           fontSize: "0.82rem", mb: 1
         }}>
           📋 오늘의 메뉴 후보 ({getFiltered().length}개)
@@ -197,9 +197,9 @@ const TodayMenu = () => {
               sx={{
                 display: "flex", alignItems: "center", gap: 1.5,
                 bgcolor: B.surface, borderRadius: 2.5, px: 2, py: 1,
-                border: `1px solid ${B.orange}18`, cursor: "pointer",
+                border: `1px solid ${alpha(B.orange, '18')}`, cursor: "pointer",
                 transition: "all 0.12s",
-                "&:active": { transform: "scale(0.98)", bgcolor: B.peach + "55" },
+                "&:active": { transform: "scale(0.98)", bgcolor: alpha(B.peach, '55') },
               }}>
               <Typography sx={{ fontSize: "1.4rem", lineHeight: 1 }}>{m.emoji}</Typography>
               <Box sx={{ flex: 1 }}>
@@ -210,14 +210,14 @@ const TodayMenu = () => {
                   {m.name}
                 </Typography>
                 <Typography sx={{
-                  fontSize: "0.72rem", color: B.dark + "66",
+                  fontSize: "0.72rem", color: alpha(B.dark, '66'),
                   fontFamily: "'Noto Sans KR',sans-serif"
                 }}>
                   {m.cook_time} · {getTotalPrice(m.ingredients)}원
                 </Typography>
               </Box>
               <Chip label={m.difficulty} size="small" sx={{
-                bgcolor: getDiffColor(m.difficulty) + "22",
+                bgcolor: alpha(getDiffColor(m.difficulty), '22'),
                 color: getDiffColor(m.difficulty),
                 fontFamily: "'Noto Sans KR',sans-serif",
                 fontSize: "0.72rem", height: 20, fontWeight: 700,
@@ -242,7 +242,7 @@ const TodayMenu = () => {
           <Button
             onClick={() => setStep("home")}
             sx={{
-              color: B.dark + "88", fontFamily: "'Noto Sans KR',sans-serif",
+              color: alpha(B.dark, '88'), fontFamily: "'Noto Sans KR',sans-serif",
               fontSize: "0.8rem", px: 0,
             }}>
             ← 돌아가기
@@ -252,10 +252,10 @@ const TodayMenu = () => {
             onClick={handleRoll}
             startIcon={<ShuffleIcon sx={{ fontSize: 16 }} />}
             sx={{
-              bgcolor: B.orange + "18", color: B.orange,
+              bgcolor: alpha(B.orange, '18'), color: B.orange,
               borderRadius: 2, fontFamily: "'Noto Sans KR',sans-serif",
               fontSize: "0.8rem",
-              "&:hover": { bgcolor: B.orange + "28" },
+              "&:hover": { bgcolor: alpha(B.orange, '28') },
             }}>
             다시 뽑기
           </Button>
@@ -264,8 +264,8 @@ const TodayMenu = () => {
         {/* 이모지 헤더 */}
         <Box sx={{
           width: "100%", borderRadius: '14px', mb: 2,
-          bgcolor: B.peach + "88",
-          border: `1.5px solid ${B.orange}33`,
+          bgcolor: alpha(B.peach, '88'),
+          border: `1.5px solid ${alpha(B.orange, '33')}`,
           py: 3, textAlign: "center",
           position: "relative",
         }}>
@@ -281,7 +281,7 @@ const TodayMenu = () => {
         {/* 기본 정보 뱃지 */}
         <Stack direction="row" gap={0.8} mb={2} flexWrap="wrap">
           <Chip label={menu.difficulty} size="small" sx={{
-            bgcolor: getDiffColor(menu.difficulty) + "22",
+            bgcolor: alpha(getDiffColor(menu.difficulty), '22'),
             color: getDiffColor(menu.difficulty), fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem",
           }} />
@@ -292,7 +292,7 @@ const TodayMenu = () => {
               fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem",
             }} />
           <Chip label={spicy.label} size="small" sx={{
-            bgcolor: spicy.color + "22", color: spicy.color,
+            bgcolor: alpha(spicy.color, '22'), color: spicy.color,
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem",
           }} />
           <Chip label={menu.serving} size="small" sx={{
@@ -303,8 +303,8 @@ const TodayMenu = () => {
 
         {/* 예상 비용 */}
         <Box sx={{
-          bgcolor: B.orange + "12", borderRadius: '14px', p: 2, mb: 2,
-          border: `1.5px solid ${B.orange}33`,
+          bgcolor: alpha(B.orange, '12'), borderRadius: '14px', p: 2, mb: 2,
+          border: `1.5px solid ${alpha(B.orange, '33')}`,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
           <Stack direction="row" alignItems="center" gap={1}>
@@ -317,7 +317,7 @@ const TodayMenu = () => {
                 예상 장보기 비용
               </Typography>
               <Typography sx={{
-                fontSize: "0.72rem", color: B.dark + "66",
+                fontSize: "0.72rem", color: alpha(B.dark, '66'),
                 fontFamily: "'Noto Sans KR',sans-serif"
               }}>
                 {menu.serving} 기준
@@ -334,8 +334,8 @@ const TodayMenu = () => {
 
         {/* 실패하지 않는 팁 */}
         <Box sx={{
-          bgcolor: B.lavender + "66", borderRadius: '14px', p: 2, mb: 2.5,
-          border: `1.5px solid ${B.pants}22`,
+          bgcolor: alpha(B.lavender, '66'), borderRadius: '14px', p: 2, mb: 2.5,
+          border: `1.5px solid ${alpha(B.pants, '22')}`,
         }}>
           <Typography sx={{
             fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
@@ -344,7 +344,7 @@ const TodayMenu = () => {
             💜 실패하지 않는 팁
           </Typography>
           <Typography sx={{
-            fontSize: "0.8rem", color: B.dark + "cc", lineHeight: 1.6,
+            fontSize: "0.8rem", color: alpha(B.dark, 'cc'), lineHeight: 1.6,
             fontFamily: "'Noto Sans KR',sans-serif"
           }}>
             {menu.tip}
@@ -354,7 +354,7 @@ const TodayMenu = () => {
         {/* 재료 & 장보기 체크리스트 */}
         <Box sx={{
           bgcolor: B.surface, borderRadius: '14px', p: 2, mb: 2.5,
-          border: `1px solid ${B.orange}22`
+          border: `1px solid ${alpha(B.orange, '22')}`
         }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
             <Typography sx={{
@@ -364,7 +364,7 @@ const TodayMenu = () => {
               🛍️ 재료 & 장보기
             </Typography>
             <Typography sx={{
-              fontSize: "0.72rem", color: B.dark + "66",
+              fontSize: "0.72rem", color: alpha(B.dark, '66'),
               fontFamily: "'Noto Sans KR',sans-serif"
             }}>
               {checkedCount}/{totalIngredients} 완료
@@ -389,16 +389,16 @@ const TodayMenu = () => {
                 sx={{
                   display: "flex", alignItems: "center", gap: 1,
                   py: 0.8, px: 1, borderRadius: 2, cursor: "pointer",
-                  bgcolor: checked[ing.name] ? B.green + "12" : "transparent",
+                  bgcolor: checked[ing.name] ? alpha(B.green, '12') : "transparent",
                   transition: "all 0.15s",
                   "&:active": { transform: "scale(0.98)" },
                 }}>
                 {checked[ing.name]
                   ? <CheckCircleIcon sx={{ color: B.green, fontSize: 20, flexShrink: 0 }} />
-                  : <RadioButtonUncheckedIcon sx={{ color: B.dark + "44", fontSize: 20, flexShrink: 0 }} />}
+                  : <RadioButtonUncheckedIcon sx={{ color: alpha(B.dark, '44'), fontSize: 20, flexShrink: 0 }} />}
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography sx={{
-                    fontSize: "0.82rem", color: checked[ing.name] ? B.dark + "66" : B.dark,
+                    fontSize: "0.82rem", color: checked[ing.name] ? alpha(B.dark, '66') : B.dark,
                     textDecoration: checked[ing.name] ? "line-through" : "none",
                     fontFamily: "'Noto Sans KR',sans-serif",
                     fontWeight: 500,
@@ -406,7 +406,7 @@ const TodayMenu = () => {
                     {ing.name}
                   </Typography>
                   <Typography sx={{
-                    fontSize: "0.72rem", color: B.dark + "55",
+                    fontSize: "0.72rem", color: alpha(B.dark, '55'),
                     fontFamily: "'Noto Sans KR',sans-serif"
                   }}>
                     {ing.amount}
@@ -425,7 +425,7 @@ const TodayMenu = () => {
           {checkedCount === totalIngredients && totalIngredients > 0 && (
             <Box sx={{
               mt: 1.5, py: 1, borderRadius: 2, textAlign: "center",
-              bgcolor: B.green + "18", border: `1px solid ${B.green}33`,
+              bgcolor: alpha(B.green, '18'), border: `1px solid ${alpha(B.green, '33')}`,
             }}>
               <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.green, fontSize: "0.88rem" }}>
                 🎉 장보기 완료! 이제 요리 시작!
@@ -437,7 +437,7 @@ const TodayMenu = () => {
         {/* 레시피 단계 */}
         <Box sx={{
           bgcolor: B.surface, borderRadius: '14px', p: 2,
-          border: `1px solid ${B.pants}22`
+          border: `1px solid ${alpha(B.pants, '22')}`
         }}>
           <Typography sx={{
             fontFamily: "'Jua',sans-serif", fontSize: "0.92rem",
@@ -461,7 +461,7 @@ const TodayMenu = () => {
                   </Typography>
                 </Box>
                 <Typography sx={{
-                  fontSize: "0.82rem", color: B.dark + "cc", lineHeight: 1.6,
+                  fontSize: "0.82rem", color: alpha(B.dark, 'cc'), lineHeight: 1.6,
                   fontFamily: "'Noto Sans KR',sans-serif", flex: 1
                 }}>
                   {step}

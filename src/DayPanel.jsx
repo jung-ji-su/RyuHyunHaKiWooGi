@@ -4,7 +4,7 @@ import { db } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { vibrate } from './touchEffects';
 import { glass, glassBorderSx, getWriterBadge, writerBadgeBg, calendarColor } from './lib/calendarTokens';
-import { B } from './lib/constants';
+import { alpha, B } from './lib/constants';
 
 // 캘린더 그리드 dot(calendarColor.category)과 같은 색을 쓰도록 값만 맞춤 — ScheduleDetailDialog와 동일 패턴
 const CATEGORY_COLORS  = {
@@ -49,7 +49,7 @@ function SectionLabel({ icon, children, action }) {
   return (
     <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
       <Typography sx={{
-        fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
+        fontSize: '0.72rem', fontWeight: 700, color: alpha(B.pants, '88'),
         letterSpacing: '0.09em', fontFamily: "'Noto Sans KR',sans-serif",
       }}>
         {icon} {children}
@@ -125,7 +125,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
     >
       {/* 드래그 핸들 */}
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.4, pb: 0.3, flexShrink: 0 }}>
-        <Box sx={{ width: 40, height: 4, borderRadius: 2, background: `linear-gradient(to right, ${B.pants}44, ${B.pants}22)` }} />
+        <Box sx={{ width: 40, height: 4, borderRadius: 2, background: `linear-gradient(to right, ${alpha(B.pants, '44')}, ${alpha(B.pants, '22')})` }} />
       </Box>
 
       {/* 날짜 헤더 */}
@@ -140,7 +140,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
       </Box>
 
       {/* 구분선 */}
-      <Box sx={{ mx: 2.5, height: 1, background: `linear-gradient(to right, transparent, ${B.pants}22, transparent)`, flexShrink: 0 }} />
+      <Box sx={{ mx: 2.5, height: 1, background: `linear-gradient(to right, transparent, ${alpha(B.pants, '22')}, transparent)`, flexShrink: 0 }} />
 
       {/* 스크롤 콘텐츠 */}
       <Box sx={{ overflowY: 'auto', px: 2.2, py: 2, flex: 1 }}>
@@ -157,8 +157,8 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                     ...GLASS_CARD,
                     display: 'flex', alignItems: 'center', gap: 1,
                     borderRadius: '14px', px: 1.5, py: 1,
-                    border: `1px solid ${meta.color}28`,
-                    boxShadow: `0 3px 14px ${meta.color}18`,
+                    border: `1px solid ${alpha(meta.color, '28')}`,
+                    boxShadow: `0 3px 14px ${alpha(meta.color, '18')}`,
                   }}>
                     <Typography sx={{ fontSize: '1.5rem', lineHeight: 1 }}>{meta.emoji}</Typography>
                     <Box>
@@ -186,7 +186,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                 sx={{
                   px: 1, py: 0.35, borderRadius: '999px', cursor: 'pointer',
                   background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
-                  boxShadow: `0 3px 10px ${B.pants}44`,
+                  boxShadow: `0 3px 10px ${alpha(B.pants, '44')}`,
                   WebkitTapHighlightColor: 'transparent',
                   '&:active': { transform: 'scale(0.93)', opacity: 0.9 },
                   transition: 'all 0.15s',
@@ -214,10 +214,10 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                     ...SCHED_ITEM_BASE,
                     display: 'flex', alignItems: 'stretch',
                     borderRadius: '14px', overflow: 'hidden',
-                    border: `1px solid ${catColor}22`,
-                    boxShadow: `0 3px 14px ${catColor}14`,
+                    border: `1px solid ${alpha(catColor, '22')}`,
+                    boxShadow: `0 3px 14px ${alpha(catColor, '14')}`,
                   }}>
-                    <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${catColor}66)`, flexShrink: 0 }} />
+                    <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${alpha(catColor, '66')})`, flexShrink: 0 }} />
                     <Box sx={{ flex: 1, px: 1.5, py: 1, minWidth: 0 }}>
                       <Stack direction="row" alignItems="center" gap={0.5} sx={{ mb: 0.2 }}>
                         <Typography sx={{ fontSize: '0.8rem', lineHeight: 1 }}>{catEmoji}</Typography>
@@ -313,7 +313,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                   <Box key={c.id} sx={{
                     ...GLASS_CARD,
                     borderRadius: '14px', px: 1.5, py: 1, mb: 0.9,
-                    border: `1.5px dashed ${B.pants}44`,
+                    border: `1.5px dashed ${alpha(B.pants, '44')}`,
                     display: 'flex', alignItems: 'center', gap: 1,
                   }}>
                     <Typography sx={{ fontSize: '1.3rem' }}>🔒</Typography>
@@ -321,7 +321,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                       <Typography sx={{ fontSize: '0.74rem', fontFamily: "'Noto Sans KR',sans-serif", color: B.pants, fontWeight: 700 }}>
                         {c.author}의 타임캡슐
                       </Typography>
-                      <Typography sx={{ fontSize: '0.72rem', color: B.dark + '55', fontFamily: "'Noto Sans KR',sans-serif", mt: 0.2 }}>
+                      <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '55'), fontFamily: "'Noto Sans KR',sans-serif", mt: 0.2 }}>
                         {isoStr}에 공개돼요
                       </Typography>
                     </Box>
@@ -331,9 +331,9 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                 <Box sx={{
                   ...GLASS_CARD,
                   borderRadius: '14px', p: '14px',
-                  border: `1px solid ${B.pants}20`,
+                  border: `1px solid ${alpha(B.pants, '20')}`,
                 }}>
-                  <Typography sx={{ fontSize: '0.72rem', color: B.pants + '88', fontFamily: "'Noto Sans KR',sans-serif", mb: 1, fontWeight: 700 }}>
+                  <Typography sx={{ fontSize: '0.72rem', color: alpha(B.pants, '88'), fontFamily: "'Noto Sans KR',sans-serif", mb: 1, fontWeight: 700 }}>
                     이 날에 남길 메시지를 적어요 ✨
                   </Typography>
                   <TextField
@@ -346,7 +346,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                       '& .MuiOutlinedInput-root': {
                         borderRadius: '10px', fontSize: '0.82rem',
                         background: 'rgba(255,255,255,0.8)',
-                        '& fieldset': { borderColor: `${B.pants}20` },
+                        '& fieldset': { borderColor: `${alpha(B.pants, '20')}` },
                         '&.Mui-focused fieldset': { borderColor: B.pants },
                       },
                     }}
@@ -358,7 +358,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                       background: capsuleMsg.trim()
                         ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
                         : 'rgba(200,200,200,0.35)',
-                      boxShadow: capsuleMsg.trim() ? `0 4px 16px ${B.pants}44` : 'none',
+                      boxShadow: capsuleMsg.trim() ? `0 4px 16px ${alpha(B.pants, '44')}` : 'none',
                       transition: 'all 0.2s ease',
                       WebkitTapHighlightColor: 'transparent',
                       '&:active': capsuleMsg.trim() ? { transform: 'scale(0.97)', opacity: 0.88 } : {},
@@ -376,9 +376,9 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
               // 반복 리스트 카드라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
               <Box key={c.id} sx={{
                 borderRadius: '14px', p: '14px',
-                background: `linear-gradient(135deg, ${B.peach}88 0%, ${B.lavender}55 100%)`,
-                border: `1.5px solid ${B.accent}33`,
-                boxShadow: `0 4px 18px ${B.accent}14`,
+                background: `linear-gradient(135deg, ${alpha(B.peach, '88')} 0%, ${alpha(B.lavender, '55')} 100%)`,
+                border: `1.5px solid ${alpha(B.accent, '33')}`,
+                boxShadow: `0 4px 18px ${alpha(B.accent, '14')}`,
               }}>
                 <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 0.8 }}>
                   <Typography sx={{ fontSize: '1.1rem' }}>📬</Typography>

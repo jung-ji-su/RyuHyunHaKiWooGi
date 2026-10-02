@@ -18,7 +18,7 @@ import NotificationDrawer   from './components/NotificationDrawer';
 import { UserContext } from './lib/UserContext';
 import { useAuth }           from './hooks/useAuth';
 import { useNotifications }  from './hooks/useNotifications';
-import { B } from './lib/constants';
+import { alpha, B } from './lib/constants';
 import {
   buri8, buri9,
   buriShocked, buriTired,
@@ -26,6 +26,7 @@ import {
 } from './lib/buriAssets';
 import { createRipple, createBuriPang } from './touchEffects';
 import { useFCM }        from './hooks/useFCM';
+import { useColorMode }  from './hooks/useColorMode';
 import InstallPrompt     from './components/InstallPrompt';
 
 // ── 페이지 lazy import (코드 스플리팅) ────────────────────────────
@@ -61,7 +62,7 @@ function PageLoader() {
 }
 
 // ── 레이아웃 (Outlet + BottomNav) ───────────────────────────────
-function Layout() {
+function Layout({ colorMode, setColorMode }) {
   const { logout } = useContext(UserContext);
   const location = useLocation();
   return (
@@ -79,7 +80,7 @@ function Layout() {
           </motion.div>
         </AnimatePresence>
       </Box>
-      <BottomNav logout={logout} />
+      <BottomNav logout={logout} colorMode={colorMode} setColorMode={setColorMode} />
     </Box>
   );
 }
@@ -98,6 +99,7 @@ const TOAST_ROUTES = {
 function AppInner() {
   const navigate = useNavigate();
   const { currentUser, loading, login, logout } = useAuth();
+  const { mode: colorMode, setMode: setColorMode } = useColorMode();
   const { requestPermission } = useFCM(currentUser);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
@@ -206,11 +208,11 @@ function AppInner() {
       <Dialog open={updateDialogOpen} disableEscapeKeyDown
         PaperProps={{ sx: {
           borderRadius: 5, p: 1, textAlign: 'center', bgcolor: B.cream,
-          border: `2px solid ${B.pants}44`, boxShadow: `0 8px 40px ${B.pants}44`, overflow: 'visible',
+          border: `2px solid ${alpha(B.pants, '44')}`, boxShadow: `0 8px 40px ${alpha(B.pants, '44')}`, overflow: 'visible',
         }}}>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: -4, gap: 1 }}>
-          <Box component="img" src={buriFlower} alt="" sx={{ width: 52, filter: `drop-shadow(0 3px 10px ${B.pants}55)` }} />
-          <Box component="img" src={buri8} alt=""      sx={{ width: 80, filter: `drop-shadow(0 4px 12px ${B.pants}66)` }} />
+          <Box component="img" src={buriFlower} alt="" sx={{ width: 52, filter: `drop-shadow(0 3px 10px ${alpha(B.pants, '55')})` }} />
+          <Box component="img" src={buri8} alt=""      sx={{ width: 80, filter: `drop-shadow(0 4px 12px ${alpha(B.pants, '66')})` }} />
         </Box>
         <DialogTitle sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '1.3rem', pt: 0.5 }}>
           ✨ 새로운 기능 업데이트!
@@ -227,7 +229,7 @@ function AppInner() {
               bgcolor: B.pants, borderRadius: '999px', px: 4,
               fontFamily: "'Jua',sans-serif", fontWeight: 700, fontSize: '1rem',
               position: 'relative', overflow: 'hidden',
-              boxShadow: `0 4px 16px ${B.pants}55`, transition: 'transform 0.1s',
+              boxShadow: `0 4px 16px ${alpha(B.pants, '55')}`, transition: 'transform 0.1s',
               '&:active': { transform: 'scale(0.94)' },
               '&:hover': { bgcolor: '#6A3D96' },
             }}>
@@ -246,8 +248,8 @@ function AppInner() {
             onClick={() => setNotifDrawerOpen(true)}
             sx={{
               bgcolor: B.surface, width: 44, height: 44,
-              boxShadow: `0 2px 14px ${B.pants}33`,
-              border: `1.5px solid ${B.pants}22`,
+              boxShadow: `0 2px 14px ${alpha(B.pants, '33')}`,
+              border: `1.5px solid ${alpha(B.pants, '22')}`,
               '&:hover': { bgcolor: B.lavender },
               '&:active': { transform: 'scale(0.92)' },
             }}
@@ -283,7 +285,7 @@ function AppInner() {
           sx={{
             width: '100%', bgcolor: B.pants, color: 'white', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif", borderRadius: 3,
-            boxShadow: `0 4px 20px ${B.pants}66`,
+            boxShadow: `0 4px 20px ${alpha(B.pants, '66')}`,
             '& .MuiAlert-icon': { alignItems: 'center' },
           }}>
           {schedulePopupItem
@@ -308,7 +310,7 @@ function AppInner() {
           sx={{
             width: '100%', bgcolor: B.accent, color: 'white', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif", borderRadius: 3,
-            boxShadow: `0 4px 20px ${B.accent}66`,
+            boxShadow: `0 4px 20px ${alpha(B.accent, '66')}`,
             '& .MuiAlert-icon': { alignItems: 'center' },
             '& .MuiAlert-action': { color: 'white' },
           }}>
@@ -325,7 +327,7 @@ function AppInner() {
 
       {/* ── 라우터 ── */}
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout colorMode={colorMode} setColorMode={setColorMode} />}>
           <Route index element={
             <Suspense fallback={<PageLoader />}>
               <HomePage currentUser={currentUser} logout={logout} />

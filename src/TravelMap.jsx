@@ -18,7 +18,7 @@ import ListIcon from "@mui/icons-material/List";
 import SearchIcon from "@mui/icons-material/Search";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const CATEGORY_LIST = [
     { label: "카페", emoji: "☕", color: "#A0522D" },
@@ -85,7 +85,7 @@ const makeIcon = (L, emoji, color) =>
     L.divIcon({
         className: "",
         html: `
-      <div style="position:relative;width:40px;height:50px;filter:drop-shadow(0 4px 10px ${color}66);">
+      <div style="position:relative;width:40px;height:50px;filter:drop-shadow(0 4px 10px ${alpha(color, '66')});">
         <svg viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg" width="40" height="50">
           <path d="M20 0C9.402 0 0.8 8.6 0.8 19.2c0 7.5 4.2 14 10.4 17.4L20 50l8.8-13.4C35 33.2 39.2 26.7 39.2 19.2 39.2 8.6 30.598 0 20 0z" fill="${color}"/>
           <circle cx="20" cy="19" r="13" fill="white" opacity="0.95"/>
@@ -171,12 +171,12 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                         startAdornment: (
                             <InputAdornment position="start">
                                 {kakaoFailed
-                                    ? <SearchIcon sx={{ fontSize: 18, color: B.dark + "33" }} />
+                                    ? <SearchIcon sx={{ fontSize: 18, color: alpha(B.dark, '33') }} />
                                     : !kakaoReady
-                                        ? <CircularProgress size={14} sx={{ color: B.pants + "66" }} />
+                                        ? <CircularProgress size={14} sx={{ color: alpha(B.pants, '66') }} />
                                         : loading
                                             ? <CircularProgress size={14} sx={{ color: B.pants }} />
-                                            : <SearchIcon sx={{ fontSize: 18, color: B.pants + "88" }} />}
+                                            : <SearchIcon sx={{ fontSize: 18, color: alpha(B.pants, '88') }} />}
                             </InputAdornment>
                         ),
                         endAdornment: keyword && (
@@ -188,8 +188,8 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                         ),
                         sx: {
                             borderRadius: 2.5, bgcolor: B.surface, fontSize: "0.82rem",
-                            "& fieldset": { borderColor: B.pants + "44" },
-                            "&:hover fieldset": { borderColor: B.pants + "88" },
+                            "& fieldset": { borderColor: alpha(B.pants, '44') },
+                            "&:hover fieldset": { borderColor: alpha(B.pants, '88') },
                             "&.Mui-focused fieldset": { borderColor: B.pants },
                         },
                     }}
@@ -197,7 +197,7 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                 <IconButton onClick={onMyLocation}
                     sx={{
                         width: 40, height: 40, borderRadius: 2.5, flexShrink: 0,
-                        bgcolor: B.surface, border: `1.5px solid ${B.pants}44`, color: B.pants,
+                        bgcolor: B.surface, border: `1.5px solid ${alpha(B.pants, '44')}`, color: B.pants,
                         "&:hover": { bgcolor: B.lavender }, "&:active": { transform: "scale(0.9)" },
                     }}>
                     <MyLocationIcon sx={{ fontSize: 18 }} />
@@ -208,28 +208,28 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                 <Box sx={{
                     position: "absolute", top: "100%", left: 0, right: 0, mt: 0.5,
                     bgcolor: B.surface, borderRadius: 2.5, overflow: "hidden",
-                    border: `1.5px solid ${B.pants}22`,
+                    border: `1.5px solid ${alpha(B.pants, '22')}`,
                     boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 2000,
                 }}>
                     {results.map((item, i) => (
                         <Box key={i} onClick={() => handleSelect(item)}
                             sx={{
                                 px: 2, py: 1, cursor: "pointer",
-                                borderBottom: i < results.length - 1 ? `1px solid ${B.pants}11` : "none",
+                                borderBottom: i < results.length - 1 ? `1px solid ${alpha(B.pants, '11')}` : "none",
                                 transition: "background 0.1s",
-                                "&:hover": { bgcolor: B.lavender + "55" },
+                                "&:hover": { bgcolor: alpha(B.lavender, '55') },
                                 "&:active": { bgcolor: B.lavender },
                             }}>
                             <Typography sx={{ fontSize: "0.82rem", fontWeight: 600, color: B.dark, lineHeight: 1.3 }}>
                                 📍 {item.display_name}
                             </Typography>
                             {item.address && item.address !== item.display_name && (
-                                <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66", mt: 0.2 }}>
+                                <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '66'), mt: 0.2 }}>
                                     {item.address}
                                 </Typography>
                             )}
                             {item.category && (
-                                <Typography sx={{ fontSize: "0.72rem", color: B.pants + "99", mt: 0.1 }}>
+                                <Typography sx={{ fontSize: "0.72rem", color: alpha(B.pants, '99'), mt: 0.1 }}>
                                     {item.category.split(" > ").pop()}
                                 </Typography>
                             )}
@@ -283,7 +283,7 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs"
-            PaperProps={{ sx: { borderRadius: '14px', bgcolor: B.cream, border: `1.5px solid ${B.pants}33` } }}>
+            PaperProps={{ sx: { borderRadius: '14px', bgcolor: B.cream, border: `1.5px solid ${alpha(B.pants, '33')}` } }}>
             <DialogTitle sx={{
                 fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: "1.1rem",
                 display: "flex", alignItems: "center", justifyContent: "space-between", pb: 0
@@ -294,7 +294,7 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
             <DialogContent sx={{ pt: 1.5 }}>
                 <Stack spacing={2}>
                     <Box>
-                        <Typography sx={{ fontSize: "0.72rem", color: B.dark + "88", mb: 0.8 }}>카테고리</Typography>
+                        <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '88'), mb: 0.8 }}>카테고리</Typography>
                         <Stack direction="row" flexWrap="wrap" gap={0.7}>
                             {CATEGORY_LIST.map((cat) => (
                                 <Chip key={cat.label} label={`${cat.emoji} ${cat.label}`}
@@ -317,13 +317,13 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
                         fullWidth size="small" multiline rows={2} placeholder="여기서 뭐 했어? 어땠어? 🐷"
                         sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: B.surface } }} />
                     <Box>
-                        <Typography sx={{ fontSize: "0.72rem", color: B.dark + "88", mb: 0.8 }}>사진 (선택)</Typography>
+                        <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '88'), mb: 0.8 }}>사진 (선택)</Typography>
                         <Stack direction="row" alignItems="center" gap={1.5}>
                             <Button component="label" size="small" startIcon={<PhotoCamera />}
                                 sx={{
                                     bgcolor: B.lavender, color: B.pants, borderRadius: 2,
                                     fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.75rem",
-                                    "&:hover": { bgcolor: B.pants + "22" }
+                                    "&:hover": { bgcolor: alpha(B.pants, '22') }
                                 }}>
                                 사진 선택
                                 <input type="file" accept="image/*" hidden onChange={handleFile} />
@@ -331,9 +331,9 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
                             {preview && (
                                 <Box sx={{ position: "relative" }}>
                                     <Box component="img" src={preview} alt=""
-                                        sx={{ width: 56, height: 56, borderRadius: 2, objectFit: "cover", border: `2px solid ${B.pants}44` }} />
+                                        sx={{ width: 56, height: 56, borderRadius: 2, objectFit: "cover", border: `2px solid ${alpha(B.pants, '44')}` }} />
                                     <IconButton size="small" onClick={() => { setFile(null); setPreview(null); }}
-                                        sx={{ position: "absolute", top: -8, right: -8, bgcolor: B.surface, width: 18, height: 18, border: `1px solid ${B.pants}44` }}>
+                                        sx={{ position: "absolute", top: -8, right: -8, bgcolor: B.surface, width: 18, height: 18, border: `1px solid ${alpha(B.pants, '44')}` }}>
                                         <CloseIcon sx={{ fontSize: 11 }} />
                                     </IconButton>
                                 </Box>
@@ -343,11 +343,11 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
                 </Stack>
             </DialogContent>
             <DialogActions sx={{ px: 2.5, pb: 2.5 }}>
-                <Button onClick={onClose} sx={{ color: B.dark + "77", fontFamily: "'Noto Sans KR',sans-serif" }}>취소</Button>
+                <Button onClick={onClose} sx={{ color: alpha(B.dark, '77'), fontFamily: "'Noto Sans KR',sans-serif" }}>취소</Button>
                 <Button onClick={handleSave} disabled={!title.trim() || loading} variant="contained"
                     sx={{
                         bgcolor: B.pants, borderRadius: '999px', px: 3, fontFamily: "'Jua',sans-serif", fontSize: "0.95rem",
-                        boxShadow: `0 3px 12px ${B.pants}55`, "&:hover": { bgcolor: "#6A3D96" }, "&:active": { transform: "scale(0.95)" }
+                        boxShadow: `0 3px 12px ${alpha(B.pants, '55')}`, "&:hover": { bgcolor: "#6A3D96" }, "&:active": { transform: "scale(0.95)" }
                     }}>
                     {loading ? <CircularProgress size={18} sx={{ color: "white" }} /> : "핀 꽂기 📍"}
                 </Button>
@@ -365,7 +365,7 @@ const PinDetailDialog = ({ pin, open, onClose, onDelete }) => {
         : "";
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs"
-            PaperProps={{ sx: { borderRadius: '14px', bgcolor: B.cream, border: `1.5px solid ${B.pants}33`, overflow: "hidden" } }}>
+            PaperProps={{ sx: { borderRadius: '14px', bgcolor: B.cream, border: `1.5px solid ${alpha(B.pants, '33')}`, overflow: "hidden" } }}>
             {pin.photoURL && (
                 <Box component="img" src={pin.photoURL} alt="" sx={{ width: "100%", height: 190, objectFit: "cover" }} />
             )}
@@ -382,17 +382,17 @@ const PinDetailDialog = ({ pin, open, onClose, onDelete }) => {
                     <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
                         <Chip label={`${cat.emoji} ${cat.label}`} size="small"
                             sx={{
-                                bgcolor: cat.color + "22", color: cat.color, fontWeight: 700,
+                                bgcolor: alpha(cat.color, '22'), color: cat.color, fontWeight: 700,
                                 fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem"
                             }} />
-                        <Typography sx={{ fontSize: "0.72rem", color: B.dark + "66" }}>
+                        <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '66') }}>
                             {pin.addedBy} · {date}
                         </Typography>
                     </Stack>
                     {pin.memo && (
                         <Typography sx={{
-                            fontSize: "0.85rem", color: B.dark + "cc", lineHeight: 1.6,
-                            bgcolor: B.lavender + "44", borderRadius: 2, p: 1, fontFamily: "'Noto Sans KR',sans-serif"
+                            fontSize: "0.85rem", color: alpha(B.dark, 'cc'), lineHeight: 1.6,
+                            bgcolor: alpha(B.lavender, '44'), borderRadius: 2, p: 1, fontFamily: "'Noto Sans KR',sans-serif"
                         }}>
                             {pin.memo}
                         </Typography>
@@ -569,7 +569,7 @@ const TravelMap = ({ currentUser }) => {
                                 width: 32, height: 32, borderRadius: 2,
                                 bgcolor: view === v ? B.pants : B.lavender,
                                 color: view === v ? "white" : B.pants,
-                                "&:hover": { bgcolor: view === v ? B.pants : B.lavender + "cc" },
+                                "&:hover": { bgcolor: view === v ? B.pants : alpha(B.lavender, 'cc') },
                             }}>
                             {icon}
                         </IconButton>
@@ -658,7 +658,7 @@ const TravelMap = ({ currentUser }) => {
                             <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, mt: 1 }}>
                                 아직 핀이 없어요!
                             </Typography>
-                            <Typography sx={{ fontSize: "0.78rem", color: B.dark + "66", mt: 0.5 }}>
+                            <Typography sx={{ fontSize: "0.78rem", color: alpha(B.dark, '66'), mt: 0.5 }}>
                                 상호명 검색하거나 지도를 탭해서 핀을 꽂아봐요
                             </Typography>
                         </Box>
@@ -673,14 +673,14 @@ const TravelMap = ({ currentUser }) => {
                                 sx={{
                                     display: "flex", gap: 1.5, alignItems: "flex-start",
                                     bgcolor: B.surface, borderRadius: '14px', p: 1.5,
-                                    border: `1px solid ${B.pants}18`, cursor: "pointer", transition: "all 0.15s",
+                                    border: `1px solid ${alpha(B.pants, '18')}`, cursor: "pointer", transition: "all 0.15s",
                                     boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
-                                    "&:active": { transform: "scale(0.98)", bgcolor: B.lavender + "44" },
+                                    "&:active": { transform: "scale(0.98)", bgcolor: alpha(B.lavender, '44') },
                                 }}>
                                 <Box sx={{
                                     width: 54, height: 54, borderRadius: 2.5, flexShrink: 0,
                                     overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center",
-                                    bgcolor: cat.color + "18", border: `1.5px solid ${cat.color}33`,
+                                    bgcolor: alpha(cat.color, '18'), border: `1.5px solid ${alpha(cat.color, '33')}`,
                                 }}>
                                     {pin.photoURL
                                         ? <Box component="img" src={pin.photoURL} alt="" sx={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -696,20 +696,20 @@ const TravelMap = ({ currentUser }) => {
                                         </Typography>
                                         <Chip label={cat.label} size="small"
                                             sx={{
-                                                bgcolor: cat.color + "18", color: cat.color, fontWeight: 700,
+                                                bgcolor: alpha(cat.color, '18'), color: cat.color, fontWeight: 700,
                                                 fontSize: "0.72rem", height: 18, fontFamily: "'Noto Sans KR',sans-serif"
                                             }} />
                                     </Stack>
                                     {pin.memo && (
                                         <Typography sx={{
-                                            fontSize: "0.75rem", color: B.dark + "88", lineHeight: 1.4,
+                                            fontSize: "0.75rem", color: alpha(B.dark, '88'), lineHeight: 1.4,
                                             overflow: "hidden", textOverflow: "ellipsis",
                                             display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical"
                                         }}>
                                             {pin.memo}
                                         </Typography>
                                     )}
-                                    <Typography sx={{ fontSize: "0.72rem", color: B.dark + "55", mt: 0.4 }}>
+                                    <Typography sx={{ fontSize: "0.72rem", color: alpha(B.dark, '55'), mt: 0.4 }}>
                                         {pin.addedBy} · {date}
                                     </Typography>
                                 </Box>

@@ -14,7 +14,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
 import buri8 from "./assets/KakaoTalk_20260316_132954818.png";
 
-import { B } from "./lib/constants";
+import { alpha, B } from "./lib/constants";
 
 const GameWishList = ({ currentUser }) => {
   const [gameResults, setGameResults] = useState([]);
@@ -72,7 +72,7 @@ const GameWishList = ({ currentUser }) => {
           }}>
             🏆 게임 전적 & 소원
           </Typography>
-          <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88" }}>
+          <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '88') }}>
             우리의 대결 기록과 소원 목록이에요
           </Typography>
         </Box>
@@ -83,7 +83,7 @@ const GameWishList = ({ currentUser }) => {
         <Card sx={{
           flex: 1,
           bgcolor: B.cream,
-          border: `2px solid ${B.accent}33`,
+          border: `2px solid ${alpha(B.accent, '33')}`,
           borderRadius: '14px',
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
@@ -94,7 +94,7 @@ const GameWishList = ({ currentUser }) => {
             }}>
               {myWishes.length}
             </Typography>
-            <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88" }}>
+            <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '88') }}>
               내가 이긴 횟수
             </Typography>
           </CardContent>
@@ -103,7 +103,7 @@ const GameWishList = ({ currentUser }) => {
         <Card sx={{
           flex: 1,
           bgcolor: B.lavender,
-          border: `2px solid ${B.pants}33`,
+          border: `2px solid ${alpha(B.pants, '33')}`,
           borderRadius: '14px',
         }}>
           <CardContent sx={{ textAlign: "center", py: 2 }}>
@@ -114,7 +114,7 @@ const GameWishList = ({ currentUser }) => {
             }}>
               {theirWishes.length}
             </Typography>
-            <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88" }}>
+            <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '88') }}>
               내가 진 횟수
             </Typography>
           </CardContent>
@@ -134,7 +134,7 @@ const GameWishList = ({ currentUser }) => {
             }}>
               {gameResults.length}
             </Typography>
-            <Typography sx={{ fontSize: "0.8rem", color: B.dark + "88" }}>
+            <Typography sx={{ fontSize: "0.8rem", color: alpha(B.dark, '88') }}>
               총 게임 수
             </Typography>
           </CardContent>
@@ -159,12 +159,12 @@ const GameWishList = ({ currentUser }) => {
         {theirWishes.length === 0 ? (
           <Card sx={{
             bgcolor: B.cream,
-            border: `2px dashed ${B.pants}33`,
+            border: `2px dashed ${alpha(B.pants, '33')}`,
             borderRadius: '14px',
             p: 3,
             textAlign: "center",
           }}>
-            <Typography sx={{ color: B.dark + "66" }}>
+            <Typography sx={{ color: alpha(B.dark, '66') }}>
               아직 들어줄 소원이 없어요!
             </Typography>
           </Card>
@@ -180,7 +180,7 @@ const GameWishList = ({ currentUser }) => {
                 >
                   <Card sx={{
                     bgcolor: wish.wishCompleted ? B.cream : B.lavender,
-                    border: `2px solid ${wish.wishCompleted ? B.dark + "22" : B.pants}`,
+                    border: `2px solid ${wish.wishCompleted ? alpha(B.dark, '22') : B.pants}`,
                     borderRadius: '14px',
                     opacity: wish.wishCompleted ? 0.6 : 1,
                   }}>
@@ -190,7 +190,7 @@ const GameWishList = ({ currentUser }) => {
                           <Typography sx={{
                             fontFamily: "'Jua',sans-serif",
                             fontSize: "0.9rem",
-                            color: B.dark + "88",
+                            color: alpha(B.dark, '88'),
                             mb: 0.5,
                           }}>
                             {wish.gameType} • {new Date(wish.playedAt?.toDate()).toLocaleDateString()}
@@ -259,13 +259,13 @@ const GameWishList = ({ currentUser }) => {
         {myWishes.length === 0 ? (
           <Card sx={{
             bgcolor: B.cream,
-            border: `2px dashed ${B.accent}33`,
+            border: `2px dashed ${alpha(B.accent, '33')}`,
             borderRadius: '14px',
             p: 3,
             textAlign: "center",
           }}>
             <Box component="img" src={buri7} alt="" sx={{ width: 80, mb: 2, opacity: 0.6 }} />
-            <Typography sx={{ color: B.dark + "66" }}>
+            <Typography sx={{ color: alpha(B.dark, '66') }}>
               아직 승리한 게임이 없어요!<br />
               게임에서 이겨서 소원을 받아보세요 🎮
             </Typography>
@@ -282,7 +282,7 @@ const GameWishList = ({ currentUser }) => {
                 >
                   <Card sx={{
                     bgcolor: wish.wishCompleted ? B.cream : B.peach,
-                    border: `2px solid ${wish.wishCompleted ? B.dark + "22" : B.accent}`,
+                    border: `2px solid ${wish.wishCompleted ? alpha(B.dark, '22') : B.accent}`,
                     borderRadius: '14px',
                     opacity: wish.wishCompleted ? 0.6 : 1,
                   }}>
@@ -290,7 +290,7 @@ const GameWishList = ({ currentUser }) => {
                       <Typography sx={{
                         fontFamily: "'Jua',sans-serif",
                         fontSize: "0.9rem",
-                        color: B.dark + "88",
+                        color: alpha(B.dark, '88'),
                         mb: 0.5,
                       }}>
                         {wish.gameType} • {new Date(wish.playedAt?.toDate()).toLocaleDateString()}

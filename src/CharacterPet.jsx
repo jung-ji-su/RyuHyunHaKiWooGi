@@ -18,7 +18,7 @@ import catTongue from './assets/KakaoTalk_20260518_145359042.png'; // 보통    
 import catGrumpy from './assets/KakaoTalk_20260518_144400884.png'; // 마른    (30-44)
 import catScruff from './assets/KakaoTalk_20260518_145513803.png'; // 해골직전 (15-29)
 import catStatue from './assets/KakaoTalk_20260518_145131598.png'; // 해골    (0-14)
-import { B } from './lib/constants';
+import { alpha, B } from './lib/constants';
 
 const COUPLE_ID = 'jisu_hyunha';
 const USERS = ['지수', '현하'];
@@ -194,8 +194,8 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
   return (
     <Box sx={{
       flex: 1, borderRadius: '14px', p: '12px 10px', textAlign: 'center',
-      bgcolor: isCurrentUser ? `${stage.color}0d` : 'white',
-      border: `1.5px solid ${isCurrentUser ? stage.color + '44' : B.dark + '0e'}`,
+      bgcolor: isCurrentUser ? `${alpha(stage.color, '0d')}` : B.surface,
+      border: `1.5px solid ${isCurrentUser ? alpha(stage.color, '44') : alpha(B.dark, '0e')}`,
       position: 'relative', transition: 'all 0.3s',
     }}>
       {/* 내 카드 뱃지 */}
@@ -245,11 +245,11 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
               <Box sx={{
                 position: 'relative',
                 bgcolor: B.surface,
-                border: `2px solid ${stage.color}70`,
+                border: `2px solid ${alpha(stage.color, '70')}`,
                 borderRadius: '18px',
                 px: 1.5, py: 1,
                 boxShadow: `
-                  0 6px 22px ${stage.color}33,
+                  0 6px 22px ${alpha(stage.color, '33')},
                   0 2px 8px rgba(0,0,0,0.12),
                   inset 0 1px 0 rgba(255,255,255,1)
                 `,
@@ -275,7 +275,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
                   color: stage.color,
                   lineHeight: 1.35,
                   letterSpacing: 0.2,
-                  textShadow: `0 1px 2px ${stage.color}18`,
+                  textShadow: `0 1px 2px ${alpha(stage.color, '18')}`,
                   textAlign: 'center',
                   wordBreak: 'break-all',
                   overflowWrap: 'break-word',
@@ -289,10 +289,10 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
                   left: isLeft ? '50%' : '68%',
                   transform: 'translateX(-50%) rotate(45deg)',
                   width: 12, height: 12,
-                  bgcolor: `${stage.color}0c`,
-                  background: `linear-gradient(135deg, transparent 40%, ${stage.color}0c 100%)`,
-                  borderRight: `2px solid ${stage.color}70`,
-                  borderBottom: `2px solid ${stage.color}70`,
+                  bgcolor: `${alpha(stage.color, '0c')}`,
+                  background: `linear-gradient(135deg, transparent 40%, ${alpha(stage.color, '0c')} 100%)`,
+                  borderRight: `2px solid ${alpha(stage.color, '70')}`,
+                  borderBottom: `2px solid ${alpha(stage.color, '70')}`,
                 }} />
                 {/* 꼬리 (채움 - 경계선 위에 덮기) */}
                 <Box sx={{
@@ -308,25 +308,32 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
           )}
         </AnimatePresence>
 
-        {/* 고양이 이미지 */}
-        <motion.img
-          src={stage.img}
-          alt={stage.label}
-          key={`${stage.label}-${clickCount}`}
-          initial={clickCount > 0
-            ? { scale: 1.18, rotate: clickCount % 2 === 0 ? 8 : -8 }
-            : { scale: 0.88, opacity: 0 }}
-          animate={{ scale: 1, rotate: 0, opacity: 1 }}
-          transition={{ duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
-          style={{
-            width: 72, height: 72, objectFit: 'contain',
-            display: 'block',
-            willChange: 'transform',
-            WebkitBackfaceVisibility: 'hidden',
-            backfaceVisibility: 'hidden',
-            filter: isSkull ? 'grayscale(0.85) brightness(0.72)' : 'none',
-          }}
-        />
+        {/* 고양이 이미지 — 실사진이라 배경이 불투명(흰색)이라 다크 모드에서 테두리 없이
+            두면 흰 사각형처럼 튀어 보인다. 둥근 프레임으로 감싸 "사진" 느낌을 의도적으로 준다. */}
+        <Box sx={{
+          width: 72, height: 72, borderRadius: '16px', overflow: 'hidden',
+          border: `1.5px solid ${alpha(B.dark, '0e')}`,
+          boxShadow: `0 2px 8px ${alpha(B.dark, '18')}`,
+        }}>
+          <motion.img
+            src={stage.img}
+            alt={stage.label}
+            key={`${stage.label}-${clickCount}`}
+            initial={clickCount > 0
+              ? { scale: 1.18, rotate: clickCount % 2 === 0 ? 8 : -8 }
+              : { scale: 0.88, opacity: 0 }}
+            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            transition={{ duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
+            style={{
+              width: 72, height: 72, objectFit: 'cover',
+              display: 'block',
+              willChange: 'transform',
+              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden',
+              filter: isSkull ? 'grayscale(0.85) brightness(0.72)' : 'none',
+            }}
+          />
+        </Box>
       </Box>
 
       {/* 이름 */}
@@ -335,7 +342,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
       </Typography>
 
       {/* 단계 칩 */}
-      <Box sx={{ display: 'inline-block', px: 0.8, py: 0.2, borderRadius: '999px', mt: 0.4, mb: 0.8, bgcolor: `${stage.color}18` }}>
+      <Box sx={{ display: 'inline-block', px: 0.8, py: 0.2, borderRadius: '999px', mt: 0.4, mb: 0.8, bgcolor: `${alpha(stage.color, '18')}` }}>
         <Typography sx={{ fontSize: '0.72rem', color: stage.color, fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
           {stage.emoji} {stage.label}
         </Typography>
@@ -343,10 +350,10 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
 
       {/* HP 바 */}
       <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.4 }}>
-        <Typography sx={{ fontSize: '0.56rem', color: B.dark + '66', fontFamily: "'Noto Sans KR',sans-serif" }}>HP</Typography>
+        <Typography sx={{ fontSize: '0.56rem', color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif" }}>HP</Typography>
         <Typography sx={{ fontSize: '0.72rem', fontFamily: "'Jua',sans-serif", color: stage.color }}>{hp}</Typography>
       </Stack>
-      <Box sx={{ height: 7, borderRadius: 4, bgcolor: `${stage.color}1a`, overflow: 'hidden', mb: 0.8 }}>
+      <Box sx={{ height: 7, borderRadius: 4, bgcolor: `${alpha(stage.color, '1a')}`, overflow: 'hidden', mb: 0.8 }}>
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: hp / 100 }}
@@ -358,7 +365,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
             willChange: 'transform',
             background: isSkull
               ? '#BDBDBD'
-              : `linear-gradient(to right, ${stage.color}88, ${stage.color})`,
+              : `linear-gradient(to right, ${alpha(stage.color, '88')}, ${stage.color})`,
             borderRadius: 4,
           }}
         />
@@ -370,7 +377,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
       </Typography>
       <Typography sx={{
         fontSize: '0.72rem', mt: 0.2,
-        color: checkedIn ? '#43A047' : B.dark + '44',
+        color: checkedIn ? '#43A047' : alpha(B.dark, '44'),
         fontFamily: "'Noto Sans KR',sans-serif",
         fontWeight: checkedIn ? 700 : 400,
       }}>
@@ -510,8 +517,8 @@ export default function CharacterPet({ currentUser }) {
     <Paper elevation={0} sx={{
       p: 2, borderRadius: '14px', overflow: 'visible',
       bgcolor: B.cream,
-      border: `1.5px solid ${B.pants}18`,
-      backgroundImage: `radial-gradient(circle at 90% 5%, ${B.lavender}55 0%, transparent 40%)`,
+      border: `1.5px solid ${alpha(B.pants, '18')}`,
+      backgroundImage: `radial-gradient(circle at 90% 5%, ${alpha(B.lavender, '55')} 0%, transparent 40%)`,
     }}>
 
       {/* ── 헤더 ─────────────────────────────────────────────── */}
@@ -538,9 +545,9 @@ export default function CharacterPet({ currentUser }) {
                 fontWeight: 700,
                 px: 1, py: 0.35,
                 minHeight: 0,
-                boxShadow: `0 2px 10px ${B.pants}55`,
+                boxShadow: `0 2px 10px ${alpha(B.pants, '55')}`,
                 animation: 'hamPulse 2.5s ease-in-out infinite',
-                '&:hover': { bgcolor: '#6A3D96', boxShadow: `0 3px 14px ${B.pants}77` },
+                '&:hover': { bgcolor: '#6A3D96', boxShadow: `0 3px 14px ${alpha(B.pants, '77')}` },
                 '&:active': { transform: 'scale(0.92)' },
               }}
             >
@@ -602,10 +609,10 @@ export default function CharacterPet({ currentUser }) {
             sx={{
               borderRadius: '999px', fontSize: '0.72rem', px: 2, py: 0.5,
               fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
-              borderColor: jiltaSent ? 'transparent' : B.accent + '66',
-              color: jiltaSent ? B.dark + '55' : B.accent,
+              borderColor: jiltaSent ? 'transparent' : alpha(B.accent, '66'),
+              color: jiltaSent ? alpha(B.dark, '55') : B.accent,
               '&:hover': { bgcolor: B.peach, borderColor: B.accent },
-              '&.Mui-disabled': { color: B.dark + '44' },
+              '&.Mui-disabled': { color: alpha(B.dark, '44') },
             }}
           >
             {jiltaSent ? `✓ ${otherUser}한테 질타 완료` : `😤 ${otherUser}한테 질타 보내기`}
@@ -664,11 +671,11 @@ export default function CharacterPet({ currentUser }) {
       >
         {/* 핸들 */}
         <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.5, pb: 0.5, flexShrink: 0 }}>
-          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '33' }} />
+          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: alpha(B.pants, '33') }} />
         </Box>
 
         {/* 헤더 */}
-        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.5, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.5, borderBottom: `1px solid ${alpha(B.pants, '14')}`, flexShrink: 0 }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
             💬 말풍선 문구 관리
           </Typography>
@@ -690,7 +697,7 @@ export default function CharacterPet({ currentUser }) {
             <Box key={idx} sx={{
               display: 'flex', alignItems: 'center', gap: 1,
               bgcolor: B.surface, borderRadius: 2.5, px: 1.5, py: 1, mb: 0.8,
-              border: `1.5px solid ${B.pants}0e`,
+              border: `1.5px solid ${alpha(B.pants, '0e')}`,
               boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
             }}>
               <Typography sx={{
@@ -719,7 +726,7 @@ export default function CharacterPet({ currentUser }) {
         {/* 추가 입력 */}
         <Box sx={{
           px: 2, pb: 3, pt: 1, flexShrink: 0,
-          borderTop: `1px solid ${B.pants}0e`,
+          borderTop: `1px solid ${alpha(B.pants, '0e')}`,
           bgcolor: B.cream,
         }}>
           <Stack direction="row" gap={1} alignItems="center">
@@ -733,8 +740,8 @@ export default function CharacterPet({ currentUser }) {
                 flex: 1,
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2.5, fontSize: '0.85rem', bgcolor: B.surface,
-                  '& fieldset': { borderColor: `${B.pants}28` },
-                  '&:hover fieldset': { borderColor: `${B.pants}66` },
+                  '& fieldset': { borderColor: `${alpha(B.pants, '28')}` },
+                  '&:hover fieldset': { borderColor: `${alpha(B.pants, '66')}` },
                   '&.Mui-focused fieldset': { borderColor: B.pants },
                 },
               }}
@@ -778,9 +785,9 @@ export default function CharacterPet({ currentUser }) {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.5, pb: 0.5, flexShrink: 0 }}>
-          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '33' }} />
+          <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: alpha(B.pants, '33') }} />
         </Box>
-        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.5, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.5, borderBottom: `1px solid ${alpha(B.pants, '14')}`, flexShrink: 0 }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
             💬 말풍선 문구 추가
           </Typography>
@@ -801,8 +808,8 @@ export default function CharacterPet({ currentUser }) {
                 flex: 1,
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2.5, fontSize: '0.85rem', bgcolor: B.surface,
-                  '& fieldset': { borderColor: `${B.pants}28` },
-                  '&:hover fieldset': { borderColor: `${B.pants}66` },
+                  '& fieldset': { borderColor: `${alpha(B.pants, '28')}` },
+                  '&:hover fieldset': { borderColor: `${alpha(B.pants, '66')}` },
                   '&.Mui-focused fieldset': { borderColor: B.pants },
                 },
               }}
