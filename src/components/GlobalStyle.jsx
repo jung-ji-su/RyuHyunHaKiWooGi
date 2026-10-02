@@ -92,6 +92,46 @@ export default function GlobalStyle() {
       }
       .hamster-idle   { display:inline-block; }
       .hamster-active { display:inline-block; animation: hamsterSpin 0.55s linear infinite; }
+
+      /* ── 배경 수채화 글로우 — design-preview.html에서 검증된 기법.
+         filter:blur()는 이 레이어 자체만 블러 처리해서(backdrop-filter처럼
+         뒤 콘텐츠를 실시간 샘플링하지 않음) transform 애니메이션이 훨씬 싸다.
+         콘텐츠 위가 아니라 맨 뒤에 깔리는 거라 불투명도를 낮게 유지한다. ── */
+      .ambient-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(64px);
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+      .ambient-blob--1 {
+        width: 360px; height: 360px; top: -80px; left: -60px;
+        background: radial-gradient(circle, rgba(var(--c-pants-rgb), 0.22), transparent 70%);
+        animation: ambientDrift1 48s ease-in-out infinite;
+      }
+      .ambient-blob--2 {
+        width: 320px; height: 320px; top: 40%; right: -100px;
+        background: radial-gradient(circle, rgba(var(--c-accent-rgb), 0.16), transparent 70%);
+        animation: ambientDrift2 58s ease-in-out infinite;
+      }
+      .ambient-blob--3 {
+        width: 300px; height: 300px; bottom: -100px; left: 20%;
+        background: radial-gradient(circle, rgba(var(--c-pink-rgb), 0.16), transparent 70%);
+        animation: ambientDrift3 52s ease-in-out infinite;
+      }
+      @keyframes ambientDrift1 {
+        0%,100% { transform: translate(0,0) scale(1); }
+        50%     { transform: translate(40px,50px) scale(1.12); }
+      }
+      @keyframes ambientDrift2 {
+        0%,100% { transform: translate(0,0) scale(1); }
+        50%     { transform: translate(-50px,-30px) scale(1.08); }
+      }
+      @keyframes ambientDrift3 {
+        0%,100% { transform: translate(0,0) scale(1); }
+        50%     { transform: translate(30px,-40px) scale(1.1); }
+      }
     `}</style>
   );
 }

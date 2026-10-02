@@ -10,6 +10,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import confetti from 'canvas-confetti';
 
 import GlobalStyle          from './components/GlobalStyle';
+import AmbientGlow          from './components/AmbientGlow';
 import LoginScreen          from './components/LoginScreen';
 import LoadingScreen        from './components/LoadingScreen';
 import SubPage              from './components/SubPage';
@@ -195,14 +196,15 @@ function AppInner() {
     window.location.replace(window.location.pathname + '?_cb=' + Date.now());
   };
 
-  if (loading)      return <><GlobalStyle /><LoadingScreen /></>;
-  if (!currentUser) return <><GlobalStyle /><LoginScreen onLogin={login} /></>;
+  if (loading)      return <><GlobalStyle /><AmbientGlow /><LoadingScreen /></>;
+  if (!currentUser) return <><GlobalStyle /><AmbientGlow /><LoginScreen onLogin={login} /></>;
 
   const opponent = currentUser === '지수' ? '현하' : '지수';
 
   return (
     <UserContext.Provider value={{ currentUser, logout }}>
       <GlobalStyle />
+      <AmbientGlow />
 
       {/* 업데이트 다이얼로그 */}
       <Dialog open={updateDialogOpen} disableEscapeKeyDown
