@@ -274,3 +274,17 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+/* 전환 애니메이션(C단계) — OS "동작 줄이기" 설정 존중.
+   framer-motion 쪽은 App.jsx의 <MotionConfig reducedMotion="user">가 맡고,
+   이 규칙은 touchEffects.js의 캔버스 파티클이 아닌 순수 CSS @keyframes
+   (버튼 팡/리플/흔들기/벨 흔들림 등)를 전부 무력화한다. 테마 전환용
+   .theme-transitioning은 색상 전환만 담당하는 별도 레이어라 영향 없음. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

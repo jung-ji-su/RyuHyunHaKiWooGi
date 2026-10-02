@@ -240,10 +240,11 @@ const DiaryList = ({ currentUser, pageSize }) => {
       {/* 목록 */}
       {!isLoading && (pageSize || activeTab === "list") && (
         <Stack spacing={3}>
-          {visible.map((item) => (
+          {visible.map((item, idx) => (
             <DiaryCard
               key={item.id}
               item={item}
+              index={idx}
               currentUser={currentUser}
               commentText={commentInputs[item.id] || ""}
               setCommentInputs={setCommentInputs}
@@ -350,7 +351,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
 };
 
 // ── 개별 다이어리 카드 ───────────────────────────────────────────
-const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAddComment, meImg, gfImg, onOpenLightbox }) => {
+const DiaryCard = memo(({ item, index = 0, currentUser, commentText, setCommentInputs, onAddComment, meImg, gfImg, onOpenLightbox }) => {
   const [comments, setComments]       = useState([]);
   const [editMode, setEditMode]       = useState(false);
   const [editContent, setEditContent] = useState("");
@@ -437,6 +438,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
       sx={{
         borderRadius: '14px',
         bgcolor: B.cream,
+        animation: `fadeInUp 0.35s ease ${Math.min(index, 8) * 0.05}s both`,
         border: `1.5px solid ${isMyPost ? alpha(B.pants, '33') : alpha(B.skin, '88')}`,
         backgroundImage: isMyPost
           ? `radial-gradient(circle at 100% 0%, ${alpha(B.lavender, '55')} 0%, transparent 40%)`

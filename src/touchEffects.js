@@ -5,6 +5,13 @@ export const vibrate = (pattern) => {
   if (navigator.vibrate) navigator.vibrate(pattern);
 };
 
+// OS "동작 줄이기" 설정 — CSS @keyframes는 index.css의 전역 media query가
+// 처리하지만, 이 캔버스 파티클(requestAnimationFrame 루프)은 CSS가 아니라서
+// 따로 확인해야 한다.
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
 // ── 1. 리플 ──────────────────────────────────────
 export const createRipple = (e) => {
   const btn = e.currentTarget;
@@ -65,6 +72,7 @@ export const createBuriPang = (e) => {
 // 화면 전체에 하트/별/부리 파티클이 터져나오는 화려한 효과
 export const createHeartPang = (container) => {
   if (!container) return;
+  if (prefersReducedMotion()) { vibrate([15, 8, 25]); return; }
 
   // 버튼 위치 기준으로 화면상 좌표 계산
   const rect = container.getBoundingClientRect();

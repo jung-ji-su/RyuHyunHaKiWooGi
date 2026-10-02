@@ -1,6 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense, useContext } from 'react';
 import { BrowserRouter, Routes, Route, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import {
   Box, Typography, Snackbar, Alert,
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
@@ -454,10 +454,14 @@ function AppInner() {
 }
 
 // ── 루트 (BrowserRouter 감싸기) ───────────────────────────────────
+// reducedMotion="user": OS의 "동작 줄이기" 설정을 프레이머 모션 애니메이션
+// 전체에 자동 적용한다 — 컴포넌트마다 따로 분기하지 않아도 됨.
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppInner />
-    </BrowserRouter>
+    <MotionConfig reducedMotion="user">
+      <BrowserRouter>
+        <AppInner />
+      </BrowserRouter>
+    </MotionConfig>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Box, Typography, Stack, Drawer, TextField, Button } from '@mui/material';
 import { db } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -100,7 +101,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
     finally { setSavingCapsule(false); }
   };
 
-  const dateLabel = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${WEEKDAYS[d.getDay()]}요일`;
+  const dateLabel = `${d.getFullYear()}년 ${d.getMonth()+1}월 · ${WEEKDAYS[d.getDay()]}요일`;
   const dayTemps  = temperatures.filter(t => t.date === isoStr && !t.isPenalty);
   const dayDiaries = diaries.filter(entry => {
     if (!entry.createdAt) return false;
@@ -130,14 +131,25 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
         <Box sx={{ width: 40, height: 4, borderRadius: 2, background: `linear-gradient(to right, ${alpha(B.pants, '44')}, ${alpha(B.pants, '22')})` }} />
       </Box>
 
-      {/* 날짜 헤더 */}
-      <Box sx={{ px: 2.5, pt: 0.6, pb: 1.4, flexShrink: 0 }}>
+      {/* 날짜 헤더 — 배지는 캘린더 그리드의 날짜 원과 layoutId를 공유한다.
+          탭한 숫자가 그 자리에서 자라나 패널 제목이 되는 느낌(핵심 체감 포인트). */}
+      <Box sx={{ px: 2.5, pt: 0.6, pb: 1.4, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 1.2 }}>
+        <Box component={motion.div} layoutId={`day-badge-${isoStr}`} sx={{
+          width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: `linear-gradient(150deg, ${B.pants} 0%, #A855F7 100%)`,
+          boxShadow: `0 4px 14px ${alpha(B.pants, '44')}`,
+        }}>
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: 'white', lineHeight: 1 }}>
+            {d.getDate()}
+          </Typography>
+        </Box>
         <Typography sx={{
-          fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', lineHeight: 1.2,
+          fontFamily: "'Jua',sans-serif", fontSize: '1.05rem', lineHeight: 1.2,
           background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
         }}>
-          📅 {dateLabel}
+          {dateLabel}
         </Typography>
       </Box>
 

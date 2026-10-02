@@ -131,12 +131,13 @@ function DayCell({ d, current, selectedDate, selectedDates, multiSelectMode, sch
         } : {}),
       }}
     >
-      {/* 날짜 원 */}
-      <Box sx={{
+      {/* 날짜 원 — DayPanel 헤더의 날짜 배지와 layoutId를 공유해서, 탭하면 숫자가
+          그 자리에서 패널 제목으로 자라나듯 이어진다(이번 작업의 핵심 체감 포인트). */}
+      <Box component={motion.div} layoutId={current ? `day-badge-${iso}` : undefined} sx={{
         width: 32, height: 32, borderRadius: '50%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
-        transition: 'all 0.2s ease',
+        transition: 'background 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
         ...circleSx,
       }}>
         <Typography sx={{
