@@ -99,7 +99,7 @@ const TOAST_ROUTES = {
 function AppInner() {
   const navigate = useNavigate();
   const { currentUser, loading, login, logout } = useAuth();
-  const { mode: colorMode, setMode: setColorMode } = useColorMode();
+  const { mode: colorMode, effective: effectiveColorMode, setMode: setColorMode } = useColorMode();
   const { requestPermission } = useFCM(currentUser);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
@@ -330,7 +330,7 @@ function AppInner() {
         <Route path="/" element={<Layout colorMode={colorMode} setColorMode={setColorMode} />}>
           <Route index element={
             <Suspense fallback={<PageLoader />}>
-              <HomePage currentUser={currentUser} logout={logout} />
+              <HomePage currentUser={currentUser} logout={logout} effectiveColorMode={effectiveColorMode} setColorMode={setColorMode} />
             </Suspense>
           } />
 

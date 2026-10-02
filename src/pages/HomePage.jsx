@@ -7,6 +7,7 @@ import {
 } from '../lib/buriAssets';
 import SectionCard from '../components/SectionCard';
 import NotifButton from '../components/NotifButton';
+import ThemeQuickToggle from '../components/ThemeQuickToggle';
 import QuickNotif from '../components/QuickNotif';
 import CoupleCalendar from '../CoupleCalendar';
 import DiaryWrite from '../DiaryWrite';
@@ -14,11 +15,12 @@ import DiaryList from '../DiaryList';
 import CoupleDDay from '../CoupleDDay';
 import CharacterPet from '../CharacterPet';
 
-export default function HomePage({ currentUser, logout }) {
+export default function HomePage({ currentUser, logout, effectiveColorMode, setColorMode }) {
   const navigate = useNavigate();
 
   return (
     <Container maxWidth="sm" sx={{ py: 4, position: 'relative', zIndex: 1 }}>
+      {setColorMode && <ThemeQuickToggle effective={effectiveColorMode} setColorMode={setColorMode} />}
       <CoupleDDay />
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
         <NotifButton />
