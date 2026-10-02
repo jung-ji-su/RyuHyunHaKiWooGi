@@ -298,7 +298,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
               />
 
               {/* 월간 인사이트 카드 — 색은 카테고리 구분에만 쓰므로 여기는 중성 톤, 작은 반복요소라 backdrop-filter 없이 유리풍만 */}
-              <Stack direction="row" gap={1} sx={{ mt: 1.6 }}>
+              <Stack direction="row" gap={1} sx={{ mt: 1.5 }}>
                 {[
                   { Icon: EventIcon,            value: monthSchedules.length,               label: '이번달 일정' },
                   { Icon: DeviceThermostatIcon, value: avgTemp !== null ? `${avgTemp}°` : '—', label: '평균 온도' },

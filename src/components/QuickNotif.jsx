@@ -101,7 +101,7 @@ export default function QuickNotif() {
     <>
       <style>{KEYFRAMES}</style>
 
-      <Box sx={{ display: 'flex', gap: 1.8, justifyContent: 'center', flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
         {QUICK.map(item => {
           const isCool = cooldown === item.emoji;
           const ak = animKey[item.emoji];
@@ -118,7 +118,7 @@ export default function QuickNotif() {
                 alignItems: 'center',
                 gap: '6px',
                 px: 3,
-                py: 1.8,
+                py: 2,
                 borderRadius: '24px',
                 cursor: isCool ? 'default' : 'pointer',
                 userSelect: 'none',

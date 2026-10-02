@@ -146,7 +146,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
         },
       }}>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.2, pb: 0.5, flexShrink: 0 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1, pb: 0.5, flexShrink: 0 }}>
         <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '44' }} />
       </Box>
 
@@ -224,7 +224,7 @@ export default function AiReport({ open, onClose, temperatures, diaries, schedul
                 const isTop = label === stats.topEmotion?.[0];
                 return (
                   <Box key={label} sx={{
-                    px: 1.4, py: 0.5, borderRadius: 2,
+                    px: 1.5, py: 0.5, borderRadius: 2,
                     bgcolor: isTop ? B.pants : 'white',
                     border: `1.5px solid ${isTop ? B.pants : '#e0d6ec'}`,
                     display: 'flex', alignItems: 'center', gap: 0.5,

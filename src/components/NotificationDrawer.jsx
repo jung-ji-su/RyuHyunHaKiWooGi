@@ -124,7 +124,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
         borderBottom: `1px solid ${B.pants}14`,
       }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" alignItems="center" gap={1.2}>
+          <Stack direction="row" alignItems="center" gap={1}>
             <IconButton size="small" onClick={onClose}
               sx={{
                 color: B.dark + '88',
@@ -141,7 +141,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
 
             {unread > 0 && (
               <Box sx={{
-                px: 1.2, py: 0.15, borderRadius: '999px',
+                px: 1, py: 0.15, borderRadius: '999px',
                 background: 'linear-gradient(135deg, #E53935, #FF5252)',
                 boxShadow: '0 2px 8px rgba(229,57,53,0.4)',
               }}>
@@ -225,7 +225,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     boxShadow: n.isRead
                       ? '0 1px 6px rgba(123,79,166,0.05)'
                       : `0 2px 14px ${meta.color}18, 0 1px 4px rgba(0,0,0,0.04)`,
-                    display: 'flex', alignItems: 'flex-start', gap: 1.4,
+                    display: 'flex', alignItems: 'flex-start', gap: 1.5,
                     p: 1.5,
                     cursor: 'pointer',
                     transition: 'all 0.18s',

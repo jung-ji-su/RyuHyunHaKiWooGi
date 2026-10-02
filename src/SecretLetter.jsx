@@ -448,7 +448,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
       {/* 헤더 */}
       <Box sx={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        px: 2.5, py: 1.8,
+        px: 2.5, py: 2,
         borderBottom: `1.5px dashed ${B.pants}33`,
         bgcolor: B.lavender + "66",
       }}>
@@ -557,7 +557,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           onClick={() => setIsAnonymous(!isAnonymous)}
           sx={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
-            bgcolor: "white", borderRadius: 3, px: 2, py: 1.4,
+            bgcolor: "white", borderRadius: 3, px: 2, py: 1.5,
             border: `1.5px solid ${B.pants}22`, cursor: "pointer",
             "&:active": { transform: "scale(0.98)" },
             transition: "transform 0.1s",
@@ -626,7 +626,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
           disabled={!content.trim() || loading}
           onPointerDown={(e) => { if (content.trim()) createBuriPang(e); }}
           sx={{
-            bgcolor: B.pants, borderRadius: '999px', py: 1.2,
+            bgcolor: B.pants, borderRadius: '999px', py: 1,
             fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             position: "relative", overflow: "hidden",
             boxShadow: `0 4px 16px ${B.pants}44`,

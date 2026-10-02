@@ -158,7 +158,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
             onClick={spin}
             disabled={spinning || !available.length}
             sx={{
-              bgcolor: B.pants, borderRadius: "14px", py: 1.2,
+              bgcolor: B.pants, borderRadius: "14px", py: 1,
               fontFamily: "'Jua',sans-serif", fontSize: "1rem",
               boxShadow: `0 4px 14px ${B.pants}44`,
               "&:hover": { bgcolor: "#6A3D96" },
@@ -256,7 +256,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
               <Box key={cat.key}
                 onClick={() => setSelCat(cat.key)}
                 sx={{
-                  px: 1.2, py: "4px", borderRadius: '999px', cursor: "pointer",
+                  px: 1, py: "4px", borderRadius: '999px', cursor: "pointer",
                   border: `1.5px solid ${selCat === cat.key ? B.pants : B.lavender}`,
                   bgcolor: selCat === cat.key ? B.pants : "white",
                   color:   selCat === cat.key ? "white"  : B.dark + "88",
@@ -340,7 +340,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
       }} />
 
       <Box sx={{ p: 2 }}>
-        <Stack direction="row" alignItems="flex-start" gap={1.2}>
+        <Stack direction="row" alignItems="flex-start" gap={1}>
           {/* 이모지 */}
           <Typography sx={{
             fontSize: "1.8rem", lineHeight: 1, mt: 0.2,
@@ -523,7 +523,7 @@ const CoupleCoupons = ({ currentUser }) => {
           onClick={() => setShowRoulette(true)}
           sx={{
             borderRadius: '999px', borderColor: B.accent, color: B.accent,
-            fontFamily: "'Jua',sans-serif", fontSize: "0.78rem", px: 1.8,
+            fontFamily: "'Jua',sans-serif", fontSize: "0.78rem", px: 2,
             "&:hover": { bgcolor: B.accent + "11" },
           }}
         >
@@ -540,7 +540,7 @@ const CoupleCoupons = ({ currentUser }) => {
           <Box key={t.key}
             onClick={() => setTab(t.key)}
             sx={{
-              px: 1.6, py: "5px", borderRadius: '999px', cursor: "pointer",
+              px: 1.5, py: "5px", borderRadius: '999px', cursor: "pointer",
               bgcolor: tab === t.key ? B.pants : B.lavender,
               color:   tab === t.key ? "white"  : B.pants,
               fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,

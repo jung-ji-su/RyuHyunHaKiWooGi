@@ -83,10 +83,10 @@ export default function BottomNav({ logout }) {
         </Box>
 
         {/* 메뉴 그리드 */}
-        <Box sx={{ px: 1.6, pt: 2, flex: 1, overflowY: 'auto' }}>
+        <Box sx={{ px: 1.5, pt: 2, flex: 1, overflowY: 'auto' }}>
           <Typography sx={{
             fontSize: '0.72rem', fontWeight: 700, color: B.pants + '88',
-            letterSpacing: '2px', mb: 1.2, px: 0.5,
+            letterSpacing: '2px', mb: 1, px: 0.5,
             fontFamily: "'Noto Sans KR',sans-serif",
           }}>MENU</Typography>
 
@@ -136,7 +136,7 @@ export default function BottomNav({ logout }) {
             onClick={() => { navigate('/'); setDrawerOpen(false); vibrate(15); }}
             onPointerDown={e => createBuriPang(e)}
             sx={{
-              mt: 1.5, py: 1.2, borderRadius: '14px',
+              mt: 1.5, py: 1, borderRadius: '14px',
               bgcolor: B.pants + '18', border: `1.5px solid ${B.pants}33`,
               textAlign: 'center', cursor: 'pointer',
               transition: 'transform 0.12s',

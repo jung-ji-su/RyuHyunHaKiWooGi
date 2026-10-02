@@ -191,7 +191,7 @@ const TodayMenu = () => {
       <Box sx={{ mt: 3 }}>
         <Typography sx={{
           fontFamily: "'Jua',sans-serif", color: B.dark + "88",
-          fontSize: "0.82rem", mb: 1.2
+          fontSize: "0.82rem", mb: 1
         }}>
           📋 오늘의 메뉴 후보 ({getFiltered().length}개)
         </Typography>
@@ -201,7 +201,7 @@ const TodayMenu = () => {
               onClick={() => { setMenu(m); setStep("result"); setChecked({}); }}
               sx={{
                 display: "flex", alignItems: "center", gap: 1.5,
-                bgcolor: "white", borderRadius: 2.5, px: 1.8, py: 1.2,
+                bgcolor: "white", borderRadius: 2.5, px: 2, py: 1,
                 border: `1px solid ${B.orange}18`, cursor: "pointer",
                 transition: "all 0.12s",
                 "&:active": { transform: "scale(0.98)", bgcolor: B.peach + "55" },
@@ -308,7 +308,7 @@ const TodayMenu = () => {
 
         {/* 예상 비용 */}
         <Box sx={{
-          bgcolor: B.orange + "12", borderRadius: '14px', p: 1.8, mb: 2,
+          bgcolor: B.orange + "12", borderRadius: '14px', p: 2, mb: 2,
           border: `1.5px solid ${B.orange}33`,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
@@ -339,7 +339,7 @@ const TodayMenu = () => {
 
         {/* 실패하지 않는 팁 */}
         <Box sx={{
-          bgcolor: B.lavender + "66", borderRadius: '14px', p: 1.8, mb: 2.5,
+          bgcolor: B.lavender + "66", borderRadius: '14px', p: 2, mb: 2.5,
           border: `1.5px solid ${B.pants}22`,
         }}>
           <Typography sx={{
@@ -392,7 +392,7 @@ const TodayMenu = () => {
               <Box key={i}
                 onClick={() => handleCheck(ing.name)}
                 sx={{
-                  display: "flex", alignItems: "center", gap: 1.2,
+                  display: "flex", alignItems: "center", gap: 1,
                   py: 0.8, px: 1, borderRadius: 2, cursor: "pointer",
                   bgcolor: checked[ing.name] ? B.green + "12" : "transparent",
                   transition: "all 0.15s",
@@ -450,7 +450,7 @@ const TodayMenu = () => {
           }}>
             👨‍🍳 레시피 순서
           </Typography>
-          <Stack spacing={1.2}>
+          <Stack spacing={1}>
             {menu.steps.map((step, i) => (
               <Stack key={i} direction="row" gap={1.5} alignItems="flex-start">
                 <Box sx={{

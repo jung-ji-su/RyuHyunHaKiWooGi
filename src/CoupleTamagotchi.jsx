@@ -1077,7 +1077,7 @@ export default function CoupleTamagotchi({ currentUser }) {
             style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translateX(-50%)', zIndex: 3100, textAlign: 'center' }}
           >
             <Paper elevation={12} sx={{
-              px: evolved.isLegendary ? 4.5 : 3.5, py: evolved.isLegendary ? 2.4 : 1.8, borderRadius: 5, textAlign: 'center',
+              px: evolved.isLegendary ? 4.5 : 3.5, py: evolved.isLegendary ? 2.4 : 2, borderRadius: 5, textAlign: 'center',
               bgcolor: evolved.isLegendary ? '#1a1130' : B.cream,
               border: evolved.isLegendary ? '2px solid #FFD700' : `2.5px solid ${evolved.color}`,
               boxShadow: evolved.isLegendary

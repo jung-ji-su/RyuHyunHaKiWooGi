@@ -169,7 +169,7 @@ const DiaryWrite = ({ currentUser }) => {
       {/* ── 감정 선택 (부리 이미지 그리드) ────────────────────── */}
       <Box sx={{ mb: 3 }}>
         <Typography sx={{
-          mb: 1.2, color: B.dark + "88", fontWeight: 700,
+          mb: 1, color: B.dark + "88", fontWeight: 700,
           fontSize: "0.82rem", fontFamily: "'Noto Sans KR',sans-serif",
         }}>
           지금 기분은 어떤가요?
@@ -231,7 +231,7 @@ const DiaryWrite = ({ currentUser }) => {
         {/* 선택된 감정 미리보기 배너 */}
         {selectedEm && (
           <Box sx={{
-            mt: 1.2, display: "flex", alignItems: "center", gap: 1.2,
+            mt: 1, display: "flex", alignItems: "center", gap: 1,
             bgcolor: `${B.pants}11`, borderRadius: 3,
             px: 1.5, py: 0.8, border: `1px solid ${B.pants}22`,
           }}>
@@ -283,7 +283,7 @@ const DiaryWrite = ({ currentUser }) => {
       )}
 
       {/* 하단 액션 */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.2 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <input accept="image/*" id="icon-button-file" type="file"
             style={{ display: "none" }} onChange={handleFileChange} />
@@ -318,7 +318,7 @@ const DiaryWrite = ({ currentUser }) => {
           disabled={loading}
           onPointerDown={(e) => { createRipple(e); if (!loading) createBuriPang(e); }}
           sx={{
-            bgcolor: B.pants, borderRadius: '999px', px: 3, py: 1.2,
+            bgcolor: B.pants, borderRadius: '999px', px: 3, py: 1,
             fontFamily: "'Jua',sans-serif", fontSize: "1rem",
             width: "100%",
             position: "relative", overflow: "hidden",

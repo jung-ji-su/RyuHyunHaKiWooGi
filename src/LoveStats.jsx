@@ -51,7 +51,7 @@ const MiniBarChart = ({ data, maxVal, color }) => (
 // ── 통계 카드 ────────────────────────────────────────────────────
 const StatCard = ({ emoji, label, value, sub, color, bgColor }) => (
   <Box sx={{
-    bgcolor: bgColor || "white", borderRadius: '14px', p: 1.8,
+    bgcolor: bgColor || "white", borderRadius: '14px', p: 2,
     border: `1.5px solid ${color || B.pants}22`,
     flex: 1, minWidth: 0,
     display: "flex", flexDirection: "column", gap: 0.3,
@@ -74,7 +74,7 @@ const StatCard = ({ emoji, label, value, sub, color, bgColor }) => (
 const SectionHeader = ({ icon, title }) => (
   <Typography sx={{
     fontFamily: "'Jua',sans-serif", fontSize: "0.92rem", color: B.pants,
-    display: "flex", alignItems: "center", gap: 0.8, mb: 1.2,
+    display: "flex", alignItems: "center", gap: 0.8, mb: 1,
   }}>
     {icon} {title}
   </Typography>
@@ -240,7 +240,7 @@ const LoveStats = ({ currentUser }) => {
         {/* ── 요약 카드 4개 ── */}
         <Box>
           <SectionHeader icon="✨" title="한눈에 보기" />
-          <Stack direction="row" gap={1.2}>
+          <Stack direction="row" gap={1}>
             <StatCard emoji="✍️" label="총 기록" value={`${filteredDiaries.length}개`}
               sub={`지수 ${jsuCount} · 현하 ${hyCount}`}
               color={B.accent} bgColor="#FFF5EE" />
@@ -248,7 +248,7 @@ const LoveStats = ({ currentUser }) => {
               sub={`${usedCoupons.length}/${filteredCoupons.length}장`}
               color={B.pants} bgColor={B.lavender + "44"} />
           </Stack>
-          <Stack direction="row" gap={1.2} mt={1.2}>
+          <Stack direction="row" gap={1} mt={1}>
             <StatCard emoji="📍" label="방문 장소" value={`${filteredPins.length}곳`}
               sub={`지수 ${jsuPins} · 현하 ${hyPins}`}
               color="#3A86FF" bgColor="#F0F7FF" />
@@ -313,7 +313,7 @@ const LoveStats = ({ currentUser }) => {
               </Box>
             </Box>
             <Stack direction="row" gap={1}>
-              <Box sx={{ flex: 1, bgcolor: B.green + "15", borderRadius: 2, p: 1.2,
+              <Box sx={{ flex: 1, bgcolor: B.green + "15", borderRadius: 2, p: 1,
                 textAlign: "center", border: `1px solid ${B.green}33` }}>
                 <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.green }}>
                   {availCoupons.length}
@@ -321,7 +321,7 @@ const LoveStats = ({ currentUser }) => {
                 <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                   fontFamily: "'Noto Sans KR',sans-serif" }}>사용 가능</Typography>
               </Box>
-              <Box sx={{ flex: 1, bgcolor: B.pants + "15", borderRadius: 2, p: 1.2,
+              <Box sx={{ flex: 1, bgcolor: B.pants + "15", borderRadius: 2, p: 1,
                 textAlign: "center", border: `1px solid ${B.pants}33` }}>
                 <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.pants }}>
                   {usedCoupons.length}
@@ -331,7 +331,7 @@ const LoveStats = ({ currentUser }) => {
               </Box>
             </Stack>
             {topCoupon && (
-              <Box sx={{ bgcolor: B.lavender + "55", borderRadius: 2, p: 1.2,
+              <Box sx={{ bgcolor: B.lavender + "55", borderRadius: 2, p: 1,
                 border: `1px dashed ${B.pants}33` }}>
                 <Typography sx={{ fontSize: "0.72rem", color: B.dark + "88",
                   fontFamily: "'Noto Sans KR',sans-serif" }}>🏆 가장 많이 쓴 쿠폰</Typography>
@@ -354,7 +354,7 @@ const LoveStats = ({ currentUser }) => {
           ) : (
             <Stack spacing={1.5}>
               <Stack direction="row" gap={1}>
-                <Box sx={{ flex: 1, bgcolor: "#F0F7FF", borderRadius: 2, p: 1.2,
+                <Box sx={{ flex: 1, bgcolor: "#F0F7FF", borderRadius: 2, p: 1,
                   textAlign: "center", border: "1px solid #3A86FF22" }}>
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: "#3A86FF" }}>
                     {filteredPins.length}
@@ -362,7 +362,7 @@ const LoveStats = ({ currentUser }) => {
                   <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                     fontFamily: "'Noto Sans KR',sans-serif" }}>총 방문지</Typography>
                 </Box>
-                <Box sx={{ flex: 1, bgcolor: "#F0FBF6", borderRadius: 2, p: 1.2,
+                <Box sx={{ flex: 1, bgcolor: "#F0FBF6", borderRadius: 2, p: 1,
                   textAlign: "center", border: `1px solid ${B.green}33` }}>
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.green }}>
                     {pinCatData[0]?.emoji || "📍"} {pinCatData[0]?.label || "-"}
@@ -387,7 +387,7 @@ const LoveStats = ({ currentUser }) => {
               버킷리스트가 없어요 🪣
             </Typography>
           ) : (
-            <Stack spacing={1.2}>
+            <Stack spacing={1}>
               <Box>
                 <Stack direction="row" justifyContent="space-between" mb={0.6}>
                   <Typography sx={{ fontSize: "0.75rem", color: B.dark + "88",
@@ -406,7 +406,7 @@ const LoveStats = ({ currentUser }) => {
                 </Box>
               </Box>
               <Stack direction="row" gap={1}>
-                <Box sx={{ flex: 1, bgcolor: B.green + "15", borderRadius: 2, p: 1.2,
+                <Box sx={{ flex: 1, bgcolor: B.green + "15", borderRadius: 2, p: 1,
                   textAlign: "center", border: `1px solid ${B.green}33` }}>
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.green }}>
                     {doneBuckets.length}
@@ -414,7 +414,7 @@ const LoveStats = ({ currentUser }) => {
                   <Typography sx={{ fontSize: "0.72rem", color: B.dark + "77",
                     fontFamily: "'Noto Sans KR',sans-serif" }}>달성 완료 🎉</Typography>
                 </Box>
-                <Box sx={{ flex: 1, bgcolor: B.peach, borderRadius: 2, p: 1.2,
+                <Box sx={{ flex: 1, bgcolor: B.peach, borderRadius: 2, p: 1,
                   textAlign: "center", border: `1px solid ${B.accent}33` }}>
                   <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: "1.2rem", color: B.accent }}>
                     {buckets.length - doneBuckets.length}

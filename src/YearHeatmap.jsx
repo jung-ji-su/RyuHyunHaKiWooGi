@@ -32,7 +32,7 @@ export default function YearHeatmap({ temperatures, year }) {
   return (
     <Box sx={{ mt: 0.5 }}>
       {/* 색상 범례 */}
-      <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.5} sx={{ mb: 1.2 }}>
+      <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.5} sx={{ mb: 1 }}>
         <Typography sx={{ fontSize: '0.72rem', color: B.dark+'66', fontFamily: "'Noto Sans KR',sans-serif" }}>낮음</Typography>
         {['#85B7EB','#EF9F27','#7B4FA6','#E8630A'].map((c, i) => (
           <Box key={i} sx={{ width: CELL, height: CELL, borderRadius: '2px', bgcolor: c }} />

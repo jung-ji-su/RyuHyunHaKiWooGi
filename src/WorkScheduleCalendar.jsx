@@ -276,7 +276,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
       sx={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'pan-y' }}
     >
       {/* ── 제목 + 다중선택 버튼 */}
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.2 }}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
         <Box>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '0.92rem', color: C.textPrimary }}>
             🏥 근무 스케줄
@@ -323,7 +323,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
       )}
 
       {/* ── 월 헤더: CustomCalendar와 동일한 대칭 구조(prev/title/next만 있는 행), 44pt 터치 타겟 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1.4 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1.5 }}>
         <IconButton onClick={() => navigate(-1)} sx={{ width: TOUCH_MIN, height: TOUCH_MIN, color: C.textSecondary, ...glassSmallSx(), '&:active': { transform: 'scale(0.86)' } }}>
           <ChevronLeftIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
@@ -391,7 +391,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
       </Box>
 
       {/* ── 범례: 작은 반복 요소라 backdrop-filter 없이 유리풍만 */}
-      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', mt: 1.6, overflow: 'hidden' }}>
+      <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', mt: 1.5, overflow: 'hidden' }}>
         {SCHEDULE_TYPES.map(s => (
           <Box key={s.type} sx={{
             display: 'flex', alignItems: 'center', gap: '4px',
@@ -428,7 +428,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
           <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: C.accent + '33' }} />
         </Box>
 
-        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.2, borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1, borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: C.textPrimary }}>
             {isMultiSelect
               ? `🏥 ${multiDates.length}개 날짜 스케줄 설정`
@@ -494,7 +494,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
                 if (window.confirm(msg)) handleScheduleSelect(null);
               }}
               sx={{
-                mt: 1.5, py: 1.2, borderRadius: 2.5, textAlign: 'center', minHeight: TOUCH_MIN,
+                mt: 1.5, py: 1, borderRadius: 2.5, textAlign: 'center', minHeight: TOUCH_MIN,
                 border: '1.5px solid #EF444440',
                 bgcolor: '#FEF2F2cc',
                 cursor: 'pointer',

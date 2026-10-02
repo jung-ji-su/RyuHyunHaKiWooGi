@@ -12,7 +12,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
     }}>
       <Box sx={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        px: 2, py: 1.2,
+        px: 2, py: 1,
         borderBottom: `1px dashed ${borderColor || B.pants}22`,
         position: 'relative',
       }}>
@@ -40,7 +40,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
         {onMore && (
           <Box onClick={onMore} sx={{
             display: 'flex', alignItems: 'center', gap: 0.4,
-            px: 1.2, py: '3px', borderRadius: '999px',
+            px: 1, py: '3px', borderRadius: '999px',
             bgcolor: (borderColor || B.pants) + '18',
             color: borderColor || B.pants,
             fontSize: '0.72rem', fontWeight: 700,

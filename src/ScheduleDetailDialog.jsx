@@ -70,7 +70,7 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
       transition: "all 0.22s ease",
     }}>
       <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${catColor}66)`, flexShrink: 0 }} />
-      <Box sx={{ flex: 1, px: 1.4, py: 1.1, minWidth: 0 }}>
+      <Box sx={{ flex: 1, px: 1.5, py: 1, minWidth: 0 }}>
         <Stack direction="row" alignItems="center" gap={0.5}>
           {cat && <Typography sx={{ fontSize: "0.8rem", lineHeight: 1 }}>{cat.emoji}</Typography>}
           <Typography sx={{
@@ -163,14 +163,14 @@ export default function ScheduleDetailDialog({
       }}
     >
       {/* 드래그 핸들 */}
-      <Box sx={{ display: "flex", justifyContent: "center", pt: 1.4, pb: 0.3, flexShrink: 0 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", pt: 1.5, pb: 0.3, flexShrink: 0 }}>
         <Box sx={{ width: 40, height: 4, borderRadius: 2, background: `linear-gradient(to right, ${B.pants}44, ${B.pants}22)` }} />
       </Box>
 
       {/* 헤더 */}
       <Box sx={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        px: 2.5, pt: 0.6, pb: 1.2, flexShrink: 0,
+        px: 2.5, pt: 0.6, pb: 1, flexShrink: 0,
       }}>
         <Box>
           <Typography sx={{
@@ -237,7 +237,7 @@ export default function ScheduleDetailDialog({
         )}
 
         {/* 구분선 */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, mb: 2.2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2.2 }}>
           <Box sx={{ flex: 1, height: 1, background: `linear-gradient(to right, transparent, ${B.pants}20)` }} />
           <Typography sx={{ fontSize: "0.72rem", color: B.pants + "88", fontFamily: "'Jua',sans-serif", flexShrink: 0 }}>
             {isEditMode ? "✏️ 수정 중" : isMultiMode ? "✨ 기간 일정 추가" : "✨ 새 일정"}
@@ -273,7 +273,7 @@ export default function ScheduleDetailDialog({
                     key={cat.value}
                     onClick={() => setCategory(cat.value)}
                     sx={{
-                      flex: 1, py: 1.2, borderRadius: "14px", textAlign: "center",
+                      flex: 1, py: 1, borderRadius: "14px", textAlign: "center",
                       cursor: "pointer",
                       transition: "all 0.22s cubic-bezier(0.34,1.56,0.64,1)",
                       background: active
@@ -303,7 +303,7 @@ export default function ScheduleDetailDialog({
               <Box
                 onClick={() => setIsImportant(v => !v)}
                 sx={{
-                  width: 60, flexShrink: 0, py: 1.2, borderRadius: "14px", textAlign: "center",
+                  width: 60, flexShrink: 0, py: 1, borderRadius: "14px", textAlign: "center",
                   cursor: "pointer",
                   transition: "all 0.22s cubic-bezier(0.34,1.56,0.64,1)",
                   background: isImportant ? "linear-gradient(135deg, #ffd70022, #ffbb0010)" : "rgba(255,255,255,0.7)",
@@ -420,7 +420,7 @@ export default function ScheduleDetailDialog({
         <Box
           onClick={canSubmit ? (isEditMode ? onEdit : onAdd) : undefined}
           sx={{
-            py: 1.6, borderRadius: "16px", textAlign: "center",
+            py: 1.5, borderRadius: "16px", textAlign: "center",
             cursor: canSubmit ? "pointer" : "default",
             background: canSubmit
               ? (isEditMode

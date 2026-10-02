@@ -122,7 +122,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
       {/* 타이틀 + 탭 (전체 페이지에서만) */}
       {!pageSize && (
         <>
-          <Stack direction="row" alignItems="center" justifyContent="center" gap={1.2} sx={{ mb: 2 }}>
+          <Stack direction="row" alignItems="center" justifyContent="center" gap={1} sx={{ mb: 2 }}>
             <Box component="img" src={buri9} alt="" sx={{
               width: 32, objectFit: "contain",
               animation: "headBob 2.8s ease-in-out infinite",
@@ -686,7 +686,7 @@ const DiaryCard = memo(({ item, currentUser, commentText, setCommentInputs, onAd
               <Avatar src={c.author === "현하" ? gfImg : meImg}
                 sx={{ width: 28, height: 28, border: `1.5px solid ${B.pants}44` }} />
               <Box sx={{
-                bgcolor: B.lavender, p: 1.2,
+                bgcolor: B.lavender, p: 1,
                 borderRadius: "15px", borderTopLeftRadius: "2px", maxWidth: "85%",
               }}>
                 <Typography sx={{

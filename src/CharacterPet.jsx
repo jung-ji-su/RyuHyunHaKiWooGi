@@ -519,7 +519,7 @@ export default function CharacterPet({ currentUser }) {
     }}>
 
       {/* ── 헤더 ─────────────────────────────────────────────── */}
-      <Box sx={{ mb: 1.8 }}>
+      <Box sx={{ mb: 2 }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '0.92rem' }}>
             😸 고먐미 건강 상태
@@ -540,7 +540,7 @@ export default function CharacterPet({ currentUser }) {
                 fontSize: '0.72rem',
                 fontFamily: "'Noto Sans KR',sans-serif",
                 fontWeight: 700,
-                px: 1.2, py: 0.35,
+                px: 1, py: 0.35,
                 minHeight: 0,
                 boxShadow: `0 2px 10px ${B.pants}55`,
                 animation: 'hamPulse 2.5s ease-in-out infinite',
@@ -568,7 +568,7 @@ export default function CharacterPet({ currentUser }) {
         {bothCheckedIn && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 0.9 }}>
             <Box sx={{
-              px: 1.6, py: 0.35, borderRadius: '999px',
+              px: 1.5, py: 0.35, borderRadius: '999px',
               bgcolor: '#E8F5E9', border: '1px solid #A5D6A7',
               display: 'inline-flex', alignItems: 'center', gap: 0.5,
             }}>
@@ -604,7 +604,7 @@ export default function CharacterPet({ currentUser }) {
             disabled={jiltaSent}
             onClick={sendJilta}
             sx={{
-              borderRadius: '999px', fontSize: '0.72rem', px: 1.8, py: 0.5,
+              borderRadius: '999px', fontSize: '0.72rem', px: 2, py: 0.5,
               fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
               borderColor: jiltaSent ? 'transparent' : B.accent + '66',
               color: jiltaSent ? B.dark + '55' : B.accent,
@@ -620,7 +620,7 @@ export default function CharacterPet({ currentUser }) {
       {/* ── 상대방 해골 경고 ─────────────────────────────────── */}
       {isOtherSkull && (
         <Box sx={{
-          p: 1.2, borderRadius: 2.5, mb: 1,
+          p: 1, borderRadius: 2.5, mb: 1,
           bgcolor: '#FFF3E0', border: '1.5px dashed #FF9800',
           textAlign: 'center',
         }}>
@@ -667,12 +667,12 @@ export default function CharacterPet({ currentUser }) {
         }}
       >
         {/* 핸들 */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.4, pb: 0.5, flexShrink: 0 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.5, pb: 0.5, flexShrink: 0 }}>
           <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '33' }} />
         </Box>
 
         {/* 헤더 */}
-        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.4, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.5, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
             💬 말풍선 문구 관리
           </Typography>
@@ -722,7 +722,7 @@ export default function CharacterPet({ currentUser }) {
 
         {/* 추가 입력 */}
         <Box sx={{
-          px: 2, pb: 3, pt: 1.2, flexShrink: 0,
+          px: 2, pb: 3, pt: 1, flexShrink: 0,
           borderTop: `1px solid ${B.pants}0e`,
           bgcolor: B.cream,
         }}>
@@ -781,10 +781,10 @@ export default function CharacterPet({ currentUser }) {
           },
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.4, pb: 0.5, flexShrink: 0 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1.5, pb: 0.5, flexShrink: 0 }}>
           <Box sx={{ width: 36, height: 4, borderRadius: 2, bgcolor: B.pants + '33' }} />
         </Box>
-        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.4, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
+        <Box sx={{ px: 2.5, pt: 0.5, pb: 1.5, borderBottom: `1px solid ${B.pants}14`, flexShrink: 0 }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1rem', color: B.pants }}>
             💬 말풍선 문구 추가
           </Typography>

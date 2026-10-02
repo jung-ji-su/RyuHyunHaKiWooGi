@@ -218,7 +218,7 @@ const SearchBar = ({ onSelect, onMyLocation, kakaoReady, kakaoFailed }) => {
                     {results.map((item, i) => (
                         <Box key={i} onClick={() => handleSelect(item)}
                             sx={{
-                                px: 1.8, py: 1.2, cursor: "pointer",
+                                px: 2, py: 1, cursor: "pointer",
                                 borderBottom: i < results.length - 1 ? `1px solid ${B.pants}11` : "none",
                                 transition: "background 0.1s",
                                 "&:hover": { bgcolor: B.lavender + "55" },
@@ -309,7 +309,7 @@ const AddPinDialog = ({ open, latlng, placeName, onClose, onSave, currentUser })
                                         color: category === cat.label ? "white" : B.dark,
                                         border: `1.5px solid ${category === cat.label ? cat.color : "transparent"}`,
                                         fontWeight: category === cat.label ? 700 : 400, transition: "all 0.15s",
-                                        "& .MuiChip-label": { px: 1.2 },
+                                        "& .MuiChip-label": { px: 1 },
                                     }} />
                             ))}
                         </Stack>
@@ -396,7 +396,7 @@ const PinDetailDialog = ({ pin, open, onClose, onDelete }) => {
                     {pin.memo && (
                         <Typography sx={{
                             fontSize: "0.85rem", color: B.dark + "cc", lineHeight: 1.6,
-                            bgcolor: B.lavender + "44", borderRadius: 2, p: 1.2, fontFamily: "'Noto Sans KR',sans-serif"
+                            bgcolor: B.lavender + "44", borderRadius: 2, p: 1, fontFamily: "'Noto Sans KR',sans-serif"
                         }}>
                             {pin.memo}
                         </Typography>
@@ -655,7 +655,7 @@ const TravelMap = ({ currentUser }) => {
 
             {/* 목록 뷰 */}
             {view === "list" && (
-                <Stack spacing={1.2}>
+                <Stack spacing={1}>
                     {filteredPins.length === 0 && (
                         <Box sx={{ textAlign: "center", py: 5 }}>
                             <Typography sx={{ fontSize: "2rem" }}>🐷</Typography>

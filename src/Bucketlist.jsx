@@ -82,11 +82,11 @@ const BucketItem = ({ item, currentUser, index }) => {
 
   return (
     <Box onClick={handleToggle} sx={{
-      display: "flex", alignItems: "center", gap: 1.2,
+      display: "flex", alignItems: "center", gap: 1,
       bgcolor: isDone ? "#F4FFF8" : "white",
       borderRadius: "14px",
       border: isDone ? `1.5px solid ${B.teal}55` : `1.5px solid ${cat.color}22`,
-      px: 1.6, py: 1.4,
+      px: 1.5, py: 1.5,
       cursor: "pointer", position: "relative", overflow: "hidden",
       transition: "transform 0.12s",
       animation: `bucketSlide 0.3s ease ${index * 0.04}s both`,
@@ -186,7 +186,7 @@ const AddForm = ({ currentUser, onClose }) => {
       <Stack direction="row" gap={0.7} sx={{ mb: 1.5, flexWrap: "wrap" }}>
         {CATEGORIES.slice(1).map(c => (
           <Box key={c.key} onClick={() => setCat(c.key)} sx={{
-            px: 1.2, py: "4px", borderRadius: '999px', cursor: "pointer",
+            px: 1, py: "4px", borderRadius: '999px', cursor: "pointer",
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
             bgcolor: cat === c.key ? c.color : c.bg,
             color:   cat === c.key ? "white" : c.color,
@@ -337,7 +337,7 @@ const BucketList = ({ currentUser }) => {
       <Stack direction="row" gap={0.7} sx={{ mb: 1.5, flexWrap: "wrap" }}>
         {CATEGORIES.map(c => (
           <Box key={c.key} onClick={() => { setFilter(c.key); vibrate(12); }} sx={{
-            px: 1.3, py: "5px", borderRadius: '999px', cursor: "pointer",
+            px: 1.5, py: "5px", borderRadius: '999px', cursor: "pointer",
             fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
             bgcolor: filter === c.key ? c.color : "white",
             color:   filter === c.key ? "white" : c.color,

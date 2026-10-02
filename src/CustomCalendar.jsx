@@ -229,7 +229,7 @@ export default function CustomCalendar({
       sx={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'pan-y' }}
     >
       {/* ── 월 헤더: prev/title/next만 있는 하나의 행 — 제목 기준 좌우 대칭 유지, 터치 타겟 44pt */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1.4 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1.5 }}>
         <IconButton onClick={() => navigate(-1)} sx={NAV_BTN_SX}>
           <ChevronLeftIcon sx={{ fontSize: '1.05rem' }} />
         </IconButton>
@@ -308,7 +308,7 @@ export default function CustomCalendar({
 
       {/* ── 범례: 일정 카테고리를 dot과 동일한 색+모양으로 표시. 작은 반복 요소라 backdrop-filter 없이 유리풍만.
           커플싱크(하트)·타임캡슐(자물쇠) 배지도 그리드에 표시되므로 함께 안내한다. */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', mt: 1.6 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', mt: 1.5 }}>
         {Object.keys(C.category).map(label => (
           <Box key={label} sx={{
             display: 'flex', alignItems: 'center', gap: '5px',

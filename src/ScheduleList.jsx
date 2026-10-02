@@ -200,7 +200,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
         }} />
 
         {/* 본문 */}
-        <Box sx={{ flex: 1, px: 1.6, py: 1.4, zIndex: 2 }}>
+        <Box sx={{ flex: 1, px: 1.5, py: 1.5, zIndex: 2 }}>
           <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1}>
             <Box sx={{ flex: 1, minWidth: 0 }}>
 
@@ -340,10 +340,10 @@ const ScheduleList = ({ currentUser }) => {
       <style>{STYLES}</style>
 
       {/* 요약 카드 */}
-      <Box sx={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1.2, mb:2.5 }}>
+      <Box sx={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap: 1, mb:2.5 }}>
         <Box sx={{ bgcolor:"white", borderRadius: '14px', p:1.5,
           border:`1.5px solid ${B.pants}22`,
-          display:"flex", alignItems:"center", gap:1.2 }}>
+          display:"flex", alignItems:"center", gap: 1 }}>
           <Box component="img" src={buri6} alt=""
             sx={{ width:36, animation:"buriJump 2.5s ease-in-out infinite",
               filter:`drop-shadow(0 2px 6px ${B.pants}44)` }}/>
@@ -356,7 +356,7 @@ const ScheduleList = ({ currentUser }) => {
         </Box>
         <Box sx={{ bgcolor:"white", borderRadius: '14px', p:1.5,
           border:`1.5px solid ${B.accent}22`,
-          display:"flex", alignItems:"center", gap:1.2 }}>
+          display:"flex", alignItems:"center", gap: 1 }}>
           <Box component="img" src={buri1} alt=""
             sx={{ width:36, animation:"buriJump 2.2s ease-in-out 0.5s infinite",
               filter:`drop-shadow(0 2px 6px ${B.accent}44)` }}/>
@@ -380,7 +380,7 @@ const ScheduleList = ({ currentUser }) => {
           <Box key={key}
             onClick={() => { setFilter(key); vibrate(12); }}
             sx={{
-              px:1.4, py:"5px", borderRadius: '999px', cursor:"pointer",
+              px: 1.5, py:"5px", borderRadius: '999px', cursor:"pointer",
               fontFamily: "'Noto Sans KR',sans-serif", fontSize:"0.75rem", fontWeight:700,
               bgcolor: filter===key ? color : "white",
               color:   filter===key ? "white" : color,
@@ -413,9 +413,9 @@ const ScheduleList = ({ currentUser }) => {
           return (
             <Box key={groupLabel}>
               {/* 그룹 헤더 */}
-              <Stack direction="row" alignItems="center" gap={1} sx={{ mb:1.2 }}>
+              <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1 }}>
                 <Box sx={{
-                  px:1.4, py:"3px", borderRadius: '999px',
+                  px: 1.5, py:"3px", borderRadius: '999px',
                   bgcolor: groupLabel === "다가오는 일정" ? "#E8F5E9" : groupColor,
                   color: groupLabel === "다가오는 일정" ? "#639922" : "white",
                 }}>

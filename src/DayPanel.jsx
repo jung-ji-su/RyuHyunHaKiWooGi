@@ -160,7 +160,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                   <Box key={i} sx={{
                     ...GLASS_CARD,
                     display: 'flex', alignItems: 'center', gap: 1,
-                    borderRadius: '14px', px: 1.6, py: 1,
+                    borderRadius: '14px', px: 1.5, py: 1,
                     border: `1px solid ${meta.color}28`,
                     boxShadow: `0 3px 14px ${meta.color}18`,
                   }}>
@@ -188,7 +188,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
               <Box
                 onClick={() => { vibrate(15); onClose(); setTimeout(onAddSchedule, 180); }}
                 sx={{
-                  px: 1.2, py: 0.35, borderRadius: '999px', cursor: 'pointer',
+                  px: 1, py: 0.35, borderRadius: '999px', cursor: 'pointer',
                   background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
                   boxShadow: `0 3px 10px ${B.pants}44`,
                   WebkitTapHighlightColor: 'transparent',
@@ -222,7 +222,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                     boxShadow: `0 3px 14px ${catColor}14`,
                   }}>
                     <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${catColor}66)`, flexShrink: 0 }} />
-                    <Box sx={{ flex: 1, px: 1.4, py: 1, minWidth: 0 }}>
+                    <Box sx={{ flex: 1, px: 1.5, py: 1, minWidth: 0 }}>
                       <Stack direction="row" alignItems="center" gap={0.5} sx={{ mb: 0.2 }}>
                         <Typography sx={{ fontSize: '0.8rem', lineHeight: 1 }}>{catEmoji}</Typography>
                         <Typography sx={{
@@ -316,9 +316,9 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                 {dayCapsules.map(c => (
                   <Box key={c.id} sx={{
                     ...GLASS_CARD,
-                    borderRadius: '14px', px: 1.6, py: 1.2, mb: 0.9,
+                    borderRadius: '14px', px: 1.5, py: 1, mb: 0.9,
                     border: `1.5px dashed ${B.pants}44`,
-                    display: 'flex', alignItems: 'center', gap: 1.2,
+                    display: 'flex', alignItems: 'center', gap: 1,
                   }}>
                     <Typography sx={{ fontSize: '1.3rem' }}>🔒</Typography>
                     <Box>
@@ -337,7 +337,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                   borderRadius: '14px', p: '14px',
                   border: `1px solid ${B.pants}20`,
                 }}>
-                  <Typography sx={{ fontSize: '0.72rem', color: B.pants + '88', fontFamily: "'Noto Sans KR',sans-serif", mb: 1.2, fontWeight: 700 }}>
+                  <Typography sx={{ fontSize: '0.72rem', color: B.pants + '88', fontFamily: "'Noto Sans KR',sans-serif", mb: 1, fontWeight: 700 }}>
                     이 날에 남길 메시지를 적어요 ✨
                   </Typography>
                   <TextField
@@ -346,7 +346,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                     value={capsuleMsg}
                     onChange={e => setCapsuleMsg(e.target.value)}
                     sx={{
-                      mb: 1.2,
+                      mb: 1,
                       '& .MuiOutlinedInput-root': {
                         borderRadius: '10px', fontSize: '0.82rem',
                         background: 'rgba(255,255,255,0.8)',
@@ -358,7 +358,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                   <Box
                     onClick={(!capsuleMsg.trim() || savingCapsule) ? undefined : handleSaveCapsule}
                     sx={{
-                      py: 1.1, borderRadius: '12px', textAlign: 'center', cursor: 'pointer',
+                      py: 1, borderRadius: '12px', textAlign: 'center', cursor: 'pointer',
                       background: capsuleMsg.trim()
                         ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
                         : 'rgba(200,200,200,0.35)',
