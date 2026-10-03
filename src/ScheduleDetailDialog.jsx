@@ -36,7 +36,7 @@ const GLASS_INPUT = {
     borderRadius: "12px",
     // 작은 반복 요소(입력창)라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
     background: alpha(B.surface, 'b8'), color: B.dark,
-    transition: "all 0.2s ease",
+    transition: "background 0.2s ease, box-shadow 0.2s ease",
     "& fieldset": { borderColor: "rgba(123,79,166,0.14)" },
     "&:hover fieldset": { borderColor: `${alpha(B.pants, '44')}` },
     "&.Mui-focused": {
@@ -64,7 +64,7 @@ function ScheduleItem({ item, onStartEdit, onDelete, isEditing }) {
         : alpha(B.surface, 'd1'),
       border: isEditing ? `1.5px solid ${alpha(catColor, '55')}` : glass.smallBorder,
       boxShadow: isEditing ? `0 4px 18px ${alpha(catColor, '22')}` : "0 2px 10px rgba(123,79,166,0.07)",
-      transition: "all 0.22s ease",
+      transition: "background 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease",
     }}>
       <Box sx={{ width: 4, background: `linear-gradient(to bottom, ${catColor}, ${alpha(catColor, '66')})`, flexShrink: 0 }} />
       <Box sx={{ flex: 1, px: 1.5, py: 1, minWidth: 0 }}>
@@ -272,7 +272,7 @@ export default function ScheduleDetailDialog({
                     sx={{
                       flex: 1, py: 1, borderRadius: "14px", textAlign: "center",
                       cursor: "pointer",
-                      transition: "all 0.22s cubic-bezier(0.34,1.56,0.64,1)",
+                      transition: "background 0.22s cubic-bezier(0.34,1.56,0.64,1), border-color 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s cubic-bezier(0.34,1.56,0.64,1)",
                       background: active
                         ? `linear-gradient(135deg, ${alpha(cat.color, '20')}, ${alpha(cat.color, '0d')})`
                         : alpha(B.surface, 'b3'),
@@ -302,7 +302,7 @@ export default function ScheduleDetailDialog({
                 sx={{
                   width: 60, flexShrink: 0, py: 1, borderRadius: "14px", textAlign: "center",
                   cursor: "pointer",
-                  transition: "all 0.22s cubic-bezier(0.34,1.56,0.64,1)",
+                  transition: "background 0.22s cubic-bezier(0.34,1.56,0.64,1), border-color 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s cubic-bezier(0.34,1.56,0.64,1)",
                   background: isImportant ? "linear-gradient(135deg, #ffd70022, #ffbb0010)" : alpha(B.surface, 'b3'),
                   border: isImportant ? "1.5px solid #ffd70066" : glass.smallBorder,
                   boxShadow: isImportant ? "0 4px 18px #ffd70030, 0 0 0 3px #ffd70014" : "0 2px 8px rgba(123,79,166,0.06)",
@@ -338,7 +338,7 @@ export default function ScheduleDetailDialog({
                 borderRadius: "14px", fontSize: "0.96rem", fontWeight: 600,
                 // 작은 반복 요소(입력창)라 backdrop-filter 없이 solid+shadow만(캘린더 성능 원칙)
                 background: alpha(B.surface, 'cc'), color: B.dark,
-                transition: "all 0.2s ease",
+                transition: "background 0.2s ease, box-shadow 0.2s ease",
                 "& fieldset": { borderColor: "rgba(123,79,166,0.16)" },
                 "&:hover fieldset": { borderColor: `${alpha(B.pants, '44')}` },
                 "&.Mui-focused": {
@@ -384,7 +384,7 @@ export default function ScheduleDetailDialog({
                     sx={{
                       flex: 1, py: 1, borderRadius: "12px", textAlign: "center",
                       cursor: "pointer",
-                      transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)",
+                      transition: "background 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s cubic-bezier(0.34,1.56,0.64,1), transform 0.2s cubic-bezier(0.34,1.56,0.64,1)",
                       background: active
                         ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
                         : alpha(B.surface, 'b8'),
@@ -427,7 +427,7 @@ export default function ScheduleDetailDialog({
             boxShadow: canSubmit
               ? (isEditMode ? "0 6px 22px rgba(76,175,80,0.40)" : `0 6px 22px ${alpha(B.pants, '44')}`)
               : "none",
-            transition: "all 0.2s ease",
+            transition: "background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease",
             WebkitTapHighlightColor: "transparent",
             "&:active": canSubmit ? { transform: "scale(0.97)", opacity: 0.88 } : {},
           }}

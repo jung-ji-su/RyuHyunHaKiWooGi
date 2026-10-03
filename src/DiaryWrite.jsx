@@ -178,7 +178,7 @@ const DiaryWrite = ({ currentUser }) => {
                   alignItems: "center", justifyContent: "flex-end",
                   gap: "4px", pt: 0.8, pb: 0.8, px: 0.4,
                   borderRadius: "14px", cursor: "pointer",
-                  transition: "all 0.18s",
+                  transition: "background-color 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.18s",
                   bgcolor: isSelected ? B.pants : B.surface,
                   border: `2px solid ${isSelected ? B.pants : B.lavender}`,
                   boxShadow: isSelected
@@ -202,7 +202,7 @@ const DiaryWrite = ({ currentUser }) => {
                     filter: isSelected
                       ? "drop-shadow(0 2px 6px rgba(0,0,0,0.25)) brightness(1.05)"
                       : "none",
-                    transition: "all 0.18s",
+                    transition: "filter 0.18s",
                     animation: isSelected ? "headBob 1.5s ease-in-out infinite" : "none",
                   }}
                 />

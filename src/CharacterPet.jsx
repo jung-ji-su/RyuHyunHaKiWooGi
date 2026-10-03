@@ -196,7 +196,7 @@ function UserCard({ user, hp, isCurrentUser, checkedIn, side, bubbles }) {
       flex: 1, borderRadius: '14px', p: '12px 10px', textAlign: 'center',
       bgcolor: isCurrentUser ? `${alpha(stage.color, '0d')}` : B.surface,
       border: `1.5px solid ${isCurrentUser ? alpha(stage.color, '44') : alpha(B.dark, '0e')}`,
-      position: 'relative', transition: 'all 0.3s',
+      position: 'relative', transition: 'background-color 0.3s, border-color 0.3s',
     }}>
       {/* 내 카드 뱃지 */}
       {isCurrentUser && (

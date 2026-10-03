@@ -571,7 +571,7 @@ const EmotionThermometer = ({ currentUser }) => {
             py: 1, px: 1.5, mb: 2,
             bgcolor: alpha(meta.color, '10'), borderRadius: 2.5,
             borderLeft: `4px solid ${meta.color}`,
-            transition: "all 0.25s",
+            transition: "background-color 0.25s, border-left-color 0.25s",
           }}>
             <Typography sx={{ fontSize: "1.3rem", lineHeight: 1 }}>{meta.emoji}</Typography>
             <Box>
@@ -623,7 +623,7 @@ const EmotionThermometer = ({ currentUser }) => {
                       bgcolor: selectedTags.includes(tag) ? B.pants : alpha(B.lavender, '88'),
                       color:   selectedTags.includes(tag) ? "white"  : alpha(B.dark, '88'),
                       border:  `1px solid ${selectedTags.includes(tag) ? B.pants : "transparent"}`,
-                      cursor: "pointer", transition: "all 0.15s",
+                      cursor: "pointer", transition: "background-color 0.15s, color 0.15s, border-color 0.15s",
                       '&:hover': { bgcolor: selectedTags.includes(tag) ? "#6A3D96" : B.lavender },
                       '& .MuiChip-label': { px: 1 },
                     }}
@@ -747,7 +747,7 @@ const EmotionThermometer = ({ currentUser }) => {
                 fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
                 bgcolor: chartTab === key ? B.pants : B.lavender,
                 color:   chartTab === key ? "white"  : B.pants,
-                transition: "all 0.15s", "&:active": { transform: "scale(0.93)" },
+                transition: "background-color 0.15s, color 0.15s, transform 0.15s", "&:active": { transform: "scale(0.93)" },
               }}>{label}</Box>
             ))}
           </Stack>

@@ -476,7 +476,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
                   cursor: "pointer",
                   transform: envColor === c.id ? "scale(1.18)" : "scale(1)",
                   boxShadow: envColor === c.id ? `0 2px 10px ${c.border}66` : "none",
-                  transition: "all 0.15s",
+                  transition: "border-color 0.15s, transform 0.15s, box-shadow 0.15s",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   "&:active": { transform: "scale(0.92)" },
                 }}
@@ -518,7 +518,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
                   fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.75rem", fontWeight: 700,
                   bgcolor: openPreset === i ? B.pants : B.lavender,
                   color: openPreset === i ? "white" : B.pants,
-                  transition: "all 0.15s",
+                  transition: "background-color 0.15s, color 0.15s, transform 0.15s",
                   "&:active": { transform: "scale(0.94)" },
                 }}
               >
@@ -688,7 +688,7 @@ const SecretLetter = ({ currentUser }) => {
             fontFamily: "'Jua',sans-serif", fontSize: "0.8rem",
             position: "relative", overflow: "hidden",
             boxShadow: `0 3px 10px ${alpha(B.pants, '33')}`,
-            transition: "all 0.15s",
+            transition: "background-color 0.15s, transform 0.15s",
             "&:active": { transform: "scale(0.93)" },
             "&:hover": { bgcolor: showWrite ? "#e0a090" : "#6A3D96" },
           }}

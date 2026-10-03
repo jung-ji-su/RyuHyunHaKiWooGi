@@ -205,7 +205,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                   boxShadow: `0 3px 10px ${alpha(B.pants, '44')}`,
                   WebkitTapHighlightColor: 'transparent',
                   '&:active': { transform: 'scale(0.93)', opacity: 0.9 },
-                  transition: 'all 0.15s',
+                  transition: 'transform 0.15s, opacity 0.15s',
                 }}
               >
                 <Typography sx={{ fontSize: '0.72rem', color: 'white', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700 }}>
@@ -375,7 +375,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                         ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
                         : 'rgba(200,200,200,0.35)',
                       boxShadow: capsuleMsg.trim() ? `0 4px 16px ${alpha(B.pants, '44')}` : 'none',
-                      transition: 'all 0.2s ease',
+                      transition: 'background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease',
                       WebkitTapHighlightColor: 'transparent',
                       '&:active': capsuleMsg.trim() ? { transform: 'scale(0.97)', opacity: 0.88 } : {},
                     }}

@@ -152,7 +152,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
                   color: activeTab === val ? "white" : B.pants,
                   cursor: "pointer",
                   fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
-                  transition: "all 0.2s",
+                  transition: "background-color 0.2s, color 0.2s",
                   border: `1.5px solid ${activeTab === val ? B.pants : alpha(B.pants, '22')}`,
                   userSelect: "none",
                   "&:active": { transform: "scale(0.94)" },
@@ -206,7 +206,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
                     aspectRatio: "1",
                     boxShadow: `0 4px 16px ${alpha(B.pants, '22')}`,
                     border: `1.5px solid ${alpha(B.pants, '18')}`,
-                    transition: "all 0.2s",
+                    transition: "transform 0.2s, box-shadow 0.2s",
                     "&:hover": { transform: "scale(1.02)", boxShadow: `0 8px 28px ${alpha(B.pants, '33')}` },
                     "&:active": { transform: "scale(0.96)" },
                   }}
@@ -285,7 +285,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: disabled ? "default" : "pointer",
                 fontFamily: "'Jua',sans-serif", fontSize: "1.1rem",
-                transition: "all 0.15s",
+                transition: "background-color 0.15s, color 0.15s",
                 "&:active": !disabled ? { transform: "scale(0.9)" } : {},
               }}
             >
@@ -465,7 +465,7 @@ const DiaryCard = memo(({ item, index = 0, currentUser, commentText, setCommentI
           sx={{
             position: "absolute", top: -24, right: 10, width: 52,
             objectFit: "contain", opacity: 0.35, pointerEvents: "none",
-            transition: "all 0.3s ease",
+            transition: "opacity 0.3s ease, transform 0.3s ease",
             filter: `drop-shadow(0 2px 8px ${alpha(B.pants, '55')})`,
             zIndex: 2,
           }}
@@ -590,7 +590,7 @@ const DiaryCard = memo(({ item, index = 0, currentUser, commentText, setCommentI
                     cursor: "pointer", fontSize: "0.78rem",
                     fontFamily: "'Noto Sans KR',sans-serif",
                     border: `1.5px solid ${editEmotion === label ? B.pants : "transparent"}`,
-                    transition: "all 0.15s",
+                    transition: "background-color 0.15s, color 0.15s, border-color 0.15s",
                     userSelect: "none",
                     "&:active": { transform: "scale(0.91)" },
                   }}

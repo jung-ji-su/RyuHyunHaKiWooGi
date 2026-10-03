@@ -48,7 +48,7 @@ export default function SectionCard({ icon, title, sub, buriImg, bgColor, border
             fontSize: '0.72rem', fontWeight: 700,
             fontFamily: "'Noto Sans KR',sans-serif",
             cursor: 'pointer', flexShrink: 0,
-            transition: 'all 0.15s',
+            transition: 'transform 0.15s',
             '&:active': { transform: 'scale(0.93)' },
           }}>
             전체보기 <ArrowForwardIosIcon sx={{ fontSize: 10 }} />

@@ -98,7 +98,7 @@ const BucketItem = ({ item, currentUser, index }) => {
         border: isDone ? `2px solid ${B.green}` : `2px solid ${B.lavender}`,
         bgcolor: isDone ? B.green : "transparent",
         display: "flex", alignItems: "center", justifyContent: "center",
-        color: "white", fontSize: "14px", transition: "all 0.2s",
+        color: "white", fontSize: "14px", transition: "border-color 0.2s, background-color 0.2s",
       }}>
         {isDone && "✓"}
       </Box>
@@ -138,7 +138,7 @@ const BucketItem = ({ item, currentUser, index }) => {
         sx={{ color: "#ccc", flexShrink: 0,
           "&:hover": { color: B.accent },
           "&:active": { transform: "scale(0.85)" },
-          transition: "all 0.15s",
+          transition: "color 0.15s, transform 0.15s",
         }}>
         <DeleteIcon sx={{ fontSize: 15 }} />
       </IconButton>
@@ -186,7 +186,7 @@ const AddForm = ({ currentUser, onClose }) => {
             bgcolor: cat === c.key ? c.color : c.bg,
             color:   cat === c.key ? "white" : c.color,
             border: `1.5px solid ${cat === c.key ? "transparent" : alpha(c.color, '44')}`,
-            transition: "all 0.15s", "&:active": { transform: "scale(0.93)" },
+            transition: "background-color 0.15s, color 0.15s, border-color 0.15s, transform 0.15s", "&:active": { transform: "scale(0.93)" },
           }}>{c.label}</Box>
         ))}
       </Stack>
@@ -337,7 +337,7 @@ const BucketList = ({ currentUser }) => {
             bgcolor: filter === c.key ? c.color : B.surface,
             color:   filter === c.key ? "white" : c.color,
             border: `1.5px solid ${filter === c.key ? "transparent" : alpha(c.color, '44')}`,
-            transition: "all 0.15s", "&:active": { transform: "scale(0.93)" },
+            transition: "background-color 0.15s, color 0.15s, border-color 0.15s, transform 0.15s", "&:active": { transform: "scale(0.93)" },
           }}>{c.label}</Box>
         ))}
       </Stack>

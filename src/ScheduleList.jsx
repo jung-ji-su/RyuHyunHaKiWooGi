@@ -280,7 +280,7 @@ const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
               <IconButton ref={deleteRef} onClick={e => { e.stopPropagation(); handleDelete(); }}
                 size="small"
                 sx={{ p: 0.3, color: "#ccc", "&:hover": { color: B.accent },
-                  "&:active": { transform: "scale(0.85)" }, transition: "all 0.15s" }}>
+                  "&:active": { transform: "scale(0.85)" }, transition: "color 0.15s, transform 0.15s" }}>
                 <DeleteIcon sx={{ fontSize: 14 }} />
               </IconButton>
             </Stack>
@@ -379,7 +379,7 @@ const ScheduleList = ({ currentUser }) => {
               bgcolor: filter===key ? color : B.surface,
               color:   filter===key ? "white" : color,
               border: `1.5px solid ${filter===key ? "transparent" : alpha(color, '44')}`,
-              transition:"all 0.15s",
+              transition:"background-color 0.15s, color 0.15s, border-color 0.15s, transform 0.15s",
               "&:active":{ transform:"scale(0.93)" },
             }}>{label}</Box>
         ))}

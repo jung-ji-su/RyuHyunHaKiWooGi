@@ -152,7 +152,7 @@ export default function QuickNotif() {
                     ].join(', '),
 
                 opacity: isCool ? 0.68 : 1,
-                transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                transition: 'background 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
 
                 '&:active': isCool ? {} : {
                   transform: 'scale(0.90)',
