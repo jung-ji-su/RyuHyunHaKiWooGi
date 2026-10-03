@@ -196,7 +196,9 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
             icon="📌"
             action={
               <Box
-                onClick={() => { vibrate(15); onClose(); setTimeout(onAddSchedule, 180); }}
+                // 260ms = 아래 Drawer의 exit transitionDuration과 동일 — 패널이
+                // 다 사라지기 전에 다음 다이얼로그가 겹쳐 뜨지 않도록 맞춤.
+                onClick={() => { vibrate(15); onClose(); setTimeout(onAddSchedule, 260); }}
                 sx={{
                   px: 1, py: 0.35, borderRadius: '999px', cursor: 'pointer',
                   background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,

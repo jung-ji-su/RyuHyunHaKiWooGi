@@ -28,7 +28,6 @@ export default function BottomNav({ logout, colorMode = 'system', setColorMode }
       setDrawerOpen(true);
       return;
     }
-    if (e) createBuriPang(e);
     vibrate(15);
     navigate(path);
   };
@@ -243,9 +242,12 @@ export default function BottomNav({ logout, colorMode = 'system', setColorMode }
         {BOTTOM_NAV.map(({ emoji, name, path }) => {
           const active = path ? pathname === path : false;
           return (
+            // 바텀탭은 하루 수십 번 눌리는 고빈도 액션이라(animate 스킬 Gate 1)
+            // 파티클 버스트(createBuriPang) 없이 진동 피드백만 남긴다 — 더보기
+            // 드로어의 메뉴 그리드(아래, line 108)는 상대적으로 가끔 쓰는
+            // 의도적 선택이라 거기엔 그대로 유지.
             <Box key={name}
               onClick={(e) => handleTab(path, e)}
-              onPointerDown={e => createBuriPang(e)}
               sx={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center',
