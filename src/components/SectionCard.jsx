@@ -2,13 +2,15 @@ import { Box, Typography } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { alpha, B } from '../lib/constants';
 
-export default function SectionCard({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children, noPadding }) {
+export default function SectionCard({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children, noPadding, index = 0 }) {
   return (
     <Box sx={{
       bgcolor: bgColor || B.cream, borderRadius: '14px',
       border: `1.5px solid ${alpha(borderColor || B.pants, '33')}`,
       position: 'relative', overflow: 'visible',
-      animation: 'fadeInUp 0.4s ease both',
+      // 홈 화면에 여러 장이 한 번에 마운트되므로(진입마다 전부 다시 탐) index로
+      // 30-80ms 스태거를 줘서 동시에 뚝 떨어지지 않게 한다.
+      animation: `fadeInUp 0.4s ease ${index * 60}ms both`,
     }}>
       <Box sx={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',

@@ -56,7 +56,9 @@ export const createBuriPang = (e) => {
       position:absolute; pointer-events:none; z-index:9999;
       font-size:16px; line-height:1;
       left:${ox}px; top:${oy}px;
-      transform:translate(-50%,-50%) scale(0);
+      transform:translate(-50%,-50%) scale(0.4);
+      /* scale(0.4)는 animation-delay가 끝나기 전(아직 keyframe이 적용 안 된 구간)
+         에만 보이는 값 — 0이면 "무에서 생성"이 되니 작게나마 보이게 */
       animation:buriPangFly 0.7s ease-out forwards;
       animation-delay:${i * 0.04}s;
       --tx:${Math.cos(angle) * dist}px;

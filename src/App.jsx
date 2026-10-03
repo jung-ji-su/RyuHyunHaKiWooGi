@@ -70,12 +70,14 @@ function Layout({ colorMode, setColorMode }) {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100dvh' }}>
       <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
         <AnimatePresence mode="wait" initial={false}>
+          {/* x 숏핸드 대신 transform 풀스트링(하드웨어 가속), enter/exit 거리를
+              12px로 대칭, easing은 animate 스킬의 --ease-out 토큰 사용 */}
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -8 }}
-            transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{ opacity: 0, transform: 'translateX(12px)' }}
+            animate={{ opacity: 1, transform: 'translateX(0px)' }}
+            exit={{ opacity: 0, transform: 'translateX(-12px)' }}
+            transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
           >
             <Outlet />
           </motion.div>

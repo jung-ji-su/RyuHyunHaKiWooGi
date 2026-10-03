@@ -245,7 +245,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.32, ease: 'easeInOut' }}
+            transition={{ duration: 0.32, ease: [0.77, 0, 0.175, 1] }} // --ease-in-out(animate 스킬 토큰) — 내장 easeInOut은 UI에 쓰기엔 약함
             style={{ transformOrigin: 'center center', willChange: 'transform, opacity' }}
           >
             <Paper elevation={0} sx={CARD_SX}>
@@ -342,7 +342,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.32, ease: 'easeInOut' }}
+            transition={{ duration: 0.32, ease: [0.77, 0, 0.175, 1] }} // --ease-in-out(animate 스킬 토큰) — 내장 easeInOut은 UI에 쓰기엔 약함
             style={{ transformOrigin: 'center center', willChange: 'transform, opacity' }}
           >
             <Paper elevation={0} sx={CARD_SX}>

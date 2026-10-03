@@ -545,12 +545,15 @@ const DiaryCard = memo(({ item, index = 0, currentUser, commentText, setCommentI
                 )}
                 <Stack ref={likeRef} direction="row" alignItems="center" sx={{ position: "relative" }}>
                   <IconButton onClick={handleLike} sx={{ p: 0.5 }}>
+                    {/* 스프링 기반 — 좋아요는 빠르게 연타될 수 있어 duration 기반
+                        keyframe(이전엔 scale(0)에서 [1,1.4,1] 배열) 대신 써서 연속
+                        탭 시에도 매번 처음부터 재생되지 않고 자연스럽게 이어지게 함 */}
                     <AnimatePresence mode="wait">
                       {item.likes?.includes(currentUser) ? (
                         <motion.div key="liked"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: [1, 1.4, 1], rotate: [0, 15, -15, 0] }}
-                          transition={{ duration: 0.3 }}
+                          initial={{ scale: 0.5, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ type: "spring", stiffness: 600, damping: 15 }}
                         >
                           <Favorite sx={{ color: B.pants }} />
                         </motion.div>

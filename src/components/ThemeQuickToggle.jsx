@@ -36,7 +36,11 @@ export default function ThemeQuickToggle({ effective, setColorMode }) {
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
           overflow: 'hidden',
-          '&:hover': { bgcolor: B.lavender },
+          // 터치 기기는 탭 후 hover가 끼어있는 상태가 될 수 있어 포인터가 실제
+          // 있는 기기에서만 hover 스타일을 건다.
+          '@media (hover: hover) and (pointer: fine)': {
+            '&:hover': { bgcolor: B.lavender },
+          },
           '&:active': { transform: 'scale(0.92)' },
           transition: 'transform 0.12s ease',
         }}
@@ -44,9 +48,9 @@ export default function ThemeQuickToggle({ effective, setColorMode }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={isDark ? 'dark' : 'light'}
-            initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
-            animate={{ rotate: 0, opacity: 1, scale: 1 }}
-            exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+            initial={{ opacity: 0, transform: 'rotate(-90deg) scale(0.6)' }}
+            animate={{ opacity: 1, transform: 'rotate(0deg) scale(1)' }}
+            exit={{ opacity: 0, transform: 'rotate(90deg) scale(0.6)' }}
             transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
             style={{ display: 'flex' }}
           >

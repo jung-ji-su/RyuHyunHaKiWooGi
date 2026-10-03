@@ -35,6 +35,7 @@ export default function HomePage({ currentUser, logout, effectiveColorMode, setC
 
       <Stack spacing={2}>
         <SectionCard
+          index={0}
           icon="🐷" title= {currentUser}
           sub="매일 기록하면 HP가 올라가요 💗"
           buriImg={buriSmile} bgColor={alpha(B.lavender, '44')} borderColor={B.pants}>
@@ -42,6 +43,7 @@ export default function HomePage({ currentUser, logout, effectiveColorMode, setC
         </SectionCard>
 
         <SectionCard
+          index={1}
           icon="💌" title="콕 찌르기"
           sub="버튼 하나로 상대방에게 알림 보내기 👉"
           buriImg={buriSmile} bgColor={alpha(B.peach, '66')} borderColor={B.accent}>
@@ -49,6 +51,7 @@ export default function HomePage({ currentUser, logout, effectiveColorMode, setC
         </SectionCard>
 
         <SectionCard
+          index={2}
           icon="📅" title="우리의 일정"
           buriImg={buri6} bgColor={alpha(B.lavender, '44')} borderColor={B.pants}
           onMore={() => navigate(ROUTES.SCHEDULE)}
@@ -57,6 +60,7 @@ export default function HomePage({ currentUser, logout, effectiveColorMode, setC
         </SectionCard>
 
         <SectionCard
+          index={3}
           icon="✍️" title="오늘의 기록"
           sub="칼 든 부리부리처럼 기록해요 ⚔️"
           buriImg={buri4} bgColor={alpha(B.accent, '15')} borderColor={B.accent}>
@@ -64,6 +68,7 @@ export default function HomePage({ currentUser, logout, effectiveColorMode, setC
         </SectionCard>
 
         <SectionCard
+          index={4}
           icon="📖" title="최근 기록"
           sub="탐정 부리부리가 기억해요 🕵️"
           buriImg={buri9} bgColor={alpha(B.lavender, '44')} borderColor={B.pants}
