@@ -12,19 +12,19 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
 import { recordCheckin } from "./CharacterPet";
-import buri4 from "./assets/KakaoTalk_20260316_132913765.png";
-import buri5 from "./assets/KakaoTalk_20260316_132923854.png";
+import buri4 from "./assets/KakaoTalk_20260316_132913765.webp";
+import buri5 from "./assets/KakaoTalk_20260316_132923854.webp";
 
 // ── 새 캐릭터 이미지 ──────────────────────────────────────────
-import buriHappy   from "./assets/KakaoTalk_20260424_173752880.png"; // 웃는 (행복)
-import buriExcited from "./assets/KakaoTalk_20260424_173800871.png"; // 꽃 들고 (신남)
-import buriCry     from "./assets/KakaoTalk_20260424_173745257.png"; // 울음
-import buriCry2     from "./assets/KakaoTalk_20260424_173832207.png"; // 슬픔
-import buriAngry   from "./assets/KakaoTalk_20260424_173820661.png"; // 불꽃 (화남)
-import buriLove    from "./assets/KakaoTalk_20260424_173810950.png"; // 하트눈 (설렘)
-import buriTired   from "./assets/KakaoTalk_20260424_173840927.png"; // 졸린 (피곤)
-import buriLucky   from "./assets/KakaoTalk_20260424_173734582.png"; // 네잎클로버 (최고)
-import buriCouple  from "./assets/KakaoTalk_20260424_173657493.png"; // 커플 (장식)
+import buriHappy   from "./assets/KakaoTalk_20260424_173752880.webp"; // 웃는 (행복)
+import buriExcited from "./assets/KakaoTalk_20260424_173800871.webp"; // 꽃 들고 (신남)
+import buriCry     from "./assets/KakaoTalk_20260424_173745257.webp"; // 울음
+import buriCry2     from "./assets/KakaoTalk_20260424_173832207.webp"; // 슬픔
+import buriAngry   from "./assets/KakaoTalk_20260424_173820661.webp"; // 불꽃 (화남)
+import buriLove    from "./assets/KakaoTalk_20260424_173810950.webp"; // 하트눈 (설렘)
+import buriTired   from "./assets/KakaoTalk_20260424_173840927.webp"; // 졸린 (피곤)
+import buriLucky   from "./assets/KakaoTalk_20260424_173734582.webp"; // 네잎클로버 (최고)
+import buriCouple  from "./assets/KakaoTalk_20260424_173657493.webp"; // 커플 (장식)
 import { alpha, B } from "./lib/constants";
 
 const emotions = [

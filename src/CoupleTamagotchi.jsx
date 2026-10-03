@@ -16,11 +16,11 @@ const PET_IMAGE_BASE = '/assets/';
 
 const STAGES = [
   { name: '알',       emoji: '🥚', image: null,                          color: '#E8B800', btnLabel: '품어주기',     btnEmoji: '🤗', particles: ['❤️','🌟','✨','💛'] },
-  { name: '아기햄찌', emoji: '🐹', image: PET_IMAGE_BASE+'1.hamzzi.png', color: '#FF9A3C', btnLabel: '안아주기',     btnEmoji: '🫂', particles: ['⭐','💫','🌙','⭐'] },
-  { name: '햄찌',     emoji: '🐹', image: PET_IMAGE_BASE+'2.hamzzi.png', color: '#7B4FA6', btnLabel: '쓰다듬어주기', btnEmoji: '✋', particles: ['💜','〰️','💜','✨'] },
-  { name: '통통햄찌', emoji: '🐹', image: PET_IMAGE_BASE+'3.hamzzi.png', color: '#FF6B9D', btnLabel: '먹이주기',     btnEmoji: '🌰', particles: ['🌰','🥜','😋','🌰'] },
-  { name: '왕햄찌',   emoji: '👑', image: PET_IMAGE_BASE+'4.hamzzi.png', color: '#E8A800', btnLabel: '숭배하기',     btnEmoji: '🙏', particles: ['🙏','✨','👑','🙏'] },
-  { name: '전설햄찌', emoji: '🌟', image: PET_IMAGE_BASE+'5.hamzzi.png', color: '#00CED1', btnLabel: null,           btnEmoji: null,  particles: ['✨','🌈','💎','🌟'] },
+  { name: '아기햄찌', emoji: '🐹', image: PET_IMAGE_BASE+'1.hamzzi.webp', color: '#FF9A3C', btnLabel: '안아주기',     btnEmoji: '🫂', particles: ['⭐','💫','🌙','⭐'] },
+  { name: '햄찌',     emoji: '🐹', image: PET_IMAGE_BASE+'2.hamzzi.webp', color: '#7B4FA6', btnLabel: '쓰다듬어주기', btnEmoji: '✋', particles: ['💜','〰️','💜','✨'] },
+  { name: '통통햄찌', emoji: '🐹', image: PET_IMAGE_BASE+'3.hamzzi.webp', color: '#FF6B9D', btnLabel: '먹이주기',     btnEmoji: '🌰', particles: ['🌰','🥜','😋','🌰'] },
+  { name: '왕햄찌',   emoji: '👑', image: PET_IMAGE_BASE+'4.hamzzi.webp', color: '#E8A800', btnLabel: '숭배하기',     btnEmoji: '🙏', particles: ['🙏','✨','👑','🙏'] },
+  { name: '전설햄찌', emoji: '🌟', image: PET_IMAGE_BASE+'5.hamzzi.webp', color: '#00CED1', btnLabel: null,           btnEmoji: null,  particles: ['✨','🌈','💎','🌟'] },
 ];
 
 // ── 스테이지별 레벨당 XP 배율 ───────────────────────────────────────

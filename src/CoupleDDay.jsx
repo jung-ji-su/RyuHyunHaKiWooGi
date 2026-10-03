@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 
-import buri4 from "./assets/KakaoTalk_20260316_132913765.png";
-import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
+import buri4 from "./assets/KakaoTalk_20260316_132913765.webp";
+import buri7 from "./assets/KakaoTalk_20260316_132945257.webp";
 
-import buriExcited from "./assets/KakaoTalk_20260424_173800871.png"; // 꽃 들고 (신남)
-import buriLove from "./assets/KakaoTalk_20260424_173810950.png"; // 하트눈 (설렘)
+import buriExcited from "./assets/KakaoTalk_20260424_173800871.webp"; // 꽃 들고 (신남)
+import buriLove from "./assets/KakaoTalk_20260424_173810950.webp"; // 하트눈 (설렘)
 import { alpha, B } from "./lib/constants";
 
 // ── 떠다니는 파티클 캔버스 (부드러운 하트/별) ────────────────────

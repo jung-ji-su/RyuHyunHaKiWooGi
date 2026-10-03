@@ -11,8 +11,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
-import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
-import buri8 from "./assets/KakaoTalk_20260316_132954818.png";
+import buri7 from "./assets/KakaoTalk_20260316_132945257.webp";
+import buri8 from "./assets/KakaoTalk_20260316_132954818.webp";
 
 import { alpha, B } from "./lib/constants";
 

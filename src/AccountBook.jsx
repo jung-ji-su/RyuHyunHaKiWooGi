@@ -21,9 +21,9 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 
-import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png"; //기본
-import buri5 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png"; //웃음
-import buri9 from "./assets/KakaoTalk_20260316_132934584.png"; // 승리
+import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.webp"; //기본
+import buri5 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.webp"; //웃음
+import buri9 from "./assets/KakaoTalk_20260316_132934584.webp"; // 승리
 import { alpha, B } from "./lib/constants";
 
 // ────────────────────────────────────────────────────────────

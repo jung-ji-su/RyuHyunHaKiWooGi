@@ -8,11 +8,11 @@ import { shakeElement, vibrate } from "./touchEffects";
 import { calendarColor } from "./lib/calendarTokens";
 import { alpha, B } from "./lib/constants";
 
-import buri6 from "./assets/KakaoTalk_20260316_132934584.png";
-import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
-import buri9 from "./assets/KakaoTalk_20260316_133007779.png";
-import meImg  from "./assets/JS.jpg";
-import gfImg  from "./assets/HY.jpg";
+import buri6 from "./assets/KakaoTalk_20260316_132934584.webp";
+import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.webp";
+import buri9 from "./assets/KakaoTalk_20260316_133007779.webp";
+import meImg  from "./assets/JS.webp";
+import gfImg  from "./assets/HY.webp";
 
 const CATEGORY_META = {
   기념일:   { color: "#7B4FA6", bg: "#EDE0F5", emoji: "💜" },

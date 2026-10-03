@@ -16,22 +16,22 @@ import CloseIcon       from "@mui/icons-material/Close";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 
-import meImg from "./assets/JS.jpg";
-import gfImg from "./assets/HY.jpg";
+import meImg from "./assets/JS.webp";
+import gfImg from "./assets/HY.webp";
 
-import buri9    from "./assets/KakaoTalk_20260316_133007779.png";
-import buri3    from "./assets/image.png";
+import buri9    from "./assets/KakaoTalk_20260316_133007779.webp";
+import buri3    from "./assets/image.webp";
 
-import buriHappy    from "./assets/KakaoTalk_20260424_173752880.png";
-import buriExcited  from "./assets/KakaoTalk_20260424_173800871.png";
-import buriCry      from "./assets/KakaoTalk_20260424_173745257.png";
-import buriAngry    from "./assets/KakaoTalk_20260424_173820661.png";
-import buriLove     from "./assets/KakaoTalk_20260424_173810950.png";
-import buriTired    from "./assets/KakaoTalk_20260424_173840927.png";
-import buriLucky    from "./assets/KakaoTalk_20260424_173734582.png";
-import buriCouple   from "./assets/KakaoTalk_20260424_173657493.png";
-import buriSurprise from "./assets/KakaoTalk_20260424_173832207.png";
-import buriFunny    from "./assets/KakaoTalk_20260424_173712715.png";
+import buriHappy    from "./assets/KakaoTalk_20260424_173752880.webp";
+import buriExcited  from "./assets/KakaoTalk_20260424_173800871.webp";
+import buriCry      from "./assets/KakaoTalk_20260424_173745257.webp";
+import buriAngry    from "./assets/KakaoTalk_20260424_173820661.webp";
+import buriLove     from "./assets/KakaoTalk_20260424_173810950.webp";
+import buriTired    from "./assets/KakaoTalk_20260424_173840927.webp";
+import buriLucky    from "./assets/KakaoTalk_20260424_173734582.webp";
+import buriCouple   from "./assets/KakaoTalk_20260424_173657493.webp";
+import buriSurprise from "./assets/KakaoTalk_20260424_173832207.webp";
+import buriFunny    from "./assets/KakaoTalk_20260424_173712715.webp";
 
 import { createHeartPang, shakeElement, vibrate } from "./touchEffects";
 import { alpha, B } from "./lib/constants";

@@ -1,4 +1,5 @@
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { lazy, Suspense } from 'react';
+import { Box, Container, Stack, Typography, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { alpha, B, ROUTES } from '../lib/constants';
 import {
@@ -11,9 +12,13 @@ import ThemeQuickToggle from '../components/ThemeQuickToggle';
 import QuickNotif from '../components/QuickNotif';
 import CoupleCalendar from '../CoupleCalendar';
 import DiaryWrite from '../DiaryWrite';
-import DiaryList from '../DiaryList';
 import CoupleDDay from '../CoupleDDay';
 import CharacterPet from '../CharacterPet';
+
+// DiaryList는 전체 모듈이 JS.jpg/HY.jpg(실사진) 등 큰 자산을 import하므로,
+// 홈 화면에 정적 import하면 홈 진입 즉시 같이 받아와진다 — lazy로 분리해
+// 실제로 이 섹션이 렌더될 때만 내려받게 한다.
+const DiaryList = lazy(() => import('../DiaryList'));
 
 export default function HomePage({ currentUser, logout, effectiveColorMode, setColorMode }) {
   const navigate = useNavigate();
@@ -63,7 +68,13 @@ export default function HomePage({ currentUser, logout, effectiveColorMode, setC
           sub="탐정 부리부리가 기억해요 🕵️"
           buriImg={buri9} bgColor={alpha(B.lavender, '44')} borderColor={B.pants}
           onMore={() => navigate(ROUTES.DIARY)}>
-          <DiaryList currentUser={currentUser} pageSize={3} />
+          <Suspense fallback={
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+              <CircularProgress size={22} sx={{ color: B.pants }} />
+            </Box>
+          }>
+            <DiaryList currentUser={currentUser} pageSize={3} />
+          </Suspense>
         </SectionCard>
       </Stack>
 

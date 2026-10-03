@@ -12,12 +12,12 @@ import {
 } from 'firebase/firestore';
 
 // 6단계 고양이 이미지 (HP 높음 → 낮음)
-import catFat from './assets/KakaoTalk_20260518_144322853.png'; // 뚱뚱    (80-100)
-import catSmile from './assets/KakaoTalk_20260518_144429661.png'; // 통통    (60-79)
-import catTongue from './assets/KakaoTalk_20260518_145359042.png'; // 보통    (45-59)
-import catGrumpy from './assets/KakaoTalk_20260518_144400884.png'; // 마른    (30-44)
-import catScruff from './assets/KakaoTalk_20260518_145513803.png'; // 해골직전 (15-29)
-import catStatue from './assets/KakaoTalk_20260518_145131598.png'; // 해골    (0-14)
+import catFat from './assets/KakaoTalk_20260518_144322853.webp'; // 뚱뚱    (80-100)
+import catSmile from './assets/KakaoTalk_20260518_144429661.webp'; // 통통    (60-79)
+import catTongue from './assets/KakaoTalk_20260518_145359042.webp'; // 보통    (45-59)
+import catGrumpy from './assets/KakaoTalk_20260518_144400884.webp'; // 마른    (30-44)
+import catScruff from './assets/KakaoTalk_20260518_145513803.webp'; // 해골직전 (15-29)
+import catStatue from './assets/KakaoTalk_20260518_145131598.webp'; // 해골    (0-14)
 import { alpha, B } from './lib/constants';
 
 const COUPLE_ID = 'jisu_hyunha';

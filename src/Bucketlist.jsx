@@ -13,9 +13,9 @@ import AddIcon    from "@mui/icons-material/Add";
 import confetti   from "canvas-confetti";
 import { createBuriPang, shakeElement, vibrate } from "./touchEffects";
 
-import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.png";
-import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png";
-import buri7 from "./assets/KakaoTalk_20260316_132945257.png";
+import buri1 from "./assets/494ea37cf81a6a1efb5dfab1783ab487f604e7b0e6900f9ac53a43965300eb9a.webp";
+import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.webp";
+import buri7 from "./assets/KakaoTalk_20260316_132945257.webp";
 import { alpha, B } from "./lib/constants";
 
 const CATEGORIES = [

@@ -12,9 +12,9 @@ import LockIcon from "@mui/icons-material/Lock";
 import CloseIcon from "@mui/icons-material/Close";
 import { createBuriPang, vibrate } from "./touchEffects";
 
-import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.png";
-import buri6 from "./assets/KakaoTalk_20260316_132934584.png";
-import buri9 from "./assets/KakaoTalk_20260316_133007779.png";
+import buri2 from "./assets/cc187d26dc66195eaea58cecb8a4acde7154249a3890514a43687a85e6b6cc82.webp";
+import buri6 from "./assets/KakaoTalk_20260316_132934584.webp";
+import buri9 from "./assets/KakaoTalk_20260316_133007779.webp";
 
 import { alpha, B } from "./lib/constants";
 
