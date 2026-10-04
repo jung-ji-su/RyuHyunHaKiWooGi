@@ -246,7 +246,9 @@ function AppInner() {
       {!notifDrawerOpen && (
         <Box sx={{
           position: 'fixed', top: 'calc(env(safe-area-inset-top, 0px) + 12px)', right: 12, zIndex: 1350,
-          animation: unreadCount > 0 ? 'bellShake 1.2s ease-in-out infinite' : 'none',
+          // 무한 반복 대신 4회만 — 안 읽음 신호는 아래 Badge 숫자가 계속 담당하므로
+          // 벨 자체는 눈에 띄게 한 번 알리고 멈춘다(계속 흔들리는 걸 막음).
+          animation: unreadCount > 0 ? 'bellShake 1.2s ease-in-out 4' : 'none',
         }}>
           <IconButton
             onClick={() => setNotifDrawerOpen(true)}

@@ -654,7 +654,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           }
         </motion.div>
         {hasPoop && (
-          <Box sx={{ position: 'absolute', bottom: -2, right: -8, fontSize: '14px', animation: 'bellShake 1.2s ease-in-out infinite' }}>💩</Box>
+          <Box sx={{ position: 'absolute', bottom: -2, right: -8, fontSize: '14px', animation: 'bellShake 1.2s ease-in-out 4' }}>💩</Box>
         )}
       </Box>
 
@@ -794,7 +794,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
                 borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                 bgcolor: '#FF930015', border: '1.5px solid #FF930055',
                 color: '#E65100', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
-                animation: 'bellShake 1.2s ease-in-out infinite',
+                animation: 'bellShake 1.2s ease-in-out 4',
                 '&:hover': { bgcolor: '#FF930025' },
               }}>
               💩 치우기 (빨리!)
