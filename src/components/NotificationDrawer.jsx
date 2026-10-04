@@ -158,7 +158,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                 cursor: 'pointer', userSelect: 'none',
                 '&:hover': { bgcolor: alpha(B.lavender, '88') },
                 '&:active': { transform: 'scale(0.95)' },
-                transition: 'all 0.15s',
+                transition: 'background-color 0.15s, transform 0.15s',
               }}
             >
               <Typography sx={{
@@ -224,7 +224,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                     display: 'flex', alignItems: 'flex-start', gap: 1.5,
                     p: 1.5,
                     cursor: 'pointer',
-                    transition: 'all 0.18s',
+                    transition: 'background-color 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.18s',
                     position: 'relative',
                     overflow: 'hidden',
                     '&:hover': {
@@ -302,7 +302,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
                         color: alpha(B.dark, '44'), fontSize: '0.75rem', lineHeight: 1,
                         cursor: 'pointer',
                         '&:hover': { bgcolor: '#ff000018', color: '#E53935' },
-                        transition: 'all 0.15s',
+                        transition: 'background-color 0.15s, color 0.15s',
                       }}
                     >
                       ✕
@@ -334,7 +334,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
               color: page === 0 ? alpha(B.pants, '33') : B.pants,
               cursor: page === 0 ? 'default' : 'pointer',
               fontFamily: "'Jua',sans-serif", fontSize: '0.85rem',
-              transition: 'all 0.15s',
+              transition: 'background-color 0.15s, border-color 0.15s, color 0.15s',
               '&:hover': page > 0 ? { bgcolor: alpha(B.lavender, '66') } : {},
             }}
           >
@@ -352,7 +352,7 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
               color: page >= totalPages - 1 ? alpha(B.pants, '33') : B.pants,
               cursor: page >= totalPages - 1 ? 'default' : 'pointer',
               fontFamily: "'Jua',sans-serif", fontSize: '0.85rem',
-              transition: 'all 0.15s',
+              transition: 'background-color 0.15s, border-color 0.15s, color 0.15s',
               '&:hover': page < totalPages - 1 ? { bgcolor: alpha(B.lavender, '66') } : {},
             }}
           >

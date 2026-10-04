@@ -109,7 +109,7 @@ function ScheduleDayCell({ d, current, today, schedule, isMultiSelected, onDateC
       <Box sx={{
         width: 30, height: 30, borderRadius: '50%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0, transition: 'all .2s ease',
+        flexShrink: 0, transition: 'background-color .2s ease, background .2s ease, box-shadow .2s ease',
         ...circleSx,
       }}>
         <Typography sx={{
@@ -461,7 +461,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
                     border: `2px solid ${active ? s.color : alpha(s.color, '44')}`,
                     textAlign: 'center', cursor: 'pointer',
                     boxShadow: active ? `0 4px 14px ${alpha(s.color, '44')}` : 'none',
-                    transition: 'all 0.15s',
+                    transition: 'background-color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s, opacity 0.15s',
                     '&:active': { transform: 'scale(0.95)', opacity: 0.8 },
                     WebkitTapHighlightColor: 'transparent',
                   }}
@@ -498,7 +498,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
                 border: '1.5px solid #EF444440',
                 bgcolor: '#FEF2F2cc',
                 cursor: 'pointer',
-                transition: 'all 0.15s',
+                transition: 'background-color 0.15s, transform 0.15s',
                 '&:active': { bgcolor: '#FEE2E2', transform: 'scale(0.97)' },
                 WebkitTapHighlightColor: 'transparent',
               }}

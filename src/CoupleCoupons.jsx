@@ -251,7 +251,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
                   bgcolor: selCat === cat.key ? B.pants : B.surface,
                   color:   selCat === cat.key ? "white"  : alpha(B.dark, '88'),
                   fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
-                  transition: "all 0.15s",
+                  transition: "border-color 0.15s, background-color 0.15s, color 0.15s",
                   userSelect: "none",
                 }}
               >
@@ -314,7 +314,7 @@ const CouponCard = ({ coupon, currentUser, onUse, onDelete }) => {
       border: `2px dashed ${isUsed || expired ? "#DDD" : B.lavender}`,
       bgcolor: isUsed || expired ? "#F9F9F9" : B.surface,
       opacity: isUsed || expired ? 0.7 : 1,
-      transition: "all 0.2s",
+      transition: "border-color 0.2s, background-color 0.2s, opacity 0.2s",
     }}>
       {/* 상단 컬러 바 */}
       <Box sx={{
@@ -534,7 +534,7 @@ const CoupleCoupons = ({ currentUser }) => {
               bgcolor: tab === t.key ? B.pants : B.lavender,
               color:   tab === t.key ? "white"  : B.pants,
               fontFamily: "'Noto Sans KR',sans-serif", fontSize: "0.72rem", fontWeight: 700,
-              transition: "all 0.15s",
+              transition: "background-color 0.15s, color 0.15s, transform 0.15s",
               "&:active": { transform: "scale(0.95)" },
               whiteSpace: "nowrap",
             }}
