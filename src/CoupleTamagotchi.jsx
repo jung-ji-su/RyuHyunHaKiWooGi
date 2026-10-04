@@ -1,5 +1,10 @@
 import { useState, useEffect, useMemo, useId } from 'react';
 import { Box, Typography, Stack, Paper, Button, Chip } from '@mui/material';
+import PetsIcon from '@mui/icons-material/Pets';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import CookieIcon from '@mui/icons-material/Cookie';
+import CelebrationIcon from '@mui/icons-material/Celebration';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { db } from './firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -598,6 +603,10 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       bgcolor: isMe ? `${alpha(stage.color, '12')}` : B.surface,
       border: `1.5px solid ${isMe ? alpha(stage.color, '44') : alpha(B.dark, '0d')}`,
       position: 'relative',
+      display: 'flex', flexDirection: 'column',
+      // 한글은 기본 word-break가 글자 단위로 끊어서 "최근 성장 추이" 같은 단어가
+      // "최근 성장 추"/"이"로 쪼개짐 — keep-all로 단어(공백) 단위로만 줄바꿈되게.
+      wordBreak: 'keep-all', overflowWrap: 'break-word',
     }}>
       {/* 내 뱃지 */}
       {isMe && (
@@ -711,7 +720,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 
       {/* [신규] 사망 안내 문구 (5일 이상 미접속) */}
       {isDead && (
-        <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000008', border: `1px dashed ${alpha(B.dark, '33')}`, mb: '8px' }}>
+        <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000008', border: `1px solid ${alpha(B.dark, '18')}`, mb: '8px' }}>
           <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '99'), fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.5 }}>
             💀 5일 동안 돌봄을 받지 못해 떠났어요.{isMe ? ' 아래 버튼으로 다시 살릴 수 있어요.' : ''}
           </Typography>
@@ -740,9 +749,11 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
         </Typography>
       )}
 
-      {/* 내 액션 버튼 */}
+      {/* 내 액션 버튼 — mt:auto로 카드 하단에 고정(상대방 카드는 버튼이 하나뿐이라
+          내용이 짧게 끝나는데, 두 카드 높이는 flex stretch로 같아서 아래에 빈 공간이
+          크게 남았음 — 액션 영역을 항상 바닥에 붙여서 자연스럽게 보이게 함) */}
       {isMe && (
-        <Stack gap="5px">
+        <Stack gap="5px" sx={{ mt: 'auto', pt: '8px' }}>
           {stage.btnLabel && (
             <Button size="small" onClick={handleInteract} disabled={!canInteract}
               sx={{
@@ -762,6 +773,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 
           <Stack direction="row" gap="5px">
             <Button size="small" onClick={() => { spawnParticles(['🍖','😊','✨']); onAction('feed'); }} disabled={!canFeed}
+              startIcon={<RestaurantIcon sx={{ fontSize: '0.85rem' }} />}
               sx={{
                 flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                 bgcolor: canFeed ? '#FF9A3C15' : 'transparent',
@@ -771,9 +783,10 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
                 '&:hover': { bgcolor: '#FF9A3C25' },
                 '&.Mui-disabled': { color: alpha(B.dark, '1a') },
               }}>
-              🍖 밥
+              밥
             </Button>
             <Button size="small" onClick={() => { spawnParticles(['🌰','😋','💕','⚠️']); onAction('snack'); }} disabled={!canSnack}
+              startIcon={<CookieIcon sx={{ fontSize: '0.85rem' }} />}
               sx={{
                 flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
                 bgcolor: canSnack ? '#FF6B9D15' : 'transparent',
@@ -783,7 +796,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
                 '&:hover': { bgcolor: '#FF6B9D25' },
                 '&.Mui-disabled': { color: alpha(B.dark, '1a') },
               }}>
-              🍪 간식{canSnack ? `(${snackLeft})` : '✕'}
+              간식{canSnack ? `(${snackLeft})` : '✕'}
             </Button>
           </Stack>
 
@@ -802,7 +815,12 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           )}
 
           {data.weight >= 90 && (
-            <Box sx={{ p: '5px 8px', borderRadius: '8px', bgcolor: '#FFF3E015', border: '1px dashed #FF9800' }}>
+            // 경고 메시지(버튼 아님) — 점선 테두리는 "내 알로" 같은 실제 버튼과
+            // 헷갈리므로 쓰지 않고, 왼쪽 색 바로 "눌리지 않는 안내"임을 표시
+            <Box sx={{
+              p: '5px 8px', borderRadius: '8px', bgcolor: '#FFF3E015',
+              borderLeft: '3px solid #FF9800', border: '1px solid #FF980033', borderLeftWidth: '3px',
+            }}>
               <Typography sx={{ fontSize: '0.72rem', color: '#E65100', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.4 }}>
                 🚨 비만 위험! 간식 그만 줘요
               </Typography>
@@ -812,7 +830,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           {/* [수정] 알로 되돌리기 — 버튼은 여전히 본인 카드에서만 노출되지만,
               내 펫/상대방 펫 둘 중 하나를 골라 되돌릴 수 있음 */}
           {resetTarget ? (
-            <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000006', border: `1px dashed ${alpha(B.dark, '44')}` }}>
+            <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000006', border: `1px solid ${alpha(B.dark, '22')}` }}>
               <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, 'aa'), fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, mb: '5px' }}>
                 정말 {resetTarget === 'self' ? '내' : otherUser} 펫을 처음부터 다시 시작할까요? 지금까지의 진행이 모두 사라져요.
               </Typography>
@@ -832,35 +850,42 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
               </Stack>
             </Box>
           ) : (
+            // 드물고 되돌릴 수 없는(destructive) 액션이라 탭 1회로 바로 실행되지
+            // 않도록 위 확인 단계가 이미 있음 — 여기서는 점선(경고 메시지용) 대신
+            // 옅은 실선으로 "보조 버튼"임을 표시해 다른 버튼들과 구분되게 한다.
             <Stack direction="row" gap="5px">
               <Button size="small" onClick={() => setResetTarget('self')}
+                startIcon={<RestartAltIcon sx={{ fontSize: '0.8rem' }} />}
                 sx={{
                   flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
-                  bgcolor: 'transparent', border: `1px dashed ${alpha(B.dark, '33')}`,
+                  bgcolor: 'transparent', border: `1px solid ${alpha(B.dark, '18')}`,
                   color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                   '&:hover': { bgcolor: alpha(B.dark, '08') },
                 }}>
-                🔄 내 알로
+                내 알로
               </Button>
               <Button size="small" onClick={() => setResetTarget('partner')}
+                startIcon={<RestartAltIcon sx={{ fontSize: '0.8rem' }} />}
                 sx={{
                   flex: 1, borderRadius: '999px', fontSize: '0.72rem', py: '4px',
-                  bgcolor: 'transparent', border: `1px dashed ${alpha(B.dark, '33')}`,
+                  bgcolor: 'transparent', border: `1px solid ${alpha(B.dark, '18')}`,
                   color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700,
                   '&:hover': { bgcolor: alpha(B.dark, '08') },
                 }}>
-                🔄 {otherUser} 알로
+                {otherUser} 알로
               </Button>
             </Stack>
           )}
         </Stack>
       )}
 
-      {/* [신규] 파트너 펫에게 응원 보내기 — 하루 1회, 상대 애정+XP 즉시 반영 */}
+      {/* [신규] 파트너 펫에게 응원 보내기 — 하루 1회, 상대 애정+XP 즉시 반영.
+          mt:auto로 카드 하단 고정(위 액션 영역 주석 참고) */}
       {!isMe && (
         <Button size="small" onClick={handleCheer} disabled={!canCheer}
+          startIcon={<CelebrationIcon sx={{ fontSize: '0.9rem' }} />}
           sx={{
-            width: '100%', borderRadius: '999px', fontSize: '0.72rem', py: '5px',
+            width: '100%', borderRadius: '999px', fontSize: '0.72rem', py: '5px', mt: 'auto',
             bgcolor: canCheer ? '#FFD70020' : 'transparent',
             border: `1.5px solid ${canCheer ? '#FFC107aa' : alpha(B.dark, '0e')}`,
             color: canCheer ? '#B8860B' : alpha(B.dark, '2a'),
@@ -868,7 +893,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             '&:hover': { bgcolor: '#FFD70035' },
             '&.Mui-disabled': { color: alpha(B.dark, '1a') },
           }}>
-          🎉 응원 보내기{isDead ? ' (되돌리기 필요)' : (!canCheer ? ' (완료)' : '')}
+          응원 보내기{isDead ? ' (되돌리기 필요)' : (!canCheer ? ' (완료)' : '')}
         </Button>
       )}
     </Box>
@@ -1116,8 +1141,8 @@ export default function CoupleTamagotchi({ currentUser }) {
       }}>
         {/* 헤더 */}
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: '12px' }}>
-          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '0.9rem' }}>
-            🐾 커플 다마고치
+          <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <PetsIcon sx={{ fontSize: '1rem' }} /> 커플 다마고치
           </Typography>
           <Chip
             label={isTie ? '🤝 동률' : iWin ? '👑 내가 앞서는 중' : `👑 ${otherUser}가 앞서는 중`}
