@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { db } from "./firebase";
 import { collection, query, onSnapshot, deleteDoc, doc, orderBy, limit } from "firebase/firestore";
 import { Box, Typography, Stack, IconButton } from "@mui/material";
@@ -304,20 +304,23 @@ const ScheduleList = ({ currentUser }) => {
     return () => unsub();
   }, []);
 
-  const filtered = filter === "전체"
-    ? schedules
-    : schedules.filter(s => s.category === filter);
+  const groups = useMemo(() => {
+    const filtered = filter === "전체"
+      ? schedules
+      : schedules.filter(s => s.category === filter);
 
-  const sorted = [...filtered].sort((a, b) =>
-    parseDate(a.date) - parseDate(b.date)
-  );
+    const sorted = [...filtered].sort((a, b) =>
+      parseDate(a.date) - parseDate(b.date)
+    );
 
-  const groups = {};
-  sorted.forEach(s => {
-    const label = classifyDate(s.date);
-    if (!groups[label]) groups[label] = [];
-    groups[label].push(s);
-  });
+    const g = {};
+    sorted.forEach(s => {
+      const label = classifyDate(s.date);
+      if (!g[label]) g[label] = [];
+      g[label].push(s);
+    });
+    return g;
+  }, [schedules, filter]);
 
   const GROUP_ORDER = ["오늘 🔥", "이번 주 ✨", "다가오는 일정", "지난 일정"];
   const GROUP_COLORS = {
@@ -327,7 +330,7 @@ const ScheduleList = ({ currentUser }) => {
     "지난 일정":    "#888",
   };
 
-  const importantCount = schedules.filter(s => s.isImportant).length;
+  const importantCount = useMemo(() => schedules.filter(s => s.isImportant).length, [schedules]);
 
   return (
     <Box>
@@ -386,7 +389,7 @@ const ScheduleList = ({ currentUser }) => {
       </Stack>
 
       {/* 빈 상태 */}
-      {sorted.length === 0 && (
+      {Object.keys(groups).length === 0 && (
         <Box sx={{ textAlign:"center", py:6, opacity:0.5 }}>
           <Box component="img" src={buri9} alt=""
             sx={{ width:64, mb:1.5, animation:"headBob 2.5s ease-in-out infinite",

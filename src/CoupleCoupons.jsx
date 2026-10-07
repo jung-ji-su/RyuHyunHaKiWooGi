@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
 import {
   collection, addDoc, query, onSnapshot, updateDoc,
-  doc, deleteDoc, serverTimestamp, orderBy,
+  doc, deleteDoc, serverTimestamp, orderBy, limit,
 } from "firebase/firestore";
 import {
   Box, Typography, Stack, Button, Chip, IconButton,
@@ -438,7 +438,7 @@ const CoupleCoupons = ({ currentUser }) => {
   const otherUser = USERS.find(u => u !== currentUser);
 
   useEffect(() => {
-    const q = query(collection(db, "coupons"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "coupons"), orderBy("createdAt", "desc"), limit(200));
     const unsub = onSnapshot(q, snap => {
       setCoupons(snap.docs.map(d => normalizeCoupon({ id: d.id, ...d.data() })));
     }, err => console.error('CoupleCoupons 구독 실패:', err));

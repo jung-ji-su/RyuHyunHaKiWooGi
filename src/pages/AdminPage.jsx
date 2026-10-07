@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   collection, getDocs, deleteDoc, doc, query,
   orderBy, limit, getDoc, addDoc, serverTimestamp, writeBatch, where,
+  getCountFromServer,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { UserContext } from '../lib/UserContext';
@@ -129,27 +130,33 @@ export default function AdminPage() {
 
   const loadStats = async () => {
     try {
-      const [diaries, schedules, buckets, couponsSnap, temps, notifSnap] = await Promise.all([
-        getDocs(collection(db, 'diaries')),
-        getDocs(collection(db, 'schedules')),
-        getDocs(collection(db, 'buckets')),
-        getDocs(collection(db, 'coupons')),
-        getDocs(collection(db, 'temperatures')),
-        getDocs(collection(db, 'notifications')),
+      // 전체 문서를 내려받아 .size/필터링하던 것을 서버 집계(count)로 교체 —
+      // 컬렉션이 커져도 문서 내용 자체는 전혀 전송되지 않는다.
+      const [
+        diariesCnt, schedulesCnt, importantCnt,
+        bucketsCnt, bucketsDoneCnt,
+        couponsCnt, couponsAvailCnt, couponsUsedCnt,
+        tempsCnt, notifCnt,
+      ] = await Promise.all([
+        getCountFromServer(collection(db, 'diaries')),
+        getCountFromServer(collection(db, 'schedules')),
+        getCountFromServer(query(collection(db, 'schedules'), where('isImportant', '==', true))),
+        getCountFromServer(collection(db, 'buckets')),
+        getCountFromServer(query(collection(db, 'buckets'), where('isDone', '==', true))),
+        getCountFromServer(collection(db, 'coupons')),
+        getCountFromServer(query(collection(db, 'coupons'), where('status', '==', 'available'))),
+        getCountFromServer(query(collection(db, 'coupons'), where('status', '==', 'used'))),
+        getCountFromServer(collection(db, 'temperatures')),
+        getCountFromServer(collection(db, 'notifications')),
       ]);
-      const bucketDocs = buckets.docs.map(d => d.data());
-      const couponDocs = couponsSnap.docs.map(d => d.data());
-      const importantCount = schedules.docs.filter(d => d.data().isImportant).length;
-      const availableCoupons = couponDocs.filter(c => c.status === 'available');
-      const usedCoupons      = couponDocs.filter(c => c.status === 'used');
       setStats({
-        diaries: diaries.size,
-        schedules: schedules.size,
-        importantSchedules: importantCount,
-        buckets: { total: buckets.size, done: bucketDocs.filter(b => b.isDone).length },
-        coupons: { total: couponsSnap.size, available: availableCoupons.length, used: usedCoupons.length },
-        temperatures: temps.size,
-        notifications: notifSnap.size,
+        diaries: diariesCnt.data().count,
+        schedules: schedulesCnt.data().count,
+        importantSchedules: importantCnt.data().count,
+        buckets: { total: bucketsCnt.data().count, done: bucketsDoneCnt.data().count },
+        coupons: { total: couponsCnt.data().count, available: couponsAvailCnt.data().count, used: couponsUsedCnt.data().count },
+        temperatures: tempsCnt.data().count,
+        notifications: notifCnt.data().count,
       });
     } catch (e) { addLog(`❌ 통계 로드 오류: ${e.message}`); }
   };

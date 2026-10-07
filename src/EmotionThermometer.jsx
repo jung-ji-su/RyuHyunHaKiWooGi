@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { db } from "./firebase";
 import {
   collection, query, onSnapshot, addDoc,
-  serverTimestamp, orderBy, doc, updateDoc, arrayUnion, writeBatch,
+  serverTimestamp, orderBy, limit, doc, updateDoc, arrayUnion, writeBatch,
 } from "firebase/firestore";
 import {
   Box, Typography, Stack, Button, CircularProgress,
@@ -341,7 +341,7 @@ function EmpathyCard({ records, currentUser, otherUser, today }) {
 }
 
 // ── 스트릭 배너 ─────────────────────────────────────────────────
-function StreakDangerBanner({ streak, submitted, currentUser, otherUser, records }) {
+function StreakDangerBanner({ streak, submitted, otherUser, records }) {
   const today    = toDateStr(new Date());
   const otherRec = records.find(r => r.author === otherUser && r.date === today);
   const hour     = new Date().getHours();
@@ -427,7 +427,9 @@ const EmotionThermometer = ({ currentUser }) => {
 
   useEffect(() => {
     backfilledRef.current = false;
-    const q = query(collection(db, "temperatures"), orderBy("date", "asc"));
+    // 스트릭(최대 365일)·연간 차트(12개월)·백필(30일) 모두 최근 1년 안쪽만 보므로
+    // 날짜 역순 + limit으로 끊어도 기능엔 영향 없음 — 컬렉션이 영원히 쌓여도 매번 전체 스캔하지 않게 함
+    const q = query(collection(db, "temperatures"), orderBy("date", "desc"), limit(800));
     const unsub = onSnapshot(q, async snap => {
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setRecords(data);
@@ -464,7 +466,7 @@ const EmotionThermometer = ({ currentUser }) => {
     } catch (err) { console.error(err); }
   };
 
-  const getStreak = user => {
+  const getStreak = useMemo(() => (user => {
     let s = 0; const d = new Date();
     while (s < 365) {
       const rec = records.find(r => r.author === user && r.date === toDateStr(d));
@@ -472,9 +474,9 @@ const EmotionThermometer = ({ currentUser }) => {
       s++; d.setDate(d.getDate() - 1);
     }
     return s;
-  };
+  }), [records]);
 
-  const getChartData = () => {
+  const chartData = useMemo(() => {
     const map = {};
     records.forEach(r => { map[`${r.author}_${r.date}`] = r.temp; });
     if (chartTab === "week") {
@@ -500,7 +502,7 @@ const EmotionThermometer = ({ currentUser }) => {
       [currentUser]: avg(currentUser, m),
       [otherUser]:   avg(otherUser, m),
     }));
-  };
+  }, [records, chartTab, currentUser, otherUser]);
 
   const getDiffMsg = () => {
     const myRec    = records.find(r => r.author === currentUser && r.date === today);
@@ -520,13 +522,12 @@ const EmotionThermometer = ({ currentUser }) => {
   const otherRec = records.find(r => r.author === otherUser   && r.date === today);
   const currentVal = submitted ? (myRec?.temp ?? 0) : todayTemp;
   const meta       = getTempMeta(currentVal);
-  const chartData  = getChartData();
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
 
       {/* 스트릭 배너 */}
-      <StreakDangerBanner streak={streak} submitted={submitted} currentUser={currentUser} otherUser={otherUser} records={records} />
+      <StreakDangerBanner streak={streak} submitted={submitted} otherUser={otherUser} records={records} />
 
       {/* 공감 카드 */}
       <EmpathyCard records={records} currentUser={currentUser} otherUser={otherUser} today={today} />

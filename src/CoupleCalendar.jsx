@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { db } from "./firebase";
 import {
   collection, addDoc, query, onSnapshot,
@@ -186,32 +186,36 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
     setScheduleOpen(true);
   };
 
-  const ay  = activeMonth.getFullYear();
-  const am  = activeMonth.getMonth();
-  const amp = `${ay}-${String(am+1).padStart(2,'0')}`;
-  const now = new Date();
-  const isCurrMonth  = ay === now.getFullYear() && am === now.getMonth();
-  const daysInPeriod = isCurrMonth ? now.getDate() : new Date(ay, am+1, 0).getDate();
+  const { monthSchedules, avgTemp, syncRate } = useMemo(() => {
+    const ay  = activeMonth.getFullYear();
+    const am  = activeMonth.getMonth();
+    const amp = `${ay}-${String(am+1).padStart(2,'0')}`;
+    const now = new Date();
+    const isCurrMonth  = ay === now.getFullYear() && am === now.getMonth();
+    const daysInPeriod = isCurrMonth ? now.getDate() : new Date(ay, am+1, 0).getDate();
 
-  const monthSchedules = schedules.filter(s => { const sd = new Date(s.date); return sd.getFullYear() === ay && sd.getMonth() === am; });
-  const monthTemps     = temperatures.filter(t => t.date?.startsWith(amp) && !t.isPenalty && parseInt(t.temp ?? 0) > 0);
-  const avgTemp        = monthTemps.length ? Math.round(monthTemps.reduce((s, t) => s + parseInt(t.temp), 0) / monthTemps.length) : null;
+    const mSchedules = schedules.filter(s => { const sd = new Date(s.date); return sd.getFullYear() === ay && sd.getMonth() === am; });
+    const mTemps     = temperatures.filter(t => t.date?.startsWith(amp) && !t.isPenalty && parseInt(t.temp ?? 0) > 0);
+    const avg        = mTemps.length ? Math.round(mTemps.reduce((s, t) => s + parseInt(t.temp), 0) / mTemps.length) : null;
 
-  let syncDays = 0;
-  for (let day = 1; day <= daysInPeriod; day++) {
-    const iso = `${ay}-${String(am+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const hj = temperatures.some(t => t.date === iso && t.author === '지수' && !t.isPenalty);
-    const hh = temperatures.some(t => t.date === iso && t.author === '현하' && !t.isPenalty);
-    if (hj && hh) syncDays++;
-  }
-  const syncRate = daysInPeriod > 0 ? Math.round((syncDays / daysInPeriod) * 100) : 0;
+    let syncDays = 0;
+    for (let day = 1; day <= daysInPeriod; day++) {
+      const iso = `${ay}-${String(am+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const hj = temperatures.some(t => t.date === iso && t.author === '지수' && !t.isPenalty);
+      const hh = temperatures.some(t => t.date === iso && t.author === '현하' && !t.isPenalty);
+      if (hj && hh) syncDays++;
+    }
+    const rate = daysInPeriod > 0 ? Math.round((syncDays / daysInPeriod) * 100) : 0;
 
-  const selectedDateSchedules = schedules
+    return { monthSchedules: mSchedules, avgTemp: avg, syncRate: rate };
+  }, [activeMonth, schedules, temperatures]);
+
+  const selectedDateSchedules = useMemo(() => schedules
     .filter(s => s.date === (date instanceof Date ? date.toDateString() : date))
     .sort((a, b) => {
       if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
       if (a.startTime) return -1; if (b.startTime) return 1; return 0;
-    });
+    }), [schedules, date]);
 
   const flipVariants = {
     initial: (dir) => ({ rotateY: dir * 90, opacity: 0 }),
