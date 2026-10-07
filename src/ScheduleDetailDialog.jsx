@@ -128,7 +128,6 @@ export default function ScheduleDetailDialog({
   open, onClose, date, selectedSchedules,
   newPlan, setNewPlan, category, setCategory,
   isImportant, setIsImportant,
-  startTime, setStartTime, endTime, setEndTime,
   memo, setMemo, location, setLocation,
   participants, setParticipants,
   editTarget, onAdd, onEdit, onStartEdit, onCancelEdit, onDelete,

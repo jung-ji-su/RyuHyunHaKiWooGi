@@ -168,7 +168,6 @@ const LetterCard = ({ letter, currentUser }) => {
         writer: currentUser,
         type: "letter_reply",
         content: `${currentUser}님이 편지에 답장했어요! 💌`,
-        targetId: letter.id,
         createdAt: serverTimestamp(),
         isRead: false,
       });
@@ -416,7 +415,6 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
         writer: currentUser,
         type: "letter",
         content: `${isAnonymous ? "누군가" : currentUser}가 몰래 편지를 보냈어요! 💌`,
-        targetId: ref.id,
         createdAt: serverTimestamp(),
         isRead: false,
       });

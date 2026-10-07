@@ -6,6 +6,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { vibrate } from './touchEffects';
 import { glass, glassBorderSx, getWriterBadge, writerBadgeBg, calendarColor } from './lib/calendarTokens';
 import { alpha, B } from './lib/constants';
+import { toIso } from './lib/date';
 
 // 캘린더 그리드 dot(calendarColor.category)과 같은 색을 쓰도록 값만 맞춤 — ScheduleDetailDialog와 동일 패턴
 const CATEGORY_COLORS  = {
@@ -24,10 +25,6 @@ function getTempMeta(v) {
   if (v < 60)  return { emoji: '😊', label: '보통이에요', color: '#EF9F27' };
   if (v < 80)  return { emoji: '😄', label: '좋아요!',   color: '#7B4FA6' };
   return        { emoji: '🥰', label: '최고예요!',       color: '#E8630A' };
-}
-
-function toIso(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 // index.css의 glass 토큰(라이트/다크 레시피 둘 다 이미 정의됨)을 그대로 가져다 쓴다 —

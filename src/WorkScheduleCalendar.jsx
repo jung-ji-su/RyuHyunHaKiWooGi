@@ -14,6 +14,7 @@ import {
   alpha, calendarColor as C, calendarFont as F, TOUCH_MIN,
   glass, glassSmallSx,
 } from './lib/calendarTokens';
+import { toIso } from './lib/date';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const COUPLE_ID = 'jisu_hyunha';
@@ -32,10 +33,6 @@ const HOLIDAYS = [
   '2026-08-15','2026-09-24','2026-09-25','2026-09-26',
   '2026-10-03','2026-10-09','2026-12-25',
 ];
-
-function toIso(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
 
 function isSameDay(a, b) {
   return a.getFullYear() === b.getFullYear()

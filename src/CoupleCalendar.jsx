@@ -29,6 +29,7 @@ import {
   glassPanelSx, glassBorderSx, glassSmallSx,
 } from "./lib/calendarTokens";
 import { alpha, B } from "./lib/constants";
+import { toIso } from "./lib/date";
 
 // 리퀴드 글래스 카드 — CoupleCalendar 앞/뒷면(근무 스케줄) 공용, 화면당 backdrop-filter 패널은 이거 하나뿐.
 const CARD_SX = {
@@ -36,10 +37,6 @@ const CARD_SX = {
   p: '14px 10px 16px', boxSizing: 'border-box',
   '&::before': glassBorderSx(),
 };
-
-function toIso(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
 
 function getRecapMessage(syncRate, avgTemp, scheduleCount) {
   if (syncRate >= 80) return `💑 싱크율 ${syncRate}%! 완벽한 한 달이에요 🎉`;
@@ -73,8 +70,6 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
   const [newPlan,      setNewPlan]      = useState('');
   const [category,     setCategory]     = useState('데이트');
   const [isImportant,  setIsImportant]  = useState(false);
-  const [startTime,    setStartTime]    = useState('');
-  const [endTime,      setEndTime]      = useState('');
   const [memo,         setMemo]         = useState('');
   const [location,     setLocation]     = useState('');
   const [participants, setParticipants] = useState('둘다');
@@ -82,7 +77,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
 
   const resetForm = () => {
     setNewPlan(''); setCategory('데이트'); setIsImportant(false);
-    setStartTime(''); setEndTime(''); setMemo('');
+    setMemo('');
     setLocation(''); setParticipants('둘다'); setEditTarget(null);
   };
 
@@ -122,14 +117,14 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
       await Promise.all(targets.map(dateStr =>
         addDoc(collection(db, 'schedules'), {
           title: newPlan, category, isImportant,
-          startTime, endTime, memo, location, participants,
+          memo, location, participants,
           date: dateStr, dateIso: toIso(new Date(dateStr)), // [수정] date는 toDateString이라 정렬 불가 — ISO 정렬용 필드 병행 저장
           createdAt: serverTimestamp(), writer: currentUser,
         })
       ));
       await addDoc(collection(db, 'notifications'), {
         writer: currentUser, type: 'schedule',
-        count: targets.length, firstDate: targets[0],
+        count: targets.length,
         content: targets.length === 1
           ? `${currentUser}가 ${new Date(targets[0]).getMonth()+1}월 ${new Date(targets[0]).getDate()}일 일정을 등록했어요! 📅`
           : `${currentUser}가 ${new Date(targets[0]).getMonth()+1}월 ${new Date(targets[0]).getDate()}일 외 ${targets.length-1}개 일정을 등록했어요! 📅`,
@@ -147,7 +142,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
     try {
       await updateDoc(doc(db, 'schedules', editTarget), {
         title: newPlan, category, isImportant,
-        startTime, endTime, memo, location, participants,
+        memo, location, participants,
       });
       resetForm();
     } catch (e) { console.error(e); }
@@ -156,8 +151,7 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
   const handleStartEdit = (s) => {
     setEditTarget(s.id);
     setNewPlan(s.title || ''); setCategory(s.category || '데이트');
-    setIsImportant(s.isImportant || false); setStartTime(s.startTime || '');
-    setEndTime(s.endTime || ''); setMemo(s.memo || '');
+    setIsImportant(s.isImportant || false); setMemo(s.memo || '');
     setLocation(s.location || ''); setParticipants(s.participants || '둘다');
   };
 
@@ -211,11 +205,8 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
   }, [activeMonth, schedules, temperatures]);
 
   const selectedDateSchedules = useMemo(() => schedules
-    .filter(s => s.date === (date instanceof Date ? date.toDateString() : date))
-    .sort((a, b) => {
-      if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
-      if (a.startTime) return -1; if (b.startTime) return 1; return 0;
-    }), [schedules, date]);
+    .filter(s => s.date === (date instanceof Date ? date.toDateString() : date)),
+    [schedules, date]);
 
   const flipVariants = {
     initial: (dir) => ({ rotateY: dir * 90, opacity: 0 }),
@@ -407,8 +398,6 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
         newPlan={newPlan}           setNewPlan={setNewPlan}
         category={category}         setCategory={setCategory}
         isImportant={isImportant}   setIsImportant={setIsImportant}
-        startTime={startTime}       setStartTime={setStartTime}
-        endTime={endTime}           setEndTime={setEndTime}
         memo={memo}                 setMemo={setMemo}
         location={location}         setLocation={setLocation}
         participants={participants}  setParticipants={setParticipants}

@@ -13,6 +13,7 @@ import {
   ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import confetti from "canvas-confetti";
+import { toIso as toDateStr } from "./lib/date";
 import { createBuriPang, vibrate } from "./touchEffects";
 import { recordCheckin } from "./CharacterPet";
 
@@ -38,9 +39,6 @@ function getTempMeta(v) {
   return         { emoji: "🥰", label: "최고예요!",         color: "#E8630A" };
 }
 
-function toDateStr(date) {
-  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
-}
 function getDateRange(days) {
   return Array.from({ length: days }, (_, i) => {
     const d = new Date(); d.setDate(d.getDate() - (days - 1 - i)); return toDateStr(d);

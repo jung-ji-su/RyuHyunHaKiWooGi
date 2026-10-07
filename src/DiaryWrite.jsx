@@ -42,7 +42,7 @@ const sendNotification = async (currentUser, diaryId) => {
     await addDoc(collection(db, "notifications"), {
       writer: currentUser, type: "diary",
       content: `${currentUser}가 새로운 기록을 남겼어요! 📝`,
-      targetId: diaryId, createdAt: serverTimestamp(), isRead: false,
+      createdAt: serverTimestamp(), isRead: false,
     });
   } catch (e) { console.error("알림 전송 실패:", e); }
 };

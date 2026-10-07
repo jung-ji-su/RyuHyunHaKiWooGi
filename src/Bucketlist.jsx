@@ -59,7 +59,7 @@ const BucketItem = ({ item, currentUser, index }) => {
       await addDoc(collection(db, "notifications"), {
         writer: currentUser, type: "bucket",
         content: `${currentUser}가 버킷리스트를 완료했어요! 🎉 "${item.title}"`,
-        targetId: item.id, createdAt: serverTimestamp(), isRead: false,
+        createdAt: serverTimestamp(), isRead: false,
       });
     } else {
       await updateDoc(ref, { isDone: false, doneAt: null, doneBy: null });

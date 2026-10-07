@@ -1,12 +1,9 @@
 import { useMemo } from 'react';
 import { Box, Typography, Stack, Drawer, Divider } from '@mui/material';
 import { alpha, B } from './lib/constants';
+import { toIso } from './lib/date';
 
 const EMOTION_LABELS = ['행복','신남','울음','슬픔','화남','설렘','피곤','최고'];
-
-function toIso(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
 
 function calcMaxSyncStreak(temperatures) {
   const today = new Date();

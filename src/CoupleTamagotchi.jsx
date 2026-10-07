@@ -9,6 +9,7 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { db } from './firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { alpha, B } from './lib/constants';
+import { toIso, isoAddDays, daysBetween } from './lib/date';
 
 const COUPLE_ID = 'jisu_hyunha';
 const USERS = ['지수', '현하'];
@@ -127,18 +128,6 @@ function EggWithCracks({ level, isChubby, image }) {
       )}
     </Box>
   );
-}
-
-function toIso(d = new Date()) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function isoAddDays(iso, n) {
-  const d = new Date(iso + 'T00:00:00');
-  d.setDate(d.getDate() + n);
-  return toIso(d);
-}
-function daysBetween(iso1, iso2) {
-  return Math.round((new Date(iso2+'T00:00:00') - new Date(iso1+'T00:00:00')) / 86400000);
 }
 
 function makeDefault() {

@@ -106,7 +106,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
       await addDoc(collection(db, "notifications"), {
         writer: currentUser, type: "comment",
         content: `${currentUser}: "${commentText.trim()}" 💬${dateStr ? ` (${dateStr})` : ''}`,
-        targetId: diaryId, createdAt: serverTimestamp(), isRead: false,
+        createdAt: serverTimestamp(), isRead: false,
       });
       setCommentInputs(prev => ({ ...prev, [diaryId]: "" }));
     } catch (e) { console.error("댓글 저장 실패:", e); }
@@ -411,7 +411,7 @@ const DiaryCard = memo(({ item, index = 0, currentUser, commentText, setCommentI
           await addDoc(collection(db, "notifications"), {
             writer: currentUser, type: "like",
             content: `${currentUser}가 기록에 좋아요를 눌렀어요! ❤️`,
-            targetId: item.id, createdAt: serverTimestamp(), isRead: false,
+            createdAt: serverTimestamp(), isRead: false,
           });
         }
       }

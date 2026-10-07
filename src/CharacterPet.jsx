@@ -19,6 +19,7 @@ import catGrumpy from './assets/KakaoTalk_20260518_144400884.webp'; // 마른   
 import catScruff from './assets/KakaoTalk_20260518_145513803.webp'; // 해골직전 (15-29)
 import catStatue from './assets/KakaoTalk_20260518_145131598.webp'; // 해골    (0-14)
 import { alpha, B } from './lib/constants';
+import { toIso, isoAddDays as addDays } from './lib/date';
 
 const COUPLE_ID = 'jisu_hyunha';
 const USERS = ['지수', '현하'];
@@ -70,16 +71,6 @@ const HP_LOSS = 15; // 미기록 패널티
 
 function getStage(hp) {
   return STAGES.find(s => hp >= s.min) ?? STAGES[STAGES.length - 1];
-}
-
-function toIso(d) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-function addDays(isoDate, n) {
-  const d = new Date(isoDate + 'T00:00:00');
-  d.setDate(d.getDate() + n);
-  return toIso(d);
 }
 
 // ── 개인 HP 누락일 패널티 평가 ─────────────────────────────────────
