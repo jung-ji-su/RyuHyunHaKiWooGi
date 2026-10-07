@@ -2,13 +2,20 @@
   PROTOTYPE — dress-preview.html
   버리는 코드입니다. 실제 앱(src/)은 전혀 건드리지 않았습니다.
 
-  질문: "다마고치 햄찌에 코인 상점 + 커스터마이징을 붙인다면, 캐릭터를
-  픽셀 아트로 그릴지 벡터(SVG)로 그릴지?" — 두 스타일을 같은 상점/꾸미기/
-  구경하기 화면 위에서 전환해가며 비교합니다.
+  1라운드(픽셀 vs 벡터)에서 벡터로 결정됨. 이번 라운드 질문:
+  "벡터 햄스터를 더 귀엽고 디테일하게, 그리고 방향이 다른 3종 중
+  뭘로 갈지?" — 같은 상점/꾸미기/구경하기 화면 위에서 하단 바로
+  전환해가며 비교합니다.
+
+  캐릭터는 head/body/ear/cheek/eye/paw/foot 좌표를 headR(머리 반지름)
+  기준 비율로 전부 계산하는 "앵커" 시스템으로 다시 짰습니다 — 1라운드의
+  버그(상의가 얼굴을 덮음, 모자가 머리에 안 붙음)는 좌표를 하드코딩해서
+  생긴 문제라, 이번엔 전부 getAnchors()가 계산한 기준점을 슬롯 아이템이
+  참조하는 구조로 바꿨습니다.
 
   state는 전부 메모리에만 있음(새로고침하면 초기화). 저장/API/테스트 없음.
-  하단 플로팅 바: ← A(픽셀 아트) / B(벡터 SVG) → 로 스타일 전환, URL의
-  ?style= 에 반영되어 새로고침해도 유지됩니다.
+  하단 플로팅 바: ← 동글이 / 볼빵빵이 / 아기눈이 → 로 전환, URL의
+  ?variant=·?tab= 에 반영되어 새로고침해도 유지됩니다.
 -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -108,8 +115,8 @@
     position: relative; border-radius: 20px; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
     box-shadow: inset 0 0 0 1.5px rgba(123,79,166,0.12);
+    cursor: pointer;
   }
-  .stage-box canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
   .fx-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
   .fx-item { position: absolute; bottom: 8%; font-size: 1rem; opacity: 0; animation: fxFloat 2.2s ease-in infinite; }
   @keyframes fxFloat {
@@ -124,8 +131,6 @@
     border-radius: 999px 999px 0 0;
     border: 6px solid transparent;
     border-top-color: #FF6B9D;
-    box-shadow:
-      0 0 0 6px transparent;
     background:
       conic-gradient(from 180deg at 50% 100%,
         #FF6B6B 0deg 51deg, #FFD93D 51deg 102deg, #6BCB77 102deg 153deg,
@@ -133,6 +138,39 @@
     -webkit-mask: radial-gradient(farthest-side at 50% 100%, transparent calc(100% - 7px), #000 calc(100% - 7px));
             mask: radial-gradient(farthest-side at 50% 100%, transparent calc(100% - 7px), #000 calc(100% - 7px));
     opacity: 0.9;
+  }
+
+  /* ── 캐릭터 애니메이션(살아있는 느낌) ──────────────────────────
+     transform-box: fill-box 없으면 SVG 자식 요소의 transform-origin이
+     뷰포트 기준으로 잡혀서 엉뚱한 지점을 축으로 돌아간다. */
+  .hm-eye { transform-box: fill-box; transform-origin: center; }
+  .hm-bounce-target { transform-box: fill-box; transform-origin: 50% 100%; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hm-breathe { animation: hmBreathe 3.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+    .hm-eye { animation: hmBlink 5.4s ease-in-out infinite; animation-delay: var(--blink-delay, 0s); }
+  }
+  @keyframes hmBreathe {
+    0%, 100% { transform: scaleY(1); }
+    50%      { transform: scaleY(1.018) translateY(-0.4%); }
+  }
+  @keyframes hmBlink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95%           { transform: scaleY(0.12); }
+  }
+  .hm-tap-jump { animation: hmTapJump 0.55s cubic-bezier(.34,1.56,.64,1) 1; }
+  @keyframes hmTapJump {
+    0%   { transform: scale(1,1) translateY(0) rotate(0deg); }
+    30%  { transform: scale(1.06,0.9) translateY(2%) rotate(0deg); }
+    60%  { transform: scale(0.95,1.08) translateY(-10%) rotate(-4deg); }
+    80%  { transform: scale(1.02,0.97) translateY(2%) rotate(3deg); }
+    100% { transform: scale(1,1) translateY(0) rotate(0deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hm-tap-jump { animation: hmTapTiny 0.25s ease-out 1; }
+  }
+  @keyframes hmTapTiny {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); }
   }
 
   /* ── 상점 ────────────────────────────────────────────────────── */
@@ -186,7 +224,8 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
 
   /* ── 꾸미기 ──────────────────────────────────────────────────── */
-  .dress-preview-wrap { display: flex; justify-content: center; padding: 6px 0 14px; }
+  .dress-preview-wrap { display: flex; justify-content: center; padding: 6px 0 10px; }
+  .tap-hint { text-align: center; font-size: 0.64rem; color: #B7ABC4; font-family: 'Noto Sans KR', sans-serif; margin-bottom: 10px; }
   .slot-tabs { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 10px; }
   .slot-tabs::-webkit-scrollbar { display: none; }
   .slot-tab {
@@ -222,6 +261,12 @@
   .color-dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; }
   .color-dot.selected { border-color: var(--c-dark); }
 
+  .fur-demo {
+    margin: 10px 0 2px; padding: 10px 12px; border-radius: 14px;
+    background: #fff; border: 1.5px solid rgba(123,79,166,0.14);
+  }
+  .fur-demo .ttl { font-size: 0.68rem; font-weight: 700; color: var(--c-pants); font-family: 'Noto Sans KR', sans-serif; margin-bottom: 6px; }
+
   /* ── 구경하기 ────────────────────────────────────────────────── */
   .compare-wrap { display: flex; gap: 10px; padding-top: 4px; }
   .compare-card { flex: 1; background: #fff; border-radius: 18px; padding: 12px 8px; box-shadow: 0 4px 16px rgba(123,79,166,0.12); text-align: center; }
@@ -233,7 +278,7 @@
     font-size: 0.68rem; color: #8A7B9B; font-family: 'Noto Sans KR', sans-serif; line-height: 1.6;
   }
 
-  /* ── 하단 스타일 전환 플로팅 바 (프로토타입 전용 — 실제 UI 아님) ── */
+  /* ── 하단 변형 전환 플로팅 바 (프로토타입 전용 — 실제 UI 아님) ── */
   .switcher {
     position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
     z-index: 550; display: flex; align-items: center; gap: 10px;
@@ -244,9 +289,10 @@
   .switcher button {
     border: none; background: #2A2338; color: #fff; width: 30px; height: 30px; border-radius: 50%;
     font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
   .switcher button:active { transform: scale(0.9); }
-  .switcher .label { font-size: 0.78rem; font-weight: 700; min-width: 128px; text-align: center; }
+  .switcher .label { font-size: 0.78rem; font-weight: 700; min-width: 108px; text-align: center; }
   .switcher .label small { display: block; font-size: 0.6rem; font-weight: 400; opacity: 0.65; margin-top: 1px; }
 </style>
 </head>
@@ -260,7 +306,7 @@
     <div class="topbar">
       <div class="title">🐹 햄찌 꾸미기</div>
       <div style="display:flex; align-items:center; gap:6px;">
-        <span class="style-chip" id="styleChip">A · 픽셀</span>
+        <span class="style-chip" id="styleChip">동글이</span>
         <span class="coin-pill">🪙 <span id="coinLabel">0</span></span>
       </div>
     </div>
@@ -276,9 +322,9 @@
 </div>
 
 <div class="switcher">
-  <button id="prevStyle" aria-label="이전 스타일">←</button>
-  <div class="label" id="switcherLabel">A<small>픽셀 아트</small></div>
-  <button id="nextStyle" aria-label="다음 스타일">→</button>
+  <button id="prevStyle" aria-label="이전 변형">←</button>
+  <div class="label" id="switcherLabel">동글이<small>기본형</small></div>
+  <button id="nextStyle" aria-label="다음 변형">→</button>
 </div>
 
 <script>
@@ -333,144 +379,38 @@ const byId = id => ITEMS.find(i => i.id === id);
 const itemsOf = slot => ITEMS.filter(i => i.slot === slot);
 
 const TOPCOLORS = ['#EDE0F5', '#FFE4D4', '#C9E8D4', '#FFD1DC'];
+const FURCOLORS = [null, '#F3DDBB', '#E8C4A0', '#D9A066', '#F5E6C8', '#8A6652'];
 
 const STATE = {
   coins: 165,
   owned: new Set(['hat_cap', 'sh_blue', 'top_tee', 'bot_shorts', 'gl_round']),
   equipped: { hat:'hat_cap', glasses:null, gloves:null, shoes:'sh_blue', top:'top_tee', bottom:'bot_shorts', bg:null, effect:null },
   topColor: TOPCOLORS[0],
+  furColor: null, // null = 변형 기본 털색
   tab: 'dress',
-  style: 'pixel',
+  variant: 'round',
   shopFilter: 'all',
   dressSlot: 'hat',
 };
 
-/* URL(?style=&tab=) 복원 — skill의 ?variant= 관례를 style/tab 두 축으로 적용 */
+/* URL(?variant=&tab=) 복원 — skill의 ?variant= 관례 그대로 적용 */
 (function restoreFromURL(){
   const p = new URLSearchParams(location.search);
-  if (p.get('style') === 'vector') STATE.style = 'vector';
+  if (['round','chubby','baby'].includes(p.get('variant'))) STATE.variant = p.get('variant');
   if (['shop','dress','compare'].includes(p.get('tab'))) STATE.tab = p.get('tab');
 })();
 function syncURL() {
   const p = new URLSearchParams(location.search);
-  p.set('style', STATE.style);
+  p.set('variant', STATE.variant);
   p.set('tab', STATE.tab);
   history.replaceState(null, '', '?' + p.toString());
 }
 
 /* ============================================================
-   캐릭터 렌더러 A — 픽셀 아트 (canvas, 40×40 논리 픽셀을 CSS로 확대)
-   색 변형이 필요하면 전용 스프라이트(draw 함수)를 새로 만들어야 한다.
-   ============================================================ */
-const GRID = 40;
-
-function pixEllipseRow(ctx, cx, cy, rx, ry, yTop, yBot, color) {
-  ctx.fillStyle = color;
-  for (let y = Math.max(0, yTop); y <= Math.min(GRID - 1, yBot); y++) {
-    const t = (y - cy) / ry;
-    if (Math.abs(t) > 1) continue;
-    const dx = rx * Math.sqrt(1 - t * t);
-    const x0 = Math.round(cx - dx), x1 = Math.round(cx + dx);
-    ctx.fillRect(x0, y, Math.max(1, x1 - x0), 1);
-  }
-}
-
-function drawPixelHamster(canvas, eq) {
-  const ctx = canvas.getContext('2d');
-  ctx.imageSmoothingEnabled = false;
-  ctx.clearRect(0, 0, GRID, GRID);
-
-  // 배경
-  const bg = eq.bg && byId(eq.bg);
-  if (bg) {
-    if (bg.id === 'bg_night') {
-      ctx.fillStyle = bg.color; ctx.fillRect(0, 0, GRID, GRID);
-      ctx.fillStyle = '#ffffff';
-      [[5,6],[34,9],[9,25],[31,30],[3,33],[36,20],[18,4]].forEach(([x,y]) => ctx.fillRect(x, y, 1, 1));
-    } else {
-      // 픽셀 아트식 "가짜 그라디언트" — 3단 밴딩(진짜 그라디언트는 벡터 쪽 참고)
-      const bands = [bg.color, bg.color, bg.color2 || '#fff', bg.color2 || '#fff'];
-      bands.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 10, GRID, 10); });
-    }
-  } else {
-    ctx.fillStyle = '#FFF8F2'; ctx.fillRect(0, 0, GRID, GRID);
-  }
-
-  const fur = '#F3DDBB', furDark = '#E6C89A';
-
-  // 귀
-  pixEllipseRow(ctx, 13, 11, 4, 4, 7, 15, fur);
-  pixEllipseRow(ctx, 27, 11, 4, 4, 7, 15, fur);
-  pixEllipseRow(ctx, 13, 11, 2, 2, 9, 13, '#FFC9D6');
-  pixEllipseRow(ctx, 27, 11, 2, 2, 9, 13, '#FFC9D6');
-
-  // 몸통(머리+배 하나로 이어진 블롭)
-  pixEllipseRow(ctx, 20, 24, 14, 15, 10, 38, fur);
-  // 하단 그림자
-  pixEllipseRow(ctx, 20, 36, 11, 4, 34, 38, furDark);
-
-  // 팔(장갑 자리)
-  pixEllipseRow(ctx, 7, 27, 3, 4, 24, 30, fur);
-  pixEllipseRow(ctx, 33, 27, 3, 4, 24, 30, fur);
-
-  // 바지
-  const bottom = eq.bottom && byId(eq.bottom);
-  if (bottom) pixEllipseRow(ctx, 20, 31, 13, 8, 28, 37, bottom.color);
-
-  // 상의
-  const top = eq.top && byId(eq.top);
-  if (top) {
-    const c = (top.colorable && eq.topColor) ? eq.topColor : top.color;
-    pixEllipseRow(ctx, 20, 23, 13.5, 8, 18, 27, c);
-  }
-
-  // 볼터치 + 코
-  ctx.fillStyle = '#FFB3C1';
-  ctx.fillRect(12, 23, 3, 3); ctx.fillRect(25, 23, 3, 3);
-  ctx.fillStyle = '#3D1F00';
-  ctx.fillRect(15, 20, 2, 2); ctx.fillRect(23, 20, 2, 2);
-  ctx.fillStyle = '#E8630A';
-  ctx.fillRect(19, 23, 2, 2);
-
-  // 신발
-  const shoes = eq.shoes && byId(eq.shoes);
-  if (shoes) { ctx.fillStyle = shoes.color; ctx.fillRect(13, 36, 5, 3); ctx.fillRect(22, 36, 5, 3); }
-
-  // 장갑
-  const gloves = eq.gloves && byId(eq.gloves);
-  if (gloves) { ctx.fillStyle = gloves.color; ctx.fillRect(5, 27, 5, 5); ctx.fillRect(30, 27, 5, 5); }
-
-  // 선글라스
-  const glasses = eq.glasses && byId(eq.glasses);
-  if (glasses) {
-    ctx.fillStyle = glasses.color;
-    ctx.fillRect(13, 19, 5, 4); ctx.fillRect(22, 19, 5, 4); ctx.fillRect(18, 20, 4, 1);
-  }
-
-  // 모자
-  const hat = eq.hat && byId(eq.hat);
-  if (hat) {
-    if (hat.id === 'hat_cap') {
-      ctx.fillStyle = hat.color; ctx.fillRect(13, 7, 14, 5);
-      ctx.fillRect(13, 6, 8, 1); // 살짝 둥근 윗모서리
-      ctx.fillStyle = hat.accent; ctx.fillRect(25, 10, 4, 2); // 챙
-    } else if (hat.id === 'hat_crown') {
-      ctx.fillStyle = hat.color;
-      ctx.fillRect(12, 9, 16, 4);
-      [13,18,23].forEach(x => ctx.fillRect(x, 4, 4, 6));
-      ctx.fillStyle = hat.accent; ctx.fillRect(18, 10, 4, 2);
-    } else if (hat.id === 'hat_ribbon') {
-      ctx.fillStyle = hat.color; ctx.fillRect(13, 9, 14, 3);
-      ctx.fillStyle = hat.accent;
-      ctx.fillRect(15, 7, 4, 4);        // 왼쪽 리본 날개
-      ctx.fillRect(21, 7, 4, 4);        // 오른쪽 리본 날개
-      ctx.fillRect(19, 8, 2, 3);        // 가운데 매듭
-    }
-  }
-}
-
-/* ============================================================
-   캐릭터 렌더러 B — 벡터(SVG). 색은 fill 속성 하나만 바꾸면 끝.
+   햄스터 — 벡터(SVG), 3가지 귀여움 방향 변형.
+   모든 아이템은 getAnchors()가 계산한 기준점(머리/볼/눈/귀/앞발/뒷발)을
+   참조한다 — headR(머리 반지름)에 대한 비율로 전부 계산해서, 변형마다
+   머리 크기가 달라도 모자·안경·장갑·신발이 항상 제자리에 붙는다.
    ============================================================ */
 const SVG_NS = 'http://www.w3.org/2000/svg';
 function svgEl(tag, attrs) {
@@ -478,19 +418,79 @@ function svgEl(tag, attrs) {
   for (const k in attrs) el.setAttribute(k, attrs[k]);
   return el;
 }
+function shade(hex, pct) {
+  // pct>0: 밝게, pct<0: 어둡게. 털색 파라미터(STATE.furColor)로부터
+  // 배/하이라이트/그림자 톤을 자동으로 유도할 때 씀.
+  const n = parseInt(hex.slice(1), 16);
+  let r = (n>>16)&255, g=(n>>8)&255, b=n&255;
+  const t = pct < 0 ? 0 : 255, p = Math.abs(pct)/100;
+  r = Math.round((t-r)*p)+r; g = Math.round((t-g)*p)+g; b = Math.round((t-b)*p)+b;
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+}
+function starPoints(cx, cy, rOuter, rInner, n) {
+  const pts = [];
+  for (let i = 0; i < n * 2; i++) {
+    const r = i % 2 === 0 ? rOuter : rInner;
+    const a = (Math.PI / n) * i - Math.PI / 2;
+    pts.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+  }
+  return pts.join(' ');
+}
 
-function buildVectorHamster(eq) {
+// ── 3종 변형 설정 — 이 몇 개 숫자만 바뀌고, 좌표 "공식"은 전부 공유 ──
+const VARIANT_META = {
+  round:  { label:'동글이',    sub:'기본형 · 동글동글' },
+  chubby: { label:'볼빵빵이',  sub:'볼주머니 강조' },
+  baby:   { label:'아기눈이',  sub:'눈 크고 아기자기' },
+};
+const VARIANT_SHAPE = {
+  round:  { headR:27, bodyRx:19, bodyRy:17, cheekMul:1.00, eyeMul:1.00, furBase:'#F3DDBB' },
+  chubby: { headR:26, bodyRx:18, bodyRy:16, cheekMul:1.45, eyeMul:0.82, furBase:'#F0D4A8' },
+  baby:   { headR:30, bodyRx:15, bodyRy:13, cheekMul:0.78, eyeMul:1.40, furBase:'#F7E2C2' },
+};
+const VARIANTS = ['round', 'chubby', 'baby'];
+
+// ── 앵커(기준점) 계산 — 전부 headR 비율. 아이템은 이 값만 참조한다 ──
+function getAnchors(variantKey) {
+  const v = VARIANT_SHAPE[variantKey];
+  const hx = 50, hy = 36;          // 머리 중심
+  const bx = 50, by = 76;          // 몸통 중심
+  const hr = v.headR;
+  const furBase = STATE.furColor || v.furBase;
+
+  const earDx = hr * 0.80, earCy = hy - hr * 0.64, earRad = hr * 0.40;
+  const cheekDx = hr * 0.88, cheekCy = hy + hr * 0.33, cheekRad = hr * 0.30 * v.cheekMul;
+  const eyeDx = hr * 0.40, eyeCy = hy + hr * 0.04, eyeRad = hr * 0.17 * v.eyeMul;
+
+  return {
+    v, hx, hy, hr, bx, by,
+    bodyRx: v.bodyRx, bodyRy: v.bodyRy,
+    bodyTop: by - v.bodyRy, bodyBottom: by + v.bodyRy,
+    ear:   { rad: earRad,   l:{cx:hx-earDx, cy:earCy},   r:{cx:hx+earDx, cy:earCy} },
+    cheek: { rad: cheekRad, l:{cx:hx-cheekDx, cy:cheekCy}, r:{cx:hx+cheekDx, cy:cheekCy} },
+    eye:   { rad: eyeRad,   l:{cx:hx-eyeDx, cy:eyeCy},   r:{cx:hx+eyeDx, cy:eyeCy} },
+    noseY: hy + hr*0.47, mouthY: hy + hr*0.58,
+    paw:  { l:{cx:bx - v.bodyRx*0.62, cy:by - v.bodyRy*0.86}, r:{cx:bx + v.bodyRx*0.62, cy:by - v.bodyRy*0.86} },
+    foot: { l:{cx:bx - v.bodyRx*0.55, cy:by + v.bodyRy*0.92}, r:{cx:bx + v.bodyRx*0.55, cy:by + v.bodyRy*0.92} },
+    tail: { cx:bx + v.bodyRx*0.96, cy:by - v.bodyRy*0.05 },
+    furBase, furLight: shade(furBase, 22), furDark: shade(furBase, -14),
+    belly: shade(furBase, 46),
+  };
+}
+
+let uidCounter = 0;
+
+function buildVectorHamster(eq, variantKey) {
+  const uid = 'u' + (uidCounter++);
+  const a = getAnchors(variantKey);
   const svg = svgEl('svg', { viewBox: '0 0 100 100', width: '100%', height: '100%' });
-
-  // defs는 배경 유무와 상관없이 항상 먼저 달아둔다 — 몸통 clipPath(아래)가
-  // 여기 들어가는데, defs 자체가 문서에 안 붙어있으면 url(#...) 참조가
-  // 전부 조용히 실패해서(특히 배경 "없음"일 때) 옷이 몸 모양을 안 따라가고
-  // 네모로 보이는 버그가 있었음.
   const defs = svgEl('defs', {});
-  svg.appendChild(defs);
+  svg.appendChild(defs); // 배경 유무와 무관하게 항상 먼저 — url(#...) 참조가 전부 여기로 간다
+
+  // ── 배경 ──
   const bg = eq.bg && byId(eq.bg);
   if (bg && bg.id !== 'bg_night') {
-    const gradId = 'g_' + bg.id;
+    const gradId = 'bg' + uid;
     const grad = svgEl('linearGradient', { id: gradId, x1:'0', y1:'0', x2:'0', y2:'1' });
     grad.appendChild(svgEl('stop', { offset:'0%', 'stop-color': bg.color }));
     grad.appendChild(svgEl('stop', { offset:'100%', 'stop-color': bg.color2 || '#fff' }));
@@ -505,124 +505,175 @@ function buildVectorHamster(eq) {
     svg.appendChild(svgEl('rect', { x:0, y:0, width:100, height:100, fill:'#FFF8F2' }));
   }
 
-  const fur = '#F3DDBB', furDark = '#E6C89A';
-  const g = svgEl('g', {});
+  // 바닥 그림자 — 숨쉬기 그룹 밖(캐릭터가 들썩여도 그림자는 고정)
+  svg.appendChild(svgEl('ellipse', { cx:50, cy:97, rx:a.bodyRx*1.3, ry:3.2, fill:'rgba(61,31,0,0.10)' }));
 
-  // 그림자
-  g.appendChild(svgEl('ellipse', { cx:50, cy:90, rx:27, ry:4, fill:'rgba(61,31,0,0.08)' }));
+  // 몸통/얼굴 전체를 담는 "숨쉬기" 그룹, 그 안에 탭 반응 그룹을 중첩
+  const breatheG = svgEl('g', { class:'hm-breathe' });
+  breatheG.style.setProperty('--blink-delay', (Math.random()*2).toFixed(2) + 's');
+  const g = svgEl('g', { class:'hm-bounce-target', 'data-tap-target':'1' });
+  breatheG.appendChild(g);
+  svg.appendChild(breatheG);
 
-  // 귀
-  g.appendChild(svgEl('ellipse', { cx:32, cy:28, rx:10, ry:10, fill:fur }));
-  g.appendChild(svgEl('ellipse', { cx:68, cy:28, rx:10, ry:10, fill:fur }));
-  g.appendChild(svgEl('ellipse', { cx:32, cy:28, rx:5, ry:5, fill:'#FFC9D6' }));
-  g.appendChild(svgEl('ellipse', { cx:68, cy:28, rx:5, ry:5, fill:'#FFC9D6' }));
+  // 입체감용 그라디언트 (몸통/머리 공용)
+  const bodyGradId = 'bgrad' + uid;
+  const bodyGrad = svgEl('radialGradient', { id:bodyGradId, cx:'38%', cy:'30%', r:'75%' });
+  bodyGrad.appendChild(svgEl('stop', { offset:'0%', 'stop-color': a.furLight }));
+  bodyGrad.appendChild(svgEl('stop', { offset:'65%', 'stop-color': a.furBase }));
+  bodyGrad.appendChild(svgEl('stop', { offset:'100%', 'stop-color': a.furDark }));
+  defs.appendChild(bodyGrad);
+  const furFill = `url(#${bodyGradId})`;
 
-  // 팔
-  g.appendChild(svgEl('ellipse', { cx:18, cy:66, rx:7, ry:9, fill:fur }));
-  g.appendChild(svgEl('ellipse', { cx:82, cy:66, rx:7, ry:9, fill:fur }));
+  // ── 꼬리 (몸통보다 먼저 — 뒤로 살짝 보이게) ──
+  g.appendChild(svgEl('ellipse', { cx:a.tail.cx, cy:a.tail.cy, rx:a.hr*0.14, ry:a.hr*0.11, fill:a.furLight }));
 
-  // 몸통
-  const bodyClipId = 'bodyClip';
+  // ── 뒷발 (짧게, 몸통 아래서 살짝 나옴) ──
+  [a.foot.l, a.foot.r].forEach(p => {
+    g.appendChild(svgEl('ellipse', { cx:p.cx, cy:p.cy, rx:a.hr*0.26, ry:a.hr*0.16, fill:a.furDark }));
+  });
+
+  // ── 몸통 + 배(밝은 털) ──
+  const bodyClipId = 'body' + uid;
   defs.appendChild(svgEl('clipPath', { id: bodyClipId })).appendChild(
-    svgEl('ellipse', { cx:50, cy:62, rx:33, ry:34 })
+    svgEl('ellipse', { cx:a.bx, cy:a.by, rx:a.bodyRx, ry:a.bodyRy })
   );
-  g.appendChild(svgEl('ellipse', { cx:50, cy:62, rx:33, ry:34, fill:fur }));
-  g.appendChild(svgEl('ellipse', { cx:50, cy:90, rx:26, ry:9, fill:furDark, 'clip-path':`url(#${bodyClipId})` }));
+  g.appendChild(svgEl('ellipse', { cx:a.bx, cy:a.by, rx:a.bodyRx, ry:a.bodyRy, fill:furFill }));
+  g.appendChild(svgEl('ellipse', { cx:a.bx, cy:a.by + a.bodyRy*0.22, rx:a.bodyRx*0.62, ry:a.bodyRy*0.62, fill:a.belly, opacity:0.9 }));
 
-  // 바지 (몸 clipPath로 깔끔하게 잘림)
+  // ── 바지(하의) → 티셔츠(상의) 순, 둘 다 몸통 모양으로 클립 ──
   const bottom = eq.bottom && byId(eq.bottom);
-  if (bottom) g.appendChild(svgEl('rect', { x:8, y:78, width:84, height:20, fill: bottom.color, 'clip-path':`url(#${bodyClipId})` }));
-
-  // 상의
+  if (bottom) g.appendChild(svgEl('rect', { x:a.bx-a.bodyRx, y:a.by, width:a.bodyRx*2, height:a.bodyRy*1.3, fill: bottom.color, 'clip-path':`url(#${bodyClipId})` }));
   const top = eq.top && byId(eq.top);
   if (top) {
     const c = (top.colorable && eq.topColor) ? eq.topColor : top.color;
-    g.appendChild(svgEl('rect', { x:8, y:54, width:84, height:26, rx:4, fill:c, 'clip-path':`url(#${bodyClipId})` }));
+    g.appendChild(svgEl('rect', { x:a.bx-a.bodyRx, y:a.bodyTop-2, width:a.bodyRx*2, height:a.by-a.bodyTop+2, rx:a.hr*0.15, fill:c, 'clip-path':`url(#${bodyClipId})` }));
   }
 
-  // 볼터치 + 눈 + 코
-  g.appendChild(svgEl('circle', { cx:33, cy:60, r:5, fill:'#FFB3C1', opacity:0.85 }));
-  g.appendChild(svgEl('circle', { cx:67, cy:60, r:5, fill:'#FFB3C1', opacity:0.85 }));
-  g.appendChild(svgEl('circle', { cx:40, cy:54, r:3, fill:'#3D1F00' }));
-  g.appendChild(svgEl('circle', { cx:60, cy:54, r:3, fill:'#3D1F00' }));
-  g.appendChild(svgEl('ellipse', { cx:50, cy:61, rx:3.2, ry:2.4, fill:'#E8630A' }));
+  // ── 귀(뒷부분 — 머리가 나중에 덮어서 밑동이 자연스럽게 가려짐) ──
+  [a.ear.l, a.ear.r].forEach(p => {
+    g.appendChild(svgEl('ellipse', { cx:p.cx, cy:p.cy, rx:a.ear.rad, ry:a.ear.rad*1.08, fill:a.furBase }));
+    g.appendChild(svgEl('ellipse', { cx:p.cx, cy:p.cy, rx:a.ear.rad*0.52, ry:a.ear.rad*0.58, fill:'#FFC9D6' }));
+  });
 
-  // 신발
-  const shoes = eq.shoes && byId(eq.shoes);
-  if (shoes) {
-    g.appendChild(svgEl('ellipse', { cx:36, cy:94, rx:9, ry:5, fill:shoes.color }));
-    g.appendChild(svgEl('ellipse', { cx:64, cy:94, rx:9, ry:5, fill:shoes.color }));
-  }
+  // ── 머리 (몸통/옷/귀밑동을 전부 위에서 덮어써서, "상의가 얼굴을 덮는"
+  //     문제가 좌표를 아무리 틀어도 구조적으로 재발하지 않게 함) ──
+  g.appendChild(svgEl('ellipse', { cx:a.hx, cy:a.hy, rx:a.hr, ry:a.hr*0.96, fill:furFill }));
 
-  // 장갑
-  const gloves = eq.gloves && byId(eq.gloves);
-  if (gloves) {
-    g.appendChild(svgEl('circle', { cx:16, cy:74, r:7.5, fill:gloves.color }));
-    g.appendChild(svgEl('circle', { cx:84, cy:74, r:7.5, fill:gloves.color }));
-  }
+  // ── 볼주머니(햄스터의 상징) — 머리 위, 눈보다 아래 ──
+  [a.cheek.l, a.cheek.r].forEach(p => {
+    g.appendChild(svgEl('ellipse', { cx:p.cx, cy:p.cy, rx:a.cheek.rad, ry:a.cheek.rad*0.92, fill:a.furLight }));
+  });
+  // 볼터치(블러셔) — 볼주머니 위, 살짝 바깥쪽
+  [a.cheek.l, a.cheek.r].forEach(p => {
+    g.appendChild(svgEl('circle', { cx:p.cx, cy:p.cy+a.cheek.rad*0.1, r:a.cheek.rad*0.52, fill:'#FFB3C1', opacity:0.55 }));
+  });
 
-  // 선글라스
+  // ── 눈 (깜빡임 애니메이션 대상) + 하이라이트 ──
+  [a.eye.l, a.eye.r].forEach(p => {
+    const eyeG = svgEl('g', { class:'hm-eye' });
+    eyeG.appendChild(svgEl('circle', { cx:p.cx, cy:p.cy, r:a.eye.rad, fill:'#3D1F00' }));
+    eyeG.appendChild(svgEl('circle', { cx:p.cx - a.eye.rad*0.32, cy:p.cy - a.eye.rad*0.38, r:a.eye.rad*0.34, fill:'#ffffff' }));
+    eyeG.appendChild(svgEl('circle', { cx:p.cx + a.eye.rad*0.28, cy:p.cy + a.eye.rad*0.30, r:a.eye.rad*0.16, fill:'#ffffff', opacity:0.75 }));
+    g.appendChild(eyeG);
+  });
+
+  // ── 코 + 입(ω) + 수염 ──
+  g.appendChild(svgEl('ellipse', { cx:a.hx, cy:a.noseY, rx:a.hr*0.11, ry:a.hr*0.08, fill:'#E8630A' }));
+  g.appendChild(svgEl('path', {
+    d:`M ${a.hx-a.hr*0.09} ${a.mouthY-a.hr*0.02} Q ${a.hx-a.hr*0.05} ${a.mouthY+a.hr*0.07} ${a.hx} ${a.mouthY-a.hr*0.015} Q ${a.hx+a.hr*0.05} ${a.mouthY+a.hr*0.07} ${a.hx+a.hr*0.09} ${a.mouthY-a.hr*0.02}`,
+    fill:'none', stroke:'#3D1F00', 'stroke-width': a.hr*0.025, 'stroke-linecap':'round',
+  }));
+  [-1, 1].forEach(side => {
+    [-1, 0, 1].forEach(i => {
+      const x0 = a.hx + side*a.hr*0.16, y0 = a.noseY + i*a.hr*0.06;
+      g.appendChild(svgEl('line', {
+        x1:x0, y1:y0, x2: x0 + side*a.hr*0.30, y2: y0 + i*a.hr*0.05,
+        stroke:'#D9A066', 'stroke-width':a.hr*0.012, 'stroke-linecap':'round', opacity:0.75,
+      }));
+    });
+  });
+
+  // ── 앞발 (가슴 앞에 모은 포즈 — 머리/얼굴보다 나중에 그려서 앞으로 나옴) ──
+  [a.paw.l, a.paw.r].forEach(p => {
+    g.appendChild(svgEl('ellipse', { cx:p.cx, cy:p.cy, rx:a.hr*0.20, ry:a.hr*0.17, fill:furFill }));
+  });
+
+  // ── 슬롯 아이템 (전부 앵커 기준) ──
   const glasses = eq.glasses && byId(eq.glasses);
-  if (glasses) {
-    if (glasses.id === 'gl_heart') {
-      [40,60].forEach(cx => {
-        const p = svgEl('path', {
-          d:`M ${cx-6} 51 C ${cx-6} 47, ${cx} 47, ${cx} 51 C ${cx} 47, ${cx+6} 47, ${cx+6} 51 C ${cx+6} 55, ${cx} 58, ${cx} 58 C ${cx} 58, ${cx-6} 55, ${cx-6} 51 Z`,
-          fill: glasses.color,
-        });
-        g.appendChild(p);
-      });
-    } else if (glasses.id === 'gl_star') {
-      [40,60].forEach(cx => g.appendChild(svgEl('polygon', {
-        points: starPoints(cx, 53, 6, 2.6, 5),
-        fill: glasses.color,
-      })));
-    } else {
-      g.appendChild(svgEl('rect', { x:33, y:49, width:14, height:9, rx:4, fill:'none', stroke:glasses.color, 'stroke-width':3 }));
-      g.appendChild(svgEl('rect', { x:53, y:49, width:14, height:9, rx:4, fill:'none', stroke:glasses.color, 'stroke-width':3 }));
-      g.appendChild(svgEl('line', { x1:47, y1:53, x2:53, y2:53, stroke:glasses.color, 'stroke-width':3 }));
-    }
-  }
+  if (glasses) drawGlasses(g, glasses, a);
 
-  // 모자
   const hat = eq.hat && byId(eq.hat);
-  if (hat) {
-    if (hat.id === 'hat_cap') {
-      // 돔 전체 타원을 그리고 위쪽 절반만 보이게 사각형으로 clip —
-      // arc 스윕 플래그로 반원 그리는 것보다 훨씬 예측 가능함.
-      const capClipId = 'capClip';
-      defs.appendChild(svgEl('clipPath', { id: capClipId })).appendChild(
-        svgEl('rect', { x:15, y:6, width:70, height:16 })
-      );
-      g.appendChild(svgEl('ellipse', { cx:50, cy:22, rx:16, ry:13, fill:hat.color, 'clip-path':`url(#${capClipId})` }));
-      g.appendChild(svgEl('ellipse', { cx:63, cy:22, rx:7, ry:2.4, fill:hat.accent }));
-    } else if (hat.id === 'hat_crown') {
-      g.appendChild(svgEl('polygon', { points:'28,34 28,18 38,27 50,12 62,27 72,18 72,34', fill:hat.color }));
-      g.appendChild(svgEl('circle', { cx:50, cy:16, r:3, fill:hat.accent }));
-    } else if (hat.id === 'hat_ribbon') {
-      g.appendChild(svgEl('path', { d:'M 26 30 A 24 16 0 0 1 74 30 L 74 36 L 26 36 Z', fill:hat.color }));
-      const bow = svgEl('g', {});
-      bow.appendChild(svgEl('path', { d:'M 50 24 L 38 16 L 38 30 Z', fill:hat.accent }));
-      bow.appendChild(svgEl('path', { d:'M 50 24 L 62 16 L 62 30 Z', fill:hat.accent }));
-      bow.appendChild(svgEl('circle', { cx:50, cy:24, r:3.2, fill:hat.accent }));
-      g.appendChild(bow);
-    }
-  }
+  if (hat) drawHat(g, defs, hat, a, uid);
 
-  svg.appendChild(g);
+  const gloves = eq.gloves && byId(eq.gloves);
+  if (gloves) [a.paw.l, a.paw.r].forEach(p => g.appendChild(svgEl('circle', { cx:p.cx, cy:p.cy, r:a.hr*0.24, fill:gloves.color })));
+
+  const shoes = eq.shoes && byId(eq.shoes);
+  if (shoes) [a.foot.l, a.foot.r].forEach(p => g.appendChild(svgEl('ellipse', { cx:p.cx, cy:p.cy+a.hr*0.02, rx:a.hr*0.30, ry:a.hr*0.19, fill:shoes.color })));
+
   return svg;
 }
-function starPoints(cx, cy, rOuter, rInner, n) {
-  const pts = [];
-  for (let i = 0; i < n * 2; i++) {
-    const r = i % 2 === 0 ? rOuter : rInner;
-    const a = (Math.PI / n) * i - Math.PI / 2;
-    pts.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+
+function drawGlasses(g, glasses, a) {
+  const { l, r, rad } = a.eye;
+  if (glasses.id === 'gl_heart') {
+    [l, r].forEach(pt => {
+      const s = rad * 1.35;
+      g.appendChild(svgEl('path', {
+        d:`M ${pt.cx-s} ${pt.cy-s*0.15} C ${pt.cx-s} ${pt.cy-s*0.85}, ${pt.cx} ${pt.cy-s*0.85}, ${pt.cx} ${pt.cy-s*0.15}
+           C ${pt.cx} ${pt.cy-s*0.85}, ${pt.cx+s} ${pt.cy-s*0.85}, ${pt.cx+s} ${pt.cy-s*0.15}
+           C ${pt.cx+s} ${pt.cy+s*0.55}, ${pt.cx} ${pt.cy+s*0.95}, ${pt.cx} ${pt.cy+s*0.95}
+           C ${pt.cx} ${pt.cy+s*0.95}, ${pt.cx-s} ${pt.cy+s*0.55}, ${pt.cx-s} ${pt.cy-s*0.15} Z`,
+        fill: glasses.color,
+      }));
+    });
+  } else if (glasses.id === 'gl_star') {
+    [l, r].forEach(pt => g.appendChild(svgEl('polygon', {
+      points: starPoints(pt.cx, pt.cy, rad*1.55, rad*0.62, 5), fill: glasses.color,
+    })));
+  } else {
+    [l, r].forEach(pt => g.appendChild(svgEl('rect', {
+      x:pt.cx-rad*1.35, y:pt.cy-rad*1.1, width:rad*2.7, height:rad*2.0, rx:rad*0.8,
+      fill:'none', stroke:glasses.color, 'stroke-width':Math.max(1.2, rad*0.42),
+    })));
+    g.appendChild(svgEl('line', {
+      x1:l.cx+rad*1.35, y1:l.cy, x2:r.cx-rad*1.35, y2:r.cy,
+      stroke:glasses.color, 'stroke-width':Math.max(1.2, rad*0.38),
+    }));
   }
-  return pts.join(' ');
 }
 
-/* ── 이펙트 레이어(두 스타일 공통 — DOM 오버레이) ─────────────── */
+function drawHat(g, defs, hat, a, uid) {
+  const hx = a.hx, hy = a.hy, hr = a.hr;
+  if (hat.id === 'hat_cap') {
+    const domeCy = hy - hr*0.60, domeRx = hr*0.62, domeRy = hr*0.52;
+    const clipId = 'cap' + uid;
+    defs.appendChild(svgEl('clipPath', { id:clipId })).appendChild(
+      svgEl('rect', { x:hx-hr*1.15, y:hy-hr*1.35, width:hr*2.3, height:hr*0.82 })
+    );
+    g.appendChild(svgEl('ellipse', { cx:hx, cy:domeCy, rx:domeRx, ry:domeRy, fill:hat.color, 'clip-path':`url(#${clipId})` }));
+    g.appendChild(svgEl('ellipse', { cx:hx+hr*0.50, cy:domeCy+hr*0.03, rx:hr*0.27, ry:hr*0.10, fill:hat.accent }));
+  } else if (hat.id === 'hat_crown') {
+    const pts = [
+      [hx-hr*0.80, hy-hr*0.20], [hx-hr*0.80, hy-hr*0.80], [hx-hr*0.43, hy-hr*0.46],
+      [hx, hy-hr*1.02], [hx+hr*0.43, hy-hr*0.46], [hx+hr*0.80, hy-hr*0.80], [hx+hr*0.80, hy-hr*0.20],
+    ];
+    g.appendChild(svgEl('polygon', { points: pts.map(p=>p.join(',')).join(' '), fill:hat.color }));
+    g.appendChild(svgEl('circle', { cx:hx, cy:hy-hr*0.87, r:hr*0.11, fill:hat.accent }));
+  } else if (hat.id === 'hat_ribbon') {
+    g.appendChild(svgEl('path', {
+      d:`M ${hx-hr*0.86} ${hy-hr*0.34} A ${hr*0.86} ${hr*0.58} 0 0 1 ${hx+hr*0.86} ${hy-hr*0.34} L ${hx+hr*0.86} ${hy-hr*0.12} L ${hx-hr*0.86} ${hy-hr*0.12} Z`,
+      fill: hat.color,
+    }));
+    const bow = svgEl('g', {});
+    bow.appendChild(svgEl('path', { d:`M ${hx} ${hy-hr*0.56} L ${hx-hr*0.42} ${hy-hr*0.86} L ${hx-hr*0.42} ${hy-hr*0.34} Z`, fill:hat.accent }));
+    bow.appendChild(svgEl('path', { d:`M ${hx} ${hy-hr*0.56} L ${hx+hr*0.42} ${hy-hr*0.86} L ${hx+hr*0.42} ${hy-hr*0.34} Z`, fill:hat.accent }));
+    bow.appendChild(svgEl('circle', { cx:hx, cy:hy-hr*0.56, r:hr*0.115, fill:hat.accent }));
+    g.appendChild(bow);
+  }
+}
+
+/* ── 이펙트 레이어 (DOM 오버레이, 캐릭터 그림과 무관하게 공용) ──── */
 function buildFxLayer(effectId) {
   const layer = document.createElement('div');
   layer.className = 'fx-layer';
@@ -647,24 +698,29 @@ function buildFxLayer(effectId) {
   return layer;
 }
 
+/* ── 탭(클릭) 반응 — 살아있는 느낌. prefers-reduced-motion은 CSS의
+   hmTapJump/hmTapTiny 분기로 처리되므로 여기선 클래스만 토글한다 ──── */
+function wireTapReaction(container) {
+  container.addEventListener('click', () => {
+    const target = container.querySelector('[data-tap-target]');
+    if (!target) return;
+    target.classList.remove('hm-tap-jump');
+    void target.getBoundingClientRect(); // 리플로우 강제 — 애니메이션 재시작 보장
+    target.classList.add('hm-tap-jump');
+  });
+}
+
 /* ── 캐릭터 프리뷰 하나 만들기 (공용) ────────────────────────── */
-function renderCharacterInto(container, eq, style, sizePx) {
+function renderCharacterInto(container, eq, variantKey, sizePx) {
   container.innerHTML = '';
   container.classList.add('stage-box');
   container.style.width = sizePx + 'px';
   container.style.height = sizePx + 'px';
-  if (style === 'pixel') {
-    const canvas = document.createElement('canvas');
-    canvas.width = GRID; canvas.height = GRID;
-    canvas.style.width = sizePx + 'px'; canvas.style.height = sizePx + 'px';
-    drawPixelHamster(canvas, eq);
-    container.appendChild(canvas);
-  } else {
-    const svg = buildVectorHamster(eq);
-    svg.style.width = sizePx + 'px'; svg.style.height = sizePx + 'px';
-    container.appendChild(svg);
-  }
+  const svg = buildVectorHamster(eq, variantKey);
+  svg.style.width = sizePx + 'px'; svg.style.height = sizePx + 'px';
+  container.appendChild(svg);
   container.appendChild(buildFxLayer(eq.effect));
+  wireTapReaction(container);
 }
 
 /* ============================================================
@@ -682,7 +738,7 @@ function showToast(msg) {
 
 function renderTopbar() {
   document.getElementById('coinLabel').textContent = STATE.coins;
-  document.getElementById('styleChip').textContent = STATE.style === 'pixel' ? 'A · 픽셀' : 'B · 벡터';
+  document.getElementById('styleChip').textContent = VARIANT_META[STATE.variant].label;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === STATE.tab));
 }
 
@@ -760,9 +816,14 @@ function renderDress() {
   const bgItem = STATE.equipped.bg && byId(STATE.equipped.bg);
   const stageBox = document.createElement('div');
   stageBox.style.background = bgItem ? bgItem.color : '#FBF3EA';
-  renderCharacterInto(stageBox, { ...STATE.equipped, topColor: STATE.topColor }, STATE.style, 190);
+  renderCharacterInto(stageBox, { ...STATE.equipped, topColor: STATE.topColor }, STATE.variant, 190);
   previewWrap.appendChild(stageBox);
   wrap.appendChild(previewWrap);
+
+  const tapHint = document.createElement('div');
+  tapHint.className = 'tap-hint';
+  tapHint.textContent = '👆 캐릭터를 탭해보세요';
+  wrap.appendChild(tapHint);
 
   const slotTabs = document.createElement('div');
   slotTabs.className = 'slot-tabs';
@@ -807,13 +868,12 @@ function renderDress() {
   });
   wrap.appendChild(row);
 
-  // 색상 파라미터화 데모 — "옷" 슬롯 탭을 보고 있고, 장착 중인 상의가
-  // 컬러러블 아이템일 때만(다른 슬롯 탭에서도 계속 보이던 버그 수정)
-  const curItem = STATE.dressSlot === 'top' && STATE.equipped.top && byId(STATE.equipped.top);
-  if (STATE.style === 'vector' && curItem && curItem.colorable) {
+  // 색상 파라미터화 데모(티셔츠) — "옷" 탭에서 컬러러블 아이템 장착 중일 때만
+  const curTop = STATE.dressSlot === 'top' && STATE.equipped.top && byId(STATE.equipped.top);
+  if (curTop && curTop.colorable) {
     const demo = document.createElement('div');
     demo.className = 'color-demo';
-    demo.innerHTML = `<div class="ttl">🎨 벡터는 색만 바꾸면 새 아이템 — 스프라이트 추가 없음</div>`;
+    demo.innerHTML = `<div class="ttl">🎨 색만 바꾸면 새 아이템 — 스프라이트 추가 없음</div>`;
     const swatchRow = document.createElement('div');
     swatchRow.className = 'swatch-row';
     TOPCOLORS.forEach(c => {
@@ -825,12 +885,27 @@ function renderDress() {
     });
     demo.appendChild(swatchRow);
     wrap.appendChild(demo);
-  } else if (STATE.style === 'pixel' && curItem && curItem.colorable) {
-    const demo = document.createElement('div');
-    demo.className = 'color-demo';
-    demo.style.borderColor = '#B7ABC4';
-    demo.innerHTML = `<div class="ttl" style="color:#8A7B9B;">🧱 픽셀은 색상 변형마다 새 스프라이트가 필요(지금은 데모 생략)</div>`;
-    wrap.appendChild(demo);
+  }
+
+  // 털색 파라미터 데모 — 모자 탭(첫 탭)에서만 노출해 눈에 띄게.
+  // 실제 구현 시엔 이 값이 "상점에서 파는 털색 아이템"의 색상 필드가 됨.
+  if (STATE.dressSlot === 'hat') {
+    const furDemo = document.createElement('div');
+    furDemo.className = 'fur-demo';
+    furDemo.innerHTML = `<div class="ttl">🐹 털색(파라미터 미리보기 — 나중에 상점 아이템화 가능)</div>`;
+    const swatchRow = document.createElement('div');
+    swatchRow.className = 'swatch-row';
+    FURCOLORS.forEach(c => {
+      const dot = document.createElement('div');
+      dot.className = 'color-dot' + (STATE.furColor === c ? ' selected' : '');
+      dot.style.background = c || VARIANT_SHAPE[STATE.variant].furBase;
+      if (!c) dot.style.boxShadow = 'inset 0 0 0 1px rgba(0,0,0,0.15)';
+      dot.title = c ? c : '변형 기본값';
+      dot.onclick = () => { STATE.furColor = c; render(); };
+      swatchRow.appendChild(dot);
+    });
+    furDemo.appendChild(swatchRow);
+    wrap.appendChild(furDemo);
   }
 
   return wrap;
@@ -857,7 +932,7 @@ function renderCompare() {
     const box = document.createElement('div');
     box.style.background = bgItem ? bgItem.color : '#FBF3EA';
     box.style.margin = '0 auto';
-    renderCharacterInto(box, { ...p.eq, topColor: p.topColor }, STATE.style, 140);
+    renderCharacterInto(box, { ...p.eq, topColor: p.topColor }, STATE.variant, 140);
     card.appendChild(box);
     const name = document.createElement('div');
     name.className = 'name'; name.textContent = p.name;
@@ -891,21 +966,19 @@ document.querySelectorAll('.tab-btn').forEach(b => {
   b.onclick = () => { STATE.tab = b.dataset.tab; render(); };
 });
 
-/* ── 스타일 전환 플로팅 바 (prototype skill 관례: ← 라벨 →, 키보드 지원) ── */
-const STYLES = ['pixel', 'vector'];
-const STYLE_META = { pixel: ['A', '픽셀 아트'], vector: ['B', '벡터 SVG'] };
-function setStyle(s) { STATE.style = s; renderSwitcherLabel(); render(); }
+/* ── 변형 전환 플로팅 바 (prototype skill 관례: ← 라벨 →, 키보드 지원) ── */
+function setVariant(v) { STATE.variant = v; renderSwitcherLabel(); render(); }
 function renderSwitcherLabel() {
-  const [k, name] = STYLE_META[STATE.style];
-  document.getElementById('switcherLabel').innerHTML = `${k}<small>${name}</small>`;
+  const m = VARIANT_META[STATE.variant];
+  document.getElementById('switcherLabel').innerHTML = `${m.label}<small>${m.sub}</small>`;
 }
 document.getElementById('prevStyle').onclick = () => {
-  const i = STYLES.indexOf(STATE.style);
-  setStyle(STYLES[(i - 1 + STYLES.length) % STYLES.length]);
+  const i = VARIANTS.indexOf(STATE.variant);
+  setVariant(VARIANTS[(i - 1 + VARIANTS.length) % VARIANTS.length]);
 };
 document.getElementById('nextStyle').onclick = () => {
-  const i = STYLES.indexOf(STATE.style);
-  setStyle(STYLES[(i + 1) % STYLES.length]);
+  const i = VARIANTS.indexOf(STATE.variant);
+  setVariant(VARIANTS[(i + 1) % VARIANTS.length]);
 };
 document.addEventListener('keydown', (e) => {
   const tag = document.activeElement && document.activeElement.tagName;
