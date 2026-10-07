@@ -1,0 +1,922 @@
+<!--
+  PROTOTYPE — dress-preview.html
+  버리는 코드입니다. 실제 앱(src/)은 전혀 건드리지 않았습니다.
+
+  질문: "다마고치 햄찌에 코인 상점 + 커스터마이징을 붙인다면, 캐릭터를
+  픽셀 아트로 그릴지 벡터(SVG)로 그릴지?" — 두 스타일을 같은 상점/꾸미기/
+  구경하기 화면 위에서 전환해가며 비교합니다.
+
+  state는 전부 메모리에만 있음(새로고침하면 초기화). 저장/API/테스트 없음.
+  하단 플로팅 바: ← A(픽셀 아트) / B(벡터 SVG) → 로 스타일 전환, URL의
+  ?style= 에 반영되어 새로고침해도 유지됩니다.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>PROTOTYPE · 햄찌 꾸미기</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap">
+<style>
+  :root {
+    --c-pants: #7B4FA6;
+    --c-accent: #E8630A;
+    --c-dark: #3D1F00;
+    --c-skin: #F5B8A0;
+    --c-cream: #FFF8F2;
+    --c-peach: #FFE4D4;
+    --c-lavender: #EDE0F5;
+    --c-pink: #FF8FAB;
+    --c-pink-vivid: #FF6B9D;
+    --c-success: #1D9E75;
+    --c-warning: #FFB830;
+    --c-surface: #FFFFFF;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #E8E2EE;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--c-dark);
+  }
+  img, svg { max-width: 100%; }
+
+  /* ── 프로토타입 표시 ─────────────────────────────────────────── */
+  .proto-ribbon {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    background: repeating-linear-gradient(135deg, #222 0 10px, #FFD700 10px 20px);
+    color: #111; font-family: 'Noto Sans KR', sans-serif; font-weight: 900;
+    font-size: 11px; text-align: center; padding: 3px 0;
+    letter-spacing: 0.04em;
+  }
+  .proto-ribbon b { background: #fff; padding: 0 6px; border-radius: 4px; }
+
+  /* ── 폰 프레임 ───────────────────────────────────────────────── */
+  .stage {
+    min-height: 100vh; display: flex; justify-content: center;
+    padding: 26px 0 100px;
+  }
+  .phone {
+    width: 402px; max-width: 100vw; min-height: 874px;
+    background: var(--c-cream);
+    background-image: radial-gradient(circle at 85% 0%, var(--c-lavender) 0%, transparent 40%);
+    position: relative; overflow: hidden;
+    box-shadow: 0 30px 70px rgba(61,31,0,0.25);
+    display: flex; flex-direction: column;
+  }
+
+  /* ── 상단 바 ─────────────────────────────────────────────────── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px 10px;
+  }
+  .topbar .title {
+    font-family: 'Jua', sans-serif; font-size: 1.05rem; color: var(--c-pants);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .coin-pill {
+    display: flex; align-items: center; gap: 4px;
+    background: #fff; border: 1.5px solid #FFD70088; border-radius: 999px;
+    padding: 4px 10px 4px 6px;
+    box-shadow: 0 2px 8px rgba(123,79,166,0.12);
+    font-family: 'Jua', sans-serif; font-size: 0.85rem; color: #B8860B;
+  }
+  .style-chip {
+    font-size: 0.62rem; font-weight: 700; color: var(--c-pants);
+    background: var(--c-lavender); border-radius: 999px; padding: 2px 9px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  /* ── 탭 ──────────────────────────────────────────────────────── */
+  .tabs {
+    display: flex; gap: 6px; padding: 0 14px 10px;
+  }
+  .tab-btn {
+    flex: 1; border: none; cursor: pointer; padding: 9px 4px;
+    border-radius: 12px; font-family: 'Jua', sans-serif; font-size: 0.82rem;
+    background: transparent; color: #B7ABC4;
+    transition: background-color .15s, color .15s;
+  }
+  .tab-btn.active { background: #fff; color: var(--c-pants); box-shadow: 0 3px 10px rgba(123,79,166,0.16); }
+
+  .view { flex: 1; overflow-y: auto; padding: 0 14px 16px; -webkit-overflow-scrolling: touch; }
+  .view::-webkit-scrollbar { display: none; }
+
+  /* ── 캐릭터 프리뷰 공통 ──────────────────────────────────────── */
+  .stage-box {
+    position: relative; border-radius: 20px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 0 1.5px rgba(123,79,166,0.12);
+  }
+  .stage-box canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+  .fx-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .fx-item { position: absolute; bottom: 8%; font-size: 1rem; opacity: 0; animation: fxFloat 2.2s ease-in infinite; }
+  @keyframes fxFloat {
+    0%   { opacity: 0; transform: translateY(0) scale(0.6); }
+    15%  { opacity: 1; }
+    85%  { opacity: 0.9; }
+    100% { opacity: 0; transform: translateY(-120%) scale(1.1); }
+  }
+  .fx-rainbow-arc {
+    position: absolute; left: 50%; top: 6%; width: 78%; aspect-ratio: 2/1;
+    transform: translateX(-50%);
+    border-radius: 999px 999px 0 0;
+    border: 6px solid transparent;
+    border-top-color: #FF6B9D;
+    box-shadow:
+      0 0 0 6px transparent;
+    background:
+      conic-gradient(from 180deg at 50% 100%,
+        #FF6B6B 0deg 51deg, #FFD93D 51deg 102deg, #6BCB77 102deg 153deg,
+        #4D96FF 153deg 204deg, #9B59B6 204deg 255deg, transparent 255deg 360deg);
+    -webkit-mask: radial-gradient(farthest-side at 50% 100%, transparent calc(100% - 7px), #000 calc(100% - 7px));
+            mask: radial-gradient(farthest-side at 50% 100%, transparent calc(100% - 7px), #000 calc(100% - 7px));
+    opacity: 0.9;
+  }
+
+  /* ── 상점 ────────────────────────────────────────────────────── */
+  .slot-filters { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 12px; }
+  .slot-filters::-webkit-scrollbar { display: none; }
+  .slot-chip {
+    flex-shrink: 0; border: 1.5px solid var(--c-lavender); background: #fff;
+    border-radius: 999px; padding: 6px 12px; font-size: 0.72rem; font-weight: 700;
+    font-family: 'Noto Sans KR', sans-serif; color: var(--c-pants); cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+    transition: background-color .15s, border-color .15s, color .15s;
+  }
+  .slot-chip.active { background: var(--c-pants); border-color: var(--c-pants); color: #fff; }
+
+  .shop-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .item-card {
+    background: #fff; border-radius: 16px; padding: 10px;
+    box-shadow: 0 3px 14px rgba(123,79,166,0.10);
+    border: 1.5px solid rgba(123,79,166,0.08);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    position: relative;
+  }
+  .item-card .swatch {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .item-card .name { font-size: 0.74rem; font-weight: 700; font-family: 'Noto Sans KR', sans-serif; text-align: center; line-height: 1.3; }
+  .item-card .price { font-size: 0.72rem; color: #B8860B; font-family: 'Jua', sans-serif; display: flex; align-items: center; gap: 3px; }
+  .buy-btn {
+    width: 100%; border: none; border-radius: 999px; padding: 6px 0;
+    font-family: 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 0.7rem;
+    cursor: pointer; background: var(--c-pants); color: #fff;
+    transition: transform .1s, opacity .15s;
+  }
+  .buy-btn:active { transform: scale(0.95); }
+  .buy-btn[disabled] { background: #EADFF2; color: #B7ABC4; cursor: default; }
+  .owned-badge {
+    position: absolute; top: 8px; right: 8px; background: var(--c-success); color: #fff;
+    font-size: 0.6rem; font-weight: 700; border-radius: 999px; padding: 2px 7px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .toast {
+    position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%);
+    background: rgba(61,31,0,0.92); color: #fff; padding: 9px 16px; border-radius: 999px;
+    font-size: 0.78rem; font-family: 'Noto Sans KR', sans-serif; font-weight: 700;
+    z-index: 600; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+  /* ── 꾸미기 ──────────────────────────────────────────────────── */
+  .dress-preview-wrap { display: flex; justify-content: center; padding: 6px 0 14px; }
+  .slot-tabs { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 10px; }
+  .slot-tabs::-webkit-scrollbar { display: none; }
+  .slot-tab {
+    flex-shrink: 0; border: none; background: #fff; border-radius: 12px;
+    padding: 7px 10px; font-size: 1.05rem; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(123,79,166,0.08);
+    opacity: 0.55;
+  }
+  .slot-tab.active { opacity: 1; background: var(--c-pants); }
+  .option-row { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 14px; }
+  .option-row::-webkit-scrollbar { display: none; }
+  .option-chip {
+    flex-shrink: 0; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    cursor: pointer; opacity: 1;
+  }
+  .option-chip .ring {
+    width: 58px; height: 58px; border-radius: 16px; background: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+    border: 2.5px solid transparent; box-shadow: 0 3px 10px rgba(123,79,166,0.10);
+    position: relative;
+  }
+  .option-chip.selected .ring { border-color: var(--c-pants); }
+  .option-chip.locked .ring { opacity: 0.4; }
+  .option-chip .lock { position: absolute; bottom: -3px; right: -3px; font-size: 0.7rem; background: #fff; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  .option-chip .lbl { font-size: 0.62rem; font-family: 'Noto Sans KR', sans-serif; color: var(--c-dark); text-align: center; line-height: 1.2; }
+
+  .color-demo {
+    margin-top: 2px; padding: 10px 12px; border-radius: 14px;
+    background: #fff; border: 1.5px dashed var(--c-pink-vivid);
+  }
+  .color-demo .ttl { font-size: 0.68rem; font-weight: 700; color: var(--c-pink-vivid); font-family: 'Noto Sans KR', sans-serif; margin-bottom: 6px; }
+  .swatch-row { display: flex; gap: 8px; }
+  .color-dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; }
+  .color-dot.selected { border-color: var(--c-dark); }
+
+  /* ── 구경하기 ────────────────────────────────────────────────── */
+  .compare-wrap { display: flex; gap: 10px; padding-top: 4px; }
+  .compare-card { flex: 1; background: #fff; border-radius: 18px; padding: 12px 8px; box-shadow: 0 4px 16px rgba(123,79,166,0.12); text-align: center; }
+  .compare-card .name { font-family: 'Jua', sans-serif; font-size: 0.85rem; color: var(--c-pants); margin: 8px 0 2px; }
+  .compare-card .sub { font-size: 0.64rem; color: #B7ABC4; font-family: 'Noto Sans KR', sans-serif; }
+
+  .hint-box {
+    margin-top: 14px; padding: 10px 12px; border-radius: 12px; background: rgba(123,79,166,0.06);
+    font-size: 0.68rem; color: #8A7B9B; font-family: 'Noto Sans KR', sans-serif; line-height: 1.6;
+  }
+
+  /* ── 하단 스타일 전환 플로팅 바 (프로토타입 전용 — 실제 UI 아님) ── */
+  .switcher {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+    z-index: 550; display: flex; align-items: center; gap: 10px;
+    background: #16121F; color: #fff; border-radius: 999px;
+    padding: 8px 10px 8px 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .switcher button {
+    border: none; background: #2A2338; color: #fff; width: 30px; height: 30px; border-radius: 50%;
+    font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .switcher button:active { transform: scale(0.9); }
+  .switcher .label { font-size: 0.78rem; font-weight: 700; min-width: 128px; text-align: center; }
+  .switcher .label small { display: block; font-size: 0.6rem; font-weight: 400; opacity: 0.65; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<div class="proto-ribbon">🧪 PROTOTYPE — <b>앱에 반영 안 됨</b> · dress-preview.html · 버리는 코드</div>
+<div id="toast" class="toast"></div>
+
+<div class="stage">
+  <div class="phone" style="margin-top: 22px;">
+    <div class="topbar">
+      <div class="title">🐹 햄찌 꾸미기</div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span class="style-chip" id="styleChip">A · 픽셀</span>
+        <span class="coin-pill">🪙 <span id="coinLabel">0</span></span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn" data-tab="shop">🛍️ 상점</button>
+      <button class="tab-btn" data-tab="dress">🧢 꾸미기</button>
+      <button class="tab-btn" data-tab="compare">👀 구경하기</button>
+    </div>
+
+    <div class="view" id="view"></div>
+  </div>
+</div>
+
+<div class="switcher">
+  <button id="prevStyle" aria-label="이전 스타일">←</button>
+  <div class="label" id="switcherLabel">A<small>픽셀 아트</small></div>
+  <button id="nextStyle" aria-label="다음 스타일">→</button>
+</div>
+
+<script>
+/* ============================================================
+   상태 (메모리에만 존재 — 새로고침하면 초기화됨, 더미 데이터)
+   ============================================================ */
+const SLOTS = [
+  { key:'hat',     label:'모자',    icon:'🎩' },
+  { key:'glasses', label:'선글라스', icon:'🕶️' },
+  { key:'gloves',  label:'장갑',    icon:'🧤' },
+  { key:'shoes',   label:'신발',    icon:'👟' },
+  { key:'top',     label:'옷',      icon:'👕' },
+  { key:'bottom',  label:'바지',    icon:'👖' },
+  { key:'bg',      label:'배경',    icon:'🖼️' },
+  { key:'effect',  label:'이펙트',  icon:'✨' },
+];
+
+const ITEMS = [
+  { id:'hat_ribbon',  slot:'hat',     name:'리본 모자',   price:40,  color:'#EDE0F5', accent:'#7B4FA6', icon:'🎀' },
+  { id:'hat_crown',   slot:'hat',     name:'왕관',        price:120, color:'#FFD700', accent:'#E8630A', icon:'👑' },
+  { id:'hat_cap',     slot:'hat',     name:'야구모자',     price:30,  color:'#FFB380', accent:'#ffffff', icon:'🧢' },
+
+  { id:'gl_round',    slot:'glasses', name:'동그란 안경',  price:20,  color:'#333333', icon:'⚫' },
+  { id:'gl_heart',    slot:'glasses', name:'하트 안경',    price:35,  color:'#FF6B9D', icon:'💗' },
+  { id:'gl_star',     slot:'glasses', name:'별 안경',      price:35,  color:'#7B4FA6', icon:'⭐' },
+
+  { id:'gv_white',    slot:'gloves',  name:'하얀 장갑',    price:15,  color:'#FFFFFF', icon:'🤍' },
+  { id:'gv_boxing',   slot:'gloves',  name:'복서 글러브',  price:45,  color:'#FF6B9D', icon:'🥊' },
+  { id:'gv_mitt',     slot:'gloves',  name:'야구 글러브',  price:45,  color:'#B87333', icon:'🧤' },
+
+  { id:'sh_blue',     slot:'shoes',   name:'파랑 운동화',  price:25,  color:'#3B82F6', icon:'👟' },
+  { id:'sh_pink',     slot:'shoes',   name:'핑크 운동화',  price:25,  color:'#FF8FAB', icon:'👟' },
+  { id:'sh_boots',    slot:'shoes',   name:'가죽 부츠',    price:50,  color:'#8B5E34', icon:'🥾' },
+
+  { id:'top_tee',     slot:'top',     name:'티셔츠',       price:30,  color:'#EDE0F5', icon:'👕', colorable:true },
+  { id:'top_hoodie',  slot:'top',     name:'후드티',       price:55,  color:'#FFE4D4', icon:'🧥' },
+  { id:'top_overall', slot:'top',     name:'멜빵바지',     price:60,  color:'#5B7FA6', icon:'🦺' },
+
+  { id:'bot_shorts',  slot:'bottom',  name:'반바지',       price:20,  color:'#85B7EB', icon:'🩳' },
+  { id:'bot_jeans',   slot:'bottom',  name:'청바지',       price:35,  color:'#4A6FA5', icon:'👖' },
+  { id:'bot_skirt',   slot:'bottom',  name:'치마',         price:35,  color:'#FFB3D9', icon:'👗' },
+
+  { id:'bg_lavender', slot:'bg',      name:'라벤더 그라디언트', price:10, color:'#EDE0F5', color2:'#FFFFFF', icon:'🟣' },
+  { id:'bg_peach',    slot:'bg',      name:'살구 그라디언트',   price:10, color:'#FFE4D4', color2:'#FFF8F2', icon:'🟠' },
+  { id:'bg_night',    slot:'bg',      name:'별이 빛나는 밤',    price:80, color:'#2E2A38', color2:'#4A3B5C', icon:'🌌' },
+
+  { id:'fx_sparkle',  slot:'effect',  name:'반짝임',  price:50, emoji:'✨', icon:'✨' },
+  { id:'fx_hearts',   slot:'effect',  name:'하트 뿅뿅', price:50, emoji:'💕', icon:'💕' },
+  { id:'fx_rainbow',  slot:'effect',  name:'무지개',  price:90, emoji:'🌈', icon:'🌈' },
+];
+const byId = id => ITEMS.find(i => i.id === id);
+const itemsOf = slot => ITEMS.filter(i => i.slot === slot);
+
+const TOPCOLORS = ['#EDE0F5', '#FFE4D4', '#C9E8D4', '#FFD1DC'];
+
+const STATE = {
+  coins: 165,
+  owned: new Set(['hat_cap', 'sh_blue', 'top_tee', 'bot_shorts', 'gl_round']),
+  equipped: { hat:'hat_cap', glasses:null, gloves:null, shoes:'sh_blue', top:'top_tee', bottom:'bot_shorts', bg:null, effect:null },
+  topColor: TOPCOLORS[0],
+  tab: 'dress',
+  style: 'pixel',
+  shopFilter: 'all',
+  dressSlot: 'hat',
+};
+
+/* URL(?style=&tab=) 복원 — skill의 ?variant= 관례를 style/tab 두 축으로 적용 */
+(function restoreFromURL(){
+  const p = new URLSearchParams(location.search);
+  if (p.get('style') === 'vector') STATE.style = 'vector';
+  if (['shop','dress','compare'].includes(p.get('tab'))) STATE.tab = p.get('tab');
+})();
+function syncURL() {
+  const p = new URLSearchParams(location.search);
+  p.set('style', STATE.style);
+  p.set('tab', STATE.tab);
+  history.replaceState(null, '', '?' + p.toString());
+}
+
+/* ============================================================
+   캐릭터 렌더러 A — 픽셀 아트 (canvas, 40×40 논리 픽셀을 CSS로 확대)
+   색 변형이 필요하면 전용 스프라이트(draw 함수)를 새로 만들어야 한다.
+   ============================================================ */
+const GRID = 40;
+
+function pixEllipseRow(ctx, cx, cy, rx, ry, yTop, yBot, color) {
+  ctx.fillStyle = color;
+  for (let y = Math.max(0, yTop); y <= Math.min(GRID - 1, yBot); y++) {
+    const t = (y - cy) / ry;
+    if (Math.abs(t) > 1) continue;
+    const dx = rx * Math.sqrt(1 - t * t);
+    const x0 = Math.round(cx - dx), x1 = Math.round(cx + dx);
+    ctx.fillRect(x0, y, Math.max(1, x1 - x0), 1);
+  }
+}
+
+function drawPixelHamster(canvas, eq) {
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0, 0, GRID, GRID);
+
+  // 배경
+  const bg = eq.bg && byId(eq.bg);
+  if (bg) {
+    if (bg.id === 'bg_night') {
+      ctx.fillStyle = bg.color; ctx.fillRect(0, 0, GRID, GRID);
+      ctx.fillStyle = '#ffffff';
+      [[5,6],[34,9],[9,25],[31,30],[3,33],[36,20],[18,4]].forEach(([x,y]) => ctx.fillRect(x, y, 1, 1));
+    } else {
+      // 픽셀 아트식 "가짜 그라디언트" — 3단 밴딩(진짜 그라디언트는 벡터 쪽 참고)
+      const bands = [bg.color, bg.color, bg.color2 || '#fff', bg.color2 || '#fff'];
+      bands.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 10, GRID, 10); });
+    }
+  } else {
+    ctx.fillStyle = '#FFF8F2'; ctx.fillRect(0, 0, GRID, GRID);
+  }
+
+  const fur = '#F3DDBB', furDark = '#E6C89A';
+
+  // 귀
+  pixEllipseRow(ctx, 13, 11, 4, 4, 7, 15, fur);
+  pixEllipseRow(ctx, 27, 11, 4, 4, 7, 15, fur);
+  pixEllipseRow(ctx, 13, 11, 2, 2, 9, 13, '#FFC9D6');
+  pixEllipseRow(ctx, 27, 11, 2, 2, 9, 13, '#FFC9D6');
+
+  // 몸통(머리+배 하나로 이어진 블롭)
+  pixEllipseRow(ctx, 20, 24, 14, 15, 10, 38, fur);
+  // 하단 그림자
+  pixEllipseRow(ctx, 20, 36, 11, 4, 34, 38, furDark);
+
+  // 팔(장갑 자리)
+  pixEllipseRow(ctx, 7, 27, 3, 4, 24, 30, fur);
+  pixEllipseRow(ctx, 33, 27, 3, 4, 24, 30, fur);
+
+  // 바지
+  const bottom = eq.bottom && byId(eq.bottom);
+  if (bottom) pixEllipseRow(ctx, 20, 31, 13, 8, 28, 37, bottom.color);
+
+  // 상의
+  const top = eq.top && byId(eq.top);
+  if (top) {
+    const c = (top.colorable && eq.topColor) ? eq.topColor : top.color;
+    pixEllipseRow(ctx, 20, 23, 13.5, 8, 18, 27, c);
+  }
+
+  // 볼터치 + 코
+  ctx.fillStyle = '#FFB3C1';
+  ctx.fillRect(12, 23, 3, 3); ctx.fillRect(25, 23, 3, 3);
+  ctx.fillStyle = '#3D1F00';
+  ctx.fillRect(15, 20, 2, 2); ctx.fillRect(23, 20, 2, 2);
+  ctx.fillStyle = '#E8630A';
+  ctx.fillRect(19, 23, 2, 2);
+
+  // 신발
+  const shoes = eq.shoes && byId(eq.shoes);
+  if (shoes) { ctx.fillStyle = shoes.color; ctx.fillRect(13, 36, 5, 3); ctx.fillRect(22, 36, 5, 3); }
+
+  // 장갑
+  const gloves = eq.gloves && byId(eq.gloves);
+  if (gloves) { ctx.fillStyle = gloves.color; ctx.fillRect(5, 27, 5, 5); ctx.fillRect(30, 27, 5, 5); }
+
+  // 선글라스
+  const glasses = eq.glasses && byId(eq.glasses);
+  if (glasses) {
+    ctx.fillStyle = glasses.color;
+    ctx.fillRect(13, 19, 5, 4); ctx.fillRect(22, 19, 5, 4); ctx.fillRect(18, 20, 4, 1);
+  }
+
+  // 모자
+  const hat = eq.hat && byId(eq.hat);
+  if (hat) {
+    if (hat.id === 'hat_cap') {
+      ctx.fillStyle = hat.color; ctx.fillRect(13, 7, 14, 5);
+      ctx.fillRect(13, 6, 8, 1); // 살짝 둥근 윗모서리
+      ctx.fillStyle = hat.accent; ctx.fillRect(25, 10, 4, 2); // 챙
+    } else if (hat.id === 'hat_crown') {
+      ctx.fillStyle = hat.color;
+      ctx.fillRect(12, 9, 16, 4);
+      [13,18,23].forEach(x => ctx.fillRect(x, 4, 4, 6));
+      ctx.fillStyle = hat.accent; ctx.fillRect(18, 10, 4, 2);
+    } else if (hat.id === 'hat_ribbon') {
+      ctx.fillStyle = hat.color; ctx.fillRect(13, 9, 14, 3);
+      ctx.fillStyle = hat.accent;
+      ctx.fillRect(15, 7, 4, 4);        // 왼쪽 리본 날개
+      ctx.fillRect(21, 7, 4, 4);        // 오른쪽 리본 날개
+      ctx.fillRect(19, 8, 2, 3);        // 가운데 매듭
+    }
+  }
+}
+
+/* ============================================================
+   캐릭터 렌더러 B — 벡터(SVG). 색은 fill 속성 하나만 바꾸면 끝.
+   ============================================================ */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+
+function buildVectorHamster(eq) {
+  const svg = svgEl('svg', { viewBox: '0 0 100 100', width: '100%', height: '100%' });
+
+  // defs는 배경 유무와 상관없이 항상 먼저 달아둔다 — 몸통 clipPath(아래)가
+  // 여기 들어가는데, defs 자체가 문서에 안 붙어있으면 url(#...) 참조가
+  // 전부 조용히 실패해서(특히 배경 "없음"일 때) 옷이 몸 모양을 안 따라가고
+  // 네모로 보이는 버그가 있었음.
+  const defs = svgEl('defs', {});
+  svg.appendChild(defs);
+  const bg = eq.bg && byId(eq.bg);
+  if (bg && bg.id !== 'bg_night') {
+    const gradId = 'g_' + bg.id;
+    const grad = svgEl('linearGradient', { id: gradId, x1:'0', y1:'0', x2:'0', y2:'1' });
+    grad.appendChild(svgEl('stop', { offset:'0%', 'stop-color': bg.color }));
+    grad.appendChild(svgEl('stop', { offset:'100%', 'stop-color': bg.color2 || '#fff' }));
+    defs.appendChild(grad);
+    svg.appendChild(svgEl('rect', { x:0, y:0, width:100, height:100, fill:`url(#${gradId})` }));
+  } else if (bg && bg.id === 'bg_night') {
+    svg.appendChild(svgEl('rect', { x:0, y:0, width:100, height:100, fill: bg.color }));
+    [[12,15],[82,22],[20,60],[75,70],[8,80],[90,48],[45,10]].forEach(([x,y]) => {
+      svg.appendChild(svgEl('circle', { cx:x, cy:y, r:0.9, fill:'#fff', opacity:0.9 }));
+    });
+  } else {
+    svg.appendChild(svgEl('rect', { x:0, y:0, width:100, height:100, fill:'#FFF8F2' }));
+  }
+
+  const fur = '#F3DDBB', furDark = '#E6C89A';
+  const g = svgEl('g', {});
+
+  // 그림자
+  g.appendChild(svgEl('ellipse', { cx:50, cy:90, rx:27, ry:4, fill:'rgba(61,31,0,0.08)' }));
+
+  // 귀
+  g.appendChild(svgEl('ellipse', { cx:32, cy:28, rx:10, ry:10, fill:fur }));
+  g.appendChild(svgEl('ellipse', { cx:68, cy:28, rx:10, ry:10, fill:fur }));
+  g.appendChild(svgEl('ellipse', { cx:32, cy:28, rx:5, ry:5, fill:'#FFC9D6' }));
+  g.appendChild(svgEl('ellipse', { cx:68, cy:28, rx:5, ry:5, fill:'#FFC9D6' }));
+
+  // 팔
+  g.appendChild(svgEl('ellipse', { cx:18, cy:66, rx:7, ry:9, fill:fur }));
+  g.appendChild(svgEl('ellipse', { cx:82, cy:66, rx:7, ry:9, fill:fur }));
+
+  // 몸통
+  const bodyClipId = 'bodyClip';
+  defs.appendChild(svgEl('clipPath', { id: bodyClipId })).appendChild(
+    svgEl('ellipse', { cx:50, cy:62, rx:33, ry:34 })
+  );
+  g.appendChild(svgEl('ellipse', { cx:50, cy:62, rx:33, ry:34, fill:fur }));
+  g.appendChild(svgEl('ellipse', { cx:50, cy:90, rx:26, ry:9, fill:furDark, 'clip-path':`url(#${bodyClipId})` }));
+
+  // 바지 (몸 clipPath로 깔끔하게 잘림)
+  const bottom = eq.bottom && byId(eq.bottom);
+  if (bottom) g.appendChild(svgEl('rect', { x:8, y:78, width:84, height:20, fill: bottom.color, 'clip-path':`url(#${bodyClipId})` }));
+
+  // 상의
+  const top = eq.top && byId(eq.top);
+  if (top) {
+    const c = (top.colorable && eq.topColor) ? eq.topColor : top.color;
+    g.appendChild(svgEl('rect', { x:8, y:54, width:84, height:26, rx:4, fill:c, 'clip-path':`url(#${bodyClipId})` }));
+  }
+
+  // 볼터치 + 눈 + 코
+  g.appendChild(svgEl('circle', { cx:33, cy:60, r:5, fill:'#FFB3C1', opacity:0.85 }));
+  g.appendChild(svgEl('circle', { cx:67, cy:60, r:5, fill:'#FFB3C1', opacity:0.85 }));
+  g.appendChild(svgEl('circle', { cx:40, cy:54, r:3, fill:'#3D1F00' }));
+  g.appendChild(svgEl('circle', { cx:60, cy:54, r:3, fill:'#3D1F00' }));
+  g.appendChild(svgEl('ellipse', { cx:50, cy:61, rx:3.2, ry:2.4, fill:'#E8630A' }));
+
+  // 신발
+  const shoes = eq.shoes && byId(eq.shoes);
+  if (shoes) {
+    g.appendChild(svgEl('ellipse', { cx:36, cy:94, rx:9, ry:5, fill:shoes.color }));
+    g.appendChild(svgEl('ellipse', { cx:64, cy:94, rx:9, ry:5, fill:shoes.color }));
+  }
+
+  // 장갑
+  const gloves = eq.gloves && byId(eq.gloves);
+  if (gloves) {
+    g.appendChild(svgEl('circle', { cx:16, cy:74, r:7.5, fill:gloves.color }));
+    g.appendChild(svgEl('circle', { cx:84, cy:74, r:7.5, fill:gloves.color }));
+  }
+
+  // 선글라스
+  const glasses = eq.glasses && byId(eq.glasses);
+  if (glasses) {
+    if (glasses.id === 'gl_heart') {
+      [40,60].forEach(cx => {
+        const p = svgEl('path', {
+          d:`M ${cx-6} 51 C ${cx-6} 47, ${cx} 47, ${cx} 51 C ${cx} 47, ${cx+6} 47, ${cx+6} 51 C ${cx+6} 55, ${cx} 58, ${cx} 58 C ${cx} 58, ${cx-6} 55, ${cx-6} 51 Z`,
+          fill: glasses.color,
+        });
+        g.appendChild(p);
+      });
+    } else if (glasses.id === 'gl_star') {
+      [40,60].forEach(cx => g.appendChild(svgEl('polygon', {
+        points: starPoints(cx, 53, 6, 2.6, 5),
+        fill: glasses.color,
+      })));
+    } else {
+      g.appendChild(svgEl('rect', { x:33, y:49, width:14, height:9, rx:4, fill:'none', stroke:glasses.color, 'stroke-width':3 }));
+      g.appendChild(svgEl('rect', { x:53, y:49, width:14, height:9, rx:4, fill:'none', stroke:glasses.color, 'stroke-width':3 }));
+      g.appendChild(svgEl('line', { x1:47, y1:53, x2:53, y2:53, stroke:glasses.color, 'stroke-width':3 }));
+    }
+  }
+
+  // 모자
+  const hat = eq.hat && byId(eq.hat);
+  if (hat) {
+    if (hat.id === 'hat_cap') {
+      // 돔 전체 타원을 그리고 위쪽 절반만 보이게 사각형으로 clip —
+      // arc 스윕 플래그로 반원 그리는 것보다 훨씬 예측 가능함.
+      const capClipId = 'capClip';
+      defs.appendChild(svgEl('clipPath', { id: capClipId })).appendChild(
+        svgEl('rect', { x:15, y:6, width:70, height:16 })
+      );
+      g.appendChild(svgEl('ellipse', { cx:50, cy:22, rx:16, ry:13, fill:hat.color, 'clip-path':`url(#${capClipId})` }));
+      g.appendChild(svgEl('ellipse', { cx:63, cy:22, rx:7, ry:2.4, fill:hat.accent }));
+    } else if (hat.id === 'hat_crown') {
+      g.appendChild(svgEl('polygon', { points:'28,34 28,18 38,27 50,12 62,27 72,18 72,34', fill:hat.color }));
+      g.appendChild(svgEl('circle', { cx:50, cy:16, r:3, fill:hat.accent }));
+    } else if (hat.id === 'hat_ribbon') {
+      g.appendChild(svgEl('path', { d:'M 26 30 A 24 16 0 0 1 74 30 L 74 36 L 26 36 Z', fill:hat.color }));
+      const bow = svgEl('g', {});
+      bow.appendChild(svgEl('path', { d:'M 50 24 L 38 16 L 38 30 Z', fill:hat.accent }));
+      bow.appendChild(svgEl('path', { d:'M 50 24 L 62 16 L 62 30 Z', fill:hat.accent }));
+      bow.appendChild(svgEl('circle', { cx:50, cy:24, r:3.2, fill:hat.accent }));
+      g.appendChild(bow);
+    }
+  }
+
+  svg.appendChild(g);
+  return svg;
+}
+function starPoints(cx, cy, rOuter, rInner, n) {
+  const pts = [];
+  for (let i = 0; i < n * 2; i++) {
+    const r = i % 2 === 0 ? rOuter : rInner;
+    const a = (Math.PI / n) * i - Math.PI / 2;
+    pts.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+  }
+  return pts.join(' ');
+}
+
+/* ── 이펙트 레이어(두 스타일 공통 — DOM 오버레이) ─────────────── */
+function buildFxLayer(effectId) {
+  const layer = document.createElement('div');
+  layer.className = 'fx-layer';
+  if (!effectId) return layer;
+  const item = byId(effectId);
+  if (item.id === 'fx_rainbow') {
+    const arc = document.createElement('div');
+    arc.className = 'fx-rainbow-arc';
+    layer.appendChild(arc);
+  }
+  const emoji = item.emoji || '✨';
+  const count = 6;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('span');
+    s.className = 'fx-item';
+    s.textContent = emoji;
+    s.style.left = (8 + (i * 84 / count) + (i % 2 ? 4 : -4)) + '%';
+    s.style.animationDelay = (i * 0.32) + 's';
+    s.style.fontSize = (0.8 + (i % 3) * 0.25) + 'rem';
+    layer.appendChild(s);
+  }
+  return layer;
+}
+
+/* ── 캐릭터 프리뷰 하나 만들기 (공용) ────────────────────────── */
+function renderCharacterInto(container, eq, style, sizePx) {
+  container.innerHTML = '';
+  container.classList.add('stage-box');
+  container.style.width = sizePx + 'px';
+  container.style.height = sizePx + 'px';
+  if (style === 'pixel') {
+    const canvas = document.createElement('canvas');
+    canvas.width = GRID; canvas.height = GRID;
+    canvas.style.width = sizePx + 'px'; canvas.style.height = sizePx + 'px';
+    drawPixelHamster(canvas, eq);
+    container.appendChild(canvas);
+  } else {
+    const svg = buildVectorHamster(eq);
+    svg.style.width = sizePx + 'px'; svg.style.height = sizePx + 'px';
+    container.appendChild(svg);
+  }
+  container.appendChild(buildFxLayer(eq.effect));
+}
+
+/* ============================================================
+   화면 렌더링
+   ============================================================ */
+const viewEl = document.getElementById('view');
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+function renderTopbar() {
+  document.getElementById('coinLabel').textContent = STATE.coins;
+  document.getElementById('styleChip').textContent = STATE.style === 'pixel' ? 'A · 픽셀' : 'B · 벡터';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === STATE.tab));
+}
+
+function renderShop() {
+  const wrap = document.createElement('div');
+
+  const filters = document.createElement('div');
+  filters.className = 'slot-filters';
+  const allChip = document.createElement('button');
+  allChip.className = 'slot-chip' + (STATE.shopFilter === 'all' ? ' active' : '');
+  allChip.textContent = '전체';
+  allChip.onclick = () => { STATE.shopFilter = 'all'; render(); };
+  filters.appendChild(allChip);
+  SLOTS.forEach(s => {
+    const chip = document.createElement('button');
+    chip.className = 'slot-chip' + (STATE.shopFilter === s.key ? ' active' : '');
+    chip.textContent = s.icon + ' ' + s.label;
+    chip.onclick = () => { STATE.shopFilter = s.key; render(); };
+    filters.appendChild(chip);
+  });
+  wrap.appendChild(filters);
+
+  const grid = document.createElement('div');
+  grid.className = 'shop-grid';
+  const list = STATE.shopFilter === 'all' ? ITEMS : itemsOf(STATE.shopFilter);
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    const owned = STATE.owned.has(item.id);
+
+    const swatch = document.createElement('div');
+    swatch.className = 'swatch';
+    swatch.style.background = item.color ? (item.color + '28') : 'var(--c-lavender)';
+    swatch.textContent = item.icon;
+    card.appendChild(swatch);
+
+    const name = document.createElement('div');
+    name.className = 'name'; name.textContent = item.name;
+    card.appendChild(name);
+
+    if (owned) {
+      const badge = document.createElement('div');
+      badge.className = 'owned-badge'; badge.textContent = '보유중';
+      card.appendChild(badge);
+      const btn = document.createElement('button');
+      btn.className = 'buy-btn'; btn.disabled = true; btn.textContent = '보유중';
+      card.appendChild(btn);
+    } else {
+      const price = document.createElement('div');
+      price.className = 'price'; price.textContent = '🪙 ' + item.price;
+      card.appendChild(price);
+      const btn = document.createElement('button');
+      btn.className = 'buy-btn';
+      btn.textContent = '구매';
+      btn.onclick = () => {
+        if (STATE.coins < item.price) { showToast('코인이 부족해요 🥲'); return; }
+        STATE.coins -= item.price;
+        STATE.owned.add(item.id);
+        showToast(item.name + ' 구매 완료! 꾸미기에서 입혀보세요 🎉');
+        render();
+      };
+      card.appendChild(btn);
+    }
+    grid.appendChild(card);
+  });
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+function renderDress() {
+  const wrap = document.createElement('div');
+
+  const previewWrap = document.createElement('div');
+  previewWrap.className = 'dress-preview-wrap';
+  const bgItem = STATE.equipped.bg && byId(STATE.equipped.bg);
+  const stageBox = document.createElement('div');
+  stageBox.style.background = bgItem ? bgItem.color : '#FBF3EA';
+  renderCharacterInto(stageBox, { ...STATE.equipped, topColor: STATE.topColor }, STATE.style, 190);
+  previewWrap.appendChild(stageBox);
+  wrap.appendChild(previewWrap);
+
+  const slotTabs = document.createElement('div');
+  slotTabs.className = 'slot-tabs';
+  SLOTS.forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'slot-tab' + (STATE.dressSlot === s.key ? ' active' : '');
+    b.textContent = s.icon;
+    b.title = s.label;
+    b.onclick = () => { STATE.dressSlot = s.key; render(); };
+    slotTabs.appendChild(b);
+  });
+  wrap.appendChild(slotTabs);
+
+  const slotLabel = document.createElement('div');
+  const curSlot = SLOTS.find(s => s.key === STATE.dressSlot);
+  slotLabel.style.cssText = 'font-family:Jua,sans-serif;font-size:0.8rem;color:var(--c-pants);margin-bottom:8px;';
+  slotLabel.textContent = curSlot.icon + ' ' + curSlot.label;
+  wrap.appendChild(slotLabel);
+
+  const row = document.createElement('div');
+  row.className = 'option-row';
+
+  const noneChip = document.createElement('div');
+  noneChip.className = 'option-chip' + (!STATE.equipped[STATE.dressSlot] ? ' selected' : '');
+  noneChip.innerHTML = `<div class="ring">🚫</div><div class="lbl">없음</div>`;
+  noneChip.onclick = () => { STATE.equipped[STATE.dressSlot] = null; render(); };
+  row.appendChild(noneChip);
+
+  itemsOf(STATE.dressSlot).forEach(item => {
+    const owned = STATE.owned.has(item.id);
+    const chip = document.createElement('div');
+    chip.className = 'option-chip' + (STATE.equipped[STATE.dressSlot] === item.id ? ' selected' : '') + (!owned ? ' locked' : '');
+    chip.innerHTML = `
+      <div class="ring">${item.icon}${!owned ? `<span class="lock">🔒</span>` : ''}</div>
+      <div class="lbl">${item.name}</div>`;
+    chip.onclick = () => {
+      if (!owned) { STATE.tab = 'shop'; STATE.shopFilter = item.slot; showToast('상점에서 먼저 구매해주세요'); render(); return; }
+      STATE.equipped[STATE.dressSlot] = item.id;
+      render();
+    };
+    row.appendChild(chip);
+  });
+  wrap.appendChild(row);
+
+  // 색상 파라미터화 데모 — "옷" 슬롯 탭을 보고 있고, 장착 중인 상의가
+  // 컬러러블 아이템일 때만(다른 슬롯 탭에서도 계속 보이던 버그 수정)
+  const curItem = STATE.dressSlot === 'top' && STATE.equipped.top && byId(STATE.equipped.top);
+  if (STATE.style === 'vector' && curItem && curItem.colorable) {
+    const demo = document.createElement('div');
+    demo.className = 'color-demo';
+    demo.innerHTML = `<div class="ttl">🎨 벡터는 색만 바꾸면 새 아이템 — 스프라이트 추가 없음</div>`;
+    const swatchRow = document.createElement('div');
+    swatchRow.className = 'swatch-row';
+    TOPCOLORS.forEach(c => {
+      const dot = document.createElement('div');
+      dot.className = 'color-dot' + (STATE.topColor === c ? ' selected' : '');
+      dot.style.background = c;
+      dot.onclick = () => { STATE.topColor = c; render(); };
+      swatchRow.appendChild(dot);
+    });
+    demo.appendChild(swatchRow);
+    wrap.appendChild(demo);
+  } else if (STATE.style === 'pixel' && curItem && curItem.colorable) {
+    const demo = document.createElement('div');
+    demo.className = 'color-demo';
+    demo.style.borderColor = '#B7ABC4';
+    demo.innerHTML = `<div class="ttl" style="color:#8A7B9B;">🧱 픽셀은 색상 변형마다 새 스프라이트가 필요(지금은 데모 생략)</div>`;
+    wrap.appendChild(demo);
+  }
+
+  return wrap;
+}
+
+function renderCompare() {
+  const wrap = document.createElement('div');
+  const title = document.createElement('div');
+  title.style.cssText = 'font-family:Jua,sans-serif;font-size:0.82rem;color:var(--c-pants);margin-bottom:10px;';
+  title.textContent = '💜 둘이 어떻게 꾸몄나 구경하기';
+  wrap.appendChild(title);
+
+  const presets = [
+    { name:'지수 (나)', sub:'Lv.4 · 아기햄찌', eq:{ hat:'hat_ribbon', glasses:'gl_heart', gloves:null, shoes:'sh_pink', top:'top_tee', bottom:'bot_skirt', bg:'bg_lavender', effect:'fx_sparkle' }, topColor:'#FFD1DC' },
+    { name:'현하', sub:'Lv.7 · 햄찌', eq:{ hat:'hat_crown', glasses:'gl_star', gloves:'gv_mitt', shoes:'sh_boots', top:'top_hoodie', bottom:'bot_jeans', bg:'bg_peach', effect:'fx_hearts' }, topColor:'#EDE0F5' },
+  ];
+
+  const row = document.createElement('div');
+  row.className = 'compare-wrap';
+  presets.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'compare-card';
+    const bgItem = p.eq.bg && byId(p.eq.bg);
+    const box = document.createElement('div');
+    box.style.background = bgItem ? bgItem.color : '#FBF3EA';
+    box.style.margin = '0 auto';
+    renderCharacterInto(box, { ...p.eq, topColor: p.topColor }, STATE.style, 140);
+    card.appendChild(box);
+    const name = document.createElement('div');
+    name.className = 'name'; name.textContent = p.name;
+    card.appendChild(name);
+    const sub = document.createElement('div');
+    sub.className = 'sub'; sub.textContent = p.sub;
+    card.appendChild(sub);
+    row.appendChild(card);
+  });
+  wrap.appendChild(row);
+
+  const hint = document.createElement('div');
+  hint.className = 'hint-box';
+  hint.innerHTML = '예시용 더미 룩입니다. 실제 앱에서는 커플 상대의 실시간 장착 상태를 그대로 보여주면 됩니다(지금 다마고치 화면의 두 카드 나란히 배치와 같은 패턴).';
+  wrap.appendChild(hint);
+
+  return wrap;
+}
+
+function render() {
+  renderTopbar();
+  viewEl.innerHTML = '';
+  if (STATE.tab === 'shop') viewEl.appendChild(renderShop());
+  else if (STATE.tab === 'dress') viewEl.appendChild(renderDress());
+  else viewEl.appendChild(renderCompare());
+  syncURL();
+}
+
+/* ── 탭 바인딩 ───────────────────────────────────────────────── */
+document.querySelectorAll('.tab-btn').forEach(b => {
+  b.onclick = () => { STATE.tab = b.dataset.tab; render(); };
+});
+
+/* ── 스타일 전환 플로팅 바 (prototype skill 관례: ← 라벨 →, 키보드 지원) ── */
+const STYLES = ['pixel', 'vector'];
+const STYLE_META = { pixel: ['A', '픽셀 아트'], vector: ['B', '벡터 SVG'] };
+function setStyle(s) { STATE.style = s; renderSwitcherLabel(); render(); }
+function renderSwitcherLabel() {
+  const [k, name] = STYLE_META[STATE.style];
+  document.getElementById('switcherLabel').innerHTML = `${k}<small>${name}</small>`;
+}
+document.getElementById('prevStyle').onclick = () => {
+  const i = STYLES.indexOf(STATE.style);
+  setStyle(STYLES[(i - 1 + STYLES.length) % STYLES.length]);
+};
+document.getElementById('nextStyle').onclick = () => {
+  const i = STYLES.indexOf(STATE.style);
+  setStyle(STYLES[(i + 1) % STYLES.length]);
+};
+document.addEventListener('keydown', (e) => {
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
+  if (e.key === 'ArrowLeft') document.getElementById('prevStyle').click();
+  if (e.key === 'ArrowRight') document.getElementById('nextStyle').click();
+});
+
+/* ── 초기 렌더 ───────────────────────────────────────────────── */
+renderSwitcherLabel();
+render();
+</script>
+</body>
+</html>
