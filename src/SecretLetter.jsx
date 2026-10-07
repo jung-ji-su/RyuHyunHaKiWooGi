@@ -122,7 +122,6 @@ const LetterCard = ({ letter, currentUser }) => {
   const cardRef = useRef(null);
 
   const isMyLetter = letter.from === currentUser;
-  const canOpen = isReady && !isMyLetter && !letter.isOpened;
   const isOpened = letter.isOpened;
 
   // 자동 공개 감지

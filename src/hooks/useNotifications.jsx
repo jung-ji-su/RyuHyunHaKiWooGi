@@ -19,7 +19,7 @@ function loadShownIds() {
   }
 }
 
-function saveShownId(id, shownSet) {
+function saveShownId(id) {
   try {
     const raw = sessionStorage.getItem('shownNotifIds');
     const obj = raw ? JSON.parse(raw) : {};
@@ -47,7 +47,7 @@ export function useNotifications(currentUser) {
   const shownRef = useRef(loadShownIds());
   const addShown = (id) => {
     shownRef.current.add(id);
-    saveShownId(id, shownRef.current);
+    saveShownId(id);
   };
 
   useEffect(() => {

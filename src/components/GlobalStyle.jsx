@@ -31,16 +31,12 @@ export default function GlobalStyle() {
         transform: translateZ(0);
       }
       .buri-float.b2 { top: 120px; left: -25px; width: 150px; animation: buriFloat2 7s ease-in-out infinite; }
-      .buri-float.b3 { bottom: 200px; left: 5px; width: 110px; animation: buriFloat3 5s ease-in-out infinite; }
       .buri-float.b4 { top: 55%; right: -20px; width: 100px; animation: buriFloat1 6s ease-in-out 1s infinite; }
-      .buri-float.b5 { bottom: 80px; right: 5px; width: 80px; animation: buriFloat2 8s ease-in-out 2s infinite; }
       @keyframes buriFloat1 { 0%,100%{transform:translateY(0) rotate(-5deg);} 50%{transform:translateY(-18px) rotate(3deg);} }
       @keyframes buriFloat2 { 0%,100%{transform:translateY(0) rotate(6deg);} 50%{transform:translateY(-14px) rotate(-4deg);} }
-      @keyframes buriFloat3 { 0%,100%{transform:translateY(0) rotate(-8deg);} 50%{transform:translateY(-22px) rotate(5deg);} }
       @keyframes wobble { 0%,100%{transform:rotate(-1deg);} 50%{transform:rotate(1.5deg);} }
       @keyframes fadeInUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
       @keyframes headBob { 0%,100%{transform:rotate(0deg);} 25%{transform:rotate(-4deg);} 75%{transform:rotate(4deg);} }
-      @keyframes pageSlideIn { from{opacity:0;transform:translateX(20px);} to{opacity:1;transform:translateX(0);} }
       @keyframes loginBgShift { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
       @keyframes titleDrop { 0%{opacity:0;transform:translateY(-30px) scale(0.8);} 70%{transform:translateY(5px) scale(1.05);} 100%{opacity:1;transform:translateY(0) scale(1);} }
       @keyframes cardSlideUp { 0%{opacity:0;transform:translateY(40px) scale(0.88);} 70%{transform:translateY(-5px) scale(1.02);} 100%{opacity:1;transform:translateY(0) scale(1);} }
@@ -54,17 +50,11 @@ export default function GlobalStyle() {
       @keyframes hintPulse { 0%,100%{opacity:0.45;letter-spacing:1px;} 50%{opacity:0.9;letter-spacing:3px;} }
       @keyframes buriRippleAnim { to{transform:scale(4);opacity:0;} }
       @keyframes buriPangFly { 0%{opacity:1;transform:translate(-50%,-50%) scale(1);} 100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(0.2);} }
-      @keyframes buriHeartBurst { 0%{opacity:1;transform:translate(-50%,-50%) scale(1.2);} 100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(0);} }
       @keyframes buri-shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-7px) rotate(-2deg);} 40%{transform:translateX(7px) rotate(2deg);} 60%{transform:translateX(-5px) rotate(-1deg);} 80%{transform:translateX(4px) rotate(1deg);} }
       .buri-shake { animation: buri-shake 0.4s ease !important; }
       @keyframes hamPulse {
         0%,100%{ box-shadow: 0 4px 18px ${alpha(B.pants, '66')}, 0 0 0 0 ${alpha(B.pants, '33')}; transform: scale(1); }
         50%    { box-shadow: 0 6px 24px ${alpha(B.pants, '88')}, 0 0 0 6px transparent; transform: scale(1.06); }
-      }
-      @keyframes hamRing {
-        0%  { transform: scale(1);   opacity: 0.7; }
-        60% { transform: scale(1.5); opacity: 0; }
-        100%{ transform: scale(1.5); opacity: 0; }
       }
       @keyframes gridCardIn {
         from { opacity:0; transform: translateY(12px) scale(0.95); }
@@ -73,10 +63,6 @@ export default function GlobalStyle() {
       @keyframes drawerHeaderIn {
         from { opacity:0; transform: translateY(-10px); }
         to   { opacity:1; transform: translateY(0); }
-      }
-      @keyframes bottomNavIn {
-        from { opacity:0; transform:translateY(100%); }
-        to   { opacity:1; transform:translateY(0); }
       }
       @keyframes bellShake {
         0%,60%,100% { transform: rotate(0deg); }

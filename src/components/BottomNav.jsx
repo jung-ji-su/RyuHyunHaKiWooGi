@@ -22,7 +22,7 @@ export default function BottomNav({ logout, colorMode = 'system', setColorMode }
   const { currentUser } = useContext(UserContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleTab = (path, e) => {
+  const handleTab = (path) => {
     if (!path) {
       vibrate([15, 10, 20]);
       setDrawerOpen(true);

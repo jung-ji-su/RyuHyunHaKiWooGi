@@ -20,7 +20,7 @@ import CharacterPet from '../CharacterPet';
 // 실제로 이 섹션이 렌더될 때만 내려받게 한다.
 const DiaryList = lazy(() => import('../DiaryList'));
 
-export default function HomePage({ currentUser, logout, effectiveColorMode, setColorMode }) {
+export default function HomePage({ currentUser, effectiveColorMode, setColorMode }) {
   const navigate = useNavigate();
 
   return (

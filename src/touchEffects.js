@@ -189,11 +189,9 @@ export const createHeartPang = (container) => {
 
   // ── 애니메이션 루프 ──
   let rafId;
-  let frame = 0;
 
   const animate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    frame++;
 
     let alive = false;
 

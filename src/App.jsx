@@ -336,7 +336,7 @@ function AppInner() {
         <Route path="/" element={<Layout colorMode={colorMode} setColorMode={setColorMode} />}>
           <Route index element={
             <Suspense fallback={<PageLoader />}>
-              <HomePage currentUser={currentUser} logout={logout} effectiveColorMode={effectiveColorMode} setColorMode={setColorMode} />
+              <HomePage currentUser={currentUser} effectiveColorMode={effectiveColorMode} setColorMode={setColorMode} />
             </Suspense>
           } />
 

@@ -9,9 +9,6 @@ import buriExcited from "./assets/KakaoTalk_20260424_173800871.webp"; // 꽃 들
 import buriLove from "./assets/KakaoTalk_20260424_173810950.webp"; // 하트눈 (설렘)
 import { alpha, B } from "./lib/constants";
 
-// ── 떠다니는 파티클 캔버스 (부드러운 하트/별) ────────────────────
-const FloatingCanvas = ({ canvasRef, wrapRef }) => null; // 훅에서 처리
-
 // [수정] schedules.date는 toDateString() 문자열이라 Firestore orderBy로는 실제 날짜순이 아님.
 // dateIso(신규 문서)가 있으면 그걸 쓰고, 없는 기존 문서는 date 문자열을 그대로 Date로 파싱해 비교한다.
 function scheduleSortDate(s) {

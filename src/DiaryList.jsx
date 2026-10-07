@@ -20,7 +20,6 @@ import meImg from "./assets/JS.webp";
 import gfImg from "./assets/HY.webp";
 
 import buri9    from "./assets/KakaoTalk_20260316_133007779.webp";
-import buri3    from "./assets/image.webp";
 
 import buriHappy    from "./assets/KakaoTalk_20260424_173752880.webp";
 import buriExcited  from "./assets/KakaoTalk_20260424_173800871.webp";
@@ -31,7 +30,6 @@ import buriTired    from "./assets/KakaoTalk_20260424_173840927.webp";
 import buriLucky    from "./assets/KakaoTalk_20260424_173734582.webp";
 import buriCouple   from "./assets/KakaoTalk_20260424_173657493.webp";
 import buriSurprise from "./assets/KakaoTalk_20260424_173832207.webp";
-import buriFunny    from "./assets/KakaoTalk_20260424_173712715.webp";
 
 import { createHeartPang, shakeElement, vibrate } from "./touchEffects";
 import { alpha, B } from "./lib/constants";

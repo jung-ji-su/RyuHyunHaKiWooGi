@@ -125,7 +125,7 @@ function spawnParticles(el) {
 }
 
 // ── 개별 일정 카드 ────────────────────────────────────────────────
-const ScheduleItem = ({ schedule, currentUser, isToday, index }) => {
+const ScheduleItem = ({ schedule, currentUser, index }) => {
   const cardRef   = useRef(null);
   const deleteRef = useRef(null);
   const meta    = CATEGORY_META[schedule.category] || CATEGORY_META["개인일정"];
@@ -429,7 +429,6 @@ const ScheduleList = ({ currentUser }) => {
                   <ScheduleItem
                     key={s.id} schedule={s}
                     currentUser={currentUser}
-                    isToday={groupLabel === "오늘 🔥"}
                     index={i}
                   />
                 ))}

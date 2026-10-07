@@ -13,7 +13,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
 import { recordCheckin } from "./CharacterPet";
 import buri4 from "./assets/KakaoTalk_20260316_132913765.webp";
-import buri5 from "./assets/KakaoTalk_20260316_132923854.webp";
 
 // ── 새 캐릭터 이미지 ──────────────────────────────────────────
 import buriHappy   from "./assets/KakaoTalk_20260424_173752880.webp"; // 웃는 (행복)
