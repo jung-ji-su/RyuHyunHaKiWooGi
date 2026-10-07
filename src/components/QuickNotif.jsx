@@ -92,7 +92,7 @@ export default function QuickNotif() {
       content: item.msg(currentUser, other),
       createdAt: serverTimestamp(),
       isRead: false,
-    }).catch(() => {});
+    }).catch(err => console.error('콕 찌르기 알림 전송 실패:', err));
   };
 
   if (!currentUser) return null;

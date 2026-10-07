@@ -441,7 +441,7 @@ const CoupleCoupons = ({ currentUser }) => {
     const q = query(collection(db, "coupons"), orderBy("createdAt", "desc"));
     const unsub = onSnapshot(q, snap => {
       setCoupons(snap.docs.map(d => normalizeCoupon({ id: d.id, ...d.data() })));
-    });
+    }, err => console.error('CoupleCoupons 구독 실패:', err));
     return () => unsub();
   }, []);
 

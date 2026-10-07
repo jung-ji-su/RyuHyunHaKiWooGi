@@ -92,7 +92,7 @@ export function useNotifications(currentUser) {
         setToastData({ content: latest.content || '새로운 알림이 있어요!', type: latest.type });
         setToastOpen(true);
       }
-    });
+    }, err => console.error('useNotifications 구독 실패:', err));
     return () => unsub();
   }, [currentUser]);
 
@@ -100,7 +100,7 @@ export function useNotifications(currentUser) {
     if (!schedulePopupItem) return;
     const id = schedulePopupItem.id;
     addShown(id);
-    updateDoc(doc(db, 'notifications', id), { isRead: true }).catch(() => {});
+    updateDoc(doc(db, 'notifications', id), { isRead: true }).catch(err => console.error('알림 읽음 처리 실패:', err));
     const next = scheduleQueueRef.current.filter(n => n.id !== id && !shownRef.current.has(n.id));
     if (next.length > 0) {
       setSchedulePopupItem(next[0]);

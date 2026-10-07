@@ -435,7 +435,7 @@ const EmotionThermometer = ({ currentUser }) => {
       if (myToday) { setTodayTemp(myToday.temp); setSubmitted(true); }
       if (!backfilledRef.current) { backfilledRef.current = true; await backfillMissedDays(currentUser, data); }
       setLoading(false);
-    });
+    }, err => { console.error('EmotionThermometer 구독 실패:', err); setLoading(false); });
     return () => unsub();
   }, [currentUser]);
 

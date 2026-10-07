@@ -241,7 +241,7 @@ const BucketList = ({ currentUser }) => {
     const unsub = onSnapshot(q, snap => {
       setItems(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       setLoading(false);
-    });
+    }, err => { console.error('Bucketlist 구독 실패:', err); setLoading(false); });
     return () => unsub();
   }, []);
 

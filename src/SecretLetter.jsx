@@ -647,7 +647,7 @@ const SecretLetter = ({ currentUser }) => {
     const q = query(collection(db, "letters"), orderBy("createdAt", "desc"), limit(100));
     const unsub = onSnapshot(q, (snap) => {
       setLetters(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
+    }, err => console.error('SecretLetter 구독 실패:', err));
     return () => unsub();
   }, []);
 

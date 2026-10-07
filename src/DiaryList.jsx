@@ -88,7 +88,7 @@ const DiaryList = ({ currentUser, pageSize }) => {
     return onSnapshot(q, (snapshot) => {
       setDiaries(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
       setIsLoading(false);
-    });
+    }, err => { console.error('DiaryList 구독 실패:', err); setIsLoading(false); });
   }, []);
 
   const handleAddComment = useCallback(async (diaryId) => {
@@ -426,7 +426,7 @@ const DiaryCard = memo(({ item, index = 0, currentUser, commentText, setCommentI
     );
     return onSnapshot(q, (snapshot) => {
       setComments(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
+    }, err => console.error('DiaryList 댓글 구독 실패:', err));
   }, [item.id]);
 
   return (

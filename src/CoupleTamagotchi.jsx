@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useId } from 'react';
+import { useState, useEffect, useMemo, useId, useRef } from 'react';
 import { Box, Typography, Stack, Paper, Button, Chip } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
@@ -906,6 +906,8 @@ export default function CoupleTamagotchi({ currentUser }) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false); // [신규] 초기 로드 실패 시 무한 로딩 대신 재시도 UI 표시
   const [retryKey, setRetryKey] = useState(0);        // [신규] 값 변경 시 아래 useEffect를 재실행해 재시도
+  const retryInFlightRef = useRef(false); // 재시도 버튼 연타로 생기는 중복 요청(XP/스트릭 중복 적용) 방지
+  const activeRetryKeyRef = useRef(0);    // 이전 재시도 결과가 늦게 도착해도 최신 재시도 결과만 반영
   const [evolved, setEvolved] = useState(null); // [수정] { name, color, isLegendary } | null
   const shakeControls = useAnimation(); // [신규] 진화 시 위젯을 흔드는 스크린쉐이크 제어
   const today   = toIso();
@@ -931,6 +933,8 @@ export default function CoupleTamagotchi({ currentUser }) {
   }, [evolved]);
 
   useEffect(() => {
+    const myKey = retryKey;
+    activeRetryKeyRef.current = myKey;
     (async () => {
       setLoading(true);
       setLoadError(false);
@@ -957,15 +961,22 @@ export default function CoupleTamagotchi({ currentUser }) {
           evaluated[currentUser] = updated;
         }
 
+        // 더 최신 재시도가 이미 시작됐다면 이 응답은 버린다(중복 XP/진화 연출 방지)
+        if (activeRetryKeyRef.current !== myKey) return;
+
         setAllData(evaluated);
         const payload = {};
         for (const u of USERS) payload[u] = evaluated[u];
         await setDoc(docRef, { ...payload, updatedAt: serverTimestamp() }, { merge: true });
       } catch (e) {
+        if (activeRetryKeyRef.current !== myKey) return;
         console.error('타마고치 로드 오류:', e);
         setLoadError(true);
       } finally {
-        setLoading(false);
+        if (activeRetryKeyRef.current === myKey) {
+          setLoading(false);
+          retryInFlightRef.current = false;
+        }
       }
     })();
   }, [retryKey]);
@@ -1062,7 +1073,11 @@ export default function CoupleTamagotchi({ currentUser }) {
     return (
       <Box sx={{ textAlign: 'center', py: 6 }}>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>😿 불러오지 못했어요</Typography>
-        <Button size="small" onClick={() => setRetryKey(k => k + 1)}
+        <Button size="small" onClick={() => {
+          if (retryInFlightRef.current) return;
+          retryInFlightRef.current = true;
+          setRetryKey(k => k + 1);
+        }}
           sx={{ mt: 1, fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
           다시 시도
         </Button>

@@ -300,7 +300,7 @@ const ScheduleList = ({ currentUser }) => {
     const q = query(collection(db, "schedules"), orderBy("createdAt", "desc"), limit(500)); // [수정] 전체 컬렉션 무제한 로드 방지, CoupleCalendar와 동일 기준
     const unsub = onSnapshot(q, snap => {
       setSchedules(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
+    }, err => console.error('ScheduleList 구독 실패:', err));
     return () => unsub();
   }, []);
 

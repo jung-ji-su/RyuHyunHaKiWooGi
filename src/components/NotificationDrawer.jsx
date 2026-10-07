@@ -84,12 +84,12 @@ export default function NotificationDrawer({ open, onClose, notifications, onMar
 
   const handleNotifDelete = async (e, n) => {
     e.stopPropagation();
-    deleteDoc(doc(db, 'notifications', n.id)).catch(() => {});
+    deleteDoc(doc(db, 'notifications', n.id)).catch(err => console.error('알림 삭제 실패:', err));
   };
 
   const handleNotifClick = async (n) => {
     if (!n.isRead) {
-      updateDoc(doc(db, 'notifications', n.id), { isRead: true }).catch(() => {});
+      updateDoc(doc(db, 'notifications', n.id), { isRead: true }).catch(err => console.error('알림 읽음 처리 실패:', err));
     }
     const route = TYPE_ROUTES[n.type] ?? ((!n.type && n.count !== undefined) ? '/schedule' : null);
     onClose();

@@ -87,10 +87,11 @@ const CoupleCalendar = ({ currentUser, showFab = false }) => {
   };
 
   useEffect(() => {
-    const u1 = onSnapshot(query(collection(db, 'schedules'),    orderBy('createdAt', 'desc'),  limit(500)), s => setSchedules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
-    const u2 = onSnapshot(query(collection(db, 'temperatures'), orderBy('date', 'desc'),       limit(400)), s => setTemperatures(s.docs.map(d => ({ id: d.id, ...d.data() }))));
-    const u3 = onSnapshot(query(collection(db, 'timeCapsules'), orderBy('createdAt', 'desc'), limit(100)), s => setCapsules(s.docs.map(d => ({ id: d.id, ...d.data() }))));
-    const u4 = onSnapshot(query(collection(db, 'diaries'),      orderBy('createdAt', 'desc'), limit(200)), s => setDiaries(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const onErr = (label) => (err) => console.error(`CoupleCalendar ${label} 구독 실패:`, err);
+    const u1 = onSnapshot(query(collection(db, 'schedules'),    orderBy('createdAt', 'desc'),  limit(500)), s => setSchedules(s.docs.map(d => ({ id: d.id, ...d.data() }))), onErr('schedules'));
+    const u2 = onSnapshot(query(collection(db, 'temperatures'), orderBy('date', 'desc'),       limit(400)), s => setTemperatures(s.docs.map(d => ({ id: d.id, ...d.data() }))), onErr('temperatures'));
+    const u3 = onSnapshot(query(collection(db, 'timeCapsules'), orderBy('createdAt', 'desc'), limit(100)), s => setCapsules(s.docs.map(d => ({ id: d.id, ...d.data() }))), onErr('timeCapsules'));
+    const u4 = onSnapshot(query(collection(db, 'diaries'),      orderBy('createdAt', 'desc'), limit(200)), s => setDiaries(s.docs.map(d => ({ id: d.id, ...d.data() }))), onErr('diaries'));
     return () => { u1(); u2(); u3(); u4(); };
   }, []);
 

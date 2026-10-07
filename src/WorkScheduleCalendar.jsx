@@ -177,7 +177,7 @@ export default function WorkScheduleCalendar({ onFlip }) {
       const map = {};
       snap.docs.forEach(d => { map[d.data().date] = d.data().type; });
       setSchedules(map);
-    });
+    }, err => console.error('WorkScheduleCalendar 구독 실패:', err));
   }, []);
 
   const navigate = (dir) => {

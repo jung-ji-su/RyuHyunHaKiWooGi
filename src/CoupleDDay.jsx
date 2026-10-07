@@ -39,7 +39,7 @@ export default function CoupleDDay() {
         .filter(e => new Date(e.date) >= now)
         .sort((a, b) => scheduleSortDate(a) - scheduleSortDate(b)); // [수정] Firestore orderBy 대신 클라이언트에서 실제 날짜순 정렬
       setTargetEvent(events[0] ?? null);
-    });
+    }, err => console.error('CoupleDDay 구독 실패:', err));
     return () => unsub();
   }, []);
 

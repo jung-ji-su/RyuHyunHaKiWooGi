@@ -394,6 +394,8 @@ export default function CharacterPet({ currentUser }) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false); // [신규] 초기 로드 실패 시 무한 로딩 대신 재시도 UI 표시
   const [retryKey, setRetryKey] = useState(0);        // [신규] 값 변경 시 아래 useEffect를 재실행해 재시도
+  const retryInFlightRef = useRef(false); // 재시도 버튼 연타로 생기는 중복 요청(HP 페널티 중복 적용) 방지
+  const activeRetryKeyRef = useRef(0);    // 이전 재시도 결과가 늦게 도착해도 최신 재시도 결과만 반영
   const [jiltaSent, setJiltaSent] = useState(false);
 
   // 말풍선 관리
@@ -408,6 +410,8 @@ export default function CharacterPet({ currentUser }) {
   const configRef = doc(db, 'couple_config', COUPLE_ID);
 
   useEffect(() => {
+    const myKey = retryKey;
+    activeRetryKeyRef.current = myKey;
     const init = async () => {
       setLoading(true);
       setLoadError(false);
@@ -416,6 +420,9 @@ export default function CharacterPet({ currentUser }) {
           getDoc(doc(db, 'couple_character', COUPLE_ID)),
           getDoc(configRef),
         ]);
+
+        // 더 최신 재시도가 이미 시작됐다면 이 응답은 버린다(HP 페널티 중복 적용 방지)
+        if (activeRetryKeyRef.current !== myKey) return;
 
         // 말풍선 로드
         if (configSnap.exists() && configSnap.data().speechBubbles?.length) {
@@ -429,6 +436,8 @@ export default function CharacterPet({ currentUser }) {
         const results = await Promise.all(
           USERS.map(user => evaluateUserPenalties(user, rawData[user] ?? { ...defaults }))
         );
+        if (activeRetryKeyRef.current !== myKey) return;
+
         const updatedData = Object.fromEntries(USERS.map((user, i) => [user, results[i]]));
         if (!charSnap.exists()) {
           await setDoc(doc(db, 'couple_character', COUPLE_ID), { ...updatedData, updatedAt: serverTimestamp() });
@@ -436,12 +445,17 @@ export default function CharacterPet({ currentUser }) {
         setAllData(updatedData);
 
         const checkinSnap = await getDoc(doc(db, 'daily_checkins', `${COUPLE_ID}_${today}`));
+        if (activeRetryKeyRef.current !== myKey) return;
         setTodayCheckin(checkinSnap.exists() ? checkinSnap.data() : { checkedIn: [] });
       } catch (e) {
+        if (activeRetryKeyRef.current !== myKey) return;
         console.error('CharacterPet 초기화 오류:', e);
         setLoadError(true);
       } finally {
-        setLoading(false);
+        if (activeRetryKeyRef.current === myKey) {
+          setLoading(false);
+          retryInFlightRef.current = false;
+        }
       }
     };
     init();
@@ -486,7 +500,11 @@ export default function CharacterPet({ currentUser }) {
     return (
       <Box sx={{ textAlign: 'center', py: 3 }}>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants }}>😿 불러오지 못했어요</Typography>
-        <Button size="small" onClick={() => setRetryKey(k => k + 1)}
+        <Button size="small" onClick={() => {
+          if (retryInFlightRef.current) return;
+          retryInFlightRef.current = true;
+          setRetryKey(k => k + 1);
+        }}
           sx={{ mt: 1, fontFamily: "'Noto Sans KR',sans-serif", fontSize: '0.72rem', color: B.pants, textDecoration: 'underline' }}>
           다시 시도
         </Button>
