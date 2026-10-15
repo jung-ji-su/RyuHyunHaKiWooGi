@@ -235,7 +235,7 @@ export default function LoginScreen({ onLogin }) {
       {/* PIN 입력 다이얼로그 — window.prompt() 대신(설치형 PWA에서 불안정) */}
       <Dialog open={!!pinTarget} onClose={closeDialog} PaperProps={{
         sx: {
-          borderRadius: '24px', p: 1,
+          borderRadius: '24px', p: 1, bgcolor: B.surface,
           border: `2.5px solid ${alpha(pinTarget === '현하' ? B.skin : B.pants, '55')}`,
         },
       }}>
