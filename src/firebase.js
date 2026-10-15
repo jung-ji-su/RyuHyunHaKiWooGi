@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth"; // ⭐ 인증(Auth) 기능 추가
+import { getFunctions } from "firebase/functions"; // 로그인 PIN 서버 검증용 Cloud Functions
 
 const firebaseConfig = {
   apiKey: "AIzaSyA6AD1G7MZdzZJxzwmwVezJv4QSLBdItqI",
@@ -21,3 +22,4 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);     // 데이터베이스
 export const storage = getStorage(app); // 스토리지 (나중에 혹시 쓸 수 있으니 유지)
 export const auth = getAuth(app);       // ⭐ 인증 (App.js에서 로그인 체크할 때 필수!)
+export const functions = getFunctions(app);

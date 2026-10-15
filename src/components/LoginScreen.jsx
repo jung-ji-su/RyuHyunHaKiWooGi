@@ -1,4 +1,8 @@
-import { Box, Typography, Stack } from '@mui/material';
+import { useState } from 'react';
+import {
+  Box, Typography, Stack, Dialog, DialogContent,
+  TextField, Button, CircularProgress,
+} from '@mui/material';
 import { alpha, B } from '../lib/constants';
 import {
   buri1, buri2, buri3, buri4, buri5, buri6, buri7, buri8, buri9,
@@ -20,11 +24,45 @@ const topBuris = [
 const bottomBuris = [buriPig, buri5, buri8, buriGirl, buri4, buriTired, buri9, buriFlower, buriCry, buriBeard, buriCouple];
 const floatEmojis  = ['🐷','💜','✨','🎉','⭐','💕','🎊','🐷','💜','✨'];
 
+// 기존 window.prompt() 문구·실패 멘트 톤을 그대로 유지 — 입력 수단만 Dialog로 교체
+const ROLE_COPY = {
+  지수: { prompt: '왜 내꺼로 로그인 하세여???', wrongMsg: '[WARNING]👹👹👹류현하 침입 시도 감지!!!👹👹👹' },
+  현하: { prompt: '🔒 현하님 비밀번호를 입력하세요', wrongMsg: '❌ 비밀번호가 틀렸습니다!' },
+};
+
 export default function LoginScreen({ onLogin }) {
+  const [pinTarget, setPinTarget] = useState(null); // '지수' | '현하' | null
+  const [pin, setPin] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSelect = (role, e) => {
     createBuriPang(e);
     vibrate([30, 15, 30, 15, 60]);
-    setTimeout(() => onLogin(role), 200);
+    setTimeout(() => setPinTarget(role), 200);
+  };
+
+  const closeDialog = () => {
+    if (submitting) return; // 요청 중엔 닫기 방지
+    setPinTarget(null);
+    setPin('');
+  };
+
+  const handleSubmit = async () => {
+    if (!pin.trim() || submitting) return;
+    setSubmitting(true);
+    const result = await onLogin(pinTarget, pin.trim());
+    setSubmitting(false);
+    if (result?.ok) {
+      setPinTarget(null);
+      setPin('');
+      return;
+    }
+    if (result?.locked) {
+      alert(result.message || '🔒 너무 많이 틀렸어요! 잠시 후 다시 시도해주세요.');
+    } else {
+      alert(ROLE_COPY[pinTarget]?.wrongMsg ?? '❌ 비밀번호가 틀렸습니다!');
+    }
+    setPin('');
   };
 
   return (
@@ -193,6 +231,38 @@ export default function LoginScreen({ onLogin }) {
           }} />
         ))}
       </Stack>
+
+      {/* PIN 입력 다이얼로그 — window.prompt() 대신(설치형 PWA에서 불안정) */}
+      <Dialog open={!!pinTarget} onClose={closeDialog} PaperProps={{
+        sx: {
+          borderRadius: '24px', p: 1,
+          border: `2.5px solid ${alpha(pinTarget === '현하' ? B.skin : B.pants, '55')}`,
+        },
+      }}>
+        <DialogContent sx={{ textAlign: 'center', px: 3, py: 3, minWidth: 260 }}>
+          <Typography sx={{
+            fontFamily: "'Jua',sans-serif", fontSize: '1.05rem', color: B.dark, mb: 2,
+          }}>{ROLE_COPY[pinTarget]?.prompt}</Typography>
+          <TextField
+            autoFocus fullWidth type="password" value={pin}
+            disabled={submitting}
+            onChange={e => setPin(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') handleSubmit(); }}
+            sx={{ mb: 2.5 }}
+          />
+          <Button
+            fullWidth variant="contained" disabled={!pin.trim() || submitting}
+            onClick={handleSubmit}
+            sx={{
+              borderRadius: '999px', py: 1, fontFamily: "'Jua',sans-serif",
+              bgcolor: pinTarget === '현하' ? B.accent : B.pants,
+              '&:hover': { bgcolor: pinTarget === '현하' ? B.accent : B.pants },
+            }}
+          >
+            {submitting ? <CircularProgress size={20} sx={{ color: 'white' }} /> : '입장하기'}
+          </Button>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }

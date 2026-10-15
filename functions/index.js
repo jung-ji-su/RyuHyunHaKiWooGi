@@ -1,9 +1,10 @@
-const { onRequest }         = require("firebase-functions/v2/https");
+const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { onSchedule }        = require("firebase-functions/v2/scheduler");
 const { defineSecret }      = require("firebase-functions/params");
 const admin                 = require("firebase-admin");
 const fetch                 = require("node-fetch");
+const crypto                = require("crypto");
 
 admin.initializeApp();
 
@@ -11,6 +12,9 @@ const BASE = "https://ryuhyunhakiwoogi.web.app";
 const USERS = ["지수", "현하"];
 // 값은 소스에 두지 않고 Secret Manager에서 관리 (firebase functions:secrets:set TEST_SECRET)
 const TEST_SECRET = defineSecret("TEST_SECRET");
+// 로그인 PIN도 동일한 방식(firebase functions:secrets:set PIN_JISU / PIN_HYUNHA)
+const PIN_JISU   = defineSecret("PIN_JISU");
+const PIN_HYUNHA = defineSecret("PIN_HYUNHA");
 
 // fcmTokens/{user} 문서: 구버전은 { token } 하나, 신버전은 { token(최근), tokens[](전체 기기) }.
 // 어느 형태든 읽을 수 있도록 두 필드를 합쳐서 중복 제거한다.
@@ -379,5 +383,76 @@ exports.sendTestPush = onRequest(
       console.error("sendTestPush error:", e);
       res.status(500).json({ error: e.message, code: e.code });
     }
+  }
+);
+
+// ── 로그인: PIN 서버 검증 + 커스텀 토큰 발급 ──────────────────────
+// PIN 값은 Secret Manager(PIN_JISU/PIN_HYUNHA)에만 존재 — 소스·클라이언트 번들 어디에도 없음.
+// uid는 "지수"/"현하" 문자열 그대로 고정 사용(앱 전체가 이미 이 문자열을 currentUser로 쓰고 있어
+// Firestore 데이터의 writer/from/to 등 어떤 필드도 바뀔 필요 없음).
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_MS = 15 * 60 * 1000; // 15분
+
+// 길이가 달라도(타이밍으로 길이 추측 못 하게) 항상 32바이트 해시로 맞춰서 비교
+function constantTimeEqual(a, b) {
+  const ha = crypto.createHash("sha256").update(String(a)).digest();
+  const hb = crypto.createHash("sha256").update(String(b)).digest();
+  return crypto.timingSafeEqual(ha, hb);
+}
+
+// 하나의 트랜잭션 안에서: 잠금 확인 → (잠겨있지 않을 때만) PIN 비교 → 결과에 따라 카운트/잠금 갱신.
+// 잠긴 동안은 PIN 비교 자체를 하지 않는다.
+async function verifyPinWithRateLimit(user, pin, expectedPin) {
+  const ref = admin.firestore().doc(`authAttempts/${user}`);
+  return admin.firestore().runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const data = snap.exists ? snap.data() : {};
+    const now = Date.now();
+
+    if (data.lockedUntil && data.lockedUntil > now) {
+      return { ok: false, locked: true, retryAfterMs: data.lockedUntil - now };
+    }
+
+    const match = constantTimeEqual(pin, expectedPin);
+
+    if (match) {
+      tx.set(ref, { count: 0, lockedUntil: 0, updatedAt: now });
+      return { ok: true };
+    }
+
+    const newCount = (data.count || 0) + 1;
+    if (newCount >= LOGIN_MAX_ATTEMPTS) {
+      tx.set(ref, { count: 0, lockedUntil: now + LOGIN_LOCKOUT_MS, updatedAt: now });
+      return { ok: false, locked: true, retryAfterMs: LOGIN_LOCKOUT_MS };
+    }
+    tx.set(ref, { count: newCount, lockedUntil: 0, updatedAt: now });
+    return { ok: false, locked: false, remainingAttempts: LOGIN_MAX_ATTEMPTS - newCount };
+  });
+}
+
+exports.verifyPinAndSignIn = onCall(
+  { secrets: [PIN_JISU, PIN_HYUNHA] },
+  async (request) => {
+    const { user, pin } = request.data || {};
+    if (user !== "지수" && user !== "현하") {
+      throw new HttpsError("invalid-argument", "잘못된 사용자예요.");
+    }
+    if (typeof pin !== "string" || !pin) {
+      throw new HttpsError("invalid-argument", "PIN을 입력해주세요.");
+    }
+
+    const expectedPin = user === "지수" ? PIN_JISU.value() : PIN_HYUNHA.value();
+    const result = await verifyPinWithRateLimit(user, pin, expectedPin);
+
+    if (result.locked) {
+      const minutes = Math.max(1, Math.ceil(result.retryAfterMs / 60000));
+      throw new HttpsError("resource-exhausted", `너무 많이 틀렸어요! ${minutes}분 후에 다시 시도해주세요.`);
+    }
+    if (!result.ok) {
+      throw new HttpsError("permission-denied", "PIN이 틀렸어요.");
+    }
+
+    const token = await admin.auth().createCustomToken(user, { role: user });
+    return { token };
   }
 );

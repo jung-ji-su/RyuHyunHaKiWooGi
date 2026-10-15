@@ -1,14 +1,21 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 모든 데이터에 대해 읽기/쓰기 모두 로그인한 사람만 가능하게 설정
+    // 모든 데이터에 대해 읽기/쓰기 모두 "지수"/"현하" 본인만 가능하게 설정
+    // (authAttempts 로그인 시도 제한 카운터는 이 와일드카드에서 제외 — 아래 별도 블록에서
+    //  클라이언트 접근을 전면 차단하고, Cloud Function(Admin SDK)만 다룬다)
     match /{document=**} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
+      allow read, write: if request.auth != null
+        && request.auth.uid in ['지수', '현하']
+        && document[0] != 'authAttempts';
     }
   }
 
   match /buckets/{docId} {
-  allow read, write: if request.auth != null;
+  allow read, write: if request.auth != null && request.auth.uid in ['지수', '현하'];
 	}
+
+  match /authAttempts/{userId} {
+    allow read, write: if false;
+  }
 }

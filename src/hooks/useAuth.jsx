@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import { auth } from '../firebase';
-import { onAuthStateChanged, signInAnonymously, updateProfile, signOut } from 'firebase/auth';
+import { auth, functions } from '../firebase';
+import { onAuthStateChanged, signInWithCustomToken, signOut } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
+
+const verifyPinAndSignIn = httpsCallable(functions, 'verifyPinAndSignIn');
 
 export function useAuth() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -8,36 +11,27 @@ export function useAuth() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, user => {
-      setCurrentUser(user?.displayName || null);
+      // uid는 커스텀 토큰 발급 시 "지수"/"현하" 문자열 그대로 고정 — 그 외(예: 예전 익명 세션의
+      // 랜덤 uid)는 로그인 안 된 것으로 취급해 자연스럽게 다시 로그인 화면으로 보낸다.
+      const uid = user?.uid;
+      setCurrentUser(uid === '지수' || uid === '현하' ? uid : null);
       setLoading(false);
     });
     return () => unsub();
   }, []);
 
-  const login = async (role) => {
-    if (role === "지수") {
-      const pw = window.prompt("왜 내꺼로 로그인 하세여???");
-      if (pw !== import.meta.env.VITE_PW_JISU) {
-        alert("[WARNING]👹👹👹류현하 침입 시도 감지!!!👹👹👹");
-        return;
-      }
-    }
-    if (role === "현하") {
-      const pw = window.prompt("🔒 현하님 비밀번호를 입력하세요");
-      if (pw !== import.meta.env.VITE_PW_HYUNHA) {
-        alert("❌ 비밀번호가 틀렸습니다!");
-        return;
-      }
-    }
+  // PIN은 서버(Cloud Function)에서만 검증한다 — 클라이언트는 그 결과(커스텀 토큰)만 받는다.
+  const login = async (role, pin) => {
     try {
-      setLoading(true);
-      const uc = await signInAnonymously(auth);
-      await updateProfile(uc.user, { displayName: role });
-      setCurrentUser(role);
+      const result = await verifyPinAndSignIn({ user: role, pin });
+      await signInWithCustomToken(auth, result.data.token);
+      return { ok: true };
     } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
+      const code = e?.code || '';
+      if (code.includes('resource-exhausted')) {
+        return { ok: false, locked: true, message: e.message };
+      }
+      return { ok: false, locked: false, message: e?.message || '로그인에 실패했어요.' };
     }
   };
 
