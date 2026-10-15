@@ -59,6 +59,8 @@ export default function LoginScreen({ onLogin }) {
     }
     if (result?.locked) {
       alert(result.message || '🔒 너무 많이 틀렸어요! 잠시 후 다시 시도해주세요.');
+    } else if (result?.serverError) {
+      alert('⚠️ 서버에 문제가 생겼어요. PIN은 맞았을 수도 있어요 — 잠시 후 다시 시도해주세요.');
     } else {
       alert(ROLE_COPY[pinTarget]?.wrongMsg ?? '❌ 비밀번호가 틀렸습니다!');
     }

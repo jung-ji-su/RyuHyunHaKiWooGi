@@ -31,6 +31,11 @@ export function useAuth() {
       if (code.includes('resource-exhausted')) {
         return { ok: false, locked: true, message: e.message };
       }
+      // PIN 불일치(permission-denied)와 서버 쪽 문제(internal 등)를 구분 —
+      // 둘 다 같은 "PIN 틀림" 메시지로 뭉개면 실제 서버 장애를 PIN 오타로 오인하게 됨.
+      if (!code.includes('permission-denied')) {
+        return { ok: false, locked: false, serverError: true, message: e?.message || '서버 오류가 발생했어요.' };
+      }
       return { ok: false, locked: false, message: e?.message || '로그인에 실패했어요.' };
     }
   };

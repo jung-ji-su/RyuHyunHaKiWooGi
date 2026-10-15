@@ -393,10 +393,12 @@ exports.sendTestPush = onRequest(
 const LOGIN_MAX_ATTEMPTS = 5;
 const LOGIN_LOCKOUT_MS = 15 * 60 * 1000; // 15분
 
-// 길이가 달라도(타이밍으로 길이 추측 못 하게) 항상 32바이트 해시로 맞춰서 비교
+// 길이가 달라도(타이밍으로 길이 추측 못 하게) 항상 32바이트 해시로 맞춰서 비교.
+// 입력/저장 양쪽 다 앞뒤 공백·개행을 제거하고 비교한다(secrets:set 입력 시 개행이
+// 섞여 들어가는 사고를 방지).
 function constantTimeEqual(a, b) {
-  const ha = crypto.createHash("sha256").update(String(a)).digest();
-  const hb = crypto.createHash("sha256").update(String(b)).digest();
+  const ha = crypto.createHash("sha256").update(String(a).trim()).digest();
+  const hb = crypto.createHash("sha256").update(String(b).trim()).digest();
   return crypto.timingSafeEqual(ha, hb);
 }
 
@@ -452,7 +454,15 @@ exports.verifyPinAndSignIn = onCall(
       throw new HttpsError("permission-denied", "PIN이 틀렸어요.");
     }
 
-    const token = await admin.auth().createCustomToken(user, { role: user });
-    return { token };
+    try {
+      const token = await admin.auth().createCustomToken(user, { role: user });
+      return { token };
+    } catch (e) {
+      // PIN은 맞았는데 여기서 실패하면 거의 항상 서비스 계정 IAM 설정 문제
+      // (roles/iam.serviceAccountTokenCreator 자기 자신 부여 누락)라서, "PIN 틀림"과
+      // 절대 같은 메시지로 섞이면 안 됨 — 원인 추적이 불가능해짐.
+      console.error("createCustomToken 실패(PIN 검증은 통과):", e);
+      throw new HttpsError("internal", "로그인 처리 중 서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+    }
   }
 );
