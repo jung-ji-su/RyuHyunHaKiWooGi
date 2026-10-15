@@ -1,6 +1,7 @@
 const { onRequest }         = require("firebase-functions/v2/https");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { onSchedule }        = require("firebase-functions/v2/scheduler");
+const { defineSecret }      = require("firebase-functions/params");
 const admin                 = require("firebase-admin");
 const fetch                 = require("node-fetch");
 
@@ -8,7 +9,8 @@ admin.initializeApp();
 
 const BASE = "https://ryuhyunhakiwoogi.web.app";
 const USERS = ["지수", "현하"];
-const TEST_SECRET = "buri2026";
+// 값은 소스에 두지 않고 Secret Manager에서 관리 (firebase functions:secrets:set TEST_SECRET)
+const TEST_SECRET = defineSecret("TEST_SECRET");
 
 // fcmTokens/{user} 문서: 구버전은 { token } 하나, 신버전은 { token(최근), tokens[](전체 기기) }.
 // 어느 형태든 읽을 수 있도록 두 필드를 합쳐서 중복 제거한다.
@@ -307,12 +309,12 @@ exports.sendDailyReminders = onSchedule(
   }
 );
 
-// ── 날씨 알림 즉시 테스트: ?secret=buri2026 로 호출 ─────────────
+// ── 날씨 알림 즉시 테스트: ?secret=... 로 호출 (값은 Secret Manager의 TEST_SECRET) ─
 exports.sendTestWeather = onRequest(
-  { cors: true },
+  { cors: true, secrets: [TEST_SECRET] },
   async (req, res) => {
     const secret = req.query.secret || req.body?.secret;
-    if (secret !== TEST_SECRET) { res.status(401).json({ error: "인증 실패" }); return; }
+    if (secret !== TEST_SECRET.value()) { res.status(401).json({ error: "인증 실패" }); return; }
 
     const targets = flattenTokenMap(await getActiveTokenMap());
     if (targets.length === 0) {
@@ -340,12 +342,12 @@ exports.sendTestWeather = onRequest(
   }
 );
 
-// ── 테스트 푸시: ?user=지수&secret=buri2026 로 호출 ─────────────
+// ── 테스트 푸시: ?user=지수&secret=... 로 호출 (값은 Secret Manager의 TEST_SECRET) ─
 exports.sendTestPush = onRequest(
-  { cors: true },
+  { cors: true, secrets: [TEST_SECRET] },
   async (req, res) => {
     const secret = req.query.secret || req.body?.secret;
-    if (secret !== TEST_SECRET) { res.status(401).json({ error: "인증 실패" }); return; }
+    if (secret !== TEST_SECRET.value()) { res.status(401).json({ error: "인증 실패" }); return; }
 
     const user = req.query.user || req.body?.user;
     if (!user) { res.status(400).json({ error: "user 파라미터 필요" }); return; }
