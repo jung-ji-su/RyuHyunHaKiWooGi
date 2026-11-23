@@ -215,16 +215,6 @@
   --cal-person-both-to-rgb: 224,98,138;
 }
 
-/* Leaflet 줌 컨트롤(+/-)이 다크 모드에서도 흰 버튼으로 남지 않도록 */
-:root[data-theme="dark"] .leaflet-control-zoom a {
-  background-color: #241F2E !important;
-  color: #E8E3F0 !important;
-  border-color: #3A3448 !important;
-}
-:root[data-theme="dark"] .leaflet-control-zoom a:hover {
-  background-color: #2E2838 !important;
-}
-
 /* MUI TextField/Select 기본 텍스트·라벨색은 항상 검정 계열(theme.palette.text)이라
    다크 모드에서 배경만 어둡게 바꾼 입력창은 글자가 안 보이는 문제가 반복됐다
    (DayPanel/ScheduleDetailDialog/AccountBook 등 각자 고쳤던 것과 같은 원인) —

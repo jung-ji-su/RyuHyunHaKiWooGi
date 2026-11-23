@@ -29,18 +29,11 @@ export const ROUTES = {
   THERMO: "/thermo",
   DIARY: "/diary",
   BUCKET: "/bucket",
-  TRAVEL: "/travel",
-  STATS: "/stats",
-  MENU: "/menu",
-  GAMES: "/games",
-  ACCOUNT: "/account",
   TAMAGOTCHI: "/tamagotchi",
-  WORLDCUP: "/worldcup",
 };
 
-// 여행지도·연애통계·오늘의메뉴·미니게임·가계부·이상형월드컵은 더 이상 쓰지 않아
-// 메뉴에서 제외됨(2026-10-03) — 상세는 CLAUDE.md "더 이상 사용하지 않는 기능" 참고.
-// 라우트(App.jsx)와 컴포넌트 소스는 보존돼 있음, 진입점만 제거.
+// 여행지도·연애통계·오늘의메뉴·미니게임·가계부·이상형월드컵은 2026-11-23에 코드째 제거됨.
+// 필요하면 git 이력(커밋 40f8053 이전)에서 복원 — CLAUDE.md 참고.
 export const MENU_ITEMS = [
   { emoji: "📅", name: "일정 보기", sub: "등록된 일정 한눈에", path: ROUTES.SCHEDULE, color: B.pants },
   { emoji: "🎟️", name: "쿠폰북", sub: "사용 가능한 쿠폰", path: ROUTES.COUPONS, color: B.accent },
