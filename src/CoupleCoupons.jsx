@@ -151,7 +151,7 @@ const RouletteModal = ({ coupons, currentUser, onClose, onUse }) => {
               bgcolor: B.pants, borderRadius: "14px", py: 1,
               fontFamily: "'Jua',sans-serif", fontSize: "1rem",
               boxShadow: `0 4px 14px ${alpha(B.pants, '44')}`,
-              "&:hover": { bgcolor: "#6A3D96" },
+              "&:hover": { bgcolor: B.pantsHover },
             }}
           >
             {spinning ? "뽑는 중..." : "🎰 뽑기!"}
@@ -219,7 +219,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
             bgcolor: open ? B.accent : B.pants, px: 2,
             fontFamily: "'Jua',sans-serif", fontSize: "0.78rem",
             boxShadow: `0 2px 8px ${alpha(B.pants, '33')}`,
-            "&:hover": { bgcolor: open ? "#C8550A" : "#6A3D96" },
+            "&:hover": { bgcolor: open ? "#C8550A" : B.pantsHover },
           }}
         >
           ✏️ 직접 쓰기
@@ -286,7 +286,7 @@ const IssueForm = ({ currentUser, onIssue }) => {
               bgcolor: B.pants, borderRadius: "12px", py: 1,
               fontFamily: "'Jua',sans-serif", fontSize: "0.9rem",
               boxShadow: `0 3px 10px ${alpha(B.pants, '44')}`,
-              "&:hover": { bgcolor: "#6A3D96" },
+              "&:hover": { bgcolor: B.pantsHover },
               "&.Mui-disabled": { bgcolor: B.lavender, color: "white" },
             }}
           >

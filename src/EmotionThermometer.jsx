@@ -35,8 +35,8 @@ function getTempMeta(v) {
   if (v < 20)   return { emoji: "😶", label: "무기력",     color: "#B4B2A9" };
   if (v < 40)   return { emoji: "😔", label: "우울해요",   color: "#85B7EB" };
   if (v < 60)   return { emoji: "😊", label: "보통이에요", color: "#EF9F27" };
-  if (v < 80)   return { emoji: "😄", label: "좋아요!",    color: "#7B4FA6" };
-  return         { emoji: "🥰", label: "최고예요!",         color: "#E8630A" };
+  if (v < 80)   return { emoji: "😄", label: "좋아요!",    color: B.pants };
+  return         { emoji: "🥰", label: "최고예요!",         color: B.accent };
 }
 
 function getDateRange(days) {
@@ -623,7 +623,7 @@ const EmotionThermometer = ({ currentUser }) => {
                       color:   selectedTags.includes(tag) ? "white"  : alpha(B.dark, '88'),
                       border:  `1px solid ${selectedTags.includes(tag) ? B.pants : "transparent"}`,
                       cursor: "pointer", transition: "background-color 0.15s, color 0.15s, border-color 0.15s",
-                      '&:hover': { bgcolor: selectedTags.includes(tag) ? "#6A3D96" : B.lavender },
+                      '&:hover': { bgcolor: selectedTags.includes(tag) ? B.pantsHover : B.lavender },
                       '& .MuiChip-label': { px: 1 },
                     }}
                   />
@@ -680,7 +680,7 @@ const EmotionThermometer = ({ currentUser }) => {
               boxShadow: submitted ? "none" : `0 4px 14px ${alpha(B.pants, '44')}`,
               transition: "transform 0.1s",
               "&:active": { transform: "scale(0.96)" },
-              "&:hover": { bgcolor: submitted ? B.successBright : "#6A3D96" },
+              "&:hover": { bgcolor: submitted ? B.successBright : B.pantsHover },
               "&.Mui-disabled": { bgcolor: B.successBright, color: "white" },
             }}
           >

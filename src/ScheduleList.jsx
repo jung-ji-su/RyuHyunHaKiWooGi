@@ -15,9 +15,9 @@ import meImg  from "./assets/JS.webp";
 import gfImg  from "./assets/HY.webp";
 
 const CATEGORY_META = {
-  기념일:   { color: "#7B4FA6", bg: "#EDE0F5", emoji: "💜" },
-  데이트:   { color: "#E8630A", bg: "#FFE4D4", emoji: "🧡" },
-  개인일정: { color: calendarColor.category.개인일정.hue, bg: "#E6F1FB", emoji: "📌" },
+  기념일:   { color: B.pants, bg: B.lavender, emoji: "💜" },
+  데이트:   { color: B.accent, bg: B.peach, emoji: "🧡" },
+  개인일정: { color: calendarColor.category.개인일정.hue, bg: "rgba(var(--cal-cat-personal-rgb), 0.14)", emoji: "📌" },
 };
 
 // ── 유틸 ─────────────────────────────────────────────────────────
@@ -61,11 +61,11 @@ const STYLES = `
 
   /* 중요 일정 — 테두리 무지개 회전 */
   @keyframes importantBorder {
-    0%   { border-color: #7B4FA6; box-shadow: 0 0 0 2px #7B4FA633, 0 6px 24px #7B4FA644; }
+    0%   { border-color: var(--c-pants); box-shadow: 0 0 0 2px rgba(var(--c-pants-rgb),0.2), 0 6px 24px rgba(var(--c-pants-rgb),0.27); }
     25%  { border-color: #ff4daa; box-shadow: 0 0 0 2px #ff4daa33, 0 6px 24px #ff4daa44; }
     50%  { border-color: #ffe44d; box-shadow: 0 0 0 2px #ffe44d33, 0 6px 24px #ffe44d44; }
-    75%  { border-color: #E8630A; box-shadow: 0 0 0 2px #E8630A33, 0 6px 24px #E8630A44; }
-    100% { border-color: #7B4FA6; box-shadow: 0 0 0 2px #7B4FA633, 0 6px 24px #7B4FA644; }
+    75%  { border-color: var(--c-accent); box-shadow: 0 0 0 2px rgba(var(--c-accent-rgb),0.2), 0 6px 24px rgba(var(--c-accent-rgb),0.27); }
+    100% { border-color: var(--c-pants); box-shadow: 0 0 0 2px rgba(var(--c-pants-rgb),0.2), 0 6px 24px rgba(var(--c-pants-rgb),0.27); }
   }
   /* 중요 일정 — 배경 빛 흐름 */
   @keyframes importantShine {
@@ -75,8 +75,8 @@ const STYLES = `
   }
   /* 중요 일정 — 제목 글로우 */
   @keyframes importantTextGlow {
-    0%,100% { text-shadow: 0 0 6px #7B4FA644; }
-    50%     { text-shadow: 0 0 14px #7B4FA6aa, 0 0 28px #7B4FA644; }
+    0%,100% { text-shadow: 0 0 6px rgba(var(--c-pants-rgb),0.27); }
+    50%     { text-shadow: 0 0 14px rgba(var(--c-pants-rgb),0.67), 0 0 28px rgba(var(--c-pants-rgb),0.27); }
   }
   /* 중요 뱃지 두근거림 */
   @keyframes importantBadge {

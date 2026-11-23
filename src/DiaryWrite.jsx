@@ -185,7 +185,7 @@ const DiaryWrite = ({ currentUser }) => {
                     : `0 2px 6px ${alpha(B.skin, '44')}`,
                   transform: isSelected ? "scale(1.07) translateY(-2px)" : "scale(1)",
                   "&:hover": {
-                    bgcolor: isSelected ? "#6A3D96" : B.lavender,
+                    bgcolor: isSelected ? B.pantsHover : B.lavender,
                     transform: "scale(1.07) translateY(-2px)",
                   },
                   "&:active": { transform: "scale(0.94)" },
@@ -314,7 +314,7 @@ const DiaryWrite = ({ currentUser }) => {
             position: "relative", overflow: "hidden",
             boxShadow: `0 4px 14px ${alpha(B.pants, '44')}`,
             transition: "transform 0.1s, box-shadow 0.1s",
-            "&:hover": { bgcolor: "#6A3D96", boxShadow: `0 6px 18px ${alpha(B.pants, '55')}` },
+            "&:hover": { bgcolor: B.pantsHover, boxShadow: `0 6px 18px ${alpha(B.pants, '55')}` },
             "&:active": { transform: "scale(0.94)" },
             "&:disabled": { bgcolor: B.skin },
           }}

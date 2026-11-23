@@ -5,6 +5,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
+import AcUnitIcon from '@mui/icons-material/AcUnit';
+import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
 import { alpha, B, MENU_ITEMS, BOTTOM_NAV } from '../lib/constants';
 import { buri1, buri2, buriCouple, buriFire } from '../lib/buriAssets';
 import { createBuriPang, vibrate } from '../touchEffects';
@@ -16,7 +18,13 @@ const MODE_OPTIONS = [
   { value: 'dark',   label: '다크',  Icon: DarkModeIcon },
 ];
 
-export default function BottomNav({ logout, colorMode = 'system', setColorMode }) {
+// 시즌 테마는 라이트/다크와 별개 — 크리스마스를 켜도 낮/밤(위 화면 모드)은 그대로 고를 수 있다.
+const SEASON_OPTIONS = [
+  { value: 'none',      label: '기본',     Icon: PaletteOutlinedIcon },
+  { value: 'christmas', label: '크리스마스', Icon: AcUnitIcon },
+];
+
+export default function BottomNav({ logout, colorMode = 'system', setColorMode, season = 'none', setSeason }) {
   const navigate  = useNavigate();
   const { pathname } = useLocation();
   const { currentUser } = useContext(UserContext);
@@ -209,6 +217,43 @@ export default function BottomNav({ logout, colorMode = 'system', setColorMode }
             })}
           </Box>
         </Box>
+
+        {/* 시즌 테마(기본 / 크리스마스) */}
+        {setSeason && (
+          <Box sx={{ px: 1.5, pb: 1 }}>
+            <Typography sx={{
+              fontSize: '0.72rem', fontWeight: 700, color: alpha(B.pants, '88'),
+              letterSpacing: '2px', mb: 1, px: 0.5,
+              fontFamily: "'Noto Sans KR',sans-serif",
+            }}>시즌 테마</Typography>
+            <Box sx={{ display: 'flex', gap: '6px', bgcolor: alpha(B.pants, '12'), borderRadius: '14px', p: '4px' }}>
+              {SEASON_OPTIONS.map(({ value, label, Icon }) => {
+                const active = season === value;
+                return (
+                  <Box
+                    key={value}
+                    onClick={() => { vibrate(10); setSeason(value); }}
+                    sx={{
+                      flex: 1, py: 1, borderRadius: '11px', textAlign: 'center', cursor: 'pointer',
+                      bgcolor: active ? B.surface : 'transparent',
+                      boxShadow: active ? `0 2px 8px ${alpha(B.pants, '22')}` : 'none',
+                      transition: 'background-color 0.15s, box-shadow 0.15s',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px',
+                      minHeight: 44,
+                      '&:active': { transform: 'scale(0.95)' },
+                    }}
+                  >
+                    <Icon sx={{ fontSize: '1.1rem', color: active ? B.pants : alpha(B.dark, '66') }} />
+                    <Typography sx={{
+                      fontSize: '0.62rem', fontFamily: "'Noto Sans KR',sans-serif",
+                      color: active ? B.pants : alpha(B.dark, '66'), fontWeight: active ? 700 : 400,
+                    }}>{label}</Typography>
+                  </Box>
+                );
+              })}
+            </Box>
+          </Box>
+        )}
 
         {/* 드로어 푸터 */}
         <Box sx={{ p: 2, textAlign: 'center', borderTop: `1px dashed ${alpha(B.pants, '22')}` }}>

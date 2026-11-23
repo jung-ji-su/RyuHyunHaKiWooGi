@@ -16,3 +16,11 @@ export function alpha(color, hexAlphaOrOpacity) {
   }
   return color; // 알 수 없는 형식은 안전하게 원본 반환
 }
+
+// canvas-confetti처럼 CSS 변수를 못 읽는 라이브러리에 현재 테마의 실제 색을 넘길 때 쓴다.
+// (테마가 바뀌면 호출 시점의 값이 반영된다. 못 읽으면 fallback.)
+export function cssVar(name, fallback) {
+  if (typeof window === 'undefined') return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}

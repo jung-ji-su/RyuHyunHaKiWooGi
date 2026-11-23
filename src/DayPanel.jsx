@@ -23,8 +23,8 @@ function getTempMeta(v) {
   if (v < 20)  return { emoji: '😶', label: '무기력',    color: '#B4B2A9' };
   if (v < 40)  return { emoji: '😔', label: '우울해요',  color: '#85B7EB' };
   if (v < 60)  return { emoji: '😊', label: '보통이에요', color: '#EF9F27' };
-  if (v < 80)  return { emoji: '😄', label: '좋아요!',   color: '#7B4FA6' };
-  return        { emoji: '🥰', label: '최고예요!',       color: '#E8630A' };
+  if (v < 80)  return { emoji: '😄', label: '좋아요!',   color: B.pants };
+  return        { emoji: '🥰', label: '최고예요!',       color: B.accent };
 }
 
 // index.css의 glass 토큰(라이트/다크 레시피 둘 다 이미 정의됨)을 그대로 가져다 쓴다 —
@@ -134,7 +134,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
         <Box component={motion.div} layoutId={`day-badge-${isoStr}`} sx={{
           width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: `linear-gradient(150deg, ${B.pants} 0%, #A855F7 100%)`,
+          background: `linear-gradient(150deg, ${B.pants} 0%, ${B.pantsBright} 100%)`,
           boxShadow: `0 4px 14px ${alpha(B.pants, '44')}`,
         }}>
           <Typography sx={{ fontFamily: "'Jua',sans-serif", fontSize: '1.15rem', color: 'white', lineHeight: 1 }}>
@@ -143,7 +143,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
         </Box>
         <Typography sx={{
           fontFamily: "'Jua',sans-serif", fontSize: '1.05rem', lineHeight: 1.2,
-          background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
+          background: `linear-gradient(135deg, ${B.pants} 0%, ${B.pantsBright} 100%)`,
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
         }}>
           {dateLabel}
@@ -198,7 +198,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                 onClick={() => { vibrate(15); onClose(); setTimeout(onAddSchedule, 260); }}
                 sx={{
                   px: 1, py: 0.35, borderRadius: '999px', cursor: 'pointer',
-                  background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
+                  background: `linear-gradient(135deg, ${B.pants} 0%, ${B.pantsBright} 100%)`,
                   boxShadow: `0 3px 10px ${alpha(B.pants, '44')}`,
                   WebkitTapHighlightColor: 'transparent',
                   '&:active': { transform: 'scale(0.93)', opacity: 0.9 },
@@ -369,7 +369,7 @@ export default function DayPanel({ open, onClose, date, schedules, temperatures,
                     sx={{
                       py: 1, borderRadius: '12px', textAlign: 'center', cursor: 'pointer',
                       background: capsuleMsg.trim()
-                        ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
+                        ? `linear-gradient(135deg, ${B.pants} 0%, ${B.pantsBright} 100%)`
                         : 'rgba(200,200,200,0.35)',
                       boxShadow: capsuleMsg.trim() ? `0 4px 16px ${alpha(B.pants, '44')}` : 'none',
                       transition: 'background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease',

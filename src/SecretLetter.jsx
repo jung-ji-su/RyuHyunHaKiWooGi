@@ -17,11 +17,12 @@ import buri6 from "./assets/KakaoTalk_20260316_132934584.webp";
 import buri9 from "./assets/KakaoTalk_20260316_133007779.webp";
 
 import { alpha, B } from "./lib/constants";
+import { cssVar } from "./lib/color";
 
 // 봉투 색상 옵션
 const ENVELOPE_COLORS = [
-  { id:"purple", bg:"#EDE0F5", border:"#7B4FA6", ribbon:"#7B4FA6", label:"보라" },
-  { id:"peach",  bg:"#FFE4D4", border:"#F5B8A0", ribbon:"#E8630A", label:"복숭아" },
+  { id:"purple", bg:B.lavender, border:B.pants, ribbon:B.pants, label:"보라" },
+  { id:"peach",  bg:B.peach, border:B.skin, ribbon:B.accent, label:"복숭아" },
   { id:"pink",   bg:"#FFE4F0", border:"#FF8FAB", ribbon:"#FF4081", label:"핑크" },
   { id:"mint",   bg:"#E0F5EE", border:"#4DB89A", ribbon:"#2E9E7A", label:"민트" },
 ];
@@ -140,7 +141,7 @@ const LetterCard = ({ letter, currentUser }) => {
     // confetti 터트리기
     confetti({
       particleCount: 120, spread: 80, origin: { y: 0.6 },
-      colors: ["#7B4FA6", "#F5B8A0", "#ffffff", "#FFE44D"],
+      colors: [cssVar("--c-pants", "#7B4FA6"), cssVar("--c-skin", "#F5B8A0"), "#ffffff", "#FFE44D"],
     });
 
     // 팡 이펙트
@@ -622,7 +623,7 @@ const LetterWriteForm = ({ currentUser, onClose }) => {
             boxShadow: `0 4px 16px ${alpha(B.pants, '44')}`,
             transition: "transform 0.1s",
             "&:active": { transform: "scale(0.96)" },
-            "&:hover": { bgcolor: "#6A3D96" },
+            "&:hover": { bgcolor: B.pantsHover },
             "&:disabled": { bgcolor: B.skin },
           }}
         >
@@ -687,7 +688,7 @@ const SecretLetter = ({ currentUser }) => {
             boxShadow: `0 3px 10px ${alpha(B.pants, '33')}`,
             transition: "background-color 0.15s, transform 0.15s",
             "&:active": { transform: "scale(0.93)" },
-            "&:hover": { bgcolor: showWrite ? "#e0a090" : "#6A3D96" },
+            "&:hover": { bgcolor: showWrite ? "#e0a090" : B.pantsHover },
           }}
         >
           {showWrite ? "✕ 닫기" : "✍️ 편지 쓰기"}

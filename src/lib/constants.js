@@ -17,6 +17,7 @@ export const B = {
   error: "var(--c-error)", danger: "var(--c-error)",
   warning: "var(--c-warning)", orange: "var(--c-orange)",
   surface: "var(--c-surface-card)",
+  pantsHover: "var(--c-pants-hover)", pantsBright: "var(--c-pants-bright)",
 };
 
 export { alpha } from './color';

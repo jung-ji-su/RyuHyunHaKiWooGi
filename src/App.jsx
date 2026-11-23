@@ -11,6 +11,7 @@ import confetti from 'canvas-confetti';
 
 import GlobalStyle          from './components/GlobalStyle';
 import AmbientGlow          from './components/AmbientGlow';
+import SnowFall             from './components/SnowFall';
 import LoginScreen          from './components/LoginScreen';
 import LoadingScreen        from './components/LoadingScreen';
 import SubPage              from './components/SubPage';
@@ -20,6 +21,7 @@ import { UserContext } from './lib/UserContext';
 import { useAuth }           from './hooks/useAuth';
 import { useNotifications }  from './hooks/useNotifications';
 import { alpha, B } from './lib/constants';
+import { cssVar } from './lib/color';
 import {
   buri8, buri9,
   buriShocked, buriTired,
@@ -57,7 +59,7 @@ function PageLoader() {
 }
 
 // ── 레이아웃 (Outlet + BottomNav) ───────────────────────────────
-function Layout({ colorMode, setColorMode }) {
+function Layout({ colorMode, setColorMode, season, setSeason }) {
   const { logout } = useContext(UserContext);
   const location = useLocation();
   return (
@@ -77,7 +79,7 @@ function Layout({ colorMode, setColorMode }) {
           </motion.div>
         </AnimatePresence>
       </Box>
-      <BottomNav logout={logout} colorMode={colorMode} setColorMode={setColorMode} />
+      <BottomNav logout={logout} colorMode={colorMode} setColorMode={setColorMode} season={season} setSeason={setSeason} />
     </Box>
   );
 }
@@ -96,7 +98,7 @@ const TOAST_ROUTES = {
 function AppInner() {
   const navigate = useNavigate();
   const { currentUser, loading, login, logout } = useAuth();
-  const { mode: colorMode, effective: effectiveColorMode, setMode: setColorMode } = useColorMode();
+  const { mode: colorMode, effective: effectiveColorMode, setMode: setColorMode, season, setSeason } = useColorMode();
   const { requestPermission } = useFCM(currentUser);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
@@ -120,8 +122,8 @@ function AppInner() {
         if (lv && lv !== sv) {
           const end = Date.now() + 3000;
           const frame = () => {
-            confetti({ particleCount: 3, angle: 60,  spread: 55, origin: { x: 0, y: 0.7 }, colors: ['#F5B8A0', '#7B4FA6', '#fff'], zIndex: 10000 });
-            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.7 }, colors: ['#F5B8A0', '#7B4FA6', '#fff'], zIndex: 10000 });
+            confetti({ particleCount: 3, angle: 60,  spread: 55, origin: { x: 0, y: 0.7 }, colors: [cssVar('--c-skin', '#F5B8A0'), cssVar('--c-pants', '#7B4FA6'), cssVar('--c-accent', '#E8630A'), '#fff'], zIndex: 10000 });
+            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.7 }, colors: [cssVar('--c-skin', '#F5B8A0'), cssVar('--c-pants', '#7B4FA6'), cssVar('--c-accent', '#E8630A'), '#fff'], zIndex: 10000 });
             if (Date.now() < end) requestAnimationFrame(frame);
           };
           frame();
@@ -192,14 +194,15 @@ function AppInner() {
     window.location.replace(window.location.pathname + '?_cb=' + Date.now());
   };
 
-  if (loading)      return <><GlobalStyle /><AmbientGlow /><LoadingScreen /></>;
-  if (!currentUser) return <><GlobalStyle /><AmbientGlow /><LoginScreen onLogin={login} /></>;
+  if (loading)      return <><GlobalStyle /><AmbientGlow />{season === 'christmas' && <SnowFall />}<LoadingScreen /></>;
+  if (!currentUser) return <><GlobalStyle /><AmbientGlow />{season === 'christmas' && <SnowFall />}<LoginScreen onLogin={login} /></>;
 
 
   return (
     <UserContext.Provider value={{ currentUser, logout }}>
       <GlobalStyle />
       <AmbientGlow />
+      {season === 'christmas' && <SnowFall />}
 
       {/* 업데이트 다이얼로그 */}
       <Dialog open={updateDialogOpen} disableEscapeKeyDown
@@ -228,7 +231,7 @@ function AppInner() {
               position: 'relative', overflow: 'hidden',
               boxShadow: `0 4px 16px ${alpha(B.pants, '55')}`, transition: 'transform 0.1s',
               '&:active': { transform: 'scale(0.94)' },
-              '&:hover': { bgcolor: '#6A3D96' },
+              '&:hover': { bgcolor: B.pantsHover },
             }}>
             업데이트 확인 🚀
           </Button>
@@ -326,7 +329,7 @@ function AppInner() {
 
       {/* ── 라우터 ── */}
       <Routes>
-        <Route path="/" element={<Layout colorMode={colorMode} setColorMode={setColorMode} />}>
+        <Route path="/" element={<Layout colorMode={colorMode} setColorMode={setColorMode} season={season} setSeason={setSeason} />}>
           <Route index element={
             <Suspense fallback={<PageLoader />}>
               <HomePage currentUser={currentUser} effectiveColorMode={effectiveColorMode} setColorMode={setColorMode} />

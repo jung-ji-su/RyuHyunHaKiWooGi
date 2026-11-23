@@ -50,10 +50,10 @@ const CAT_IMAGES = [catFat, catSmile, catTongue, catGrumpy, catScruff, catStatue
 
 // HP 단계 경계: 0, 15, 30, 45, 60, 80, 100
 const STAGES = [
-  { min: 80, label: '뚱냥이', img: catFat, color: '#7B4FA6', emoji: '😸', desc: '행복 만땅! 통통하게 잘 살아요' },
+  { min: 80, label: '뚱냥이', img: catFat, color: B.pants, emoji: '😸', desc: '행복 만땅! 통통하게 잘 살아요' },
   { min: 60, label: '통통냥이', img: catSmile, color: '#43A047', emoji: '😊', desc: '건강하게 잘 지내고 있어요' },
   { min: 45, label: '보통냥이', img: catTongue, color: '#EF9F27', emoji: '😛', desc: '평범하게 지내고 있어요' },
-  { min: 30, label: '시무룩냥이', img: catGrumpy, color: '#E8630A', emoji: '😒', desc: '기록이 줄었어요. 힘내봐요!' },
+  { min: 30, label: '시무룩냥이', img: catGrumpy, color: B.accent, emoji: '😒', desc: '기록이 줄었어요. 힘내봐요!' },
   { min: 15, label: '뼈냥이', img: catScruff, color: '#E53935', emoji: '😰', desc: '위험해요! 빨리 기록해요!' },
   { min: 0, label: '해골냥이', img: catStatue, color: '#757575', emoji: '💀', desc: '쓰러졌어요... 기록하면 부활해요!' },
 ];
@@ -556,7 +556,7 @@ export default function CharacterPet({ currentUser }) {
                 minHeight: 0,
                 boxShadow: `0 2px 10px ${alpha(B.pants, '55')}`,
                 animation: 'hamPulse 2.5s ease-in-out infinite',
-                '&:hover': { bgcolor: '#6A3D96', boxShadow: `0 3px 14px ${alpha(B.pants, '77')}` },
+                '&:hover': { bgcolor: B.pantsHover, boxShadow: `0 3px 14px ${alpha(B.pants, '77')}` },
                 '&:active': { transform: 'scale(0.92)' },
               }}
             >
@@ -768,7 +768,7 @@ export default function CharacterPet({ currentUser }) {
               sx={{
                 bgcolor: B.pants, color: 'white',
                 borderRadius: 2.5, width: 42, height: 42, flexShrink: 0,
-                '&:hover': { bgcolor: '#6A3D96' },
+                '&:hover': { bgcolor: B.pantsHover },
                 '&:active': { transform: 'scale(0.9)' },
                 '&.Mui-disabled': { bgcolor: '#e8e8e8', color: '#bbb' },
               }}
@@ -836,7 +836,7 @@ export default function CharacterPet({ currentUser }) {
               sx={{
                 bgcolor: B.pants, color: 'white',
                 borderRadius: 2.5, width: 42, height: 42, flexShrink: 0,
-                '&:hover': { bgcolor: '#6A3D96' },
+                '&:hover': { bgcolor: B.pantsHover },
                 '&:active': { transform: 'scale(0.9)' },
                 '&.Mui-disabled': { bgcolor: '#e8e8e8', color: '#bbb' },
               }}

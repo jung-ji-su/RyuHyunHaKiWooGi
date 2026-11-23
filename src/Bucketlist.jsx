@@ -213,7 +213,7 @@ const AddForm = ({ currentUser, onClose }) => {
             bgcolor: B.pants, borderRadius: "10px", px: 2, flexShrink: 0,
             fontFamily: "'Jua',sans-serif", fontSize: "0.85rem",
             minWidth: 0, boxShadow: `0 3px 10px ${alpha(B.pants, '33')}`,
-            "&:hover": { bgcolor: "#6A3D96" },
+            "&:hover": { bgcolor: B.pantsHover },
             "&:disabled": { bgcolor: B.lavender },
             "&:active": { transform: "scale(0.94)" },
             transition: "transform 0.1s",

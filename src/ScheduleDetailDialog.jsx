@@ -171,7 +171,7 @@ export default function ScheduleDetailDialog({
         <Box>
           <Typography sx={{
             fontFamily: "'Jua',sans-serif", fontSize: "1.1rem", lineHeight: 1.2,
-            background: `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`,
+            background: `linear-gradient(135deg, ${B.pants} 0%, ${B.pantsBright} 100%)`,
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
           }}>
             💕 {date}
@@ -385,7 +385,7 @@ export default function ScheduleDetailDialog({
                       cursor: "pointer",
                       transition: "background 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s cubic-bezier(0.34,1.56,0.64,1), transform 0.2s cubic-bezier(0.34,1.56,0.64,1)",
                       background: active
-                        ? `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`
+                        ? `linear-gradient(135deg, ${B.pants} 0%, ${B.pantsBright} 100%)`
                         : alpha(B.surface, 'b8'),
                       border: active ? "none" : "1px solid rgba(123,79,166,0.12)",
                       boxShadow: active ? `0 4px 16px ${alpha(B.pants, '44')}` : "0 1px 6px rgba(123,79,166,0.07)",
@@ -421,7 +421,7 @@ export default function ScheduleDetailDialog({
             background: canSubmit
               ? (isEditMode
                   ? "linear-gradient(135deg, #43a047 0%, #66bb6a 100%)"
-                  : `linear-gradient(135deg, ${B.pants} 0%, #A855F7 100%)`)
+                  : `linear-gradient(135deg, ${B.pants} 0%, ${B.pantsBright} 100%)`)
               : "rgba(200,200,200,0.35)",
             boxShadow: canSubmit
               ? (isEditMode ? "0 6px 22px rgba(76,175,80,0.40)" : `0 6px 22px ${alpha(B.pants, '44')}`)

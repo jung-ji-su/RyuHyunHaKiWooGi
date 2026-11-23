@@ -9,16 +9,16 @@ import { alpha, B } from '../lib/constants';
 const PAGE_SIZE = 20;
 
 const TYPE_META = {
-  schedule:     { icon: '📅', color: '#7B4FA6', label: '일정' },
-  diary:        { icon: '📝', color: '#E8630A', label: '일기' },
+  schedule:     { icon: '📅', color: B.pants, label: '일정' },
+  diary:        { icon: '📝', color: B.accent, label: '일기' },
   comment:      { icon: '💬', color: '#43A047', label: '댓글' },
   like:         { icon: '❤️', color: '#E53935', label: '좋아요' },
   bucket:       { icon: '🎉', color: '#43A047', label: '버킷' },
   bucket_add:   { icon: '🪣', color: '#43A047', label: '버킷' },
-  hug:          { icon: '🤗', color: '#E8630A', label: '토닥' },
-  temp_diff:    { icon: '🌡️', color: '#7B4FA6', label: '온도' },
-  letter:       { icon: '💌', color: '#7B4FA6', label: '편지' },
-  letter_reply: { icon: '💌', color: '#7B4FA6', label: '답장' },
+  hug:          { icon: '🤗', color: B.accent, label: '토닥' },
+  temp_diff:    { icon: '🌡️', color: B.pants, label: '온도' },
+  letter:       { icon: '💌', color: B.pants, label: '편지' },
+  letter_reply: { icon: '💌', color: B.pants, label: '답장' },
   coupon:       { icon: '🎫', color: '#FF6B9D', label: '쿠폰' },
   coupon_used:  { icon: '✅', color: '#43A047', label: '쿠폰사용' },
   jilta:        { icon: '😤', color: '#E53935', label: '질타' },
