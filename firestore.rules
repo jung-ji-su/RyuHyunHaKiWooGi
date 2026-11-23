@@ -1,4 +1,15 @@
 rules_version = '2';
+
+// ⚠️ 이 파일은 "최종본"이고 아직 라이브에 배포되지 않았다 (2026-11-23 기준).
+//   - 라이브는 임시본: 로그인(request.auth != null)만 요구. 커밋 63f544d 내용과 동일하며
+//     Firestore ruleset 4f09a06d… (2026-10-15)로 되돌려 둔 상태다.
+//   - 이 최종본(uid 지수/현하 화이트리스트 + authAttempts 차단)은 2026-11-23 05:54 UTC에
+//     실수로 한 번 배포됐다가, 데이터가 안 보여서 롤백했다 (그때 올라갔던 ruleset: a23a4edb…).
+//   - 배포 순서: 두 사람 모두 PIN 로그인(커스텀 토큰)이 되는지 확인 → 구버전 번들/익명 세션이
+//     남지 않았는지 확인 → 그 다음에만 `firebase deploy --only firestore:rules,storage`.
+//   - deploy.js는 `--only hosting,functions`라 규칙은 자동으로 나가지 않는다.
+//   - 문제가 생기면 임시본 복구: `git show 63f544d:firestore.rules` 내용으로 다시 배포.
+//   - 배포하면 이 주석을 "배포됨"으로 고치거나 지울 것.
 service cloud.firestore {
   match /databases/{database}/documents {
     // 모든 데이터에 대해 읽기/쓰기 모두 "지수"/"현하" 본인만 가능하게 설정

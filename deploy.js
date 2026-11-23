@@ -36,7 +36,9 @@ try {
 
   // 4. 파이어베이스 배포
   console.log('🔥 파이어베이스 배포 중...');
-  execSync('firebase deploy', { stdio: 'inherit' });
+  // 규칙(firestore.rules/storage.rules)은 일부러 제외 — 로그인 검증 후 수동 배포한다 (firestore.rules 상단 주석 참고).
+  // 2026-11-23, 맨 `firebase deploy`가 미배포 최종 규칙까지 같이 올려서 데이터가 안 보인 적이 있음.
+  execSync('firebase deploy --only hosting,functions', { stdio: 'inherit' });
 
   console.log(`✅ 배포 성공! 현재 버전: ${newVersion}`);
 } catch (error) {
