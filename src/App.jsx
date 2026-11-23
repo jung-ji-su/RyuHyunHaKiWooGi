@@ -38,13 +38,7 @@ const SecretLetter      = lazy(() => import('./SecretLetter'));
 const EmotionThermometer = lazy(() => import('./EmotionThermometer'));
 const DiaryList         = lazy(() => import('./DiaryList'));
 const BucketList        = lazy(() => import('./Bucketlist'));
-const TravelMap         = lazy(() => import('./TravelMap'));
-const LoveStats         = lazy(() => import('./LoveStats'));
-const TodayMenu         = lazy(() => import('./TodayMenu'));
-const MiniGameHub       = lazy(() => import('./MiniGameHub'));
-const AccountBook       = lazy(() => import('./AccountBook'));
 const CoupleTamagotchi  = lazy(() => import('./CoupleTamagotchi'));
-const WorldCup          = lazy(() => import('./WorldCup'));
 const AdminPage         = lazy(() => import('./pages/AdminPage'));
 
 // ── 페이지 로딩 fallback ─────────────────────────────────────────
@@ -201,7 +195,6 @@ function AppInner() {
   if (loading)      return <><GlobalStyle /><AmbientGlow /><LoadingScreen /></>;
   if (!currentUser) return <><GlobalStyle /><AmbientGlow /><LoginScreen onLogin={login} /></>;
 
-  const opponent = currentUser === '지수' ? '현하' : '지수';
 
   return (
     <UserContext.Provider value={{ currentUser, logout }}>
@@ -388,60 +381,10 @@ function AppInner() {
             </SubPage>
           } />
 
-          <Route path="travel" element={
-            <SubPage title="우리의 여행 지도" icon="🗺️">
-              <Suspense fallback={<PageLoader />}>
-                <TravelMap currentUser={currentUser} />
-              </Suspense>
-            </SubPage>
-          } />
-
-          <Route path="stats" element={
-            <SubPage title="연애 통계" icon="📊">
-              <Suspense fallback={<PageLoader />}>
-                <LoveStats currentUser={currentUser} />
-              </Suspense>
-            </SubPage>
-          } />
-
-          <Route path="menu" element={
-            <SubPage title="오늘의 메뉴 (오메)" icon="🍳">
-              <Suspense fallback={<PageLoader />}>
-                <TodayMenu currentUser={currentUser} />
-              </Suspense>
-            </SubPage>
-          } />
-
-          <Route path="games" element={
-            <Suspense fallback={<PageLoader />}>
-              <MiniGameHub
-                currentUser={currentUser}
-                opponentUser={opponent}
-                onBack={() => navigate(-1)}
-              />
-            </Suspense>
-          } />
-
-          <Route path="account" element={
-            <SubPage title="가계부" icon="💰">
-              <Suspense fallback={<PageLoader />}>
-                <AccountBook currentUser={currentUser} opponentUser={opponent} />
-              </Suspense>
-            </SubPage>
-          } />
-
           <Route path="tamagotchi" element={
             <SubPage title="커플 다마고치" icon="🐾">
               <Suspense fallback={<PageLoader />}>
                 <CoupleTamagotchi currentUser={currentUser} />
-              </Suspense>
-            </SubPage>
-          } />
-
-          <Route path="worldcup" element={
-            <SubPage title="이상형 월드컵" icon="⚔️">
-              <Suspense fallback={<PageLoader />}>
-                <WorldCup currentUser={currentUser} />
               </Suspense>
             </SubPage>
           } />
