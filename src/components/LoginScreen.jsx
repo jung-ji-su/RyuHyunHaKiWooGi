@@ -114,12 +114,12 @@ export default function LoginScreen({ onLogin }) {
       {/* 타이틀 */}
       <Box sx={{ textAlign: 'center', mb: 4, position: 'relative', zIndex: 2 }}>
         <Typography sx={{
-          fontFamily: "'Jua',sans-serif", fontSize: '2.2rem', color: B.pants,
-          textShadow: `3px 3px 0 ${alpha(B.skin, '88')}, 0 0 30px ${alpha(B.pants, '33')}`,
+          fontFamily: "'Jua',sans-serif", fontSize: '2.2rem', color: 'var(--login-title)',
+          textShadow: 'var(--login-title-shadow)',
           animation: 'titleDrop 0.65s ease both', lineHeight: 1.2,
         }}>Who are you? 🕵️</Typography>
         <Typography sx={{
-          fontSize: '0.82rem', color: alpha(B.dark, '88'), mt: 0.8,
+          fontSize: '0.82rem', color: 'var(--login-sub)', mt: 0.8,
           fontFamily: "'Noto Sans KR',sans-serif",
           animation: 'fadeInUp 0.5s ease 0.3s both',
         }}>부리부리가 기다리고 있어요 🐷</Typography>
@@ -216,7 +216,7 @@ export default function LoginScreen({ onLogin }) {
       </Stack>
 
       <Typography sx={{
-        fontFamily: "'Jua',sans-serif", fontSize: '0.72rem', color: alpha(B.dark, '66'),
+        fontFamily: "'Jua',sans-serif", fontSize: '0.72rem', color: 'var(--login-hint)',
         animation: 'hintPulse 2.5s ease-in-out infinite',
         position: 'relative', zIndex: 2, mb: 2.5,
       }}>✨ 나를 선택해서 입장하기 ✨</Typography>

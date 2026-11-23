@@ -12,6 +12,7 @@ import confetti from 'canvas-confetti';
 import GlobalStyle          from './components/GlobalStyle';
 import AmbientGlow          from './components/AmbientGlow';
 import SnowFall             from './components/SnowFall';
+import ChristmasDecor       from './components/ChristmasDecor';
 import LoginScreen          from './components/LoginScreen';
 import LoadingScreen        from './components/LoadingScreen';
 import SubPage              from './components/SubPage';
@@ -194,15 +195,15 @@ function AppInner() {
     window.location.replace(window.location.pathname + '?_cb=' + Date.now());
   };
 
-  if (loading)      return <><GlobalStyle /><AmbientGlow />{season === 'christmas' && <SnowFall />}<LoadingScreen /></>;
-  if (!currentUser) return <><GlobalStyle /><AmbientGlow />{season === 'christmas' && <SnowFall />}<LoginScreen onLogin={login} /></>;
+  if (loading)      return <><GlobalStyle /><AmbientGlow />{season === 'christmas' && <><SnowFall lifted /><ChristmasDecor lifted /></>}<LoadingScreen /></>;
+  if (!currentUser) return <><GlobalStyle /><AmbientGlow />{season === 'christmas' && <><SnowFall lifted /><ChristmasDecor lifted /></>}<LoginScreen onLogin={login} /></>;
 
 
   return (
     <UserContext.Provider value={{ currentUser, logout }}>
       <GlobalStyle />
       <AmbientGlow />
-      {season === 'christmas' && <SnowFall />}
+      {season === 'christmas' && <><SnowFall /><ChristmasDecor /></>}
 
       {/* 업데이트 다이얼로그 */}
       <Dialog open={updateDialogOpen} disableEscapeKeyDown

@@ -276,7 +276,7 @@ export default function BottomNav({ logout, colorMode = 'system', setColorMode, 
       </Drawer>
 
       {/* ── 하단 탭 바 ── */}
-      <Box sx={{
+      <Box data-bottom-nav sx={{
         bgcolor: alpha(B.cream, 'f2'), backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
         borderTop: `1.5px solid ${alpha(B.pants, '22')}`,
         display: 'flex', alignItems: 'center',

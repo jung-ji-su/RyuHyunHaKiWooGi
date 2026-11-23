@@ -9,6 +9,12 @@
   color-scheme: light;
 
   /* 브랜드 코어 */
+  /* 로그인 화면 텍스트 — 기본값은 기존 하드코딩 값(색은 같고, 다크/시즌에서만 덮어씀) */
+  --login-title: var(--c-pants);
+  --login-title-shadow: 3px 3px 0 rgba(var(--c-skin-rgb), 0.53), 0 0 30px rgba(var(--c-pants-rgb), 0.2);
+  --login-sub: rgba(var(--c-dark-rgb), 0.53);
+  --login-hint: rgba(var(--c-dark-rgb), 0.4);
+
   --c-pants: #7B4FA6;
   --c-pants-hover: #6A3D96;   /* 버튼 hover 짙은 톤 */
   --c-pants-bright: #A855F7;  /* 그라디언트 끝색 */
@@ -125,6 +131,10 @@
    ============================================================ */
 :root[data-theme="dark"] {
   color-scheme: dark;
+
+  /* 어두운 배경에선 부제/힌트가 거의 안 보였다(알파 0.4 + 깜빡임으로 실효 0.18~0.36) → 올림 */
+  --login-sub: rgba(var(--c-dark-rgb), 0.78);
+  --login-hint: rgba(var(--c-dark-rgb), 0.95);
 
   --c-pants: #A77FD1;
   --c-pants-hover: #6A3D96;
@@ -310,7 +320,15 @@
   --cal-person-both-from-rgb: 79,163,127;
   --cal-person-both-to-rgb: 229,89,107;
 
+  /* 로그인 부제/힌트: 푸른 흰 배경에서 기본값(알파 0.4~0.53)은 흐려서 시즌 낮에만 올림 */
+  --login-sub: rgba(var(--c-dark-rgb), 0.7);
+  --login-hint: rgba(var(--c-dark-rgb), 0.7);
+
   --snow-flake: rgba(120,170,205,0.6);
+  --xd-tree: rgba(47,122,95,0.17);
+  --xd-trunk: rgba(120,85,60,0.22);
+  --xd-wire: rgba(60,80,72,0.5);
+  --xd-spark: #E9B440;
   --season-body-bg: linear-gradient(180deg, #EAF4FA 0%, #F3FAF8 42%, #F6FBF8 100%);
   --season-blob-1: rgba(135,195,235,0.34);
   --season-blob-2: rgba(130,215,185,0.28);
@@ -402,7 +420,15 @@
   --cal-person-both-from-rgb: 143,224,187;
   --cal-person-both-to-rgb: 224,100,122;
 
+  /* 로그인 타이틀: 밤 배경에서 연어색 오프셋 그림자가 탁해 보여서 밝은 민트 + 은은한 글로우로 */
+  --login-title: #8CE3B8;
+  --login-title-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 0 26px rgba(140,227,184,0.35);
+
   --snow-flake: rgba(255,255,255,0.7);
+  --xd-tree: rgba(111,203,159,0.15);
+  --xd-trunk: rgba(200,160,120,0.18);
+  --xd-wire: rgba(230,242,236,0.4);
+  --xd-spark: #F4D27A;
   --season-body-bg: linear-gradient(180deg, #0E1C22 0%, #14231F 55%, #111F1B 100%);
   --season-blob-1: rgba(70,150,175,0.22);
   --season-blob-2: rgba(60,165,120,0.18);
@@ -434,13 +460,104 @@
   90%  { opacity: var(--o); }
   100% { opacity: 0;            transform: translate3d(var(--drift), calc(100vh + 24px), 0); }
 }
-/* 가장자리 장식 — 맨 위 3px 캔디 스트라이프(레이아웃엔 영향 없음) */
-.season-garland {
-  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 5;
-  pointer-events: none; opacity: 0.85;
-  background: repeating-linear-gradient(135deg, #D8515B 0 8px, #F6FBF8 8px 14px, #2F7A5F 14px 22px, #F6FBF8 22px 28px);
+/* ── 크리스마스 장식(ChristmasDecor.jsx) ──────────────────────────────
+   전부 pointer-events:none, 레이아웃 비영향(position:fixed). transform/opacity만 애니메이션.
+   z-index: 트리 -1(콘텐츠 뒤) / 반짝이 0 / 루돌프 3 / 전구줄·산타 4. */
+.xd { pointer-events: none; }
+.xd * { pointer-events: none; }
+.xd-lifted .xd-back, .xd-lifted .xd-mid { z-index: 1; }
+.xd.xd-paused *, .xd.xd-paused *::before { animation-play-state: paused !important; }
+
+/* 상단 전구 줄 */
+.xd-bulbs {
+  position: fixed; top: 0; left: 0; right: 0; height: 14px; z-index: 4;
+  display: flex; justify-content: space-around; align-items: flex-start;
+  padding: 0 6px;
 }
-:root[data-theme="dark"] .season-garland { opacity: 0.6; }
+.xd-wire {
+  position: absolute; left: 0; right: 0; top: 1px; height: 1.5px;
+  background: var(--xd-wire);
+}
+.xd-bulb {
+  position: relative; display: block; width: 6px; height: 9px; margin-top: 1px;
+  border-radius: 50% 50% 55% 55% / 40% 40% 60% 60%;
+  background: var(--c);
+  box-shadow: 0 0 6px 1px var(--c);
+  animation: xdTwinkle 2.4s ease-in-out infinite;
+}
+.xd-bulb::before { /* 소켓 */
+  content: ''; position: absolute; left: 1px; top: -3px; width: 4px; height: 3px; border-radius: 1px;
+  background: var(--xd-wire);
+}
+@keyframes xdTwinkle { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
+
+/* 콘텐츠 뒤 레이어(트리) */
+.xd-back { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+.xd-tree { position: absolute; height: auto; overflow: visible; }
+.xd-leaf { fill: var(--xd-tree); }
+.xd-trunk { fill: var(--xd-trunk); }
+.xd-star { fill: #F2B93B; opacity: 0.55; }
+.xd-orn { opacity: 0.3; animation: xdOrn 3.2s ease-in-out infinite; }
+.xd-orn--still { animation: none; opacity: 0.4; }
+@keyframes xdOrn { 0%,100% { opacity: 0.22; } 50% { opacity: 0.85; } }
+
+/* 반짝이 — 4갈래 별 */
+.xd-mid { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+.xd-spark {
+  position: absolute; display: block; opacity: 0;
+  background: var(--xd-spark);
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+  animation: xdSpark 3.8s ease-in-out infinite;
+}
+@keyframes xdSpark {
+  0%,100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  50%     { opacity: 0.85; transform: scale(1) rotate(45deg); }
+}
+
+/* 산타 썰매 — 약 75초에 한 번 12초간 상단 전구 줄 높이(y 4~26px)를 가로지른다.
+   헤더 글자·버튼은 y 30px 아래부터라 겹치지 않는다. */
+.xd-santa {
+  position: fixed; top: 5px; left: 0; z-index: 4; width: 40px; height: 24px; opacity: 0;
+  animation: xdSantaFly 75s linear 14s infinite;
+}
+.xd-santa-sleigh { position: absolute; left: 0; bottom: 0; font-size: 22px; line-height: 1; transform: scaleX(-1); }
+.xd-santa-man { position: absolute; left: 10px; bottom: 8px; font-size: 14px; line-height: 1; }
+@keyframes xdSantaFly {
+  0%   { opacity: 0;    transform: translate3d(-60px, 2px, 0); }
+  1.5% { opacity: 0.95; }
+  8%   { transform: translate3d(38vw, -1px, 0); }
+  14.5%{ opacity: 0.95; }
+  16%  { opacity: 0;    transform: translate3d(calc(100vw + 20px), 2px, 0); }
+  100% { opacity: 0;    transform: translate3d(calc(100vw + 20px), 2px, 0); }
+}
+
+/* 루돌프 — 약 58초에 한 번 9초간 탭바 윗선을 달린다(탭 라벨/터치 영역엔 닿지 않음) */
+.xd-deer {
+  position: fixed; left: 0; bottom: calc(var(--xd-nav-h, 56px) - 7px); z-index: 3;
+  width: 30px; height: 30px; opacity: 0;
+  animation: xdDeerRun 58s linear 7s infinite;
+}
+.xd-deer-body {
+  display: block; font-size: 26px; line-height: 1; transform: scaleX(-1);
+  animation: xdHop 0.46s ease-in-out infinite;
+}
+@keyframes xdDeerRun {
+  0%   { opacity: 0; transform: translate3d(-40px, 0, 0); }
+  1%   { opacity: 1; }
+  15%  { opacity: 1; }
+  16%  { opacity: 0; transform: translate3d(calc(100vw + 10px), 0, 0); }
+  100% { opacity: 0; transform: translate3d(calc(100vw + 10px), 0, 0); }
+}
+@keyframes xdHop { 0%,100% { transform: scaleX(-1) translateY(0); } 50% { transform: scaleX(-1) translateY(-6px); } }
+
+/* 동작 줄이기 — 움직임 전부 끄고 정적 장식만 */
+.xd-static .xd-bulb { animation: none; opacity: 1; }
+.xd-static .xd-orn { animation: none; opacity: 0.4; }
+@media (prefers-reduced-motion: reduce) {
+  .xd .xd-bulb { animation: none; opacity: 1; }
+  .xd .xd-orn  { animation: none; opacity: 0.4; }
+}
+
 
 /* MUI TextField/Select 기본 텍스트·라벨색은 항상 검정 계열(theme.palette.text)이라
    다크 모드에서 배경만 어둡게 바꾼 입력창은 글자가 안 보이는 문제가 반복됐다

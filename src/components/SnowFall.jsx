@@ -28,7 +28,7 @@ function makeFlakes(count) {
   }));
 }
 
-export default function SnowFall() {
+export default function SnowFall({ lifted = false }) {
   const ref = useRef(null);
   const reduce = useMemo(() => prefersReducedMotion(), []);
   const flakes = useMemo(
@@ -47,13 +47,12 @@ export default function SnowFall() {
     return () => document.removeEventListener('visibilitychange', onVisibility);
   }, []);
 
-  if (reduce) return <div aria-hidden="true" className="season-garland" />;
+  if (reduce) return null;
 
   return (
     <>
-      <div className="season-garland" aria-hidden="true" />
       <div ref={ref} aria-hidden="true"
-        style={{ position: 'fixed', inset: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+        style={{ position: 'fixed', inset: 0, overflow: 'hidden', zIndex: lifted ? 1 : 0, pointerEvents: 'none' }}>
         {flakes.map(f => (
           <span key={f.id} className="snow-flake"
             style={{ '--x': f.x, '--s': f.s, '--d': f.d, '--delay': f.delay, '--drift': f.drift, '--o': f.o }} />
