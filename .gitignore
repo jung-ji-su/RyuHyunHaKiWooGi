@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Firebase Hosting 배포 캐시 (배포할 때마다 바뀌는 로컬 산출물)
+.firebase/
