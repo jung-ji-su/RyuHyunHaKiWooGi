@@ -4,7 +4,7 @@ import { alpha, B } from '../lib/constants';
 
 export default function SectionCard({ icon, title, sub, buriImg, bgColor, borderColor, onMore, children, noPadding, index = 0 }) {
   return (
-    <Box sx={{
+    <Box className="xd-card" sx={{
       bgcolor: bgColor || B.cream, borderRadius: '14px',
       border: `1.5px solid ${alpha(borderColor || B.pants, '33')}`,
       position: 'relative', overflow: 'visible',

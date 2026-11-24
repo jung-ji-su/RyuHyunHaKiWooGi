@@ -325,8 +325,18 @@
   --login-hint: rgba(var(--c-dark-rgb), 0.7);
 
   --snow-flake: rgba(120,170,205,0.6);
-  --xd-tree: rgba(47,122,95,0.17);
-  --xd-trunk: rgba(120,85,60,0.22);
+  /* 장식 색 — 글자 뒤에 놓여도 본문 대비 AA(4.5) 이상 유지되도록 측정해서 정한 값(낮 최악 6.6 / 밤 최악 5.9).
+     바꿀 땐 대비를 다시 재야 한다. */
+  --xd-o: 0.5;
+  --xd-leaf: #4A9078;
+  --xd-leaf2: #58A084;
+  --xd-trunk: #B08C69;
+  --xd-snow-fill: #FFFFFF;
+  --xd-sm-stroke: #8FB3CB;
+  --xd-gold: #F2B93B;
+  --xd-red: #DC6A73;
+  --xd-blue: #5B9BE0;
+  --xd-hat: #8B939D;
   --xd-wire: rgba(60,80,72,0.5);
   --xd-spark: #E9B440;
   --season-body-bg: linear-gradient(180deg, #EAF4FA 0%, #F3FAF8 42%, #F6FBF8 100%);
@@ -425,8 +435,16 @@
   --login-title-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 0 26px rgba(140,227,184,0.35);
 
   --snow-flake: rgba(255,255,255,0.7);
-  --xd-tree: rgba(111,203,159,0.15);
-  --xd-trunk: rgba(200,160,120,0.18);
+  --xd-o: 0.44;
+  --xd-leaf: #2E8062;
+  --xd-leaf2: #3A9474;
+  --xd-trunk: #9A7855;
+  --xd-snow-fill: #7F98A8;
+  --xd-sm-stroke: #8FB0C4;
+  --xd-gold: #C9A24A;
+  --xd-red: #C45D66;
+  --xd-blue: #5B8FC8;
+  --xd-hat: #6B7480;
   --xd-wire: rgba(230,242,236,0.4);
   --xd-spark: #F4D27A;
   --season-body-bg: linear-gradient(180deg, #0E1C22 0%, #14231F 55%, #111F1B 100%);
@@ -461,14 +479,14 @@
   100% { opacity: 0;            transform: translate3d(var(--drift), calc(100vh + 24px), 0); }
 }
 /* ── 크리스마스 장식(ChristmasDecor.jsx) ──────────────────────────────
-   전부 pointer-events:none, 레이아웃 비영향(position:fixed). transform/opacity만 애니메이션.
-   z-index: 트리 -1(콘텐츠 뒤) / 반짝이 0 / 루돌프 3 / 전구줄·산타 4. */
+   전부 pointer-events:none, 레이아웃 비영향(position:fixed / ::after). transform/opacity만 애니메이션.
+   z-index: 트리·선물·눈사람 -1(콘텐츠 뒤) / 반짝이 0 / 눈 테두리 3 / 전구줄 4 / 루돌프·산타 5. */
 .xd { pointer-events: none; }
 .xd * { pointer-events: none; }
 .xd-lifted .xd-back, .xd-lifted .xd-mid { z-index: 1; }
 .xd.xd-paused *, .xd.xd-paused *::before { animation-play-state: paused !important; }
 
-/* 상단 전구 줄 */
+/* 상단 전구 줄 — 전구는 y 0~14px, 매달린 오너먼트는 최대 y 26px까지(헤더 글자는 y 30px 아래) */
 .xd-bulbs {
   position: fixed; top: 0; left: 0; right: 0; height: 14px; z-index: 4;
   display: flex; justify-content: space-around; align-items: flex-start;
@@ -490,18 +508,45 @@
   background: var(--xd-wire);
 }
 @keyframes xdTwinkle { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
+.xd-hang { /* 줄에 매달린 오너먼트: 실 + 구슬(+ 캡) */
+  position: absolute; top: 2px; width: 1px; height: var(--len); margin-left: -0.5px;
+  background: var(--xd-wire);
+}
+.xd-hang::after {
+  content: ''; position: absolute; left: 50%; top: 100%; width: 10px; height: 10px; margin-left: -5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0 12%, var(--c) 14% 100%);
+  box-shadow: 0 0 5px var(--c);
+}
+.xd-hang::before { /* 오너먼트 캡 */
+  content: ''; position: absolute; left: 50%; top: calc(100% - 2px); width: 4px; height: 3px; margin-left: -2px;
+  border-radius: 1px; background: #E7C873; z-index: 1;
+}
 
-/* 콘텐츠 뒤 레이어(트리) */
+/* 콘텐츠 뒤 레이어 — 트리·선물·눈사람. 솔리드 색 + 전체 opacity(--xd-o)로 또렷하되 글자 뒤에서 은은하게 */
 .xd-back { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
-.xd-tree { position: absolute; height: auto; overflow: visible; }
-.xd-leaf { fill: var(--xd-tree); }
+.xd-tree, .xd-gifts, .xd-snowman { position: absolute; height: auto; overflow: visible; opacity: var(--xd-o); }
+.xd-leaf { fill: var(--xd-leaf); }
+.xd-leaf2 { fill: var(--xd-leaf2); }
 .xd-trunk { fill: var(--xd-trunk); }
-.xd-star { fill: #F2B93B; opacity: 0.55; }
-.xd-orn { opacity: 0.3; animation: xdOrn 3.2s ease-in-out infinite; }
-.xd-orn--still { animation: none; opacity: 0.4; }
-@keyframes xdOrn { 0%,100% { opacity: 0.22; } 50% { opacity: 0.85; } }
+.xd-snowcap polygon { fill: var(--xd-snow-fill); }
+.xd-garland path { fill: none; stroke: var(--xd-gold); stroke-width: 3.4; stroke-linecap: round; stroke-dasharray: 0.1 6.5; }
+.xd-star { fill: var(--xd-gold); }
+.xd-c-gold { fill: var(--xd-gold); }
+.xd-c-red { fill: var(--xd-red); }
+.xd-c-blue { fill: var(--xd-blue); }
+.xd-c-green { fill: var(--xd-leaf2); }
+.xd-c-hat { fill: var(--xd-hat); }
+.xd-c-snow { fill: var(--xd-snow-fill); }
+.xd-c-eye { fill: #2B2F36; }
+.xd-sm-body { stroke: var(--xd-sm-stroke); stroke-width: 1.6; }
+.xd-orn { opacity: 0.9; }
+.xd-orn--a { animation: xdOrn 3.2s ease-in-out infinite; }
+.xd-orn--b { animation: xdOrn 3.2s ease-in-out 1.5s infinite; }
+.xd-orn--still { animation: none; opacity: 0.9; }
+@keyframes xdOrn { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-/* 반짝이 — 4갈래 별 */
+/* 반짝이 — 4갈래 별 (최대 불투명도 0.7) */
 .xd-mid { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .xd-spark {
   position: absolute; display: block; opacity: 0;
@@ -509,53 +554,77 @@
   clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
   animation: xdSpark 3.8s ease-in-out infinite;
 }
+.xd-spark--still { animation: none; opacity: 0.5; }
 @keyframes xdSpark {
   0%,100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
-  50%     { opacity: 0.85; transform: scale(1) rotate(45deg); }
+  50%     { opacity: 0.7; transform: scale(1) rotate(45deg); }
 }
 
-/* 산타 썰매 — 약 75초에 한 번 12초간 상단 전구 줄 높이(y 4~26px)를 가로지른다.
-   헤더 글자·버튼은 y 30px 아래부터라 겹치지 않는다. */
+/* 산타 썰매 + 루돌프 — 약 40초에 한 번 11초간 상단 전구 줄 높이(y 3~29px)를 가로지른다. */
 .xd-santa {
-  position: fixed; top: 5px; left: 0; z-index: 4; width: 40px; height: 24px; opacity: 0;
-  animation: xdSantaFly 75s linear 14s infinite;
+  position: fixed; top: 3px; left: 0; z-index: 5; width: 62px; height: 26px; opacity: 0;
+  animation: xdSantaFly 40s linear 5s infinite;
+  will-change: transform, opacity;
 }
-.xd-santa-sleigh { position: absolute; left: 0; bottom: 0; font-size: 22px; line-height: 1; transform: scaleX(-1); }
-.xd-santa-man { position: absolute; left: 10px; bottom: 8px; font-size: 14px; line-height: 1; }
+.xd-santa span { position: absolute; line-height: 1; }
+.xd-santa-sleigh { left: 2px; bottom: 0; font-size: 26px; transform: scaleX(-1); }
+.xd-santa-man { left: 13px; bottom: 7px; font-size: 18px; }
+.xd-santa-deer { left: 40px; bottom: 1px; font-size: 20px; transform: scaleX(-1); }
 @keyframes xdSantaFly {
-  0%   { opacity: 0;    transform: translate3d(-60px, 2px, 0); }
-  1.5% { opacity: 0.95; }
-  8%   { transform: translate3d(38vw, -1px, 0); }
-  14.5%{ opacity: 0.95; }
-  16%  { opacity: 0;    transform: translate3d(calc(100vw + 20px), 2px, 0); }
-  100% { opacity: 0;    transform: translate3d(calc(100vw + 20px), 2px, 0); }
+  0%    { opacity: 0;    transform: translate3d(-80px, 2px, 0); }
+  1.5%  { opacity: 0.95; }
+  13%   { transform: translate3d(38vw, -2px, 0); }
+  26%   { opacity: 0.95; }
+  27.5% { opacity: 0;    transform: translate3d(calc(100vw + 30px), 2px, 0); }
+  100%  { opacity: 0;    transform: translate3d(calc(100vw + 30px), 2px, 0); }
 }
 
-/* 루돌프 — 약 58초에 한 번 9초간 탭바 윗선을 달린다(탭 라벨/터치 영역엔 닿지 않음) */
-.xd-deer {
-  position: fixed; left: 0; bottom: calc(var(--xd-nav-h, 56px) - 7px); z-index: 3;
-  width: 30px; height: 30px; opacity: 0;
-  animation: xdDeerRun 58s linear 7s infinite;
+/* 탭바 윗선의 눈 쌓인 테두리(정적). 탭바 안쪽으로는 5px까지만 — 탭 아이콘은 윗선에서 8px 아래부터 시작한다.
+   탭바가 없는 화면(로그인/로딩)에선 .xd-has-nav가 없어서 그리지 않는다. */
+.xd-rim, .xd-deer { display: none; }
+.xd-has-nav .xd-rim {
+  display: block; position: fixed; left: 0; right: 0; z-index: 3; height: 10px;
+  bottom: calc(var(--xd-nav-top, 56px) - 5px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='10' viewBox='0 0 72 10'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF'/%3E%3Cstop offset='1' stop-color='%23CFE3F0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 5C4 5 4 2 9 2S15 6 20 5S25 1 31 2S38 6 42 6S47 3 52 3S58 7 63 6S68 5 72 5V10H0Z' fill='url(%23g)'/%3E%3Cpath d='M0 5C4 5 4 2 9 2S15 6 20 5S25 1 31 2S38 6 42 6S47 3 52 3S58 7 63 6S68 5 72 5' fill='none' stroke='%236F9DBB' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: repeat-x; background-size: 72px 10px; background-position: 0 100%;
+}
+:root[data-theme="dark"] .xd-has-nav .xd-rim {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='10' viewBox='0 0 72 10'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23F4F9FC'/%3E%3Cstop offset='1' stop-color='%23BCD3E2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 5C4 5 4 2 9 2S15 6 20 5S25 1 31 2S38 6 42 6S47 3 52 3S58 7 63 6S68 5 72 5V10H0Z' fill='url(%23g)'/%3E%3Cpath d='M0 5C4 5 4 2 9 2S15 6 20 5S25 1 31 2S38 6 42 6S47 3 52 3S58 7 63 6S68 5 72 5' fill='none' stroke='%239FBDD0' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+
+/* 루돌프 — 크기·속도·출발 시점이 제각각인 3마리가 눈 테두리 위를 쉬지 않고 달린다.
+   바깥(run)은 좌→우 이동, 안쪽(hop)은 위아래 깡충. 둘 다 transform만 쓴다. */
+.xd-has-nav .xd-deer {
+  display: block; position: fixed; left: 0; z-index: 5;
+  bottom: calc(var(--xd-nav-top, 56px) - 2px);
+  width: var(--sz); height: var(--sz);
+  will-change: transform;
+  animation: xdDeerRun var(--run) linear var(--dl) infinite;
 }
 .xd-deer-body {
-  display: block; font-size: 26px; line-height: 1; transform: scaleX(-1);
-  animation: xdHop 0.46s ease-in-out infinite;
+  display: block; font-size: var(--sz); line-height: 1; transform: scaleX(-1);
+  animation: xdHop var(--hop) ease-in-out infinite;
 }
 @keyframes xdDeerRun {
-  0%   { opacity: 0; transform: translate3d(-40px, 0, 0); }
-  1%   { opacity: 1; }
-  15%  { opacity: 1; }
-  16%  { opacity: 0; transform: translate3d(calc(100vw + 10px), 0, 0); }
-  100% { opacity: 0; transform: translate3d(calc(100vw + 10px), 0, 0); }
+  from { transform: translate3d(calc(var(--sz) * -1 - 2px), 0, 0); }
+  to   { transform: translate3d(calc(100vw + 2px), 0, 0); }
 }
-@keyframes xdHop { 0%,100% { transform: scaleX(-1) translateY(0); } 50% { transform: scaleX(-1) translateY(-6px); } }
+@keyframes xdHop { 0%,100% { transform: scaleX(-1) translateY(0); } 50% { transform: scaleX(-1) translateY(var(--rise)); } }
+
+/* 카드 모서리 호랑가시 — SectionCard(.xd-card) 오른쪽 위. 카드 밖으로 살짝 걸쳐 나가고 "더보기" 버튼(우측 16px 안쪽)과는 안 겹친다. */
+:root[data-season="christmas"] .xd-card::after {
+  content: ''; position: absolute; top: -11px; right: -10px; width: 28px; height: 24px; z-index: 2;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 24'%3E%3Cg transform='translate(14 14) rotate(-148) scale(.58)'%3E%3Cpath d='M0,0L5,-3L7,-7L11,-5L15,-8L18,-3L24,0L18,3L15,8L11,5L7,7L5,3Z' fill='%233C8F6F' stroke='%231F5E46' stroke-width='1.6'/%3E%3C/g%3E%3Cg transform='translate(14 14) rotate(-32) scale(.58)'%3E%3Cpath d='M0,0L5,-3L7,-7L11,-5L15,-8L18,-3L24,0L18,3L15,8L11,5L7,7L5,3Z' fill='%233C8F6F' stroke='%231F5E46' stroke-width='1.6'/%3E%3C/g%3E%3Ccircle cx='11.2' cy='15' r='2.9' fill='%23D8515B' stroke='%239E2F3A' stroke-width='.8'/%3E%3Ccircle cx='16.6' cy='15.6' r='2.9' fill='%23D8515B' stroke='%239E2F3A' stroke-width='.8'/%3E%3Ccircle cx='14' cy='11.2' r='2.9' fill='%23E5535D' stroke='%239E2F3A' stroke-width='.8'/%3E%3C/svg%3E") center / contain no-repeat;
+  pointer-events: none;
+}
 
 /* 동작 줄이기 — 움직임 전부 끄고 정적 장식만 */
 .xd-static .xd-bulb { animation: none; opacity: 1; }
-.xd-static .xd-orn { animation: none; opacity: 0.4; }
+.xd-static .xd-orn { animation: none; opacity: 0.9; }
 @media (prefers-reduced-motion: reduce) {
   .xd .xd-bulb { animation: none; opacity: 1; }
-  .xd .xd-orn  { animation: none; opacity: 0.4; }
+  .xd .xd-orn  { animation: none; opacity: 0.9; }
+  .xd .xd-spark { animation: none; opacity: 0.5; }
 }
 
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
+import { IS_LITE_DEVICE } from '../lib/xdPerf';
 
 // 은은한 눈 — 시즌 테마(크리스마스)가 켜져 있을 때만 렌더된다.
 // 성능/배려 원칙(AmbientGlow와 같은 패턴):
@@ -20,7 +21,7 @@ function makeFlakes(count) {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
     x: `${(rnd() * 100).toFixed(1)}%`,
-    s: `${(2 + rnd() * 3).toFixed(1)}px`,
+    s: `${(2 + rnd() * 4).toFixed(1)}px`,
     d: `${(16 + rnd() * 14).toFixed(1)}s`,
     delay: `${(-rnd() * 30).toFixed(1)}s`, // 음수 지연 → 처음부터 화면에 흩어져 있음
     drift: `${(-30 + rnd() * 60).toFixed(0)}px`,
@@ -32,7 +33,12 @@ export default function SnowFall({ lifted = false }) {
   const ref = useRef(null);
   const reduce = useMemo(() => prefersReducedMotion(), []);
   const flakes = useMemo(
-    () => makeFlakes(typeof window !== 'undefined' && window.innerWidth < 500 ? 16 : 26),
+    () => {
+      const narrow = typeof window !== 'undefined' && window.innerWidth < 500;
+      // 장식이 늘어난 만큼 눈도 늘렸다(폰 26 / 넓은 화면 38). 저사양이면 예전 수준(16 / 26)으로.
+      const n = IS_LITE_DEVICE ? (narrow ? 16 : 26) : (narrow ? 26 : 38);
+      return makeFlakes(n);
+    },
     [],
   );
 
