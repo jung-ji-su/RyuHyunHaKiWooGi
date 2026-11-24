@@ -32,9 +32,22 @@ const STAGES = [
 // ── 스테이지별 레벨당 XP 배율 ───────────────────────────────────────
 // 목표 스케줄: 알→아기 7일 / 아기→햄찌 14일 / 햄찌→통통 30일 / 통통→왕 60일 / 왕→전설 90일
 // (하루 접속+상호작용+밥+간식3회+응가 = 약 24XP, 스트릭 배율 4일+×1.5→8일+×2.0→15일+×2.5 가정하고 역산)
-// 스테이지별 총 필요 XP: 220 / 770 / 1,815 / 3,575 / 5,390
+// 스테이지별 총 필요 XP(원래): 220 / 770 / 1,815 / 3,575 / 5,390
+//
+// [2026-11-24 난이도 완화] "진화가 너무 안 된다"는 의견으로 요구량을 XP_SCALE(0.6)배로 낮춤.
+// 레벨마다 반올림하므로 스테이지 총량은 132 / 462 / 1,089 / 2,145 / 3,234.
+// (획득량은 그대로. 이미 쌓인 XP도 그대로 두면 다음 액션 때 자연스럽게 반영된다 — 한 번에 최대 1단계 진화,
+//  레벨은 최대 1칸 점프. 아래 주석의 "~7일/14일…" 일정은 원래 값이고, 지금은 대략 5/9/17/33/49일.)
+// ⚠️ 이 값을 바꾸면 totalProgressXP(성장 그래프) 눈금도 같이 바뀐다. 저장된 xpHistory는 2026-11-24에 한 번
+//    ×0.6으로 보정했다(문서의 xpScaleVer: 2). 다시 바꿀 땐 같은 식의 보정이 필요하다.
 const STAGE_XP_MULT = [4, 14, 33, 65, 98];
-const xpForLevel = (stage, lv) => lv * (STAGE_XP_MULT[stage] ?? 100);
+const XP_SCALE = 0.6;
+const xpForLevel = (stage, lv) => Math.round(lv * (STAGE_XP_MULT[stage] ?? 100) * XP_SCALE);
+// 7일 이상 미방문 시 XP 손실 — 요구량과 같은 비율로 줄임(30 → 18). 14일 이상 벌칙은 요구량의 30%라 자동으로 따라간다.
+const MISS_7D_XP_LOSS = Math.round(30 * XP_SCALE);
+// 되살릴 때 남기는 레벨 비율. 스테이지는 유지하고 레벨은 70%(올림)만 남긴다: Lv10→7, Lv7→5, Lv3→3.
+// (레벨 70% ≈ 그 스테이지에서 쌓은 XP의 약 절반 — 죽는 긴장감은 남기되 복구가 덜 가혹하게)
+const reviveLevelFor = (level) => Math.max(1, Math.ceil((level * 7) / 10));
 
 // [신규] 진화 단계+레벨+XP를 하나의 누적 수치로 환산 (미니 XP 히스토리 그래프용).
 // data.xp는 레벨업/진화마다 0으로 리셋되기 때문에, 그래프가 계속 우상향하도록
@@ -188,7 +201,7 @@ function evaluateOnLoad(raw, today) {
       d.streak = 0;
       d.love = Math.max(0, d.love-25); d.hunger = Math.max(0, d.hunger-35); d.health = Math.max(0, d.health-20);
     } else if (missed >= 7) {
-      d.xp = Math.max(0, d.xp-30); d.streak = 0;
+      d.xp = Math.max(0, d.xp - MISS_7D_XP_LOSS); d.streak = 0;
       d.love = Math.max(0, d.love-15); d.hunger = Math.max(0, d.hunger-25); d.health = Math.max(0, d.health-10);
     } else if (missed >= 3) {
       d.streak = 0;
@@ -716,7 +729,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
         </Box>
       )}
 
-      {/* [신규] 되살리기 — 알로 초기화하지 않고 죽은 시점의 stage Lv.1로 부활 */}
+      {/* [신규] 되살리기 — 알로 초기화하지 않고 죽은 시점의 stage를 유지, 레벨은 70%(올림)만 남기고 부활 */}
       {isDead && isMe && (
         <Button size="small" onClick={() => onReviveUser(user)}
           sx={{
@@ -727,7 +740,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             '&:hover': { bgcolor: alpha(stage.color, 'dd') },
             '&:active': { transform: 'scale(0.96)' },
           }}>
-          💗 되살리기 ({stage.name} Lv.1로)
+          💗 되살리기 ({stage.name} Lv.{data.level}→Lv.{reviveLevelFor(data.level)})
         </Button>
       )}
 
@@ -1019,12 +1032,24 @@ export default function CoupleTamagotchi({ currentUser }) {
     await setDoc(docRef, { [targetUser]: resetData, updatedAt: serverTimestamp() }, { merge: true });
   };
 
-  // [신규] 사망한 펫을 알이 아니라 죽은 시점의 stage를 유지한 채 그 stage Lv.1로 되살림.
+  // [신규] 사망한 펫을 알이 아니라 죽은 시점의 stage를 유지한 채 되살림. 레벨은 70%(올림)만 남기고 XP는 0부터.
+  // (예전엔 stage Lv.1로 초기화 — 진화 직전에 죽으면 수백 XP가 날아가 너무 가혹했음)
   // xpHistory는 유지해 성장 그래프가 끊기지 않게 함. (알로 되돌리기와 달리 진화 단계는 보존)
+  // 바이탈/오늘 기록 등 게임 상태 필드는 makeDefault()로 새로 채우되, ...prev를 먼저 펼쳐서
+  // makeDefault에 없는 필드(예: xpScaleVer 같은 보정 표식, 예전 버전 필드)는 지워지지 않게 한다.
+  // 응원 기록(lastCheerSentDate)은 "내가 보낸 기록"이라 되살려도 초기화하지 않는다(하루 1회 제한 우회 방지).
   const handleRevivePet = async (targetUser) => {
     if (!allData) return;
     const prev = allData[targetUser];
-    const revived = { ...makeDefault(), stage: prev.stage, xpHistory: prev.xpHistory, lastVisitDate: today };
+    const revived = {
+      ...prev,
+      ...makeDefault(),
+      stage: prev.stage,
+      level: reviveLevelFor(prev.level),
+      xpHistory: prev.xpHistory,
+      lastCheerSentDate: prev.lastCheerSentDate ?? null,
+      lastVisitDate: today,
+    };
     const newAllData = { ...allData, [targetUser]: revived };
     setAllData(newAllData);
     await setDoc(docRef, { [targetUser]: revived, updatedAt: serverTimestamp() }, { merge: true });
@@ -1183,8 +1208,9 @@ export default function CoupleTamagotchi({ currentUser }) {
           <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '66'), fontFamily: "'Noto Sans KR',sans-serif", lineHeight: 1.8 }}>
             💡 방문 +10 · 상호작용 +5 · 밥 +3 · 간식 +2 · 응원 보내기 +4 XP (×스트릭 배율)<br />
             🔥 4일+ 연속 ×1.5 → 8일+ ×2.0 → 15일+ ×2.5 · 3일 이상 미방문 시 스트릭 리셋<br />
-            🥚 알→아기 약 7일 · 아기→햄찌 약 14일 · 햄찌→통통 약 30일 · 통통→왕 약 60일 · 왕→전설 약 90일<br />
-            💩 밥 후 6~12시간 뒤 등장 · 방치 시 건강만 감소 (레벨/단계는 유지돼요)
+            🥚 알→아기 약 5일 · 아기→햄찌 약 9일 · 햄찌→통통 약 17일 · 통통→왕 약 33일 · 왕→전설 약 49일 (매일 꾸준히 돌봤을 때)<br />
+            💩 밥 후 6~12시간 뒤 등장 · 방치 시 건강만 감소 (레벨/단계는 유지돼요)<br />
+            💀 5일 이상 안 오면 떠나요 · 되살리면 단계는 그대로, 레벨은 70%가 남아요
           </Typography>
         </Box>
       </Paper>

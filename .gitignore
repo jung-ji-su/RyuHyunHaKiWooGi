@@ -29,3 +29,6 @@ dist-ssr
 # 작업 도구(에이전트 스킬) — 앱과 무관해서 레포에 불필요
 .claude/skills/
 skills-lock.json
+
+# 데이터 백업(개인 데이터 포함) — 커밋 금지
+backups/
