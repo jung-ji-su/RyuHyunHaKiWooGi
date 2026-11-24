@@ -61,6 +61,34 @@ const SNACK_WEIGHT_GAIN = 5;
 const WEIGHT_LOSS_PER_DAY = 8;
 const MIN_WEIGHT = 10;
 const MAX_DECAY_DAYS = 5;
+// [2026-11-24 2차] 100 도달 페널티는 "하룻밤 감소를 먼저 적용한 뒤에도 여전히 100 이상일 때"만 건다.
+//  - 예전엔 100이 되는 순간(같은 날 새로고침 포함) 바로 건강 -25 → 억울했고, 반대로 감소를 먼저 적용하면서 상한이 100이면
+//    감소 후 항상 92 이하라 페널티가 죽은 로직이 된다. 그래서 내부 체중 상한을 WEIGHT_MAX까지 열어
+//    "100을 넘겨서 계속 먹인 만큼"이 쌓이게 했다 → 하루 감소(-8)를 빼고도 100 이상이려면 108 이상 = 진짜 과식.
+//  - 화면에는 100까지만 보여주고, 108 이상(OVERFED_AT)이면 "내일 아파요" 경고를 띄워 예측 가능하게 한다.
+const OBESE_LIMIT = 100;
+const WEIGHT_MAX = 125;
+const OVERFED_AT = OBESE_LIMIT + WEIGHT_LOSS_PER_DAY;
+// ── 사망 기준 + 응원 유예 (2026-11-24 2차) ───────────────────────────
+// 기본은 "마지막 방문일로부터 DEATH_DAYS(5)일 이상"이면 사망. 파트너가 응원(하루 1회)을 보내면 사망까지 유예를 준다:
+//  - 유예는 상대 펫이 GRACE_MIN_MISSED(3)일 이상 안 왔고 아직 살아 있을 때만 +1일(위험하지 않을 때 미리 쌓아두는 것 방지)
+//  - 상한 GRACE_CAP(2)일 → 응원만으로 최대 7일까지(영원히 못 죽는 일 없음), 주인이 방문하면 0으로 리셋
+//  - 사망 판정: 미방문 일수 >= DEATH_DAYS + 유예일
+// ⚠️ functions/petWarnings.js의 DEATH_DAYS/GRACE_CAP/WARN_START와 같은 값을 써야 한다(푸시 알림이 같은 기준으로 판단).
+const DEATH_DAYS = 5;
+const GRACE_CAP = 2;
+const GRACE_MIN_MISSED = 3;
+const graceOf = (d) => Math.max(0, Math.min(GRACE_CAP, Number(d?.graceDays) || 0));
+const missedDaysOf = (d, today) => (d?.lastVisitDate ? Math.max(0, daysBetween(d.lastVisitDate, today)) : 0);
+// 파트너 응원 1회의 유예 효과 — 상대가 위험 구간(GRACE_MIN_MISSED일 이상 미방문, 아직 살아 있음)이고 유예가 상한 미만일 때만 +1일.
+// 위험하지 않을 때 미리 쌓아두는 것, 무한 연장을 막는다. (순수 함수 — 테스트에서 그대로 실행한다)
+const applyCheerGrace = (d, from, today) => {
+  const missed = missedDaysOf(d, today);
+  const g = graceOf(d);
+  if (d.isDead || missed < GRACE_MIN_MISSED || missed >= DEATH_DAYS + g || g >= GRACE_CAP) return d;
+  return { ...d, graceDays: g + 1, graceFrom: from };
+};
+
 // 하루 기본 먹이 횟수 — 일기 보너스(오늘 쓴 일기 1편당 +1, 최대 DIARY_BONUS_CAP편)가 여기에 더해진다.
 const BASE_FEEDS = 1;
 const BASE_SNACKS = 3;
@@ -173,6 +201,8 @@ function makeDefault() {
     lastCheerSentDate: null,               // [신규] 파트너에게 응원을 보낸 날짜 (하루 1회 제한용)
     isDead: false,                         // [신규] 5일 이상 미접속 시 사망 상태
     xpHistory: [],                         // [신규] 최근 방문일별 누적 진행치 기록 (미니 그래프용, 최대 14개)
+    graceDays: 0, graceFrom: null,         // [신규] 파트너 응원으로 얻은 사망 유예(일) / 마지막으로 응원해 준 사람. 주인이 방문하면 리셋
+    graceThanks: null,                     // [신규] { from, days, date } — 응원 덕에 버티고 돌아온 날 한 번 보여주는 안내
   };
 }
 
@@ -201,6 +231,7 @@ function evaluateOnLoad(raw, today) {
   if (d.lastCheerSentDate === undefined) d.lastCheerSentDate = null;
   if (d.isDead === undefined) d.isDead = false;
   if (!Array.isArray(d.xpHistory)) d.xpHistory = [];
+  if (d.graceDays === undefined) d.graceDays = 0;
 
   // [버그 수정] 기존엔 lastEvalDate(누군가 마지막으로 평가를 실행한 날짜)를 기준으로 삼아서,
   // 커플 중 한쪽만 매일 접속해도 두 사람의 lastEvalDate가 함께 갱신되어 버렸음.
@@ -239,11 +270,6 @@ function evaluateOnLoad(raw, today) {
     d.poopCleaned = false; d.poopDate = new Date(d.nextPoopTime).toISOString(); d.nextPoopTime = null;
   }
 
-  // [수정] 체중 100 도달 시 확률적 완전 초기화 제거, 항상 건강 페널티로 대체
-  if (d.weight >= 100) {
-    d.weight = 80; d.health = Math.max(0, d.health-25);
-  }
-
   // [버그 수정] todaySnack이 날짜와 무관하게 누적되기만 해서, 평생 3번 쓰면
   // 이후 영구적으로 간식을 줄 수 없던 문제. 날짜가 바뀌면 리셋되도록 수정.
   if (d.lastSnackDate !== today) {
@@ -252,6 +278,10 @@ function evaluateOnLoad(raw, today) {
     if (d.lastSnackDate) {
       const passed = Math.min(MAX_DECAY_DAYS, Math.max(1, daysBetween(d.lastSnackDate, today)));
       d.weight = Math.max(MIN_WEIGHT, d.weight - WEIGHT_LOSS_PER_DAY * passed);
+      // [수정] 하룻밤 감소를 적용하고도 여전히 100 이상일 때만 과식 페널티(건강 -25, 체중 80으로). 같은 날 새로고침으론 안 걸린다.
+      if (d.weight >= OBESE_LIMIT) {
+        d.weight = 80; d.health = Math.max(0, d.health-25);
+      }
     }
     d.lastSnackDate = today;
   }
@@ -260,7 +290,7 @@ function evaluateOnLoad(raw, today) {
   // "알로 되돌리기" 버튼으로만 다시 시작할 수 있음.
   if (!d.isDead) {
     const missedVisit = daysBetween(lastVisit, today);
-    if (missedVisit >= 5) {
+    if (missedVisit >= DEATH_DAYS + graceOf(d)) {
       d.isDead = true;
     }
   }
@@ -595,6 +625,13 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
   const weightColor = data.weight >= 90 ? '#E53935' : data.weight >= 70 ? '#FF9800' : '#78909C';
 
   const isDead      = !!data.isDead;
+  // [신규] 사망 임박/응원 유예 상태 — 주인은 방문하면 lastVisitDate가 오늘이 되므로 이 배너는 사실상 "상대방이 보는 카드"에서만 뜬다
+  const missed      = missedDaysOf(data, today);
+  const grace       = graceOf(data);
+  const daysLeft    = DEATH_DAYS + grace - missed;               // 1이면 "오늘이 마지막 날"
+  const atRisk      = !isDead && missed >= GRACE_MIN_MISSED && daysLeft >= 1;
+  const canGraceNow = !isMe && canCheer && atRisk && grace < GRACE_CAP;
+  const thanks      = isMe && !isDead && data.graceThanks?.date === today ? data.graceThanks : null;
   const canInteract = isMe && !isDead && data.todayInteracted !== today;
   const feedsLeft   = BASE_FEEDS + diaryBonus - feedsUsedToday(data, today);
   const canFeed     = isMe && !isDead && feedsLeft > 0;
@@ -729,7 +766,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
         <MiniStat emoji="❤️" label="애정"   value={data.love}   color="#FF6B9D" />
         <MiniStat emoji="🍔" label="배고픔" value={data.hunger} color="#FF9A3C" />
         <MiniStat emoji="💚" label="건강"   value={data.health} color="#43A047" />
-        <MiniStat emoji="⚖️" label="체중"   value={data.weight} color={weightColor} />
+        <MiniStat emoji="⚖️" label="체중"   value={Math.min(OBESE_LIMIT, data.weight)} color={weightColor} />
       </Box>
 
       {/* 스트릭 */}
@@ -748,7 +785,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
       {isDead && (
         <Box sx={{ p: '6px 8px', borderRadius: '8px', bgcolor: '#00000008', border: `1px solid ${alpha(B.dark, '18')}`, mb: '8px' }}>
           <Typography sx={{ fontSize: '0.72rem', color: alpha(B.dark, '99'), fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.5 }}>
-            💀 5일 동안 돌봄을 받지 못해 떠났어요.{isMe ? ' 아래 버튼으로 다시 살릴 수 있어요.' : ''}
+            💀 {DEATH_DAYS + graceOf(data)}일 동안 돌봄을 받지 못해 떠났어요.{graceOf(data) > 0 ? ` (${data.graceFrom || '상대'}의 응원으로 ${graceOf(data)}일 더 버텼어요)` : ''}{isMe ? ' 아래 버튼으로 다시 살릴 수 있어요.' : ''}
           </Typography>
         </Box>
       )}
@@ -766,6 +803,35 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
           }}>
           💗 되살리기 ({stage.name} Lv.{data.level}→Lv.{reviveLevelFor(data.level)})
         </Button>
+      )}
+
+      {/* [신규] 응원 덕에 버티고 돌아온 날의 안내 (내 카드) */}
+      {thanks && (
+        <Box sx={{ p: '5px 8px', borderRadius: '8px', bgcolor: alpha('#FF6B9D', '14'), border: `1px solid ${alpha('#FF6B9D', '55')}`, mb: '8px' }}>
+          <Typography sx={{ fontSize: '0.72rem', color: '#C2185B', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.4 }}>
+            💗 {thanks.from || '상대'}의 응원으로 {thanks.days === 1 ? '하루' : `${thanks.days}일`} 더 버텼어요!
+          </Typography>
+        </Box>
+      )}
+
+      {/* [신규] 사망 임박 / 응원 유예 상태 (상대방 카드) */}
+      {!isMe && atRisk && (
+        <Box sx={{
+          p: '5px 8px', borderRadius: '8px', mb: '8px',
+          bgcolor: daysLeft <= 1 ? '#E5393514' : '#FF980014',
+          border: `1px solid ${daysLeft <= 1 ? '#E5393555' : '#FF980055'}`,
+        }}>
+          <Typography sx={{ fontSize: '0.72rem', color: daysLeft <= 1 ? '#C62828' : '#E65100', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.45 }}>
+            {daysLeft <= 1
+              ? `🚨 ${missed}일째 혼자예요! 오늘 안 오면 떠나요`
+              : `⚠️ ${missed}일째 혼자 있어요 · ${daysLeft}일 안에 안 오면 떠나요`}
+          </Typography>
+          {grace > 0 && (
+            <Typography sx={{ fontSize: '0.72rem', color: '#C2185B', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.45, mt: '2px' }}>
+              💗 {data.graceFrom || '응원'}의 응원으로 {grace}일 더 버티는 중{grace >= GRACE_CAP ? ' (최대)' : ''}
+            </Typography>
+          )}
+        </Box>
       )}
 
       {/* 오늘 체크인 표시 (상대방) */}
@@ -867,7 +933,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
               borderLeft: '3px solid #FF9800', border: '1px solid #FF980033', borderLeftWidth: '3px',
             }}>
               <Typography sx={{ fontSize: '0.72rem', color: '#E65100', fontFamily: "'Noto Sans KR',sans-serif", fontWeight: 700, lineHeight: 1.4 }}>
-                🚨 비만 위험! 간식 그만 줘요
+                {data.weight >= OVERFED_AT ? '🚨 너무 많이 먹었어요! 이대로면 내일 몸이 아파요' : '🚨 비만 위험! 간식 그만 줘요'}
               </Typography>
             </Box>
           )}
@@ -938,7 +1004,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
             '&:hover': { bgcolor: '#FFD70035' },
             '&.Mui-disabled': { color: alpha(B.dark, '1a') },
           }}>
-          응원 보내기{isDead ? ' (되돌리기 필요)' : (!canCheer ? ' (완료)' : '')}
+          응원 보내기{isDead ? ' (되돌리기 필요)' : (!canCheer ? ' (완료)' : (canGraceNow ? ' · 하루 더 버텨요 💗' : ''))}
         </Button>
       )}
     </Box>
@@ -995,7 +1061,9 @@ export default function CoupleTamagotchi({ currentUser }) {
         if (!me.isDead && me.lastVisitDate !== today) {
           const prevDay   = isoAddDays(today, -1);
           const newStreak = me.lastVisitDate === prevDay ? me.streak + 1 : 1;
-          let updated     = { ...me, streak: newStreak, lastVisitDate: today };
+          let updated     = { ...me, streak: newStreak, lastVisitDate: today, graceDays: 0, graceFrom: null };
+          // 응원 덕에 버티고 돌아왔다면 그날 한 번 알려준다(유예는 방문과 함께 리셋)
+          if (graceOf(me) > 0) updated.graceThanks = { from: me.graceFrom ?? '', days: graceOf(me), date: today };
           const prevStage = updated.stage;
           updated = applyXp(updated, 10);
           if (updated._evolved && updated.stage > prevStage) celebrateEvolution(updated.stage);
@@ -1050,7 +1118,7 @@ export default function CoupleTamagotchi({ currentUser }) {
     } else if (action === 'feed') {
       const used = feedsUsedToday(data, today);
       if (used >= BASE_FEEDS + diaryBonus) return; // 연타/중복 요청 방지 (버튼도 막혀 있음)
-      data.hunger = Math.min(100, data.hunger+30); data.weight = Math.min(100, data.weight+FEED_WEIGHT_GAIN);
+      data.hunger = Math.min(100, data.hunger+30); data.weight = Math.min(WEIGHT_MAX, data.weight+FEED_WEIGHT_GAIN);
       data.love   = Math.min(100, data.love+5);
       data.health = Math.min(100, data.health+5); // [추가] 소량 건강 회복
       data.todayFed = today;
@@ -1059,7 +1127,7 @@ export default function CoupleTamagotchi({ currentUser }) {
       data = applyXp(data, 3);
     } else if (action === 'snack') {
       if ((data.todaySnack ?? 0) >= BASE_SNACKS + diaryBonus) return;
-      data.hunger = Math.min(100, data.hunger+20); data.weight = Math.min(100, data.weight+SNACK_WEIGHT_GAIN);
+      data.hunger = Math.min(100, data.hunger+20); data.weight = Math.min(WEIGHT_MAX, data.weight+SNACK_WEIGHT_GAIN);
       data.love   = Math.min(100, data.love+30);
       data.todaySnack = (data.todaySnack ?? 0) + 1;
       data.lastSnackDate = today; // [버그 수정] 날짜 기록 (자정 지나면 자동 리셋되도록)
@@ -1128,12 +1196,21 @@ export default function CoupleTamagotchi({ currentUser }) {
     }
     delete partnerData._evolved;
 
+    // [신규] 응원으로 사망 유예(+1일, 상한 GRACE_CAP, 주인이 방문하면 리셋) — 조건은 applyCheerGrace 참고
+    partnerData = applyCheerGrace(partnerData, currentUser, today);
+
     const meUpdated = { ...me, lastCheerSentDate: today };
 
     setAllData({ ...allData, [currentUser]: meUpdated, [otherUser]: partnerData });
+    // 필드 단위로만 쓴다(merge:true는 중첩 맵을 필드별로 병합) — 주인이 그 사이 다른 기기에서 방문했을 때
+    // 오래된 전체 데이터(lastVisitDate 등)로 방문 기록을 덮어써서 오히려 죽게 만드는 일을 막는다.
     await setDoc(docRef, {
-      [currentUser]: meUpdated,
-      [otherUser]: partnerData,
+      [currentUser]: { lastCheerSentDate: today },
+      [otherUser]: {
+        love: partnerData.love, health: partnerData.health,
+        xp: partnerData.xp, level: partnerData.level, stage: partnerData.stage,
+        graceDays: partnerData.graceDays ?? 0, graceFrom: partnerData.graceFrom ?? null,
+      },
       updatedAt: serverTimestamp(),
     }, { merge: true });
   };
@@ -1267,7 +1344,7 @@ export default function CoupleTamagotchi({ currentUser }) {
             🥚 알→아기 약 5일 · 아기→햄찌 약 9일 · 햄찌→통통 약 17일 · 통통→왕 약 33일 · 왕→전설 약 49일 (매일 꾸준히 돌봤을 때)<br />
             📝 오늘 일기를 쓰면 밥·간식이 1편당 +1회 (최대 +2) · ⚖️ 체중은 하루 8씩 빠지고 간식은 +5<br />
             💩 밥 후 6~12시간 뒤 등장 · 방치 시 건강만 감소 (레벨/단계는 유지돼요)<br />
-            💀 5일 이상 안 오면 떠나요 · 되살리면 단계는 그대로, 레벨은 70%가 남아요
+            💀 5일 이상 안 오면 떠나요 · 3일째부터 상대가 응원을 보내면 하루씩 더 버텨요(최대 2일, 돌아오면 리셋) · 되살리면 단계는 그대로, 레벨은 70%가 남아요
           </Typography>
         </Box>
       </Paper>

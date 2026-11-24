@@ -1,15 +1,20 @@
 // 햄찌(타마고치) "파트너 펫이 위험해요" 알림 로직 — 순수 함수 + 의존성 주입형 오케스트레이션.
 // 실제 Firestore/FCM 없이도 테스트할 수 있게 index.js와 분리했다(functions/petWarnings.test.js 참고).
 //
-// 규칙 (클라이언트 CoupleTamagotchi.jsx와 같은 기준):
-//  - 펫은 "마지막 방문일(lastVisitDate)로부터 5일 이상" 지나면 사망 → 그 전인 3일째/4일째에 파트너에게 푸시.
-//  - 이미 죽은 펫(isDead 또는 5일 이상 경과)에는 보내지 않는다.
-//  - 같은 방문 공백(lastVisitDate)에서 3일째 1번, 4일째 1번 — petAlerts/{주인} 문서에 "lastVisitDate:일수" 키를
-//    트랜잭션으로 먼저 기록(claim)한 뒤 보내므로, 스케줄이 중복 실행돼도 두 번 가지 않는다.
+// 규칙 (클라이언트 CoupleTamagotchi.jsx와 같은 기준 — 아래 상수는 그쪽 DEATH_DAYS/GRACE_CAP/GRACE_MIN_MISSED와 같아야 한다):
+//  - 펫은 "마지막 방문일(lastVisitDate)로부터 DEATH_DAYS + 유예일(graceDays)일 이상" 지나면 사망.
+//    유예는 파트너가 응원(하루 1회)을 보낼 때 +1일(상한 GRACE_CAP, 주인이 방문하면 0으로 리셋).
+//  - 미방문 WARN_START(3)일째부터 사망 전날까지 파트너에게 푸시. 이미 죽은 펫(isDead 또는 기준 초과)은 보내지 않는다.
+//  - 남은 일수(left) = 사망일 - 미방문일수.  left>=2 는 부드러운 경고, left==1("오늘이 마지막 날")은 긴박한 경고.
+//  - 부드러운 경고는 "지금 응원으로 도울 수 있을 때"(유예 여유가 있고, 오늘 아직 응원을 안 보냈을 때)만 보낸다 — 할 수 있는 게 없으면 조용히.
+//    긴박한 경고는 항상 보내되, 응원이 아직 도움이 되는지에 따라 문구가 다르다.
+//  - 같은 방문 공백(lastVisitDate)에서 일수별로 1번 — petAlerts/{주인}에 "lastVisitDate:일수" 키를 트랜잭션으로 먼저 기록(claim)한 뒤
+//    보내므로, 스케줄이 중복 실행돼도 두 번 가지 않는다.
 //  - 받는 사람은 항상 "상대방"(주인 본인이 아님).
 
-const WARN_DAYS = [3, 4];   // 경고를 보내는 미방문 일수
-const DEATH_DAYS = 5;       // 클라이언트의 사망 기준과 같아야 한다
+const DEATH_DAYS = 5;       // 기본 사망 기준(유예 없을 때)
+const GRACE_CAP = 2;        // 응원으로 벌 수 있는 유예 상한(일)
+const WARN_START = 3;       // 이 일수부터 경고 (= 클라이언트의 GRACE_MIN_MISSED)
 
 // 'YYYY-MM-DD' 두 개의 일수 차이 (UTC 자정 기준이라 시간대/서머타임 영향 없음)
 function daysBetween(iso1, iso2) {
@@ -22,21 +27,37 @@ function todayKST(now = new Date()) {
   return new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(now);
 }
 
-function buildMessage(owner, days) {
-  if (days >= 4) {
-    return {
-      title: "🚨 햄찌가 위험해요",
-      body: `${owner}의 햄찌가 ${days}일째 혼자예요! 오늘 안 오면 내일 떠나요 😢 ${owner}한테 알려주고 응원 보내기를 눌러주세요`,
-    };
+const clampGrace = (g) => Math.max(0, Math.min(GRACE_CAP, Number(g) || 0));
+
+// kind: "gentle"(응원으로 도울 수 있음) | "urgent-cheer"(마지막 날, 지금 응원하면 하루 더) |
+//       "urgent-capped"(마지막 날, 응원은 이미 최대) | "urgent-used"(마지막 날, 오늘 응원은 이미 보냄)
+function buildMessage(owner, days, kind = "gentle") {
+  switch (kind) {
+    case "urgent-cheer":
+      return {
+        title: "🚨 햄찌가 위험해요",
+        body: `${owner}의 햄찌가 ${days}일째 혼자예요! 오늘 안 오면 내일 떠나요 😢 지금 응원 보내기를 눌러주면 하루 더 버텨요!`,
+      };
+    case "urgent-capped":
+      return {
+        title: "🚨 햄찌가 위험해요",
+        body: `${owner}의 햄찌가 ${days}일째 혼자예요! 응원은 이미 최대로 보냈어요. ${owner}가 오늘 안에 들어와야 해요, 얼른 알려주세요!`,
+      };
+    case "urgent-used":
+      return {
+        title: "🚨 햄찌가 위험해요",
+        body: `${owner}의 햄찌가 ${days}일째 혼자예요! 오늘 응원은 이미 보냈어요. ${owner}가 오늘 안에 들어와야 해요, 얼른 알려주세요!`,
+      };
+    default:
+      return {
+        title: "🐹 햄찌가 외로워해요",
+        body: `${owner}의 햄찌가 ${days}일째 혼자 있어요. 응원 보내기를 누르면 하루 더 버틸 수 있어요!`,
+      };
   }
-  return {
-    title: "🐹 햄찌가 외로워해요",
-    body: `${owner}의 햄찌가 ${days}일째 혼자 있어요. 응원 보내기를 눌러볼까요?`,
-  };
 }
 
 // pets: { 지수: {...}, 현하: {...} } (couple_tamagotchi 문서 내용), states: { 지수: {lastWarnKey}, ... }
-// 반환: [{ owner, recipient, days, key, title, body }]
+// 반환: [{ owner, recipient, days, left, kind, key, title, body }]
 function decideWarnings(pets, states, today, users = ["지수", "현하"]) {
   const out = [];
   for (const owner of users) {
@@ -44,13 +65,29 @@ function decideWarnings(pets, states, today, users = ["지수", "현하"]) {
     if (!pet || pet.isDead) continue;
     const last = pet.lastVisitDate;
     if (typeof last !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(last)) continue;
+
+    const grace = clampGrace(pet.graceDays);
+    const deathDay = DEATH_DAYS + grace;
     const days = daysBetween(last, today);
-    if (days >= DEATH_DAYS || !WARN_DAYS.includes(days)) continue;
-    const key = `${last}:${days}`;
-    if (states?.[owner]?.lastWarnKey === key) continue;
+    if (days < WARN_START || days >= deathDay) continue;     // 경고 전이거나 이미 떠남
+    const left = deathDay - days;                             // 1 = 오늘이 마지막 날
+
     const recipient = users.find((u) => u !== owner);
     if (!recipient) continue;
-    out.push({ owner, recipient, days, key, ...buildMessage(owner, days) });
+    const cheerUsedToday = pets?.[recipient]?.lastCheerSentDate === today;
+    const canGrace = grace < GRACE_CAP;
+
+    let kind;
+    if (left >= 2) {
+      if (!canGrace || cheerUsedToday) continue;              // 지금 응원으로 도울 수 없으면 조용히
+      kind = "gentle";
+    } else {
+      kind = !canGrace ? "urgent-capped" : cheerUsedToday ? "urgent-used" : "urgent-cheer";
+    }
+
+    const key = `${last}:${days}`;
+    if (states?.[owner]?.lastWarnKey === key) continue;
+    out.push({ owner, recipient, days, left, kind, key, ...buildMessage(owner, days, kind) });
   }
   return out;
 }
@@ -73,4 +110,4 @@ async function runPetWarnings(deps, today) {
   return { today, decisions: decisions.length, sent };
 }
 
-module.exports = { WARN_DAYS, DEATH_DAYS, daysBetween, todayKST, buildMessage, decideWarnings, runPetWarnings };
+module.exports = { DEATH_DAYS, GRACE_CAP, WARN_START, daysBetween, todayKST, buildMessage, decideWarnings, runPetWarnings };

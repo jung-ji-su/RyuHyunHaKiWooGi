@@ -21,9 +21,11 @@
 - **`XP_SCALE`이나 배율을 바꾸면 성장 그래프(`totalProgressXP`) 눈금이 달라진다.** Firestore `couple_tamagotchi/jisu_hyunha`의 `<유저>.xpHistory`에 저장된 값은 옛 눈금이라 같이 보정해야 한다.
   2026-11-24에 한 번 ×0.6으로 보정했고 각 유저 맵에 `xpScaleVer: 2` 표식을 남겼다(중복 보정 방지). 백업은 `backups/`(gitignore, 개인 데이터).
 - 되살리기: 스테이지 유지, 레벨은 `ceil(레벨×0.7)`, XP 0. 사망 기준은 5일 미접속 그대로. 미방문 7일+ XP 손실은 18(= 30×XP_SCALE), 14일+는 현재 레벨 요구량의 30%(자동 연동).
-- **체중**: 간식 +5, 밥 +2, 하루가 지날 때마다 -8(최대 5일치, 최소 10). 예전엔 내려가는 경로가 없어서 비만 경고가 상시로 떴다. 90 이상 경고와 100 도달 시 건강 -25 페널티는 그대로.
+- **체중**: 간식 +5, 밥 +2, 하루가 지날 때마다 -8(최대 5일치, 최소 10). 예전엔 내려가는 경로가 없어서 비만 경고가 상시로 떴다. 90 이상이면 "비만 위험" 경고.
+  **과식 페널티(건강 -25, 체중 80)는 "하룻밤 감소를 적용하고도 여전히 100 이상"일 때만, 날짜가 바뀌는 로드에서만** 걸린다(같은 날 새로고침으론 안 걸림). 이게 의미 있으려면 100을 넘어 쌓여야 하므로 내부 체중 상한은 125(`WEIGHT_MAX`)이고 화면엔 100까지만 보인다. 108 이상(`OVERFED_AT` = 100 + 하루 감소)이면 "내일 아파요" 경고가 뜬다. 하루 감소량을 바꾸면 `OVERFED_AT`도 같이 달라진다.
 - **일기 보너스**(`src/lib/diaryBonus.js`): 오늘(서울 날짜) 내가 쓴 일기 1편당 밥 +1회·간식 +1회, 하루 최대 2편. 저장하지 않고 `diaries`에서 createdAt 기준으로 매번 계산한다(지우면 자동으로 줄고, 쓰고-지우고 반복해도 상한을 못 넘김). 밥 횟수는 `todayFeedCount`/`todayFeedDate`, 예전 데이터(`todayFed`만 있음)와 호환.
-- **파트너 위험 알림**(`functions/petWarnings.js` + `index.js`의 `sendPetWarnings`, 매일 20:00 KST): 미접속 3일째·4일째에 **상대방에게** 푸시(5일째는 이미 사망이라 안 보냄). 중복 방지는 `petAlerts/{주인}`의 `lastWarnKey`(`마지막방문일:일수`)를 트랜잭션으로 먼저 기록. 판단 로직은 순수 함수라 `node --test functions/petWarnings.test.js`로 검증한다(실제 발송 불필요). 사망 기준(5일)을 바꾸면 `petWarnings.js`의 `DEATH_DAYS`/`WARN_DAYS`도 같이 바꿀 것.
+- **응원 사망 유예**: 파트너가 응원(하루 1회)을 보내면 상대 펫이 **3일 이상 미접속이고 살아 있을 때만** 사망까지 +1일(`graceDays`, 상한 `GRACE_CAP`=2, 주인이 방문하면 0으로 리셋). 사망 기준 = `DEATH_DAYS(5) + graceDays`(응원만으로 최대 7일). 위험하지 않을 때 미리 쌓아두는 건 불가. 판정은 `applyCheerGrace`(순수 함수). 응원 쓰기는 필드 단위 부분 쓰기라 주인의 방문 기록을 덮어쓰지 않는다. 돌아온 날 `graceThanks`로 "OO의 응원으로 N일 더 버텼어요" 안내.
+- **파트너 위험 알림**(`functions/petWarnings.js` + `index.js`의 `sendPetWarnings`, 매일 20:00 KST): 미접속 3일째부터 사망 전날까지 **상대방에게** 푸시. 남은 일수 2일 이상은 "응원으로 도울 수 있을 때"(유예 여유 있고 오늘 응원 전)만, 마지막 날은 항상 보내되 응원이 아직 도움이 되는지에 따라 문구가 다르다. 이미 죽은 펫은 제외. 중복 방지는 `petAlerts/{주인}`의 `lastWarnKey`(`마지막방문일:일수`)를 트랜잭션으로 먼저 기록. 판단 로직은 순수 함수라 `node --test functions/petWarnings.test.js`로 검증한다(실제 발송 불필요). **`DEATH_DAYS`/`GRACE_CAP`/`WARN_START`는 클라이언트(`CoupleTamagotchi.jsx`의 `DEATH_DAYS`/`GRACE_CAP`/`GRACE_MIN_MISSED`)와 항상 같은 값이어야 한다.**
 
 ## 크리스마스 장식 (`src/components/ChristmasDecor.jsx`, `SnowFall.jsx`, `index.css`의 `.xd-*`)
 
