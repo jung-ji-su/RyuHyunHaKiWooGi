@@ -27,6 +27,14 @@
 - **응원 사망 유예**: 파트너가 응원(하루 1회)을 보내면 상대 펫이 **3일 이상 미접속이고 살아 있을 때만** 사망까지 +1일(`graceDays`, 상한 `GRACE_CAP`=2, 주인이 방문하면 0으로 리셋). 사망 기준 = `DEATH_DAYS(5) + graceDays`(응원만으로 최대 7일). 위험하지 않을 때 미리 쌓아두는 건 불가. 판정은 `applyCheerGrace`(순수 함수). 응원 쓰기는 필드 단위 부분 쓰기라 주인의 방문 기록을 덮어쓰지 않는다. 돌아온 날 `graceThanks`로 "OO의 응원으로 N일 더 버텼어요" 안내.
 - **파트너 위험 알림**(`functions/petWarnings.js` + `index.js`의 `sendPetWarnings`, 매일 20:00 KST): 미접속 3일째부터 사망 전날까지 **상대방에게** 푸시. 남은 일수 2일 이상은 "응원으로 도울 수 있을 때"(유예 여유 있고 오늘 응원 전)만, 마지막 날은 항상 보내되 응원이 아직 도움이 되는지에 따라 문구가 다르다. 이미 죽은 펫은 제외. 중복 방지는 `petAlerts/{주인}`의 `lastWarnKey`(`마지막방문일:일수`)를 트랜잭션으로 먼저 기록. 판단 로직은 순수 함수라 `node --test functions/petWarnings.test.js`로 검증한다(실제 발송 불필요). **`DEATH_DAYS`/`GRACE_CAP`/`WARN_START`는 클라이언트(`CoupleTamagotchi.jsx`의 `DEATH_DAYS`/`GRACE_CAP`/`GRACE_MIN_MISSED`)와 항상 같은 값이어야 한다.**
 
+## 앱 아이콘 배지 (`src/lib/appBadge.js`, `public/firebase-messaging-sw.js`, `functions/badge.js`)
+
+- 홈 화면 아이콘에 "안 읽은 알림 개수" 표시(Badging API). **iOS/iPadOS 16.4+ 홈 화면에 설치한 웹앱에서만**, 알림 권한을 허용해야 하고(배지 권한은 자동으로 같이 허용) iOS 설정에서 배지를 끄면 안 보인다. Safari 탭에서는 API가 없다. 미지원/거부 환경에선 조용히 무시.
+- **앱을 열었을 때**: `useNotifications`가 `unreadCount`와 배지를 동기화한다(읽음·모두 읽음·삭제·새 알림 모두 반영, 0이면 지움). 첫 스냅샷 전에는 건드리지 않는다.
+- **앱이 닫혀 있을 때**: `sendPushOnNotification`이 푸시에 `data.badge`(받는 사람의 안 읽은 알림 총개수)를 실어 보내고, 서비스워커 `push` 핸들러가 그 값으로 배지를 갱신한다. `data.badge`가 없는 푸시(날씨·일정 브리핑·햄찌 위험 알림)는 서랍에 안 쌓이는 알림이라 배지를 건드리지 않는다.
+- **서버의 개수 계산(`functions/badge.js`)은 클라이언트 `useNotifications`의 `mine` 필터와 같은 기준**이어야 한다. 한쪽을 바꾸면 다른 쪽도 바꿀 것(테스트가 소스를 대조해 어긋나면 깨진다: `node --test functions/badge.test.js`).
+- 서비스워커 파일은 `firebase.json`에서 `Cache-Control: no-cache`로 서빙한다(갱신이 빨리 퍼지도록). iOS 홈 화면 앱은 앱을 완전히 종료했다 다시 열어야 새 서비스워커가 적용될 수 있다.
+
 ## 크리스마스 장식 (`src/components/ChristmasDecor.jsx`, `SnowFall.jsx`, `index.css`의 `.xd-*`)
 
 - 시즌 테마가 `christmas`일 때만 렌더된다. 기본 라이트/다크에는 DOM도 CSS도 없다(`SectionCard`의 `.xd-card` 클래스만 남지만 `[data-season="christmas"]` 아래에서만 스타일이 붙는다).

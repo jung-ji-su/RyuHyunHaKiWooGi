@@ -5,6 +5,7 @@ const { defineSecret }      = require("firebase-functions/params");
 const admin                 = require("firebase-admin");
 const fetch                 = require("node-fetch");
 const crypto                = require("crypto");
+const { unreadCountFor }    = require("./badge");
 
 admin.initializeApp();
 
@@ -138,11 +139,23 @@ exports.sendPushOnNotification = onDocumentCreated(
     const tokens = extractTokens(tokenSnap.data());
     if (tokens.length === 0) return null;
 
+    // 앱 아이콘 배지: 이 푸시를 받는 사람의 "안 읽은 알림" 총개수를 data.badge로 실어 보낸다.
+    // 서비스워커(firebase-messaging-sw.js)가 앱이 닫혀 있어도 이 값으로 배지를 갱신한다.
+    // 서랍(useNotifications)과 같은 기준(badge.js)이라 앱을 열었을 때 숫자가 어긋나지 않는다. 계산 실패 시 배지는 건드리지 않는다.
+    let badge = null;
+    try {
+      const recent = await admin.firestore().collection("notifications").orderBy("createdAt", "desc").limit(60).get();
+      badge = unreadCountFor(recent.docs.map((d) => d.data()), recipient);
+    } catch (e) {
+      console.error("배지 개수 계산 실패:", e);
+    }
+
     const message = {
       notification: {
         title: "부리부리 미니홈피 🐷",
         body: data.content ?? "새로운 알림이 있어요!",
       },
+      ...(badge !== null ? { data: { badge: String(badge) } } : {}),
       webpush: {
         notification: {
           icon: `${BASE}/icon.svg`,

@@ -5,6 +5,7 @@ import {
   collection, query, onSnapshot, updateDoc, doc,
   orderBy, limit, writeBatch,
 } from 'firebase/firestore';
+import { setAppBadgeCount } from '../lib/appBadge';
 
 // sessionStorage + 24h TTL로 본 알림 ID 관리
 function loadShownIds() {
@@ -35,6 +36,7 @@ export function useNotifications(currentUser) {
 
   const [allNotifications, setAllNotifications] = useState([]);
   const [unreadCount,      setUnreadCount]      = useState(0);
+  const [syncedFor,        setSyncedFor]        = useState(null); // 첫 스냅샷을 받은 사용자(그 전엔 0으로 배지를 지우지 않기 위함)
 
   const [toastOpen, setToastOpen] = useState(false);
   const [toastData, setToastData] = useState(null);
@@ -71,6 +73,7 @@ export function useNotifications(currentUser) {
 
       setAllNotifications(mine);
       setUnreadCount(mine.filter(n => !n.isRead).length);
+      setSyncedFor(currentUser);
 
       const newOnes = mine.filter(n => !n.isRead && !shownRef.current.has(n.id));
       if (newOnes.length === 0) return;
@@ -111,6 +114,14 @@ export function useNotifications(currentUser) {
       setTimeout(() => navigate('/schedule'), 50);
     }
   };
+
+  // 홈 화면 아이콘 배지를 안 읽은 알림 개수와 맞춘다 — 읽으면 줄고 다 읽으면 사라진다.
+  // 첫 스냅샷 전(unreadCount 초기값 0)에는 건드리지 않아 서비스워커가 올려둔 배지를 순간적으로 지우지 않는다.
+  // 로그아웃/미로그인 상태에서도 건드리지 않는다. 미지원 환경에선 setAppBadgeCount가 조용히 무시.
+  useEffect(() => {
+    if (!currentUser || syncedFor !== currentUser) return;
+    setAppBadgeCount(unreadCount);
+  }, [currentUser, syncedFor, unreadCount]);
 
   const markAllRead = async () => {
     const batch = writeBatch(db);
