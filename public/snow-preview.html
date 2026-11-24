@@ -26,7 +26,7 @@
   #stage { position: fixed; inset: 0; background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 60%); color: var(--txt); touch-action: none; }
 
   /* ── 가짜 앱 화면: 눈이 실제 콘텐츠 위에서 어떻게 읽히는지 보려고 깔아둔 것 ── */
-  .app { position: absolute; inset: 0; display: flex; flex-direction: column; padding: calc(34px + env(safe-area-inset-top)) 16px 0; max-width: 520px; margin: 0 auto; pointer-events: none; }
+  .app { position: absolute; inset: 0; display: flex; flex-direction: column; padding: calc(52px + env(safe-area-inset-top)) 16px 0; max-width: 520px; margin: 0 auto; pointer-events: none; }
   .app h1 { margin: 0 0 4px; font-size: 22px; color: var(--accent); }
   .app .sub { font-size: 12px; color: var(--sub); margin-bottom: 12px; }
   .card { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }
@@ -40,7 +40,7 @@
   .scene { position: relative; flex: 1; min-width: 0; overflow: hidden; }
   .scene + .scene { border-left: 2px solid rgba(255,255,255,.35); }
   .scene canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .slabel { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); font-size: 11px; padding: 3px 9px; border-radius: 99px; background: rgba(10,16,20,.7); color: #fff; z-index: 3; white-space: nowrap; display: none; }
+  .slabel { position: absolute; bottom: calc(var(--navH) + 118px); left: 50%; transform: translateX(-50%); font-size: 10px; line-height: 1.25; text-align: center; max-width: 94%; padding: 3px 8px; border-radius: 10px; background: rgba(10,16,20,.7); color: #fff; z-index: 3; white-space: normal; display: none; }
   body.compare .slabel { display: block; }
 
   /* 유리볼 느낌 — 가장자리 빛 번짐 + 곡면 반사. 과하지 않게(soft) / 더 유리볼답게(globe). 흔들 때 살짝 밝아진다(opacity) */
@@ -63,18 +63,29 @@
   .btn:hover { background: rgba(255,255,255,.2); } .btn:active { transform: scale(.95); }
   .btn.on { background: #41A17A; border-color: #6FCB9F; color: #06150F; font-weight: 700; }
 
-  #switcher { left: 50%; bottom: calc(10px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 5px 8px; }
-  #switcher .arrow { width: 34px; height: 34px; border-radius: 50%; font-size: 16px; }
+  /* ══ 컨트롤 레이아웃 (폰 폭 402에서 겹침 0) ══
+     상단: 왼쪽 HUD 뱃지 / 오른쪽 ⚙️·👁 (작은 아이콘 줄, y 8~40)
+     하단: 탭바 목업 바로 위에 "독" 하나(변형 전환 + 흔들기 4단계) → 권한 칩은 그 위 → 팝오버(HUD/설정)는 서로 배타적
+     👁로 전체를 숨기면 눈만 보인다. --navH는 JS가 탭바 목업 실제 높이로 갱신한다. */
+  :root { --navH: 64px; }
+  .topbtn { position: fixed; top: calc(8px + env(safe-area-inset-top)); z-index: 22; height: 32px; min-width: 32px; padding: 0 9px; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 14px; border-radius: 99px; }
+  #hudBadge { left: 8px; font: 700 11px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  #hudBadge .dot { width: 8px; height: 8px; border-radius: 50%; background: #6FCB9F; }
+  #hudBadge.warn .dot { background: #FFC857; } #hudBadge.bad .dot { background: #FF7B7B; }
+  #gear { right: 46px; } #eye { right: 8px; }
+  body.clean .ui:not(.eye):not(#toast) { display: none !important; }
+  body.clean .slabel { display: none; }
+  body.clean .eye { opacity: .28; } body.clean .eye:hover { opacity: .95; }
+
+  #dock { left: 50%; transform: translateX(-50%); width: max-content; bottom: calc(var(--navH) + 8px); display: flex; align-items: center; padding: 4px 6px; max-width: calc(100vw - 16px); white-space: nowrap; }
+  #switcher, #shakebar { display: flex; align-items: center; gap: 3px; }
+  #switcher .arrow { width: 30px; height: 34px; border-radius: 50%; font-size: 15px; }
   #switcher .arrow:hover { background: rgba(255,255,255,.18); }
-  #switcher .label { min-width: 150px; text-align: center; font-weight: 700; font-size: 13px; padding: 0 6px; }
-  #switcher .label small { display: block; font-weight: 400; opacity: .7; font-size: 10px; }
+  #switcher .label { min-width: 84px; text-align: center; font-weight: 700; font-size: 12px; padding: 0 2px; }
+  #dock .sep { width: 1px; align-self: stretch; background: rgba(255,255,255,.2); margin: 4px 5px; }
+  #shakebar .btn { width: 36px; height: 34px; padding: 0; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
-  #shakebar { border-radius: 22px; left: 50%; bottom: calc(64px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 6px 8px; max-width: calc(100vw - 16px); }
-  #shakebar .sep { width: 1px; background: rgba(255,255,255,.2); margin: 2px 2px; }
-  #shakebar .tit { align-self: center; opacity: .7; padding: 0 4px; }
-
-  #gear { top: calc(10px + env(safe-area-inset-top)); right: 10px; width: 40px; height: 40px; font-size: 18px; }
-  #panel { top: calc(58px + env(safe-area-inset-top)); right: 10px; width: min(330px, calc(100vw - 20px)); max-height: calc(100vh - 150px - env(safe-area-inset-top)); overflow: auto; padding: 12px; border-radius: 16px; display: none; background: rgba(14,20,24,.92); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  #panel { top: calc(48px + env(safe-area-inset-top)); right: 8px; width: min(340px, calc(100vw - 16px)); max-height: calc(100vh - 56px - env(safe-area-inset-top) - var(--navH) - 64px); overflow: auto; padding: 12px; border-radius: 16px; display: none; background: rgba(14,20,24,.94); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
   #panel.open { display: block; }
   #panel h3 { margin: 12px 0 6px; font-size: 11px; letter-spacing: .04em; color: #9DB8AE; text-transform: none; } #panel h3:first-child { margin-top: 0; }
   .chips { display: flex; flex-wrap: wrap; gap: 5px; } .chips .btn { padding: 6px 10px; }
@@ -83,16 +94,17 @@
   #panel select { background: #1B2E29; color: #EEF6F2; border: 1px solid #2F4A42; border-radius: 8px; padding: 6px; font: inherit; width: 100%; }
   #panel hr { border: 0; border-top: 1px solid rgba(255,255,255,.12); margin: 12px 0; }
 
-  #hud { top: calc(10px + env(safe-area-inset-top)); left: 10px; padding: 8px 10px; border-radius: 12px; font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: rgba(14,20,24,.8); border: 1px solid rgba(255,255,255,.14); max-width: min(330px, calc(100vw - 70px)); white-space: pre-wrap; pointer-events: none; }
-  #hud.hidden { display: none; }
-  body.compare #hud { top: calc(40px + env(safe-area-inset-top)); }   /* 비교 모드의 장면 라벨을 가리지 않게 */
-  #hud .bar { display: inline-block; height: 6px; background: #6FCB9F; border-radius: 3px; vertical-align: middle; }
-  #hud .warn { color: #FFC857; } #hud .bad { color: #FF7B7B; }
+  /* HUD: 기본은 접힘(뱃지만). 펼치면 작은 고정폭 패널 — 폰 폭에서도 줄바꿈이 거의 없도록 줄을 짧게 */
+  #hud { display: none; top: calc(46px + env(safe-area-inset-top)); left: 8px; width: min(292px, calc(100vw - 16px)); padding: 7px 9px; border-radius: 12px; font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: rgba(14,20,24,.92); border: 1px solid rgba(255,255,255,.16); white-space: pre-wrap; pointer-events: none; }
+  body.hud-open #hud { display: block; }
+  #hud .bar { display: inline-block; height: 5px; background: #6FCB9F; border-radius: 3px; vertical-align: middle; }
+  #hud .warn { color: #FFC857; } #hud .bad { color: #FF7B7B; } #hud .dim { color: #9DB8AE; }
 
-  #chip { left: 50%; top: calc(58px + env(safe-area-inset-top)); transform: translateX(-50%); padding: 8px 12px; display: none; align-items: center; gap: 8px; max-width: calc(100vw - 130px); }
+  #chip { left: 50%; transform: translateX(-50%); width: max-content; bottom: calc(var(--navH) + 60px); padding: 7px 10px; display: none; align-items: center; gap: 8px; max-width: calc(100vw - 16px); border-radius: 18px; }
   #chip.show { display: flex; } #chip .msg { font-size: 12px; line-height: 1.35; }
   #chip .x { opacity: .6; padding: 2px 6px; }
-  #toast { left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 12px 18px; text-align: center; line-height: 1.5; opacity: 0; pointer-events: none; transition: opacity .3s; font-size: 14px; }
+  body.panel-open #chip, body.hud-open #chip { display: none !important; }   /* 팝오버가 열려 있으면 칩은 숨김(겹침 방지) */
+  #toast { left: 50%; bottom: calc(var(--navH) + 176px); transform: translateX(-50%); width: max-content; padding: 12px 18px; text-align: center; line-height: 1.5; opacity: 0; pointer-events: none; transition: opacity .3s; font-size: 14px; max-width: calc(100vw - 32px); border-radius: 18px; }
   #toast.show { opacity: 1; }
 
   /* iOS 권한 프롬프트 흉내(데스크톱에서 UX를 보려는 시뮬레이션) */
@@ -118,12 +130,13 @@
   <div id="scenes"></div>
 </div>
 
+<button id="hudBadge" class="ui topbtn pill" title="성능 HUD 펼치기/접기 (H)"><span class="dot"></span><span id="hudFps">--</span></button>
 <div id="hud" class="ui"></div>
-<button id="gear" class="ui pill" title="설정 (G)">⚙️</button>
+<button id="gear" class="ui topbtn pill" title="설정 (G)">⚙️</button>
+<button id="eye" class="ui eye topbtn pill" title="컨트롤 숨기기/보이기 (U) — 숨기면 눈만 보여요">👁</button>
 <div id="panel" class="ui"></div>
 <div id="chip" class="ui pill"><span class="msg"></span><button class="btn go">켜기</button><button class="x" title="나중에">✕</button></div>
-<div id="shakebar" class="ui pill"></div>
-<div id="switcher" class="ui pill"><button class="arrow" id="prev" title="이전 변형 (←)">◀</button><div class="label" id="vlabel"></div><button class="arrow" id="next" title="다음 변형 (→)">▶</button></div>
+<div id="dock" class="ui pill"><div id="switcher"><button class="arrow" id="prev" title="이전 변형 (←)">◀</button><div class="label" id="vlabel"></div><button class="arrow" id="next" title="다음 변형 (→)">▶</button></div><span class="sep"></span><div id="shakebar"></div></div>
 <div id="toast" class="ui pill"></div>
 <div id="iosDlg"><div class="box"><div class="t"><b>“부리부리”에서 동작 및 방향 접근을 요청합니다</b>눈을 흔들어 날리기 위해 기기의 움직임 센서를 사용합니다. (iOS 권한창 시뮬레이션)</div><div class="row"><button id="dlgNo">허용 안 함</button><button id="dlgYes">허용</button></div></div></div>
 <div id="rm"><div class="box"><b>동작 줄이기 설정이 켜져 있어요</b><br>기기의 “동작 줄이기(prefers-reduced-motion)” 설정을 존중해서 눈 효과를 끄고 있습니다. 앱에서도 이 설정이면 효과가 꺼집니다.<br><br><button class="btn" id="rmForce">프로토타입 평가용으로 그래도 보기</button></div></div>
@@ -248,7 +261,7 @@ const OPT = {
   theme: [['night', '🌙 밤'], ['day', '☀️ 낮']],
 };
 const COUNT = { low: 350, mid: 700, high: 1200, max: 2000 };
-const DEF = { variant: 'A', count: 'mid', decay: 'exp', glass: 'soft', theme: 'night', pile: '0', stretch: '1', sens: '1', compare: 'none', alt: '', perm: 'auto', hud: '1', lite: '0', force: '0', adapt: '1', eco: '0', mouse: '1' };
+const DEF = { variant: 'A', count: 'mid', decay: 'exp', glass: 'soft', theme: 'night', pile: '0', stretch: '1', sens: '1', compare: 'none', alt: '', perm: 'auto', hud: '0', ui: '1', lite: '0', force: '0', adapt: '1', eco: '0', mouse: '1' };
 const P = new URLSearchParams(location.search);
 const S = {}; for (const k in DEF) S[k] = P.get(k) ?? DEF[k];
 if (!OPT.variant.some((o) => o[0] === S.variant)) S.variant = 'A';
@@ -539,7 +552,7 @@ function applyConfig(opts = {}) {
   while (scenes.length > cfgs.length) { const sc = scenes.pop(); sc.root.remove(); }
   scenes.forEach((sc, k) => sc.configure(cfgs[k]));
   quality = opts.keepQuality ? quality : 1;
-  const m = MODELS[S.variant]; $('#vlabel').innerHTML = `${S.variant} · ${m.name}<small>${m.desc}</small>`;
+  const m = MODELS[S.variant]; $('#vlabel').textContent = `${S.variant} · ${m.name}`; $('#vlabel').title = m.desc;
   buildPanel(); syncURL();
 }
 const cycleVariant = (d) => { const list = OPT.variant.map((o) => o[0]); S.variant = list[(list.indexOf(S.variant) + d + list.length) % list.length]; applyConfig({ keepQuality: true }); };
@@ -555,17 +568,16 @@ function shake(dx, dy, s, src) {
   const t = now(); scenes.forEach((sc) => sc.shake(dx, dy, s, t)); lastShake = { s, src };
   log(`흔들기 ${src} s=${s.toFixed(2)} 방향(${dx.toFixed(1)},${dy.toFixed(1)})`);
 }
-const bar = $('#shakebar'); bar.innerHTML = '<span class="tit">흔들기</span>';
-[['약 (1)', 'weak'], ['중 (2/Space)', 'mid'], ['강 (3)', 'strong'], ['폭발 (4)', 'boom']].forEach(([lab, k]) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = lab; b.onclick = () => shake((Math.random() - 0.5) * 0.6, 0, STRENGTH[k], '버튼:' + k); bar.appendChild(b); });
-bar.insertAdjacentHTML('beforeend', '<span class="sep"></span><span class="tit">방향</span>');
-[['◀', -1, 0], ['▲', 0, -1], ['▶', 1, 0]].forEach(([lab, dx, dy]) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = lab; b.onclick = () => shake(dx, dy, STRENGTH.mid, '방향버튼'); bar.appendChild(b); });
+const bar = $('#shakebar');
+[['약', '약 (1)', 'weak'], ['중', '중 (2 / Space)', 'mid'], ['강', '강 (3)', 'strong'], ['💥', '폭발 (4)', 'boom']].forEach(([lab, tip, k]) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = lab; b.title = tip; b.onclick = () => shake((Math.random() - 0.5) * 0.6, 0, STRENGTH[k], '버튼:' + k); bar.appendChild(b); });
 
 addEventListener('keydown', (e) => {
   const ae = document.activeElement; if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) || ae?.isContentEditable) return;
   if (e.key === 'ArrowLeft') cycleVariant(-1); else if (e.key === 'ArrowRight') cycleVariant(1);
   else if (e.key >= '1' && e.key <= '4') shake((Math.random() - 0.5) * 0.6, 0, Object.values(STRENGTH)[+e.key - 1], '키' + e.key);
   else if (e.key === ' ') { e.preventDefault(); shake((Math.random() - 0.5) * 0.6, 0, STRENGTH.mid, '스페이스'); }
-  else if (e.key === 'g' || e.key === 'G') $('#panel').classList.toggle('open'); else if (e.key === 'h' || e.key === 'H') { S.hud = S.hud === '1' ? '0' : '1'; syncURL(); updateHud(true); }
+  else if (e.key === 'g' || e.key === 'G') setPanel(!panel.classList.contains('open')); else if (e.key === 'h' || e.key === 'H') setHudOpen(S.hud !== '1');
+  else if (e.key === 'u' || e.key === 'U') setClean(S.ui !== '0'); else if (e.key === 'Escape') { setPanel(false); setHudOpen(false); }
 });
 // 마우스/터치 휘두르기: 포인터가 빠르게 움직이면 속도에 비례해 흔들기(UI 위에서는 무시)
 let pm = { x: 0, y: 0, t: 0, vx: 0, vy: 0, last: 0 };
@@ -654,6 +666,14 @@ function buildPanel() {
   const cmpDims = [['none', '끔'], ['variant', '변형 A/B/C'], ['decay', '감속 곡선'], ['count', '입자 수'], ['glass', '유리볼']];
   const altList = S.compare !== 'none' && OPT[S.compare] ? OPT[S.compare].map(([v, l]) => `<option value="${v}" ${(configs()[1] && configs()[1][S.compare] === v) ? 'selected' : ''}>${l}</option>`).join('') : '';
   panel.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="font-size:13px">설정</b><button class="btn" data-act="closepanel" style="padding:4px 10px">닫기 ✕</button></div>
+    <p class="note" style="margin:0 0 8px"><b>${S.variant} · ${MODELS[S.variant].name}</b> — ${MODELS[S.variant].desc}</p>
+    <h3>방향 흔들기 (찰랑 C에서 방향이 가장 잘 보여요)</h3>
+    <div class="chips"><button class="btn" data-dir="-1,0">◀ 왼쪽</button><button class="btn" data-dir="0,-1">▲ 위</button><button class="btn" data-dir="1,0">오른쪽 ▶</button></div>
+    <h3>눈만 보기</h3>
+    <div class="chips"><button class="btn" data-act="clean">컨트롤 전부 숨기기 (U)</button></div>
+    <p class="note">숨기면 화면을 톡 치면 흔들려요(연타할수록 세게). 다시 보려면 오른쪽 위 흐린 👁.</p>
+    <hr>
     <h3>입자 수 (동시 최대, 화면 크기에 비례)</h3>${chips('count', OPT.count)}
     <h3>감속 곡선 — 흔든 뒤 가라앉는 방식</h3>${chips('decay', OPT.decay)}
     <p class="note">${OPT.decay.map(([v, l]) => `${l}: 잔잔해지기까지 ≈${settleTime(v).toFixed(1)}초`).join(' · ')}</p>
@@ -674,41 +694,74 @@ function buildPanel() {
     <p class="note">걷기·뛰기·탁 치기·휙 돌리기는 <b>무시</b>되고, 흔들기만 눈이 날립니다. 결과는 왼쪽 위 HUD 로그에 표시됩니다.</p>
     <hr>
     <h3>성능</h3>
-    <div class="chips"><button class="btn ${S.adapt === '1' ? 'on' : ''}" data-tog="adapt">자동 품질 조정</button><button class="btn ${S.lite === '1' ? 'on' : ''}" data-tog="lite">저사양 시뮬레이션</button><button class="btn ${S.eco === '1' ? 'on' : ''}" data-tog="eco">잔잔할 땐 30fps</button><button class="btn ${S.mouse === '1' ? 'on' : ''}" data-tog="mouse">마우스 휘두르기</button><button class="btn" data-act="rm">동작 줄이기 시뮬(새로고침)</button><button class="btn ${S.hud === '1' ? 'on' : ''}" data-tog="hud">HUD (H)</button></div>
+    <div class="chips"><button class="btn ${S.adapt === '1' ? 'on' : ''}" data-tog="adapt">자동 품질 조정</button><button class="btn ${S.lite === '1' ? 'on' : ''}" data-tog="lite">저사양 시뮬레이션</button><button class="btn ${S.eco === '1' ? 'on' : ''}" data-tog="eco">잔잔할 땐 30fps</button><button class="btn ${S.mouse === '1' ? 'on' : ''}" data-tog="mouse">마우스 휘두르기</button><button class="btn" data-act="rm">동작 줄이기 시뮬(새로고침)</button></div>
     <p class="note">${REDUCE ? '⚠️ OS가 “동작 줄이기”라서 평소엔 효과가 꺼집니다(이 페이지는 강제 보기 가능).' : ''}${LITE_AUTO ? ' ⚠️ 저사양으로 감지되어 입자 수가 절반입니다.' : ''}</p>`;
 }
 panel.addEventListener('click', (e) => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.k) { S[b.dataset.k] = b.dataset.v; if (b.dataset.k === 'compare') S.alt = ''; if (b.dataset.k === 'perm') { Sensor.state = 'init'; chipDismissed = false; applyConfig({ keepQuality: true }); initSensor(); return; } applyConfig(); }
-  else if (b.dataset.tog) { const k = b.dataset.tog; S[k] = S[k] === '1' ? '0' : '1'; if (k === 'hud') { updateHud(true); buildPanel(); syncURL(); } else applyConfig({ keepQuality: k === 'adapt' }); }
+  else if (b.dataset.tog) { const k = b.dataset.tog; S[k] = S[k] === '1' ? '0' : '1'; applyConfig({ keepQuality: k === 'adapt' }); }
   else if (b.dataset.sim) runSim(b.dataset.sim);
+  else if (b.dataset.dir) { const [dx, dy] = b.dataset.dir.split(',').map(Number); shake(dx, dy, STRENGTH.mid, '방향버튼'); }
+  else if (b.dataset.act === 'closepanel') setPanel(false);
+  else if (b.dataset.act === 'clean') setClean(true);
   else if (b.dataset.act === 'rm') { const q = new URLSearchParams(location.search); q.set('rm', '1'); location.search = q.toString(); }
 });
 panel.addEventListener('change', (e) => { if (e.target.id === 'alt') { S.alt = e.target.value; applyConfig({ keepQuality: true }); } });
 panel.addEventListener('input', (e) => { if (e.target.id === 'sens') { S.sens = e.target.value; detector.setSensitivity(+S.sens); $('#sensV').textContent = (+S.sens).toFixed(2); syncURL(); } });
-$('#gear').onclick = () => panel.classList.toggle('open');
+// 팝오버(설정/HUD)는 서로 배타적이고, 👁(눈만 보기)는 모든 컨트롤을 숨긴다 — 겹침 방지의 핵심
+function setPanel(open) { panel.classList.toggle('open', open); document.body.classList.toggle('panel-open', open); if (open && S.hud === '1') setHudOpen(false); }
+function setHudOpen(open) { if (open) setPanel(false); S.hud = open ? '1' : '0'; document.body.classList.toggle('hud-open', open); syncURL(); updateHud(true); }
+function setClean(on) {
+  S.ui = on ? '0' : '1'; document.body.classList.toggle('clean', on);
+  if (on) { setPanel(false); if (S.hud === '1') setHudOpen(false); toast('컨트롤을 숨겼어요<br><small>화면을 톡 치면 흔들려요 (연타 = 더 세게) · 오른쪽 위 흐린 👁로 다시 보기</small>'); }
+  syncURL();
+}
+$('#gear').onclick = () => setPanel(!panel.classList.contains('open'));
+$('#eye').onclick = () => setClean(S.ui !== '0');
+$('#hudBadge').onclick = () => setHudOpen(S.hud !== '1');
+// 눈만 보기 상태에서의 입력: 화면을 톡 치면 흔들기(연타할수록 세게). 마우스 휘두르기/센서는 그대로 동작
+let tapDown = null, tapSeq = { t: 0, n: 0 };
+$('#stage').addEventListener('pointerdown', (e) => { tapDown = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+$('#stage').addEventListener('pointerup', (e) => {
+  if (S.ui !== '0' || !tapDown) return; const d = Math.hypot(e.clientX - tapDown.x, e.clientY - tapDown.y), dt = performance.now() - tapDown.t; tapDown = null; if (d > 12 || dt > 400) return;
+  const t = performance.now(); tapSeq.n = (t - tapSeq.t < 450) ? Math.min(3, tapSeq.n + 1) : 1; tapSeq.t = t;
+  shake((e.clientX / innerWidth - 0.5) * 1.2, (e.clientY / innerHeight - 0.5) * 0.6 - 0.2, [0, 0.5, 0.8, 1][tapSeq.n], '탭×' + tapSeq.n);
+});
+// 하단 독이 탭바 목업을 가리지 않도록 탭바의 실제 높이를 CSS 변수로 알려준다
+function measureNav() { const n = $('.nav'); if (n) document.documentElement.style.setProperty('--navH', Math.ceil(n.getBoundingClientRect().height) + 'px'); }
 
 /* ══════════════ HUD / 메인 루프 / 자동 품질 ══════════════ */
-const hud = $('#hud'); const ft = new Float32Array(120); let ftI = 0, ftN = 0, frames = 0, emaMs = 16.7, workEma = 1, badFor = 0, goodFor = 0, lastHud = 0;
+const hud = $('#hud'), hudBadge = $('#hudBadge'); const ft = new Float32Array(120); let ftI = 0, ftN = 0, frames = 0, emaMs = 16.7, workEma = 1, badFor = 0, goodFor = 0, lastHud = 0, lastFrameAt = performance.now();
 function pct(arr, n, p) { const a = Array.from(arr.slice(0, n)).sort((x, y) => x - y); return a[Math.min(n - 1, Math.floor(n * p))] || 0; }
 function updateHud(force) {
-  hud.classList.toggle('hidden', S.hud !== '1'); if (S.hud !== '1') return;
   const t = performance.now(); if (!force && t - lastHud < 250) return; lastHud = t;
-  const n = Math.min(ftN, 120), avg = n ? Array.from(ft.slice(0, n)).reduce((a, b) => a + b, 0) / n : 16.7, p95 = pct(ft, n, 0.95), max = n ? Math.max(...ft.slice(0, n)) : 0;
-  const fps = 1000 / avg, cls = fps >= 55 ? '' : fps >= 45 ? 'warn' : 'bad';
+  const n = Math.min(ftN, 120), avg = n ? Array.from(ft.slice(0, n)).reduce((a, b) => a + b, 0) / n : 0, p95 = pct(ft, n, 0.95), max = n ? Math.max(...ft.slice(0, n)) : 0;
+  const stalled = document.hidden || t - lastFrameAt > 700;                      // 프레임이 멈춤(창이 가려지거나 백그라운드)
+  const fps = avg ? 1000 / avg : 0;
+  // fps는 낮은데 우리 JS 작업은 가볍다 = 병목이 우리 코드가 아니라 창 스로틀(가려짐/백그라운드)일 가능성이 높다
+  const throttled = !stalled && n > 10 && avg > 30 && workEma < 4;
+  const cls = stalled || throttled ? 'warn' : !n ? '' : fps >= 55 ? '' : fps >= 45 ? 'warn' : 'bad';
+  hudBadge.className = 'ui topbtn pill ' + cls;
+  $('#hudFps').textContent = stalled ? '⏸' : !n ? '--' : (throttled ? '⚠' : '') + fps.toFixed(0);
+  hudBadge.title = stalled ? '프레임이 멈췄어요 (창이 가려졌거나 백그라운드)' : throttled ? '창이 가려져 fps가 낮게 나오는 것으로 보여요 (JS 작업은 가벼움)' : '성능 HUD 펼치기/접기 (H)';
+  if (S.hud !== '1') return;
   const sc = scenes[0], env = sc ? sc.envNow : 0;
-  const L = [`<span class="${cls}">${fps.toFixed(0)} fps</span>  프레임 평균 ${avg.toFixed(1)} · p95 ${p95.toFixed(1)} · 최대 ${max.toFixed(1)} ms`,
-    `JS 작업 ${workEma.toFixed(1)}ms/프레임 (예산 16.7)
-입자 ${scenes.map((s) => s.active + '/' + s.poolEnd).join(' | ')}  캔버스 ${sc ? sc.dpr.toFixed(1) + 'x' : ''}  품질 ×${quality.toFixed(2)}${isLite() ? ' [저사양]' : ''}`,
-    `에너지 <span class="bar" style="width:${Math.round(clamp(env, 0, 1.6) * 60)}px"></span> ${env.toFixed(2)}  잔잔해지기까지 ≈${settleTime(S.decay).toFixed(1)}s`,
-    `센서 ${Sensor.state}${Sensor.sim ? '(시뮬)' : ''}  가속도 ${detector.diag.mag.toFixed(1)}m/s² (임계 ${detector.o.threshold.toFixed(1)})`,
-    `감지기: ${detector.diag.reason} · 이어진 펄스 ${detector.diag.chain}개(3개 이상이면 흔들기) · 피크 ${detector.diag.peak.toFixed(1)}`,
-    `마지막 흔들기: ${lastShake.src} s=${lastShake.s.toFixed(2)}`, ...logLines];
-  hud.innerHTML = L.join('\n');
+  const L = [`<span class="${cls}">${stalled ? '⏸ 프레임 정지' : (n ? fps.toFixed(0) + ' fps' : '측정 중')}</span> · ${avg.toFixed(1)}ms (p95 ${p95.toFixed(1)} / 최대 ${max.toFixed(1)})`,
+    `JS 작업 <b>${workEma.toFixed(1)}ms</b>/프레임 (예산 16.7)`,
+    `입자 ${scenes.map((s) => s.active + '/' + s.poolEnd).join(' | ')} · ×${quality.toFixed(2)} · ${sc ? sc.dpr.toFixed(1) + 'x' : ''}${isLite() ? ' [저사양]' : ''}`,
+    `에너지 <span class="bar" style="width:${Math.round(clamp(env, 0, 1.6) * 50)}px"></span> ${env.toFixed(2)} · 안정 ≈${settleTime(S.decay).toFixed(1)}s`,
+    `센서 ${Sensor.state}${Sensor.sim ? '(시뮬)' : ''} · a ${detector.diag.mag.toFixed(1)} / 임계 ${detector.o.threshold.toFixed(1)}`,
+    `감지: ${detector.diag.reason} · 펄스 ${detector.diag.chain} · 피크 ${detector.diag.peak.toFixed(1)}`,
+    `마지막: ${lastShake.src} s=${lastShake.s.toFixed(2)}`, ...logLines.slice(0, 3),
+    stalled ? '<span class="warn">⚠ 창이 가려졌거나 백그라운드라 렌더가 멈췄어요.</span>' : throttled ? '<span class="warn">⚠ fps는 낮지만 JS 작업은 가벼워요 → 창이 가려졌을 가능성이 커요.</span>' : '',
+    '<span class="dim">ⓘ 창이 가려지면 fps가 낮게(≈8) 나옵니다. 그땐 위 \'JS 작업\'으로 판단하세요.</span>'];
+  hud.innerHTML = L.filter(Boolean).join('\n');
 }
+setInterval(() => updateHud(false), 500);   // 프레임이 멈춰도(창 가려짐) 뱃지/HUD는 갱신
 let last = performance.now(), acc = 0, skip = false;
 function frame(tms) {
-  const raw = tms - last; last = tms;
+  const raw = tms - last; last = tms; lastFrameAt = performance.now();
   if (raw > 0 && raw < 250) {
     ft[ftI] = raw; ftI = (ftI + 1) % 120; ftN++; emaMs = emaMs * 0.92 + raw * 0.08;
     if (S.adapt === '1') {                                                           // 자동 품질: 오래 느리면 입자 수를 줄이고, 오래 여유로우면 되돌린다
@@ -727,11 +780,12 @@ let running = false, raf = 0;
 function start() { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
 function stop() { running = false; cancelAnimationFrame(raf); }
 document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (!$('#rm').classList.contains('show') || S.force === '1') start(); });
-new ResizeObserver(() => { clearTimeout(window.__rz); window.__rz = setTimeout(() => scenes.forEach((s) => s.configure(s.cfg)), 120); }).observe(document.body);
+new ResizeObserver(() => { measureNav(); clearTimeout(window.__rz); window.__rz = setTimeout(() => scenes.forEach((s) => s.configure(s.cfg)), 120); }).observe(document.body);
 addEventListener('pointermove', (e) => { const x = (e.clientX / innerWidth - 0.5) * 8; scenes.forEach((s) => s.glass.style.setProperty('--hx', x.toFixed(1) + '%')); }, { passive: true });
 
 /* ══════════════ 시작 ══════════════ */
-applyConfig(); initSensor(); updateHud(true);
+measureNav(); applyConfig(); initSensor();
+if (S.ui === '0') setClean(true); if (S.hud === '1') setHudOpen(true); else updateHud(true);
 if (REDUCE && S.force !== '1') { $('#rm').classList.add('show'); $('#rmForce').onclick = () => { S.force = '1'; syncURL(); $('#rm').classList.remove('show'); start(); }; }
 else start();
 // 디버그/검증용 훅
