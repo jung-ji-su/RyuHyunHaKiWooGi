@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useSyncExternalStore } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Typography, Drawer } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -11,6 +11,7 @@ import { alpha, B, MENU_ITEMS, BOTTOM_NAV } from '../lib/constants';
 import { buri1, buri2, buriCouple, buriFire } from '../lib/buriAssets';
 import { createBuriPang, vibrate } from '../touchEffects';
 import { UserContext } from '../lib/UserContext';
+import { getSensorState, subscribeSensor, enableSensor, disableSensor } from '../lib/shakeSensor';
 
 const MODE_OPTIONS = [
   { value: 'system', label: '시스템', Icon: SettingsBrightnessIcon },
@@ -23,6 +24,36 @@ const SEASON_OPTIONS = [
   { value: 'none',      label: '기본',     Icon: PaletteOutlinedIcon },
   { value: 'christmas', label: '크리스마스', Icon: AcUnitIcon },
 ];
+
+// 크리스마스 눈 "흔들기" 칩 — 권한을 묻는 유일한 곳(맥락: 시즌 테마 설정 바로 아래, 기존 UI를 가리지 않음).
+// 로드 직후엔 묻지 않고 "켜기"를 누른 순간에만 iOS 권한창을 띄운다. 거부하면 다시 묻지 않고 설정에서 켜는 법만 안내한다.
+function ShakeRow() {
+  const state = useSyncExternalStore(subscribeSensor, getSensorState, () => 'idle');
+  if (state === 'idle' || state === 'unsupported' || state === 'nosensor') return null;   // 쓸 수 없는 환경(데스크톱 등)에선 숨김
+  const canToggle = state !== 'denied';
+  const on = state === 'listening';
+  const text = on ? '📳 흔들기 켜짐 — 폰을 흔들어 보세요'
+    : state === 'denied' ? '📳 흔들기가 꺼져 있어요 — 설정 › Safari › 동작 및 방향 접근에서 허용하면 쓸 수 있어요'
+    : '📳 폰을 흔들면 눈이 날려요';
+  return (
+    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, px: 0.5 }}>
+      <Typography sx={{ flex: 1, fontSize: '0.72rem', lineHeight: 1.4, fontFamily: "'Noto Sans KR',sans-serif", color: on ? B.pants : alpha(B.dark, '88'), fontWeight: on ? 700 : 400 }}>
+        {text}
+      </Typography>
+      {canToggle && (
+        <Box onClick={() => { vibrate(10); if (on) disableSensor(); else enableSensor(); }}
+          sx={{
+            px: 1.5, py: '6px', borderRadius: '999px', cursor: 'pointer', flexShrink: 0, minHeight: 32, display: 'flex', alignItems: 'center',
+            fontSize: '0.72rem', fontWeight: 700, fontFamily: "'Noto Sans KR',sans-serif",
+            bgcolor: on ? alpha(B.pants, '14') : B.pants, color: on ? B.pants : '#fff',
+            border: `1px solid ${alpha(B.pants, '44')}`, '&:active': { transform: 'scale(0.95)' },
+          }}>
+          {on ? '끄기' : '켜기'}
+        </Box>
+      )}
+    </Box>
+  );
+}
 
 export default function BottomNav({ logout, colorMode = 'system', setColorMode, season = 'none', setSeason }) {
   const navigate  = useNavigate();
@@ -252,6 +283,7 @@ export default function BottomNav({ logout, colorMode = 'system', setColorMode, 
                 );
               })}
             </Box>
+            {season === 'christmas' && <ShakeRow />}
           </Box>
         )}
 
