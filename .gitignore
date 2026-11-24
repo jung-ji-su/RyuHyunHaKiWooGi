@@ -25,3 +25,7 @@ dist-ssr
 
 # Firebase Hosting 배포 캐시 (배포할 때마다 바뀌는 로컬 산출물)
 .firebase/
+
+# 작업 도구(에이전트 스킬) — 앱과 무관해서 레포에 불필요
+.claude/skills/
+skills-lock.json
