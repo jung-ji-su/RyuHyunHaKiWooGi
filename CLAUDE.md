@@ -35,6 +35,12 @@
 - **서버의 개수 계산(`functions/badge.js`)은 클라이언트 `useNotifications`의 `mine` 필터와 같은 기준**이어야 한다. 한쪽을 바꾸면 다른 쪽도 바꿀 것(테스트가 소스를 대조해 어긋나면 깨진다: `node --test functions/badge.test.js`).
 - 서비스워커 파일은 `firebase.json`에서 `Cache-Control: no-cache`로 서빙한다(갱신이 빨리 퍼지도록). iOS 홈 화면 앱은 앱을 완전히 종료했다 다시 열어야 새 서비스워커가 적용될 수 있다.
 
+## 스노우볼 프로토타입 (`public/snow-preview.html`) — 앱에 아직 통합 안 됨
+
+- "폰을 흔들면 화면에 눈이 쏟아지는" 효과의 **독립 프로토타입**(단일 파일, `src/` 무관). 주소: `/snow-preview.html`, `?variant=A|B|C` 등 URL 파라미터로 설정 공유. 반복 수정이 전제라 `firebase.json`에서 이 파일만 `no-cache`로 서빙한다.
+- 앱에 통합되면 이 파일과 `firebase.json`의 해당 헤더 항목을 지운다(prototype 스킬 규칙: 확정된 결정만 main에 남기고 프로토타입은 별도 브랜치에 보관).
+- 결정 사항(프로토타입에서 검증한 것): **canvas 2D 단일 캔버스**(DOM 눈은 흔들림에 반응하는 물리를 못 함) · 스프라이트 blit + 입자별 typed array · 소용돌이 장은 격자 보간 · 흔들기 감지는 "임계 초과 펄스가 방향을 번갈아 3개 이상, 간격 40~320ms"(걷기/뛰기/탁/돌리기 무시) · iOS 권한은 사용자가 "켜기"를 누른 순간에만 요청 · 자동 품질 조정은 프레임 간격이 아니라 **JS 작업 시간이 길 때만** 입자를 줄인다(창 스로틀을 느린 기기로 오판하지 않게).
+
 ## 크리스마스 장식 (`src/components/ChristmasDecor.jsx`, `SnowFall.jsx`, `index.css`의 `.xd-*`)
 
 - 시즌 테마가 `christmas`일 때만 렌더된다. 기본 라이트/다크에는 DOM도 CSS도 없다(`SectionCard`의 `.xd-card` 클래스만 남지만 `[data-season="christmas"]` 아래에서만 스타일이 붙는다).
