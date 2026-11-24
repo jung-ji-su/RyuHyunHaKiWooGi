@@ -313,6 +313,53 @@ exports.sendDailyReminders = onSchedule(
   }
 );
 
+// ── 햄찌 위험 알림: 매일 20:00 KST, 상대 펫이 3일/4일째 미접속이면 "상대방"에게 푸시 ──────
+// 5일 미접속이면 펫이 떠나므로(클라이언트 CoupleTamagotchi.jsx) 그 전에 경고한다. 이미 죽은 펫엔 안 보냄.
+// 중복 방지: petAlerts/{주인} 문서에 "마지막방문일:일수" 키를 트랜잭션으로 먼저 기록한 뒤 전송한다.
+// 판단 로직은 petWarnings.js(테스트 가능한 순수 함수)에 있다.
+const { runPetWarnings, todayKST } = require("./petWarnings");
+
+exports.sendPetWarnings = onSchedule(
+  { schedule: "0 20 * * *", timeZone: "Asia/Seoul" },
+  async () => {
+    const db = admin.firestore();
+    const result = await runPetWarnings({
+      readPets: async () => {
+        const snap = await db.doc("couple_tamagotchi/jisu_hyunha").get();
+        return snap.exists ? snap.data() : {};
+      },
+      readStates: async () => {
+        const states = {};
+        await Promise.all(USERS.map(async (u) => {
+          const s = await db.doc(`petAlerts/${u}`).get();
+          if (s.exists) states[u] = s.data();
+        }));
+        return states;
+      },
+      getTokens: async (user) => {
+        const snap = await db.doc(`fcmTokens/${user}`).get();
+        return snap.exists ? extractTokens(snap.data()) : [];
+      },
+      claim: (owner, key) => db.runTransaction(async (tx) => {
+        const ref = db.doc(`petAlerts/${owner}`);
+        const snap = await tx.get(ref);
+        if (snap.exists && snap.data().lastWarnKey === key) return false;
+        tx.set(ref, { lastWarnKey: key, lastWarnAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        return true;
+      }),
+      send: (user, token, { title, body }) => sendSafe(user, token, {
+        notification: { title, body },
+        webpush: {
+          notification: { icon: `${BASE}/icon.svg`, badge: `${BASE}/icon.svg`, vibrate: [200, 100, 200] },
+          fcmOptions: { link: `${BASE}/tamagotchi` },
+        },
+      }),
+    }, todayKST());
+    console.log("햄찌 위험 알림:", JSON.stringify(result));
+    return null;
+  }
+);
+
 // ── 날씨 알림 즉시 테스트: ?secret=... 로 호출 (값은 Secret Manager의 TEST_SECRET) ─
 exports.sendTestWeather = onRequest(
   { cors: true, secrets: [TEST_SECRET] },

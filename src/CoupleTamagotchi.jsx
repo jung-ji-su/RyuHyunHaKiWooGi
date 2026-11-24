@@ -9,6 +9,7 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { db } from './firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { alpha, B } from './lib/constants';
+import { DIARY_BONUS_CAP, diaryBonusFor, fetchTodayDiaryCount } from './lib/diaryBonus';
 import { toIso, isoAddDays, daysBetween } from './lib/date';
 
 const COUPLE_ID = 'jisu_hyunha';
@@ -48,6 +49,23 @@ const MISS_7D_XP_LOSS = Math.round(30 * XP_SCALE);
 // 되살릴 때 남기는 레벨 비율. 스테이지는 유지하고 레벨은 70%(올림)만 남긴다: Lv10→7, Lv7→5, Lv3→3.
 // (레벨 70% ≈ 그 스테이지에서 쌓은 XP의 약 절반 — 죽는 긴장감은 남기되 복구가 덜 가혹하게)
 const reviveLevelFor = (level) => Math.max(1, Math.ceil((level * 7) / 10));
+
+// ── 체중 / 먹이 밸런스 (2026-11-24) ─────────────────────────────────
+// 예전엔 체중이 "오르기만 하고 내려가는 경로가 없어서" 조금만 줘도 몇 번 만에 90(비만 위험)에 닿고 그 뒤로 계속 경고가 떴다.
+//  - 간식 체중 +10 → +5, 밥은 +2 그대로
+//  - 하루가 지날 때마다 체중 -8 (접속 안 한 날도 최대 5일치까지 반영), 최소 10
+//  → 밥 1번+간식 1번(+7/일)은 늘 안정, 밥+간식 3번(+17/일)은 약 8일, 일기 보너스까지 전부 먹이면(+31/일) 3~4일 뒤에 경고.
+//  경고(90 이상)와 100 도달 시 건강 페널티는 그대로 둔다.
+const FEED_WEIGHT_GAIN = 2;
+const SNACK_WEIGHT_GAIN = 5;
+const WEIGHT_LOSS_PER_DAY = 8;
+const MIN_WEIGHT = 10;
+const MAX_DECAY_DAYS = 5;
+// 하루 기본 먹이 횟수 — 일기 보너스(오늘 쓴 일기 1편당 +1, 최대 DIARY_BONUS_CAP편)가 여기에 더해진다.
+const BASE_FEEDS = 1;
+const BASE_SNACKS = 3;
+// 오늘 먹인 밥 횟수. 예전 데이터(todayFed 날짜만 있음)와 호환: 오늘 먹었는데 횟수 필드가 없으면 1회로 본다.
+const feedsUsedToday = (d, today) => (d.todayFeedDate === today ? (d.todayFeedCount ?? 0) : (d.todayFed === today ? 1 : 0));
 
 // [신규] 진화 단계+레벨+XP를 하나의 누적 수치로 환산 (미니 XP 히스토리 그래프용).
 // data.xp는 레벨업/진화마다 0으로 리셋되기 때문에, 그래프가 계속 우상향하도록
@@ -230,6 +248,11 @@ function evaluateOnLoad(raw, today) {
   // 이후 영구적으로 간식을 줄 수 없던 문제. 날짜가 바뀌면 리셋되도록 수정.
   if (d.lastSnackDate !== today) {
     d.todaySnack = 0;
+    // [신규] 날이 바뀐 만큼 체중 감소(새 펫처럼 lastSnackDate가 없으면 감소 없이 오늘로만 기록)
+    if (d.lastSnackDate) {
+      const passed = Math.min(MAX_DECAY_DAYS, Math.max(1, daysBetween(d.lastSnackDate, today)));
+      d.weight = Math.max(MIN_WEIGHT, d.weight - WEIGHT_LOSS_PER_DAY * passed);
+    }
     d.lastSnackDate = today;
   }
 
@@ -560,7 +583,7 @@ function PetAura({ stageIndex, color, level, nextColor }) {
   );
 }
 // ── PetCard ───────────────────────────────────────────────────────────
-function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUser, onResetUser, onReviveUser }) {
+function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUser, onResetUser, onReviveUser, diaryBonus = 0 }) {
   const stage = STAGES[Math.min(data.stage, STAGES.length-1)];
   const [particles, setParticles] = useState([]);
   const [bouncing, setBouncing]   = useState(false);
@@ -573,8 +596,9 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
 
   const isDead      = !!data.isDead;
   const canInteract = isMe && !isDead && data.todayInteracted !== today;
-  const canFeed     = isMe && !isDead && data.todayFed !== today;
-  const snackLeft   = 3 - (data.todaySnack ?? 0);
+  const feedsLeft   = BASE_FEEDS + diaryBonus - feedsUsedToday(data, today);
+  const canFeed     = isMe && !isDead && feedsLeft > 0;
+  const snackLeft   = BASE_SNACKS + diaryBonus - (data.todaySnack ?? 0);
   const canSnack    = isMe && !isDead && snackLeft > 0;
   const [resetTarget, setResetTarget] = useState(null); // null | 'self' | 'partner'
   const [petImgFailed, setPetImgFailed] = useState(false); // [신규] 사진 로드 실패 시 이모지로 자동 대체
@@ -785,7 +809,7 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
                 '&:hover': { bgcolor: '#FF9A3C25' },
                 '&.Mui-disabled': { color: alpha(B.dark, '1a') },
               }}>
-              밥
+              밥{canFeed && feedsLeft > 1 ? `(${feedsLeft})` : ''}
             </Button>
             <Button size="small" onClick={() => { spawnParticles(['🌰','😋','💕','⚠️']); onAction('snack'); }} disabled={!canSnack}
               startIcon={<CookieIcon sx={{ fontSize: '0.85rem' }} />}
@@ -801,6 +825,25 @@ function PetCard({ user, data, isMe, today, onAction, canCheer, onCheer, otherUs
               간식{canSnack ? `(${snackLeft})` : '✕'}
             </Button>
           </Stack>
+
+          {/* [신규] 일기 보너스 안내 — 오늘 쓴 일기 1편당 밥·간식 +1회(최대 DIARY_BONUS_CAP편). 안 썼으면 쓰면 늘어난다는 힌트 */}
+          {!isDead && (
+            <Box sx={{
+              p: '4px 8px', borderRadius: '8px',
+              bgcolor: diaryBonus > 0 ? alpha(B.pants, '14') : alpha(B.dark, '06'),
+              border: `1px solid ${diaryBonus > 0 ? alpha(B.pants, '44') : alpha(B.dark, '14')}`,
+            }}>
+              <Typography sx={{
+                fontSize: '0.72rem', lineHeight: 1.4, fontFamily: "'Noto Sans KR',sans-serif",
+                fontWeight: diaryBonus > 0 ? 700 : 400,
+                color: diaryBonus > 0 ? B.pants : alpha(B.dark, '88'),
+              }}>
+                {diaryBonus > 0
+                  ? `📝 오늘 기록 써서 밥·간식 +${diaryBonus}!${diaryBonus >= DIARY_BONUS_CAP ? ' (오늘 최대)' : ''}`
+                  : `📝 오늘 일기를 쓰면 밥·간식이 늘어나요 (1편당 +1, 최대 +${DIARY_BONUS_CAP})`}
+              </Typography>
+            </Box>
+          )}
 
           {hasPoop && !isDead && (
             <Button size="small"
@@ -911,6 +954,8 @@ export default function CoupleTamagotchi({ currentUser }) {
   const retryInFlightRef = useRef(false); // 재시도 버튼 연타로 생기는 중복 요청(XP/스트릭 중복 적용) 방지
   const activeRetryKeyRef = useRef(0);    // 이전 재시도 결과가 늦게 도착해도 최신 재시도 결과만 반영
   const [evolved, setEvolved] = useState(null); // [수정] { name, color, isLegendary } | null
+  const [diaryCount, setDiaryCount] = useState(0); // [신규] 오늘 내가 쓴 일기 편수 → 밥/간식 보너스(최대 DIARY_BONUS_CAP)
+  const diaryBonus = diaryBonusFor(diaryCount);
   const shakeControls = useAnimation(); // [신규] 진화 시 위젯을 흔드는 스크린쉐이크 제어
   const today   = toIso();
   const docRef  = doc(db, 'couple_tamagotchi', COUPLE_ID);
@@ -983,6 +1028,12 @@ export default function CoupleTamagotchi({ currentUser }) {
     })();
   }, [retryKey]);
 
+  useEffect(() => {
+    let alive = true;
+    fetchTodayDiaryCount(db, currentUser, today).then(n => { if (alive) setDiaryCount(n); });
+    return () => { alive = false; };
+  }, [currentUser, today]);
+
   const handleAction = async (action) => {
     if (!allData) return;
     let data = { ...allData[currentUser] };
@@ -997,14 +1048,18 @@ export default function CoupleTamagotchi({ currentUser }) {
       data.health = Math.min(100, data.health+3); // [추가] 소량 건강 회복
       data.todayInteracted = today;
     } else if (action === 'feed') {
-      data.hunger = Math.min(100, data.hunger+30); data.weight = Math.min(100, data.weight+2);
+      const used = feedsUsedToday(data, today);
+      if (used >= BASE_FEEDS + diaryBonus) return; // 연타/중복 요청 방지 (버튼도 막혀 있음)
+      data.hunger = Math.min(100, data.hunger+30); data.weight = Math.min(100, data.weight+FEED_WEIGHT_GAIN);
       data.love   = Math.min(100, data.love+5);
       data.health = Math.min(100, data.health+5); // [추가] 소량 건강 회복
       data.todayFed = today;
+      data.todayFeedDate = today; data.todayFeedCount = used + 1;
       data.nextPoopTime = Date.now() + (6 + Math.random()*6) * 3600000;
       data = applyXp(data, 3);
     } else if (action === 'snack') {
-      data.hunger = Math.min(100, data.hunger+20); data.weight = Math.min(100, data.weight+10);
+      if ((data.todaySnack ?? 0) >= BASE_SNACKS + diaryBonus) return;
+      data.hunger = Math.min(100, data.hunger+20); data.weight = Math.min(100, data.weight+SNACK_WEIGHT_GAIN);
       data.love   = Math.min(100, data.love+30);
       data.todaySnack = (data.todaySnack ?? 0) + 1;
       data.lastSnackDate = today; // [버그 수정] 날짜 기록 (자정 지나면 자동 리셋되도록)
@@ -1199,6 +1254,7 @@ export default function CoupleTamagotchi({ currentUser }) {
               otherUser={otherUser}
               onResetUser={handleResetPet}
               onReviveUser={handleRevivePet}
+              diaryBonus={u === currentUser ? diaryBonus : 0}
             />
           ))}
         </Stack>
@@ -1209,6 +1265,7 @@ export default function CoupleTamagotchi({ currentUser }) {
             💡 방문 +10 · 상호작용 +5 · 밥 +3 · 간식 +2 · 응원 보내기 +4 XP (×스트릭 배율)<br />
             🔥 4일+ 연속 ×1.5 → 8일+ ×2.0 → 15일+ ×2.5 · 3일 이상 미방문 시 스트릭 리셋<br />
             🥚 알→아기 약 5일 · 아기→햄찌 약 9일 · 햄찌→통통 약 17일 · 통통→왕 약 33일 · 왕→전설 약 49일 (매일 꾸준히 돌봤을 때)<br />
+            📝 오늘 일기를 쓰면 밥·간식이 1편당 +1회 (최대 +2) · ⚖️ 체중은 하루 8씩 빠지고 간식은 +5<br />
             💩 밥 후 6~12시간 뒤 등장 · 방치 시 건강만 감소 (레벨/단계는 유지돼요)<br />
             💀 5일 이상 안 오면 떠나요 · 되살리면 단계는 그대로, 레벨은 70%가 남아요
           </Typography>

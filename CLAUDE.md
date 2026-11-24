@@ -21,6 +21,9 @@
 - **`XP_SCALE`이나 배율을 바꾸면 성장 그래프(`totalProgressXP`) 눈금이 달라진다.** Firestore `couple_tamagotchi/jisu_hyunha`의 `<유저>.xpHistory`에 저장된 값은 옛 눈금이라 같이 보정해야 한다.
   2026-11-24에 한 번 ×0.6으로 보정했고 각 유저 맵에 `xpScaleVer: 2` 표식을 남겼다(중복 보정 방지). 백업은 `backups/`(gitignore, 개인 데이터).
 - 되살리기: 스테이지 유지, 레벨은 `ceil(레벨×0.7)`, XP 0. 사망 기준은 5일 미접속 그대로. 미방문 7일+ XP 손실은 18(= 30×XP_SCALE), 14일+는 현재 레벨 요구량의 30%(자동 연동).
+- **체중**: 간식 +5, 밥 +2, 하루가 지날 때마다 -8(최대 5일치, 최소 10). 예전엔 내려가는 경로가 없어서 비만 경고가 상시로 떴다. 90 이상 경고와 100 도달 시 건강 -25 페널티는 그대로.
+- **일기 보너스**(`src/lib/diaryBonus.js`): 오늘(서울 날짜) 내가 쓴 일기 1편당 밥 +1회·간식 +1회, 하루 최대 2편. 저장하지 않고 `diaries`에서 createdAt 기준으로 매번 계산한다(지우면 자동으로 줄고, 쓰고-지우고 반복해도 상한을 못 넘김). 밥 횟수는 `todayFeedCount`/`todayFeedDate`, 예전 데이터(`todayFed`만 있음)와 호환.
+- **파트너 위험 알림**(`functions/petWarnings.js` + `index.js`의 `sendPetWarnings`, 매일 20:00 KST): 미접속 3일째·4일째에 **상대방에게** 푸시(5일째는 이미 사망이라 안 보냄). 중복 방지는 `petAlerts/{주인}`의 `lastWarnKey`(`마지막방문일:일수`)를 트랜잭션으로 먼저 기록. 판단 로직은 순수 함수라 `node --test functions/petWarnings.test.js`로 검증한다(실제 발송 불필요). 사망 기준(5일)을 바꾸면 `petWarnings.js`의 `DEATH_DAYS`/`WARN_DAYS`도 같이 바꿀 것.
 
 ## 크리스마스 장식 (`src/components/ChristmasDecor.jsx`, `SnowFall.jsx`, `index.css`의 `.xd-*`)
 

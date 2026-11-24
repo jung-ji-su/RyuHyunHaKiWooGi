@@ -4,6 +4,7 @@ import {
   collection, query, orderBy, onSnapshot, deleteDoc, doc, addDoc,
   serverTimestamp, updateDoc, arrayUnion, arrayRemove, limit,
 } from "firebase/firestore";
+import { toIso } from "./lib/date";
 import {
   Card, CardContent, Typography, Stack, Box, Avatar, Divider,
   IconButton, TextField, InputAdornment, Skeleton,
@@ -390,7 +391,10 @@ const DiaryCard = memo(({ item, index = 0, currentUser, commentText, setCommentI
   const handleDeleteDiary = async () => {
     shakeElement(deleteRef.current);
     setTimeout(async () => {
-      if (window.confirm("이 소중한 추억을 정말 삭제하시겠습니까? 😢")) {
+      // 오늘 내가 쓴 일기를 지우면 햄찌 밥·간식 보너스(일기 1편당 +1)도 그만큼 줄어든다 — 미리 알려준다.
+      const todayMine = isMyPost && item.createdAt?.toDate && toIso(item.createdAt.toDate()) === toIso();
+      const note = todayMine ? "\n\n(오늘 쓴 일기라 햄찌 밥·간식 보너스가 줄어들 수 있어요 🐹)" : "";
+      if (window.confirm("이 소중한 추억을 정말 삭제하시겠습니까? 😢" + note)) {
         try { await deleteDoc(doc(db, "diaries", item.id)); }
         catch (e) { console.error("삭제 실패:", e); alert("삭제 중 오류가 발생했습니다."); }
       }

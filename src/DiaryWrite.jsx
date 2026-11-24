@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { createRipple, createBuriPang, vibrate } from "./touchEffects";
 import { recordCheckin } from "./CharacterPet";
+import { DIARY_BONUS_CAP, diaryBonusFor, fetchTodayDiaryCount } from "./lib/diaryBonus";
 import buri4 from "./assets/KakaoTalk_20260316_132913765.webp";
 
 // ── 새 캐릭터 이미지 ──────────────────────────────────────────
@@ -121,7 +122,14 @@ const DiaryWrite = ({ currentUser }) => {
       });
       await sendNotification(currentUser, docRef.id);
       recordCheckin(currentUser).catch(console.error);
-      alert("추억 저장 완료! 🐷");
+      // 햄찌 보너스 안내 — 오늘 내가 쓴 일기 1편당 밥·간식 +1회(최대 DIARY_BONUS_CAP편). 조회 실패(0)면 안내만 생략.
+      const todayCount = await fetchTodayDiaryCount(db, currentUser || "지수");
+      const bonus = diaryBonusFor(todayCount);
+      const bonusMsg = bonus <= 0 ? ""
+        : bonus >= DIARY_BONUS_CAP
+          ? `\n🐹 오늘 기록 보너스 최대! 햄찌 밥·간식 +${bonus}`
+          : `\n🐹 햄찌 밥·간식 +${bonus}! (오늘 ${todayCount}편 · 최대 ${DIARY_BONUS_CAP}편까지)`;
+      alert("추억 저장 완료! 🐷" + bonusMsg);
       setContent(""); setFile(null); setPreview(null); setEmotion("행복");
     } catch (e) {
       console.error("저장 실패:", e);
@@ -155,6 +163,13 @@ const DiaryWrite = ({ currentUser }) => {
           오늘의 기록 ✍️
         </Typography>
       </Stack>
+      {/* 일기 → 햄찌 보너스 힌트 (오늘 쓴 일기 1편당 밥·간식 +1회, 최대 DIARY_BONUS_CAP편) */}
+      <Typography sx={{
+        mt: -1.5, mb: 2, fontSize: "0.72rem", color: alpha(B.dark, '88'),
+        fontFamily: "'Noto Sans KR',sans-serif",
+      }}>
+        🐹 오늘 기록 1편당 햄찌 밥·간식 +1 (최대 {DIARY_BONUS_CAP}편)
+      </Typography>
 
       {/* ── 감정 선택 (부리 이미지 그리드) ────────────────────── */}
       <Box sx={{ mb: 3 }}>
