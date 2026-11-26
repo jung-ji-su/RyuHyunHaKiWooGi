@@ -494,6 +494,8 @@ async function verifyPinWithRateLimit(user, pin, expectedPin) {
   });
 }
 
+const AUTH_UID = { "지수": "jisu", "현하": "hyunha" };
+
 exports.verifyPinAndSignIn = onCall(
   { secrets: [PIN_JISU, PIN_HYUNHA] },
   async (request) => {
@@ -517,7 +519,9 @@ exports.verifyPinAndSignIn = onCall(
     }
 
     try {
-      const token = await admin.auth().createCustomToken(user, { role: user });
+      // uid는 ASCII('jisu'/'hyunha') — 한글 uid는 규칙 배포 사고(2026-11-23)의 의심 요인이라 피한다.
+      // 데이터는 전부 "지수"/"현하" 이름 문자열 키를 쓰므로 uid 변경은 데이터에 영향이 없다(이름은 클레임 name으로도 싣는다).
+      const token = await admin.auth().createCustomToken(AUTH_UID[user], { role: user, name: user });
       return { token };
     } catch (e) {
       // PIN은 맞았는데 여기서 실패하면 거의 항상 서비스 계정 IAM 설정 문제

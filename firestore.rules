@@ -1,32 +1,29 @@
 rules_version = '2';
 
-// ⚠️ 이 파일은 "최종본"이고 아직 라이브에 배포되지 않았다 (2026-11-23 기준).
-//   - 라이브는 임시본: 로그인(request.auth != null)만 요구. 커밋 63f544d 내용과 동일하며
-//     Firestore ruleset 4f09a06d… (2026-10-15)로 되돌려 둔 상태다.
-//   - 이 최종본(uid 지수/현하 화이트리스트 + authAttempts 차단)은 2026-11-23 05:54 UTC에
-//     실수로 한 번 배포됐다가, 데이터가 안 보여서 롤백했다 (그때 올라갔던 ruleset: a23a4edb…).
-//   - 배포 순서: 두 사람 모두 PIN 로그인(커스텀 토큰)이 되는지 확인 → 구버전 번들/익명 세션이
-//     남지 않았는지 확인 → 그 다음에만 `firebase deploy --only firestore:rules,storage`.
+// ⚠️ 이 파일은 "최종본"이고 아직 라이브에 배포되지 않았다 (2026-11-26 기준).
+//   - 라이브는 임시본: 로그인(request.auth != null)만 요구. Firestore ruleset 4f09a06d… (2026-10-15)로 되돌려 둔 상태다.
+//   - 2026-11-23 05:54 UTC에 이전 최종본(한글 uid 화이트리스트)이 실수로 한 번 배포됐다가 데이터가 안 보여서 롤백했다(ruleset a23a4edb…).
+//   - 이번 최종본: uid를 ASCII('jisu'/'hyunha')로 바꾸고, authAttempts 제외를 {document=**}의 document[0] 대신
+//     첫 경로 세그먼트 캡처({col})로 표현했다. buckets/authAttempts 블록은 documents 범위 밖에 있어 효과가 없었으므로 정리했다.
+//   - 배포 순서(반드시 지킬 것): 함수·클라이언트(영문 uid) 배포 → 두 사람 재로그인 + 기기 현황(관리자 페이지)에서
+//     새 번들 확인 + 콘솔에서 익명 로그인 비활성화 → 그 다음에만 `firebase deploy --only firestore:rules,storage`.
 //   - deploy.js는 `--only hosting,functions`라 규칙은 자동으로 나가지 않는다.
 //   - 문제가 생기면 임시본 복구: `git show 63f544d:firestore.rules` 내용으로 다시 배포.
 //   - 배포하면 이 주석을 "배포됨"으로 고치거나 지울 것.
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 모든 데이터에 대해 읽기/쓰기 모두 "지수"/"현하" 본인만 가능하게 설정
-    // (authAttempts 로그인 시도 제한 카운터는 이 와일드카드에서 제외 — 아래 별도 블록에서
-    //  클라이언트 접근을 전면 차단하고, Cloud Function(Admin SDK)만 다룬다)
-    match /{document=**} {
-      allow read, write: if request.auth != null
-        && request.auth.uid in ['지수', '현하']
-        && document[0] != 'authAttempts';
+    function isCouple() {
+      return request.auth != null && request.auth.uid in ['jisu', 'hyunha'];
     }
-  }
 
-  match /buckets/{docId} {
-  allow read, write: if request.auth != null && request.auth.uid in ['지수', '현하'];
-	}
+    // 로그인 시도 제한 카운터: 클라이언트 접근 전면 차단(Cloud Function의 Admin SDK만 다룬다)
+    match /authAttempts/{userId} {
+      allow read, write: if false;
+    }
 
-  match /authAttempts/{userId} {
-    allow read, write: if false;
+    // 그 외 모든 컬렉션(하위 컬렉션 포함)은 두 사람만 읽기/쓰기. authAttempts는 여기서 제외한다.
+    match /{col}/{rest=**} {
+      allow read, write: if col != 'authAttempts' && isCouple();
+    }
   }
 }

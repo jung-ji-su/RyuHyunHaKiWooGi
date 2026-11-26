@@ -1,14 +1,12 @@
 rules_version = '2';
 
-// ⚠️ 이 파일은 "최종본"이고 아직 라이브에 배포되지 않았다 (2026-11-23 기준).
-//   라이브는 임시본(로그인만 요구, 커밋 63f544d, ruleset a066294e… 2026-10-15)이다.
-//   배포 순서와 롤백 방법은 firestore.rules 상단 주석 참고.
-//   deploy.js는 `--only hosting,functions`라 규칙은 수동 배포한다:
-//   `firebase deploy --only firestore:rules,storage` (로그인 검증 후에만).
+// ⚠️ 이 파일은 "최종본"이고 아직 라이브에 배포되지 않았다 (2026-11-26 기준).
+//   라이브는 임시본(로그인만 요구, ruleset a066294e…)이다. 배포 순서와 롤백 방법은 firestore.rules 상단 주석 참고.
+//   deploy.js는 `--only hosting,functions`라 규칙은 수동 배포한다.
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
-      allow read, write: if request.auth != null && request.auth.uid in ['지수', '현하'];
+      allow read, write: if request.auth != null && request.auth.uid in ['jisu', 'hyunha'];
     }
   }
 }

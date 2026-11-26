@@ -6,10 +6,35 @@ import {
   getCountFromServer,
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import { onSnapshot } from 'firebase/firestore';
 import { UserContext } from '../lib/UserContext';
+import { BUNDLE_VERSION } from '../lib/clientHeartbeat';
 import { alpha } from '../lib/color';
 
 const USERS = ['지수', '현하'];
+
+// 기기 현황: 새 번들을 쓰는 기기 목록(규칙 배포 전 점검용). 버전이 지금 번들과 다르면 ⚠️.
+function ClientsCard() {
+  const [rows, setRows] = useState(null);
+  const [now, setNow] = useState(0);
+  useEffect(() => onSnapshot(query(collection(db, 'appClients'), orderBy('lastSeen', 'desc'), limit(20)), (s) => { setNow(Date.now()); setRows(s.docs.map((d) => ({ id: d.id, ...d.data() }))); }, () => setRows([])), []);
+  const ago = (ts) => { if (!ts?.toMillis) return '방금'; const m = Math.floor((now - ts.toMillis()) / 60000); return m < 60 ? `${m}분 전` : m < 1440 ? `${Math.floor(m / 60)}시간 전` : `${Math.floor(m / 1440)}일 전`; };
+  const dev = (ua = '') => (/iPhone|iPad/.test(ua) ? 'iPhone' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /Mac/.test(ua) ? 'Mac' : '기기');
+  return (
+    <div style={S.card}>
+      <div style={S.h}>📱 기기 현황 <span style={{ fontSize: 11, color: '#999', fontWeight: 400 }}>(번들 v{BUNDLE_VERSION})</span></div>
+      {rows === null ? <div style={{ fontSize: 12, color: '#bbb' }}>로딩 중...</div>
+        : rows.length === 0 ? <div style={{ fontSize: 12, color: '#bbb' }}>아직 기록이 없어요. 두 사람이 새 버전을 한 번씩 열면 나타나요.</div>
+        : rows.map((r) => (
+          <div key={r.id} style={{ fontSize: 12, padding: '4px 0', display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ fontWeight: 700, width: 34 }}>{r.user}</span>
+            <span>{dev(r.ua)}{r.standalone ? ' (앱)' : ' (브라우저)'}</span>
+            <span style={{ marginLeft: 'auto', color: r.version === BUNDLE_VERSION ? '#1D9E75' : '#E8630A' }}>{r.version === BUNDLE_VERSION ? '✅' : '⚠️'} v{r.version} · {ago(r.lastSeen)}</span>
+          </div>
+        ))}
+    </div>
+  );
+}
 
 const WMO = {
   0:'맑음☀️',1:'대체로맑음🌤️',2:'구름조금⛅',3:'흐림☁️',
@@ -321,6 +346,8 @@ export default function AdminPage() {
           <div style={{ fontSize: 11, color: '#999', marginTop: 1 }}>지수 전용 · v{version}</div>
         </div>
       </div>
+
+      <ClientsCard />
 
       {/* ── 앱 통계 ── */}
       <div style={S.card}>

@@ -31,6 +31,7 @@ import {
 import { createRipple, createBuriPang } from './touchEffects';
 import { useFCM }        from './hooks/useFCM';
 import { useColorMode }  from './hooks/useColorMode';
+import { reportClient }  from './lib/clientHeartbeat';
 import InstallPrompt     from './components/InstallPrompt';
 
 // ── 페이지 lazy import (코드 스플리팅) ────────────────────────────
@@ -113,6 +114,9 @@ function AppInner() {
   } = useNotifications(currentUser);
 
   const [notifDrawerOpen, setNotifDrawerOpen] = useState(false);
+
+  // 기기 현황 기록(30분에 한 번) — 규칙 배포 전 "새 번들 쓰는 기기" 점검용
+  useEffect(() => { if (currentUser) reportClient(currentUser); }, [currentUser]);
 
   // 버전 업데이트 체크
   useEffect(() => {

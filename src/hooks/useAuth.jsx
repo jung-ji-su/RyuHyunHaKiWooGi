@@ -4,6 +4,7 @@ import { onAuthStateChanged, signInWithCustomToken, signOut } from 'firebase/aut
 import { httpsCallable } from 'firebase/functions';
 
 const verifyPinAndSignIn = httpsCallable(functions, 'verifyPinAndSignIn');
+const UID_TO_NAME = { jisu: '지수', hyunha: '현하' };   // functions/index.js의 AUTH_UID와 같은 표
 
 export function useAuth() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -11,10 +12,12 @@ export function useAuth() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, user => {
-      // uid는 커스텀 토큰 발급 시 "지수"/"현하" 문자열 그대로 고정 — 그 외(예: 예전 익명 세션의
-      // 랜덤 uid)는 로그인 안 된 것으로 취급해 자연스럽게 다시 로그인 화면으로 보낸다.
-      const uid = user?.uid;
-      setCurrentUser(uid === '지수' || uid === '현하' ? uid : null);
+      // uid는 커스텀 토큰 발급 시 ASCII('jisu'/'hyunha')로 고정하고, 화면/데이터에서 쓰는 이름("지수"/"현하")으로 바꿔 쓴다.
+      // 그 외(예전 한글 uid 세션, 더 예전 익명 세션의 랜덤 uid)는 로그인 안 된 것으로 보고 세션도 지워서
+      // 로그인 화면으로 보낸다 → PIN으로 다시 로그인하면 새 uid가 발급된다.
+      const name = UID_TO_NAME[user?.uid] ?? null;
+      setCurrentUser(name);
+      if (user && !name) signOut(auth).catch(() => {});
       setLoading(false);
     });
     return () => unsub();
