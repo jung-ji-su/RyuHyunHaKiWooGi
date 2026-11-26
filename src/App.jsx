@@ -42,6 +42,7 @@ const EmotionThermometer = lazy(() => import('./EmotionThermometer'));
 const DiaryList         = lazy(() => import('./DiaryList'));
 const BucketList        = lazy(() => import('./Bucketlist'));
 const CoupleTamagotchi  = lazy(() => import('./CoupleTamagotchi'));
+const PhotoBooth        = lazy(() => import('./PhotoBooth'));
 const AdminPage         = lazy(() => import('./pages/AdminPage'));
 
 // ── 페이지 로딩 fallback ─────────────────────────────────────────
@@ -389,6 +390,14 @@ function AppInner() {
             <SubPage title="커플 다마고치" icon="🐾">
               <Suspense fallback={<PageLoader />}>
                 <CoupleTamagotchi currentUser={currentUser} />
+              </Suspense>
+            </SubPage>
+          } />
+
+          <Route path="photobooth" element={
+            <SubPage title="네컷 사진" icon="📸">
+              <Suspense fallback={<PageLoader />}>
+                <PhotoBooth currentUser={currentUser} />
               </Suspense>
             </SubPage>
           } />

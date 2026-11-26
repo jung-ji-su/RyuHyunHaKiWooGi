@@ -31,6 +31,7 @@ export const ROUTES = {
   DIARY: "/diary",
   BUCKET: "/bucket",
   TAMAGOTCHI: "/tamagotchi",
+  PHOTOBOOTH: "/photobooth",
 };
 
 // 여행지도·연애통계·오늘의메뉴·미니게임·가계부·이상형월드컵은 2026-11-23에 코드째 제거됨.
@@ -43,6 +44,7 @@ export const MENU_ITEMS = [
   { emoji: "📖", name: "전체 기록", sub: "우리의 소중한 기록", path: ROUTES.DIARY, color: B.pants },
   { emoji: "🪣", name: "버킷리스트", sub: "같이 이루고 싶은 것", path: ROUTES.BUCKET, color: B.green },
   { emoji: "🐾", name: "다마고치", sub: "커플 펫 키우기 대결", path: ROUTES.TAMAGOTCHI, color: "#7B4FA6" },
+  { emoji: "📸", name: "네컷 사진", sub: "프레임 끼워 인생네컷", path: ROUTES.PHOTOBOOTH, color: "#FF8FAB" },
 ];
 
 // 바텀 네비게이션 6탭 (자주 쓰는 메뉴 5개 + 더보기)
