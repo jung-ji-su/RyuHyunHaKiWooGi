@@ -380,8 +380,8 @@
     <p class="why-title">왜 &nbsp; 직접 &nbsp; 만들었나 ?</p>
 
     <div class="why-item">
-      <h4>01 &nbsp;프라이버시가 전부다</h4>
-      <p>Firebase Anonymous Auth 기반으로 두 사람만 접근 가능한 완전 폐쇄형 공간을 구축했습니다. 우리 기록은 우리만 봅니다.</p>
+      <h4>01 &nbsp;우리 기록은 우리만 본다</h4>
+      <p>이 목표를 처음부터 지켰다고는 못 합니다. 한동안은 익명 로그인에 열린 보안 규칙이라 사실상 열려 있었고, 그걸 발견해서 닫은 과정이 이 프로젝트에서 제일 값진 삽질이었습니다(09 Troubleshooting). 지금은 PIN을 서버에서 검증하는 커스텀 토큰 인증 + 두 사람만 허용하는 보안 규칙으로 실제로 닫혀 있습니다.</p>
     </div>
     <div class="why-item">
       <h4>02 &nbsp;감정을 데이터로 기록한다</h4>
@@ -422,15 +422,15 @@
     <p style="font-size:20px; font-weight:900; color:var(--purple); margin-bottom:14px;">부리부리 미니홈피 🐷</p>
 
     <p class="lead">
-      일상 기록, 일정 공유, 감정 온도계, 편지 교환, 쿠폰 룰렛, 버킷리스트, 여행 지도,<br>
-      연애 통계, 미니게임, 가계부, PWA 푸시 알림까지 — 커플의 모든 소통을 담은 풀스택 웹 애플리케이션.
+      일상 기록, 일정 공유, 감정 온도계, 편지 교환, 쿠폰 룰렛, 버킷리스트, 커플 햄스터 키우기, 인생네컷,<br>
+      크리스마스 테마, PWA 푸시 알림까지 — 두 사람이 매일 쓰는 풀스택 웹 애플리케이션.
     </p>
 
     <div class="overview-meta">
       <div class="meta-col"><span class="meta-k">PERIOD</span><span class="meta-v">2026.04 — 진행 중</span></div>
-      <div class="meta-col"><span class="meta-k">TEAM</span><span class="meta-v">1인 개발</span></div>
+      <div class="meta-col"><span class="meta-k">TEAM</span><span class="meta-v">1인 개발 + Claude Code 협업</span></div>
       <div class="meta-col"><span class="meta-k">ROLE</span><span class="meta-v">기획 · 개발 · 배포</span></div>
-      <div class="meta-col"><span class="meta-k">CODE</span><span class="meta-v">~10,000 LOC</span></div>
+      <div class="meta-col"><span class="meta-k">CODE</span><span class="meta-v">~14,500 LOC (src)</span></div>
     </div>
 
     <p class="features-title">C O R E &nbsp; F E A T U R E S</p>
@@ -441,22 +441,22 @@
       <div class="feature-row"><span class="fn">04</span> 쿠폰북 — 랜덤 룰렛</div>
       <div class="feature-row"><span class="fn">05</span> 몰래 편지함 — 시간 예약</div>
       <div class="feature-row"><span class="fn">06</span> 버킷리스트 — 공동 목표</div>
-      <div class="feature-row"><span class="fn">07</span> 여행 지도 — 카테고리 핀</div>
-      <div class="feature-row"><span class="fn">08</span> 연애 통계 — 자동 리포트</div>
-      <div class="feature-row"><span class="fn">09</span> 오늘의 메뉴 — 랜덤 추천</div>
-      <div class="feature-row"><span class="fn">10</span> 미니게임 — 오목 · 그림퀴즈</div>
-      <div class="feature-row"><span class="fn">11</span> 가계부 — 실시간 지출 관리</div>
-      <div class="feature-row"><span class="fn">12</span> FCM 알림 — PWA 딥링크 연동</div>
+      <div class="feature-row"><span class="fn">07</span> 햄찌 — 커플 펫 · 응원으로 사망 유예</div>
+      <div class="feature-row"><span class="fn">08</span> 네컷 사진 — 프레임 17종 · 둘이 2컷씩</div>
+      <div class="feature-row"><span class="fn">09</span> 크리스마스 테마 — canvas 눈 · 폰 흔들기</div>
+      <div class="feature-row"><span class="fn">10</span> 앱 아이콘 배지 — 안 읽은 알림 수</div>
+      <div class="feature-row"><span class="fn">11</span> FCM 알림 — PWA 딥링크 연동</div>
+      <div class="feature-row"><span class="fn">12</span> PIN 서버 인증 — 커스텀 토큰</div>
     </div>
 
     <p class="features-title">T E C H &nbsp; S T A C K</p>
     <div class="tech-table">
       <div class="tech-row"><span class="tech-key">FRONTEND</span><span class="tech-val">React 19 (Hooks, Context API) · Vite 7</span></div>
-      <div class="tech-row"><span class="tech-key">UI / ANIMATION</span><span class="tech-val">Material-UI v7 · Framer Motion · canvas-confetti · Chart.js</span></div>
+      <div class="tech-row"><span class="tech-key">UI / ANIMATION</span><span class="tech-val">Material-UI v7 · Framer Motion · canvas-confetti · Recharts · canvas 2D(눈·네컷 합성)</span></div>
       <div class="tech-row"><span class="tech-key">BACKEND / DB</span><span class="tech-val">Firebase Firestore (실시간 동기화) · Firebase Storage</span></div>
       <div class="tech-row"><span class="tech-key">FUNCTIONS</span><span class="tech-val">Firebase Cloud Functions v2 (Node.js 24) · Cloud Scheduler</span></div>
       <div class="tech-row"><span class="tech-key">NOTIFICATIONS</span><span class="tech-val">Firebase Cloud Messaging (FCM) · PWA Push API · Service Worker</span></div>
-      <div class="tech-row"><span class="tech-key">AUTH</span><span class="tech-val">Firebase Anonymous Authentication</span></div>
+      <div class="tech-row"><span class="tech-key">AUTH</span><span class="tech-val">Firebase Auth 커스텀 토큰 — PIN은 Cloud Function이 서버에서 검증(5회 실패 시 15분 잠금), 익명 로그인 비활성화</span></div>
       <div class="tech-row"><span class="tech-key">DEPLOY</span><span class="tech-val">Firebase Hosting + Cloud Functions · PWA (iOS Safari 16.4+)</span></div>
     </div>
 
@@ -507,7 +507,7 @@
         </div>
         <div class="detail-block">
           <h4>주 간 &nbsp; 리 포 트</h4>
-          <p>Chart.js 기반 주간/월간/연간 온도 히스토리 그래프를 자동 생성합니다. 두 사람의 감정 패턴을 시각화해 대화의 시작점을 만들어줍니다.</p>
+          <p>Recharts 기반 주간/월간/연간 온도 히스토리 그래프를 자동 생성합니다. 두 사람의 감정 패턴을 시각화해 대화의 시작점을 만들어줍니다.</p>
         </div>
         <div class="detail-block">
           <h4>T E C H N I C A L &nbsp; N O T E</h4>
@@ -618,16 +618,16 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
-<!--  PAGE 7 — FEATURE 04 : 버킷리스트 & 연애 통계      -->
+<!--  PAGE 7 — FEATURE 04 : 버킷리스트 & 햄찌          -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="page">
   <div class="page-inner">
     <div class="section-num">0 6</div>
     <div class="section-label">K E Y &nbsp; F E A T U R E &nbsp; — &nbsp; 0 4</div>
 
-    <h2 class="section-title">버킷리스트 🎯<br><span style="font-size:26px;">&amp; 연애 통계 📊</span></h2>
+    <h2 class="section-title">버킷리스트 🎯<br><span style="font-size:26px;">&amp; 햄찌 🐹</span></h2>
 
-    <p class="lead">함께 이루고 싶은 목표를 데이트/여행/도전/일상 카테고리로 관리하고, 완료 시 화려한 confetti 효과로 축하합니다. 연애 통계는 그동안의 기록을 자동 분석해 우리만의 리포트를 생성합니다.</p>
+    <p class="lead">함께 이루고 싶은 목표를 카테고리별로 관리하고, 완료하면 confetti로 축하합니다. 햄찌는 둘이 같이 키우는 커플 펫으로, 밥·간식·체중·진화에 파트너의 응원까지 얽혀 있습니다.</p>
 
     <hr class="divider">
 
@@ -638,22 +638,16 @@
         </div>
         <p class="fig-label">Fig.06 버킷리스트</p>
       </div>
-      <div class="fig-box">
-        <div class="phone-frame lg">
-          <img src="portfolio_img/img03.png" alt="연애 통계">
-        </div>
-        <p class="fig-label">Fig.07 연애 통계 대시보드</p>
-      </div>
     </div>
 
     <div class="feature-layout">
       <div class="detail-block">
         <h4>버 킷 &nbsp; 리 스 트</h4>
-        <p>둘 다 체크해야 완료 처리되는 <strong>양방향 확인 시스템</strong>. 달성률 자동 계산. 완료 시 confetti + 축하 메시지. 항목 추가 시 상대방에게 실시간 알림 전송.</p>
+        <p>둘 다 체크해야 완료 처리되는 <strong>양방향 확인 시스템</strong>. 달성률 자동 계산. 항목을 추가하면 상대방에게 실시간 알림.</p>
       </div>
       <div class="detail-block">
-        <h4>연 애 &nbsp; 통 계</h4>
-        <p>총 기록 수, 쿠폰 사용률, 방문 장소, 감정 분석을 한눈에 보여주는 대시보드. 7일/30일/전체 기간 필터링. "요즘 기분은 행복!" 같은 인사이트 자동 생성.</p>
+        <h4>햄 찌 &nbsp; (다 마 고 치)</h4>
+        <p>"진화가 너무 안 된다"는 실사용 피드백으로 레벨업 XP를 0.6배로 낮추고, 저장된 성장 기록도 같은 비율로 한 번만 보정했습니다(백업 후, 중복 방지 표식 포함). 3일 이상 안 들어온 상대 펫은 파트너의 <strong>응원으로 사망을 하루씩 미룰 수</strong> 있고, 위험해지면 파트너에게 푸시가 갑니다.</p>
       </div>
     </div>
 
@@ -665,52 +659,38 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
-<!--  PAGE 8 — FEATURE 05 : 여행 지도 & 메뉴 & 미니게임 -->
+<!--  PAGE 8 — 네컷 사진 & 크리스마스 테마 -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="page">
   <div class="page-inner">
     <div class="section-num">0 7</div>
     <div class="section-label">K E Y &nbsp; F E A T U R E &nbsp; — &nbsp; 0 5</div>
 
-    <h2 class="section-title">여행 지도 🗺️ &nbsp; 오늘 뭐 먹지? 🍽️<br><span style="font-size:24px;">&amp; 미니게임 🎮</span></h2>
+    <h2 class="section-title">네컷 사진 📸<br><span style="font-size:26px;">&amp; 크리스마스 테마 🎄</span></h2>
 
-    <p class="lead">함께 다녀온 장소를 지도에 핀으로 기록하고, 오늘의 메뉴 추천기로 저녁 메뉴 고민을 해결하며, 미니게임으로 심심할 때 즐깁니다. "지면 소원 들어주기" 룰로.</p>
+    <p class="lead">인생네컷을 앱 안에서 찍고, 프레임에 끼워 갤러리에 쌓습니다. 시즌 테마를 켜면 앱 전체가 크리스마스로 바뀌고, 폰을 흔들면 눈이 쏟아집니다. 둘 다 이미지 에셋 없이 코드로만 그렸습니다.</p>
 
     <hr class="divider">
 
-    <div class="feature-layout triple">
-      <div class="fig-box">
-        <div class="phone-frame sm">
-          <img src="portfolio_img/img02.png" alt="여행 지도">
-        </div>
-        <p class="fig-label">Fig.08 여행 지도</p>
+    <div class="feature-layout">
+      <div class="detail-block">
+        <h4>네 컷 &nbsp; 사 진</h4>
+        <p>3-2-1 카운트다운 후 4컷 촬영 → canvas로 합성 → WebP 한 장만 Storage에 저장(원본 컷은 남기지 않음). 프레임 17종은 패턴·그라데이션·이중 테두리·폴라로이드·필름·시즌 한정까지 <strong>전부 코드</strong>입니다. 삭제하면 Storage 파일도 같이 지웁니다.</p>
       </div>
-      <div class="fig-box">
-        <div class="phone-frame sm">
-          <img src="portfolio_img/img01.png" alt="오늘의 메뉴">
-        </div>
-        <p class="fig-label">Fig.09 오늘의 메뉴</p>
-      </div>
-      <div class="fig-box">
-        <div class="phone-frame sm">
-          <img src="portfolio_img/img_game.png" alt="미니게임 센터">
-        </div>
-        <p class="fig-label">Fig.10 미니게임 센터</p>
+      <div class="detail-block">
+        <h4>둘 이 &nbsp; 2 컷 씩</h4>
+        <p>내가 2컷을 보내면 상대에게 푸시가 가고, 상대가 나머지 2컷을 채우면 완성됩니다. 완성 전엔 서로의 컷이 보이지 않습니다. 미완성 컷은 Storage가 아니라 임시 문서에만 두고, 48시간이 지나거나 취소하면 지웁니다.</p>
       </div>
     </div>
 
-    <div class="feature-layout triple">
+    <div class="feature-layout">
       <div class="detail-block">
-        <h4>여 행 &nbsp; 지 도</h4>
-        <p>Leaflet 기반 지도에 카페/맛집/여행/데이트/산책 카테고리별 핀 등록. 장소 검색 + GPS 현재 위치 연동.</p>
+        <h4>크 리 스 마 스 &nbsp; 테 마</h4>
+        <p>전구·나무·탭바 위를 달리는 루돌프까지 CSS/SVG로 구현. 장식을 바꿀 때마다 글자 대비(WCAG AA 4.5 이상)를 직접 측정합니다. 시즌 테마가 꺼져 있으면 DOM도 CSS도 없습니다.</p>
       </div>
       <div class="detail-block">
-        <h4>오 늘 의 &nbsp; 메 뉴</h4>
-        <p>145개 메뉴 DB에서 카테고리별 필터링 후 랜덤 추천. 조리 시간, 가격, 난이도 표시.</p>
-      </div>
-      <div class="detail-block">
-        <h4>미 니 게 임</h4>
-        <p>오목 대결 + 그림 퀴즈. 승부 기록 &amp; 소원 시스템. Canvas API로 그림판 구현.</p>
+        <h4>눈 &nbsp; + &nbsp; 흔 들 기</h4>
+        <p>canvas 2D 입자 엔진(소용돌이 + 유리볼). 저사양 기기 감지, 프레임이 느려지면 입자 자동 감소, 탭이 숨겨지면 정지, "동작 줄이기"면 끔. 걷기·뛰기는 흔들기로 오인하지 않게 판정을 따로 만들었고, iOS 모션 권한은 사용자가 "켜기"를 누를 때만 요청합니다.</p>
       </div>
     </div>
 
@@ -722,16 +702,16 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════ -->
-<!--  PAGE 9 — FEATURE 06 : PWA 알림 & 가계부 (신규)   -->
+<!--  PAGE 9 — PWA 알림 & 앱 배지 -->
 <!-- ═══════════════════════════════════════════════════ -->
 <div class="page">
   <div class="page-inner">
     <div class="section-num">0 8</div>
     <div class="section-label">K E Y &nbsp; F E A T U R E &nbsp; — &nbsp; 0 6</div>
 
-    <h2 class="section-title">PWA 푸시 알림 🔔<br><span style="font-size:26px;">&amp; 가계부 💰</span></h2>
+    <h2 class="section-title">PWA 푸시 알림 🔔<br><span style="font-size:26px;">&amp; 앱 아이콘 배지 🔴</span></h2>
 
-    <p class="lead">Firebase Cloud Messaging + Service Worker로 네이티브 수준의 푸시 알림을 구현했습니다. iOS Safari 16.4+ PWA 환경까지 지원하며, 알림 탭 시 해당 페이지로 즉시 딥링크 이동합니다. 가계부는 onSnapshot으로 실시간 동기화해 입력 즉시 두 사람에게 반영됩니다.</p>
+    <p class="lead">Firebase Cloud Messaging + Service Worker로 푸시 알림을 구현했습니다. iOS 16.4+ 홈 화면 앱까지 지원하고, 알림을 탭하면 해당 페이지로 이동합니다. 앱 아이콘에는 안 읽은 알림 개수가 뜹니다.</p>
 
     <hr class="divider">
 
@@ -739,25 +719,25 @@
       <div>
         <div class="detail-block">
           <h4>F C M &nbsp; 알 림 &nbsp; 시 스 템</h4>
-          <p>일기 좋아요·댓글·쿠폰 발급/사용·편지 수신·버킷 추가·온도 차이 등 12가지 알림 타입을 완전 지원합니다. Firestore <code>notifications</code> 컬렉션에 문서가 생성되는 순간 Cloud Function이 트리거돼 상대방 FCM 토큰으로 즉시 푸시를 전송합니다.</p>
+          <p>일기·댓글·좋아요·쿠폰·편지·버킷·온도 차이·네컷 등 10여 가지 알림 타입. Firestore <code>notifications</code> 컬렉션에 문서가 생기는 순간 Cloud Function이 상대방 기기로 푸시를 보냅니다.</p>
         </div>
         <div class="detail-block">
           <h4>알 림 &nbsp; 드 로 어</h4>
-          <p>앱 내 알림 드로어에서 타입별 아이콘·라벨·timeAgo를 제공합니다. 읽음/미읽음·전체 읽음·개별 삭제를 지원하며 20개 단위 페이지네이션으로 관리합니다.</p>
+          <p>타입별 아이콘·라벨·timeAgo, 읽음/미읽음·전체 읽음·개별 삭제, 20개 단위 페이지네이션.</p>
         </div>
         <div class="detail-block">
           <h4>스 케 줄 러 &nbsp; 자 동 &nbsp; 알 림</h4>
-          <p>매일 오전 9시 KST에 두 지역(동탄/서울) 날씨 브리핑을 자동 발송. Open-Meteo API로 아침/점심/저녁 예보 + 강수확률 제공. 월요일엔 이번 주 일정 브리핑 추가 발송.</p>
+          <p>매일 06:00(KST) 동탄/서울 날씨 브리핑(Open-Meteo), 09:00 일정·기념일 리마인더(월요일엔 주간 브리핑), 20:00 햄찌 위험 알림.</p>
         </div>
       </div>
       <div>
         <div class="detail-block">
-          <h4>가 계 부</h4>
-          <p>수입/지출을 날짜·카테고리·메모와 함께 기록합니다. Firestore onSnapshot으로 실시간 동기화되어 한 명이 입력하면 상대방 화면에도 즉시 반영됩니다. 월별 집계와 카테고리별 분석을 제공합니다.</p>
+          <h4>앱 &nbsp; 아 이 콘 &nbsp; 배 지</h4>
+          <p>Badging API로 홈 화면 아이콘에 안 읽은 알림 수를 표시. 앱이 닫혀 있어도 푸시에 개수(<code>data.badge</code>)를 실어 서비스워커가 갱신합니다. 서버의 개수 계산과 클라이언트 필터는 같은 기준이어야 해서, 둘을 대조하는 테스트를 뒀습니다.</p>
         </div>
         <div class="detail-block">
           <h4>T E C H N I C A L &nbsp; N O T E</h4>
-          <p>FCM 토큰은 <code>fcmTokens/{userName}</code>에 저장. VAPID 키로 Web Push 인증. iOS PWA에서 <code>clients.openWindow()</code>가 서브 경로를 무시하는 문제는 <code>/?__nav=/path</code> 쿼리 파라미터 + App.jsx 마운트 핸들러로 우회 해결. FCM 토큰 만료 시 Cloud Function이 자동 삭제합니다.</p>
+          <p>FCM 토큰은 <code>fcmTokens/{userName}</code>에 기기별로 저장. iOS PWA에서 <code>clients.openWindow()</code>가 하위 경로를 무시하는 문제는 <code>/?__nav=/path</code> 쿼리 + App.jsx 마운트 시 처리로 우회했습니다.</p>
         </div>
       </div>
     </div>
@@ -780,11 +760,11 @@
     <h2 class="section-title">이런 문제들,<br>이렇게 풀었습니다.</h2>
 
     <div class="trouble-item">
-      <p class="trouble-tag">0 1 &nbsp; R E A L T I M E</p>
-      <h3>실시간 동기화에서 오프라인 상태 처리</h3>
-      <div class="trouble-row"><span class="tr-key">문 제</span><span class="tr-val">Firestore 실시간 리스너 기반 앱에서 네트워크 끊김 시 UI가 멈추거나 데이터 유실 발생.</span></div>
-      <div class="trouble-row"><span class="tr-key">해 결</span><span class="tr-val">Firestore Offline Persistence 활성화로 로컬 캐시 우선 동작. 로딩/오프라인 상태 UI를 분리해 사용자 혼란 최소화. 재연결 시 자동 동기화.</span></div>
-      <div class="trouble-row"><span class="tr-key">배운 점</span><span class="tr-val">"실시간 앱일수록 오프라인 시나리오를 먼저 설계한다." — 네트워크 의존 기능은 반드시 fallback이 있어야 합니다.</span></div>
+      <p class="trouble-tag">0 1 &nbsp; S E C U R I T Y</p>
+      <h3>"폐쇄형 앱"이라고 믿었는데 사실은 열려 있었다</h3>
+      <div class="trouble-row"><span class="tr-key">문 제</span><span class="tr-val">익명 로그인 + 열린 보안 규칙(Firestore 읽기 공개, Storage 완전 공개)이라 두 사람만 쓰는 앱이 아니었습니다. 서버 PIN 인증을 넣은 뒤에도 임시 규칙이 "로그인만 하면 통과"에 익명 로그인이 켜져 있어 마찬가지였습니다. 최종 규칙을 올렸다가 두 사람 데이터가 안 보여 롤백한 적도 있습니다(원인은 끝내 확정 못 함).</span></div>
+      <div class="trouble-row"><span class="tr-key">해 결</span><span class="tr-val">uid를 ASCII로 바꾸고, 새 번들을 쓰는 기기를 관리자 페이지에서 확인하고, 익명 로그인을 끈 뒤 규칙을 배포. 배포 전에 같은 프로젝트의 임시 DB에서 실제 토큰으로 먼저 검증했습니다. 규칙 파일의 <code>match</code> 일부가 <code>documents</code> 밖에 있어 효과가 없던 버그도 에뮬레이터 테스트로 찾아 고쳤습니다.</span></div>
+      <div class="trouble-row"><span class="tr-key">배운 점</span><span class="tr-val">"닫혀 있다고 믿는 것과 닫혀 있는 것은 다르다." — 원인을 못 찾아도 같은 일이 반복되지 않는 배포 순서는 만들 수 있고, 규칙은 에뮬레이터로 검증할 수 있습니다.</span></div>
     </div>
 
     <div class="trouble-item">
@@ -797,10 +777,10 @@
 
     <div class="trouble-item">
       <p class="trouble-tag">0 3 &nbsp; O P T I M I Z A T I O N</p>
-      <h3>이미지 업로드로 인한 Storage 비용 폭증</h3>
-      <div class="trouble-row"><span class="tr-key">문 제</span><span class="tr-val">다이어리에 원본 고해상도 사진을 그대로 업로드하면서 Firebase Storage 비용이 빠르게 증가.</span></div>
-      <div class="trouble-row"><span class="tr-key">해 결</span><span class="tr-val">Canvas API로 클라이언트 측 이미지 압축 구현. 800px 이하 리사이징 + JPEG 품질 70%로 변환. 평균 70% 용량 절감.</span></div>
-      <div class="trouble-row"><span class="tr-key">배운 점</span><span class="tr-val">"서버에 올리기 전에 클라이언트에서 할 수 있는 일을 먼저 한다." — 비용 최적화는 아키텍처의 일부입니다.</span></div>
+      <h3>이미지 용량 — 업로드와 앱 에셋</h3>
+      <div class="trouble-row"><span class="tr-key">문 제</span><span class="tr-val">다이어리에 원본 고해상도 사진을 그대로 올려 Storage 용량이 빠르게 늘고, 앱에 들어 있는 캐릭터 이미지 에셋도 전부 원본 크기였습니다.</span></div>
+      <div class="trouble-row"><span class="tr-key">해 결</span><span class="tr-val">일기 사진은 업로드 전에 Canvas로 최대 폭 1200px / JPEG 품질 0.82로 압축. 앱 에셋은 실제 표시 크기의 @3x로 줄여 WebP로 변환 — <strong>실측 약 33MB → 333KB</strong>. 네컷은 합성본만 WebP로 저장합니다.</span></div>
+      <div class="trouble-row"><span class="tr-key">배운 점</span><span class="tr-val">"서버에 올리기 전에 클라이언트에서 할 수 있는 일을 먼저 한다." 그리고 변환 중에 sharp가 EXIF 방향을 무시해 세로 사진이 누워 버리는 걸 발견했는데, 수치만 보지 말고 결과 이미지를 직접 봐야 합니다.</span></div>
     </div>
 
     <div class="footer">

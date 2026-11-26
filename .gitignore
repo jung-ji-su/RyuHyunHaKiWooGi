@@ -32,3 +32,6 @@ skills-lock.json
 
 # 데이터 백업(개인 데이터 포함) — 커밋 금지
 backups/
+
+# 스크린샷 원본(개인 정보 가능) — 커밋하지 않는다. WebP로 변환한 것만 portfolio_img/에 둔다
+_shots/
