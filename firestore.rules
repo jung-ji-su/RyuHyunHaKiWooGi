@@ -1,15 +1,10 @@
 rules_version = '2';
 
-// ⚠️ 이 파일은 "최종본"이고 아직 라이브에 배포되지 않았다 (2026-11-26 기준).
-//   - 라이브는 임시본: 로그인(request.auth != null)만 요구. Firestore ruleset 4f09a06d… (2026-10-15)로 되돌려 둔 상태다.
-//   - 2026-11-23 05:54 UTC에 이전 최종본(한글 uid 화이트리스트)이 실수로 한 번 배포됐다가 데이터가 안 보여서 롤백했다(ruleset a23a4edb…).
-//   - 이번 최종본: uid를 ASCII('jisu'/'hyunha')로 바꾸고, authAttempts 제외를 {document=**}의 document[0] 대신
-//     첫 경로 세그먼트 캡처({col})로 표현했다. buckets/authAttempts 블록은 documents 범위 밖에 있어 효과가 없었으므로 정리했다.
-//   - 배포 순서(반드시 지킬 것): 함수·클라이언트(영문 uid) 배포 → 두 사람 재로그인 + 기기 현황(관리자 페이지)에서
-//     새 번들 확인 + 콘솔에서 익명 로그인 비활성화 → 그 다음에만 `firebase deploy --only firestore:rules,storage`.
-//   - deploy.js는 `--only hosting,functions`라 규칙은 자동으로 나가지 않는다.
-//   - 문제가 생기면 임시본 복구: `git show 63f544d:firestore.rules` 내용으로 다시 배포.
-//   - 배포하면 이 주석을 "배포됨"으로 고치거나 지울 것.
+// ✅ 이 규칙은 2026-11-26에 라이브에 배포됐다(uid 'jisu'/'hyunha'만 허용, authAttempts 차단).
+//   - 이전 임시본(로그인만 요구)으로 되돌리려면 `git show 63f544d:firestore.rules` 내용으로 배포한다(백업 ruleset 4f09a06d).
+//   - 2026-11-23의 첫 배포 시도(한글 uid)는 데이터가 안 보여 롤백했다. 한글 uid는 원인이 아니었고 옛 번들 기기가 유력(CLAUDE.md 참고).
+//   - 수정 후 배포 전: `firebase emulators:exec --only firestore --project demo-rules "node rules-test.mjs"`(JDK 21).
+//   - 배포: `firebase deploy --only firestore:rules,storage`. deploy.js는 `--only hosting,functions`라 규칙은 자동으로 나가지 않는다.
 service cloud.firestore {
   match /databases/{database}/documents {
     function isCouple() {

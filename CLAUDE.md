@@ -1,19 +1,23 @@
 # CLAUDE.md
 
-## ⚠️ 보안 규칙(firestore.rules / storage.rules)은 배포하지 말 것
+## 보안: 인증과 규칙 (2026-11-26 완료)
 
-- 레포의 `firestore.rules`·`storage.rules`는 **최종본**(uid `지수`/`현하` 화이트리스트 + `authAttempts` 차단)이다.
-  **라이브에 올라가 있는 건 임시본**(로그인만 요구, 커밋 `63f544d`)이다.
-- 2026-11-23에 최종본이 실수로 한 번 배포됐고, **사용자 데이터가 화면에 안 보여서 롤백**했다.
-  **원인은 아직 밝혀지지 않았다.** 원인을 규명하기 전에는 규칙을 배포하지 않는다.
-  (이 지시를 따르는 에이전트는 사용자가 명시적으로 "규칙 배포해"라고 하기 전엔 어떤 경우에도 배포하지 말 것.)
-- 조심할 명령:
-  - 맨 `firebase deploy` — `firebase.json`에 firestore/storage 규칙이 들어 있어서 규칙까지 같이 나간다(이게 사고 원인이었다).
-  - `firebase deploy --only firestore…` / `--only storage…`.
-  - 배포는 항상 `npm run deploy`(= `deploy.js`) 또는 `firebase deploy --only hosting`처럼 대상을 명시한다.
-- `deploy.js`는 이미 `firebase deploy --only hosting,functions`로 고쳐져 있어 규칙이 딸려 나가지 않는다.
-- 규칙 파일 자체에도 같은 경고와 배포 순서·롤백 방법이 주석으로 있다(`firestore.rules` 상단 참고).
-- 규칙 동작은 에뮬레이터로만 검증한다: `rules-test.mjs`(`@firebase/rules-unit-testing`, 프로젝트 ID `demo-rules`) — 라이브에는 영향이 없다.
+- **인증**: PIN은 Cloud Function `verifyPinAndSignIn`이 검증하고 커스텀 토큰을 준다. 토큰 uid는 **ASCII `jisu`/`hyunha`**
+  (`functions/index.js`의 `AUTH_UID`), 화면·데이터에서 쓰는 이름("지수"/"현하")은 클라이언트가 `useAuth.jsx`의 `UID_TO_NAME`으로 바꿔 쓴다.
+  **데이터는 전부 이름 문자열 키**(`writer`, `sender`, `fcmTokens/지수` …)라서 uid와 무관하다 — 코드에서 uid를 쓰는 곳은 위 두 군데뿐.
+  예전 한글 uid·익명 세션은 `useAuth`가 로그아웃시켜 로그인 화면으로 보낸다.
+- **익명 로그인은 콘솔에서 비활성화**돼 있다(코드에도 호출 없음). 다시 켜지 말 것.
+- **규칙은 최종본이 라이브에 배포돼 있다**: `firestore.rules`/`storage.rules` = uid `jisu`/`hyunha`만 읽기·쓰기, `authAttempts`는 클라이언트 전면 차단.
+  새 컬렉션/Storage 경로는 와일드카드가 받아주므로 규칙을 고칠 필요 없다.
+- **규칙 배포는 신중하게**: 규칙을 고쳤을 때만 `firebase deploy --only firestore:rules,storage`. 먼저 `rules-test.mjs`(JDK 21 필요, 에뮬레이터 `demo-rules`)를 돌린다:
+  `firebase emulators:exec --only firestore --project demo-rules "node rules-test.mjs"`. 새 규칙을 라이브에 올리기 전에 같은 프로젝트에 **임시 Firestore DB**(`firestore:databases:create`)를 만들어
+  실제 토큰으로 시험하는 방법이 있다(2026-11-26에 그렇게 검증하고 삭제함). 롤백용 임시본(로그인만 요구)은 `git show 63f544d:firestore.rules` / `:storage.rules`.
+- `deploy.js`는 `firebase deploy --only hosting,functions`다. 규칙은 자동으로 나가지 않는다. 맨 `firebase deploy`는 규칙까지 올라가니 쓰지 말 것.
+- **옛 번들 기기 점검**: 새 번들은 30분마다 `appClients`에 기기·버전을 남긴다(`src/lib/clientHeartbeat.js`). 관리자 페이지(/admin) 맨 위 "📱 기기 현황"에서 확인.
+  빌드 버전은 `vite.config.js`가 `public/version.json`을 읽어 `__APP_VERSION__`으로 박는다.
+- **사고 이력**: 2026-11-23 05:54 UTC에 이전 최종본(한글 uid 화이트리스트)을 올렸다가 두 사람 데이터가 안 보여 롤백했다. 한글 uid는 원인이 **아니었다**(실서비스 토큰으로 검증, 전부 통과).
+  유력한 원인은 **옛 번들(익명 로그인 시절)을 쓰는 기기**였을 것으로 추정(같은 날 21:43에 현재 코드로는 만들 수 없는 익명 계정이 생겼음). 확정은 못 했다.
+  그래서 이번엔 영문 uid 전환 → 기기 현황으로 새 번들 확인 → 익명 로그인 끄기 → 규칙 배포 순서로 올렸고 문제없이 끝났다.
 
 ## 햄찌(타마고치) 성장 (`src/CoupleTamagotchi.jsx`)
 

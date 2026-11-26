@@ -1,8 +1,7 @@
 rules_version = '2';
 
-// ⚠️ 이 파일은 "최종본"이고 아직 라이브에 배포되지 않았다 (2026-11-26 기준).
-//   라이브는 임시본(로그인만 요구, ruleset a066294e…)이다. 배포 순서와 롤백 방법은 firestore.rules 상단 주석 참고.
-//   deploy.js는 `--only hosting,functions`라 규칙은 수동 배포한다.
+// ✅ 이 규칙은 2026-11-26에 라이브에 배포됐다(uid 'jisu'/'hyunha'만 허용). 롤백: `git show 63f544d:storage.rules`(백업 ruleset a066294e).
+//   firestore.rules 상단 주석 참고. 배포: `firebase deploy --only firestore:rules,storage`.
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
