@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { db, storage } from './firebase';
 import { collection, doc, setDoc, getDoc, addDoc, deleteDoc, runTransaction, query, orderBy, limit, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { ref as sRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Box, Typography, Button, Dialog, CircularProgress } from '@mui/material';
 import { alpha, B } from './lib/constants';
 import { vibrate } from './touchEffects';
-import { FRAMES, LAYOUTS, getLayout } from './lib/photoFrames';
-import { captureCut, composeStrip, canvasToBlob } from './lib/photoCompose';
+import { FRAMES, GROUPS, LAYOUTS, getLayout, visibleFrames } from './lib/photoFrames';
+import { captureCut, composeStrip, canvasToBlob, placeholderCut } from './lib/photoCompose';
 
 const COLL = 'photobooth';
 const GALLERY_LIMIT = 40;          // 갤러리 한 번에 읽는 최대 장수(무제한 쿼리 금지)
@@ -46,6 +46,12 @@ export default function PhotoBooth({ currentUser }) {
   const [mode, setMode] = useState('solo');                 // solo | duo
   const [pending, setPending] = useState(undefined);         // undefined=로딩, null=없음
   const [cfg, setCfg] = useState({ need: 4, role: 'solo' }); // role: solo | starter | finisher(starterCuts: 먼저 보낸 사람 컷)
+  const [caption, setCaption] = useState('');               // 하단 한 줄 문구(선택)
+  const [group, setGroup] = useState('basic');
+  const [prev, setPrev] = useState({ thumbs: {}, big: '' });  // 프레임 선택 화면 미리보기(가짜 컷으로 합성)
+  const seasonTheme = typeof document !== 'undefined' ? document.documentElement.getAttribute('data-season') : null;
+  const visible = useMemo(() => visibleFrames(seasonTheme), [seasonTheme]);
+  const shownGroups = GROUPS.filter((g) => visible.some((f) => f.group === g.id));
   const partner = USERS.find((u) => u !== currentUser);
   const videoRef = useRef(null), streamRef = useRef(null), tokenRef = useRef(0);
 
@@ -63,6 +69,30 @@ export default function PhotoBooth({ currentUser }) {
     if (d && d.expiresAt < Date.now()) { deleteDoc(sn.ref).catch(() => {}); setPending(null); return; }
     setPending(d);
   }, () => setPending(null)), []);
+
+  useEffect(() => {
+    if (view !== 'setup') return undefined;
+    let dead = false;
+    const t = setTimeout(async () => {
+      const L = getLayout(layoutId), ph = [0, 1, 2, 3].map((i) => placeholderCut(L.cw, L.ch, i)), thumbs = {};
+      for (const f of visible) {
+        const c = await composeStrip({ cuts: ph, frameId: f.id, layoutId, names: NAMES, dateText: todayText(), scale: 0.1 });
+        if (dead) return; thumbs[f.id] = c.toDataURL('image/png');
+      }
+      if (!dead) setPrev((p) => ({ ...p, thumbs }));
+    }, 150);
+    return () => { dead = true; clearTimeout(t); };
+  }, [view, layoutId, visible]);
+  useEffect(() => {
+    if (view !== 'setup') return undefined;
+    let dead = false;
+    const t = setTimeout(async () => {
+      const L = getLayout(layoutId), ph = [0, 1, 2, 3].map((i) => placeholderCut(L.cw, L.ch, i));
+      const c = await composeStrip({ cuts: ph, frameId, layoutId, names: NAMES, dateText: todayText(), caption, scale: 0.4 });
+      if (!dead) setPrev((p) => ({ ...p, big: c.toDataURL('image/jpeg', 0.85) }));
+    }, 200);
+    return () => { dead = true; clearTimeout(t); };
+  }, [view, layoutId, frameId, caption]);
 
   const stopCam = useCallback(() => {
     tokenRef.current++;                                    // 진행 중 촬영 루프 취소
@@ -113,7 +143,7 @@ export default function PhotoBooth({ currentUser }) {
     setShooting(false); stopCam();
     if (cfg.role === 'starter') { setResult({ mine: got, thumbs: got.map((c) => c.toDataURL('image/jpeg', 0.7)) }); setView('review'); return; }   // 내 2컷만 확인 후 전송(합성 안 함)
     const all = cfg.role === 'finisher' ? [...cfg.starterCuts, ...got] : got;
-    const canvas = await composeStrip({ cuts: all, frameId, layoutId, names: NAMES, dateText: todayText() });
+    const canvas = await composeStrip({ cuts: all, frameId, layoutId, names: NAMES, dateText: todayText(), caption });
     setResult({ canvas, url: canvas.toDataURL('image/webp', 0.8) }); setView('result');
   };
 
@@ -129,7 +159,7 @@ export default function PhotoBooth({ currentUser }) {
       await runTransaction(db, async (tx) => {
         const r = doc(db, PEND, 'active'), sn = await tx.get(r);
         if (sn.exists() && sn.data().expiresAt > Date.now()) throw new Error('busy');
-        tx.set(r, { starter: currentUser, partner, frame: frameId, layout: layoutId, cuts: data, createdAt: serverTimestamp(), expiresAt: Date.now() + EXPIRE_MS });
+        tx.set(r, { starter: currentUser, partner, frame: frameId, layout: layoutId, caption: caption.trim().slice(0, 24), cuts: data, createdAt: serverTimestamp(), expiresAt: Date.now() + EXPIRE_MS });
       });
       await addDoc(collection(db, 'notifications'), { writer: currentUser, type: 'photo', content: `${currentUser}가 네컷 2컷을 보냈어요 📸 이어서 2컷을 찍어 주세요!`, createdAt: serverTimestamp(), isRead: false });
       setToast(`${partner}에게 보냈어요! 컷은 완성될 때까지 비밀 🤫`); leave();
@@ -142,7 +172,7 @@ export default function PhotoBooth({ currentUser }) {
     if (!pending) return;
     try {
       const starterCuts = await Promise.all(pending.cuts.map(decode));
-      setFrameId(pending.frame); setLayoutId(pending.layout); setCfg({ need: 2, role: 'finisher', starterCuts }); setView('shoot');
+      setFrameId(pending.frame); setLayoutId(pending.layout); setCaption(pending.caption || ''); setCfg({ need: 2, role: 'finisher', starterCuts }); setView('shoot');
     } catch { setToast('컷을 불러오지 못했어요. 다시 시도해 주세요.'); }
   };
   const dropPending = async () => {
@@ -165,7 +195,7 @@ export default function PhotoBooth({ currentUser }) {
       await uploadBytes(sRef(storage, path), blob, { contentType: blob.type });
       const url = await getDownloadURL(sRef(storage, path));
       try {
-        await setDoc(doc(db, COLL, id), { url, path, layout: layoutId, frame: frameId, createdBy: currentUser, createdAt: serverTimestamp(), size: blob.size, ...(cfg.role === 'finisher' ? { duo: true, with: pending?.starter ?? null } : {}) });
+        await setDoc(doc(db, COLL, id), { url, path, layout: layoutId, frame: frameId, createdBy: currentUser, createdAt: serverTimestamp(), size: blob.size, w: result.canvas.width, h: result.canvas.height, ...(cfg.role === 'finisher' ? { duo: true, with: pending?.starter ?? null } : {}) });
       } catch (e) {
         await deleteObject(sRef(storage, path)).catch(() => {});   // 문서 저장 실패 시 방금 올린 파일을 남기지 않는다
         throw e;
@@ -289,16 +319,29 @@ export default function PhotoBooth({ currentUser }) {
       </Box>
       <Box>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, mb: 1 }}>프레임</Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 1 }}>
-          {FRAMES.map((f) => (
-            <Box key={f.id} onClick={() => setFrameId(f.id)} sx={{ cursor: 'pointer', textAlign: 'center' }}>
-              <Box sx={{ height: 64, borderRadius: '10px', background: f.bg.length > 1 ? `linear-gradient(${f.bg.join(',')})` : f.bg[0], border: `3px solid ${frameId === f.id ? B.pants : 'transparent'}`, display: 'grid', placeItems: 'center' }}>
-                <Box sx={{ width: '60%', height: '55%', bgcolor: alpha(f.ink, '33'), border: `3px solid ${f.edge}`, borderRadius: '4px' }} />
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1.5, minHeight: 120 }}>
+          {prev.big ? <Box component="img" src={prev.big} alt="프레임 미리보기" sx={{ maxHeight: 300, maxWidth: '100%', objectFit: 'contain', borderRadius: '6px', boxShadow: `0 4px 18px ${alpha(B.pants, '33')}` }} /> : <CircularProgress size={22} sx={{ color: B.pants, alignSelf: 'center' }} />}
+        </Box>
+        <Box sx={{ display: 'flex', gap: 0.8, mb: 1 }}>
+          {shownGroups.map((g) => (
+            <Box key={g.id} onClick={() => setGroup(g.id)} sx={{ px: 1.6, py: 0.6, borderRadius: '999px', cursor: 'pointer', fontFamily: font, fontSize: '0.78rem', fontWeight: 700, border: `1.5px solid ${group === g.id ? B.pants : alpha(B.pants, '33')}`, bgcolor: group === g.id ? alpha(B.pants, '14') : 'transparent', color: B.pants }}>{g.id === 'season' ? '🎄 ' : ''}{g.name}</Box>
+          ))}
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1, overflowX: 'auto', pb: 1, mx: -0.5, px: 0.5 }}>
+          {visible.filter((f) => f.group === group).map((f) => (
+            <Box key={f.id} onClick={() => setFrameId(f.id)} sx={{ cursor: 'pointer', textAlign: 'center', flexShrink: 0, width: 76 }}>
+              <Box sx={{ height: 116, borderRadius: '8px', display: 'grid', placeItems: 'center', bgcolor: alpha(B.pants, '0D'), border: `2.5px solid ${frameId === f.id ? B.pants : 'transparent'}` }}>
+                {prev.thumbs[f.id] ? <Box component="img" src={prev.thumbs[f.id]} alt={f.name} sx={{ maxHeight: 108, maxWidth: 70, objectFit: 'contain' }} /> : <Box sx={{ width: 20, height: 20 }} />}
               </Box>
-              <Typography sx={{ fontFamily: font, fontSize: '0.7rem', mt: 0.4, color: B.dark, fontWeight: frameId === f.id ? 700 : 400 }}>{f.name}</Typography>
+              <Typography sx={{ fontFamily: font, fontSize: '0.68rem', mt: 0.4, color: B.dark, fontWeight: frameId === f.id ? 700 : 400, lineHeight: 1.2 }}>{f.name}</Typography>
             </Box>
           ))}
         </Box>
+      </Box>
+      <Box>
+        <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, mb: 1 }}>하단 문구 <Box component="span" sx={{ fontFamily: font, fontSize: '0.72rem', color: alpha(B.dark, '88') }}>(선택)</Box></Typography>
+        <Box component="input" value={caption} maxLength={24} onChange={(e) => setCaption(e.target.value)} placeholder="예: 우리 첫 네컷 ♥ (비우면 프레임 기본 문구)"
+          sx={{ width: '100%', boxSizing: 'border-box', px: 1.5, py: 1.1, borderRadius: '12px', fontFamily: font, fontSize: '0.9rem', border: `1.5px solid ${alpha(B.pants, '44')}`, bgcolor: 'transparent', color: B.dark, outline: 'none', '&:focus': { borderColor: B.pants } }} />
       </Box>
       <Typography sx={{ fontFamily: font, fontSize: '0.75rem', color: alpha(B.dark, '99'), lineHeight: 1.6 }}>시작을 누르면 카메라가 켜지고, 3-2-1 뒤에 한 컷씩 모두 4컷을 찍어요.</Typography>
       <Box sx={{ display: 'flex', gap: 1 }}>
@@ -330,7 +373,7 @@ export default function PhotoBooth({ currentUser }) {
         : <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 1.2 }}>
           {items.map((it) => (
             <Box key={it.id} onClick={() => setDetail(it)} sx={{ cursor: 'pointer', borderRadius: '10px', overflow: 'hidden', bgcolor: alpha(B.pants, '10'), boxShadow: `0 2px 10px ${alpha(B.pants, '22')}`, '&:active': { transform: 'scale(.97)' } }}>
-              <Box component="img" src={it.url} alt="네컷" loading="lazy" sx={{ width: '100%', display: 'block', aspectRatio: it.layout === 'grid' ? '1064 / 1504' : '720 / 2190', objectFit: 'cover' }} />
+              <Box component="img" src={it.url} alt="네컷" loading="lazy" sx={{ width: '100%', display: 'block', aspectRatio: it.w && it.h ? `${it.w} / ${it.h}` : (it.layout === 'grid' ? '1064 / 1504' : '720 / 2190'), objectFit: 'cover' }} />
             </Box>
           ))}
         </Box>}
