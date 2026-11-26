@@ -94,6 +94,7 @@ const TOAST_ROUTES = {
   letter: '/letter', letter_reply: '/letter',
   thermo: '/thermo', hug: '/thermo', temp_diff: '/thermo',
   coupon: '/coupons', coupon_used: '/coupons',
+  photo: '/photobooth', photo_done: '/photobooth',
 };
 
 // ── 앱 내부 (BrowserRouter 안에서 실행) ──────────────────────────

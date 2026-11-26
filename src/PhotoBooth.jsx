@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { db, storage } from './firebase';
-import { collection, doc, setDoc, deleteDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, setDoc, getDoc, addDoc, deleteDoc, runTransaction, query, orderBy, limit, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { ref as sRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Box, Typography, Button, Dialog, CircularProgress } from '@mui/material';
 import { alpha, B } from './lib/constants';
@@ -10,7 +10,13 @@ import { captureCut, composeStrip, canvasToBlob } from './lib/photoCompose';
 
 const COLL = 'photobooth';
 const GALLERY_LIMIT = 40;          // 갤러리 한 번에 읽는 최대 장수(무제한 쿼리 금지)
-const SHOTS = 4, COUNT_FROM = 3, GAP_MS = 1400;
+const COUNT_FROM = 3, GAP_MS = 1400;
+const PEND = 'photoboothPending';  // 둘이 찍기 진행 문서 1개('active')만 존재 — 합성 전 컷은 Storage가 아니라 이 문서에 임시로만 둔다
+const EXPIRE_MS = 48 * 3600 * 1000; // 상대가 48시간 안에 안 찍으면 만료(다음에 누가 열 때 자동 삭제)
+const USERS = ['지수', '현하'];
+const cutToData = (c) => { const w = c.toDataURL('image/webp', 0.72); return w.startsWith('data:image/webp') ? w : c.toDataURL('image/jpeg', 0.72); };
+const decode = (u) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = u; });
+const leftText = (ms) => { const h = Math.max(1, Math.ceil(ms / 3600000)); return h >= 24 ? `${Math.floor(h / 24)}일 ${h % 24}시간` : `${h}시간`; };
 const NAMES = '지수 ♥ 현하';
 const todayText = () => { const d = new Date(); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`; };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -37,6 +43,10 @@ export default function PhotoBooth({ currentUser }) {
   const [saving, setSaving] = useState(false);
   const [detail, setDetail] = useState(null);
   const [toast, setToast] = useState('');
+  const [mode, setMode] = useState('solo');                 // solo | duo
+  const [pending, setPending] = useState(undefined);         // undefined=로딩, null=없음
+  const [cfg, setCfg] = useState({ need: 4, role: 'solo' }); // role: solo | starter | finisher(starterCuts: 먼저 보낸 사람 컷)
+  const partner = USERS.find((u) => u !== currentUser);
   const videoRef = useRef(null), streamRef = useRef(null), tokenRef = useRef(0);
 
   const layout = getLayout(layoutId);
@@ -46,6 +56,13 @@ export default function PhotoBooth({ currentUser }) {
     const q = query(collection(db, COLL), orderBy('createdAt', 'desc'), limit(GALLERY_LIMIT));
     return onSnapshot(q, (s) => setItems(s.docs.map((d) => ({ id: d.id, ...d.data() }))), () => setItems([]));
   }, []);
+
+  // 둘이 찍기 진행 상태 구독(문서 1개). 만료됐으면 지운다.
+  useEffect(() => onSnapshot(doc(db, PEND, 'active'), (sn) => {
+    const d = sn.exists() ? sn.data() : null;
+    if (d && d.expiresAt < Date.now()) { deleteDoc(sn.ref).catch(() => {}); setPending(null); return; }
+    setPending(d);
+  }, () => setPending(null)), []);
 
   const stopCam = useCallback(() => {
     tokenRef.current++;                                    // 진행 중 촬영 루프 취소
@@ -78,9 +95,10 @@ export default function PhotoBooth({ currentUser }) {
 
   const startShooting = async () => {
     if (shooting || !camReady) return;
+    const need = cfg.need;
     const my = ++tokenRef.current; setShooting(true); setCuts([]);
     const got = [];
-    for (let i = 0; i < SHOTS; i++) {
+    for (let i = 0; i < need; i++) {
       for (let n = COUNT_FROM; n >= 1; n--) { if (tokenRef.current !== my) return; setCount(n); vibrate(8); await sleep(1000); }
       if (tokenRef.current !== my) return;
       setCount(0); setFlash(true); vibrate(30);
@@ -89,20 +107,56 @@ export default function PhotoBooth({ currentUser }) {
       got.push(captureCut(v, layout.cw, layout.ch, facing === 'user'));
       setCuts([...got]);
       setTimeout(() => setFlash(false), 140);
-      if (i < SHOTS - 1) await sleep(GAP_MS);
+      if (i < need - 1) await sleep(GAP_MS);
     }
     if (tokenRef.current !== my) return;
-    const canvas = await composeStrip({ cuts: got, frameId, layoutId, names: NAMES, dateText: todayText() });
-    const url = canvas.toDataURL('image/webp', 0.8);
-    setResult({ canvas, url }); setShooting(false); stopCam(); setView('result');
+    setShooting(false); stopCam();
+    if (cfg.role === 'starter') { setResult({ mine: got, thumbs: got.map((c) => c.toDataURL('image/jpeg', 0.7)) }); setView('review'); return; }   // 내 2컷만 확인 후 전송(합성 안 함)
+    const all = cfg.role === 'finisher' ? [...cfg.starterCuts, ...got] : got;
+    const canvas = await composeStrip({ cuts: all, frameId, layoutId, names: NAMES, dateText: todayText() });
+    setResult({ canvas, url: canvas.toDataURL('image/webp', 0.8) }); setView('result');
   };
 
   const retake = () => { setResult(null); setCuts([]); setView('shoot'); };
   const leave = () => { stopCam(); setResult(null); setCuts([]); setView('gallery'); };
 
+  // 내 2컷을 상대에게 보낸다: 임시 문서에 저장(진행 중인 게 이미 있으면 거부) + 알림
+  const sendDuo = async () => {
+    if (!result?.mine || saving) return;
+    setSaving(true);
+    try {
+      const data = result.mine.map(cutToData);
+      await runTransaction(db, async (tx) => {
+        const r = doc(db, PEND, 'active'), sn = await tx.get(r);
+        if (sn.exists() && sn.data().expiresAt > Date.now()) throw new Error('busy');
+        tx.set(r, { starter: currentUser, partner, frame: frameId, layout: layoutId, cuts: data, createdAt: serverTimestamp(), expiresAt: Date.now() + EXPIRE_MS });
+      });
+      await addDoc(collection(db, 'notifications'), { writer: currentUser, type: 'photo', content: `${currentUser}가 네컷 2컷을 보냈어요 📸 이어서 2컷을 찍어 주세요!`, createdAt: serverTimestamp(), isRead: false });
+      setToast(`${partner}에게 보냈어요! 컷은 완성될 때까지 비밀 🤫`); leave();
+    } catch (e) { setToast(e?.message === 'busy' ? '이미 진행 중인 둘이 찍기가 있어요' : '보내지 못했어요. 다시 시도해 주세요.'); }
+    finally { setSaving(false); }
+  };
+
+  // 상대가 보낸 걸 이어서 찍기: 프레임·레이아웃은 먼저 시작한 사람 것을 따른다
+  const beginFinish = async () => {
+    if (!pending) return;
+    try {
+      const starterCuts = await Promise.all(pending.cuts.map(decode));
+      setFrameId(pending.frame); setLayoutId(pending.layout); setCfg({ need: 2, role: 'finisher', starterCuts }); setView('shoot');
+    } catch { setToast('컷을 불러오지 못했어요. 다시 시도해 주세요.'); }
+  };
+  const dropPending = async () => {
+    if (!window.confirm(pending?.starter === currentUser ? '보낸 2컷을 취소할까요? 컷은 삭제돼요.' : '이 요청을 거절할까요? 보낸 컷은 삭제돼요.')) return;
+    try { await deleteDoc(doc(db, PEND, 'active')); setToast('취소했어요'); } catch { setToast('취소하지 못했어요. 다시 시도해 주세요.'); }
+  };
+
   const save = async () => {
     if (!result || saving) return;
     setSaving(true);
+    if (cfg.role === 'finisher') {
+      const ps = await getDoc(doc(db, PEND, 'active')).catch(() => null);
+      if (!ps?.exists()) { setSaving(false); setToast('상대가 이미 취소했어요'); return; }
+    }
     const id = doc(collection(db, COLL)).id;
     let path = '';
     try {
@@ -111,10 +165,14 @@ export default function PhotoBooth({ currentUser }) {
       await uploadBytes(sRef(storage, path), blob, { contentType: blob.type });
       const url = await getDownloadURL(sRef(storage, path));
       try {
-        await setDoc(doc(db, COLL, id), { url, path, layout: layoutId, frame: frameId, createdBy: currentUser, createdAt: serverTimestamp(), size: blob.size });
+        await setDoc(doc(db, COLL, id), { url, path, layout: layoutId, frame: frameId, createdBy: currentUser, createdAt: serverTimestamp(), size: blob.size, ...(cfg.role === 'finisher' ? { duo: true, with: pending?.starter ?? null } : {}) });
       } catch (e) {
         await deleteObject(sRef(storage, path)).catch(() => {});   // 문서 저장 실패 시 방금 올린 파일을 남기지 않는다
         throw e;
+      }
+      if (cfg.role === 'finisher') {
+        await deleteDoc(doc(db, PEND, 'active')).catch(() => {});
+        await addDoc(collection(db, 'notifications'), { writer: currentUser, type: 'photo_done', content: `${currentUser}와 함께 찍은 네컷이 완성됐어요 🎞️ 갤러리에서 확인해 보세요!`, createdAt: serverTimestamp(), isRead: false }).catch(() => {});
       }
       setToast('갤러리에 저장했어요 📸'); leave();
     } catch {
@@ -166,10 +224,10 @@ export default function PhotoBooth({ currentUser }) {
           {count > 0 && <Box sx={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', pointerEvents: 'none' }}>
             <Typography key={count} sx={{ fontFamily: "'Jua',sans-serif", fontSize: '6rem', color: '#fff', textShadow: '0 2px 16px rgba(0,0,0,.55)' }}>{count}</Typography></Box>}
           <Box sx={{ position: 'absolute', inset: 0, bgcolor: '#fff', opacity: flash ? 0.9 : 0, transition: 'opacity .14s', pointerEvents: 'none' }} />
-          <Typography sx={{ position: 'absolute', top: 8, left: 12, fontFamily: font, fontSize: '0.8rem', fontWeight: 700, color: '#fff', textShadow: '0 1px 6px rgba(0,0,0,.6)' }}>{Math.min(cuts.length + (shooting ? 1 : 0), SHOTS)} / {SHOTS}</Typography>
+          <Typography sx={{ position: 'absolute', top: 8, left: 12, fontFamily: font, fontSize: '0.8rem', fontWeight: 700, color: '#fff', textShadow: '0 1px 6px rgba(0,0,0,.6)' }}>{Math.min(cuts.length + (shooting ? 1 : 0), cfg.need)} / {cfg.need}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 0.8 }}>
-          {Array.from({ length: SHOTS }, (_, i) => <Box key={i} sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: i < cuts.length ? B.pants : alpha(B.pants, '33') }} />)}
+          {Array.from({ length: cfg.need }, (_, i) => <Box key={i} sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: i < cuts.length ? B.pants : alpha(B.pants, '33') }} />)}
         </Box>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
           <Button sx={btn(true)} disabled={!camReady || shooting} onClick={startShooting}>{shooting ? '촬영 중…' : '📸 촬영 시작'}</Button>
@@ -177,6 +235,21 @@ export default function PhotoBooth({ currentUser }) {
           <Button sx={btn(false)} onClick={leave}>취소</Button>
         </Box>
       </>)}
+    </Box>
+  );
+
+  if (view === 'review' && result?.thumbs) return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+      <Typography sx={{ fontFamily: font, fontSize: '0.85rem', color: B.dark }}>내 2컷이에요. {partner}가 나머지 2컷을 찍어야 완성돼요.</Typography>
+      <Box sx={{ display: 'flex', gap: 1, width: '100%', maxWidth: 360 }}>
+        {result.thumbs.map((u, i) => <Box key={i} component="img" src={u} alt="" sx={{ flex: 1, minWidth: 0, borderRadius: '10px', aspectRatio: aspect, objectFit: 'cover' }} />)}
+      </Box>
+      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Button sx={btn(true)} disabled={saving} onClick={sendDuo}>{saving ? '보내는 중…' : `💌 ${partner}에게 보내기`}</Button>
+        <Button sx={btn(false)} disabled={saving} onClick={retake}>🔁 다시 찍기</Button>
+        <Button sx={btn(false)} disabled={saving} onClick={leave}>취소</Button>
+      </Box>
+      {toast && <ToastBar text={toast} onDone={() => setToast('')} />}
     </Box>
   );
 
@@ -195,6 +268,17 @@ export default function PhotoBooth({ currentUser }) {
 
   if (view === 'setup') return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+      <Box>
+        <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, mb: 1 }}>모드</Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          {[['solo', '🙋 혼자 4컷'], ['duo', `👫 둘이 2컷씩`]].map(([m, label]) => {
+            const dis = m === 'duo' && !!pending;
+            return <Box key={m} onClick={() => !dis && setMode(m)} sx={{ flex: 1, py: 1.2, textAlign: 'center', borderRadius: '14px', cursor: dis ? 'default' : 'pointer', opacity: dis ? 0.45 : 1, fontFamily: font, fontWeight: 700, fontSize: '0.85rem', border: `2px solid ${mode === m ? B.pants : alpha(B.pants, '33')}`, bgcolor: mode === m ? alpha(B.pants, '14') : 'transparent', color: B.pants }}>{label}</Box>;
+          })}
+        </Box>
+        {pending && <Typography sx={{ fontFamily: font, fontSize: '0.7rem', color: alpha(B.dark, '88'), mt: 0.8 }}>진행 중인 둘이 찍기가 있어서 지금은 혼자 찍기만 가능해요.</Typography>}
+        {mode === 'duo' && !pending && <Typography sx={{ fontFamily: font, fontSize: '0.7rem', color: alpha(B.dark, '88'), mt: 0.8, lineHeight: 1.5 }}>내가 2컷을 찍어 보내면 {partner}가 나머지 2컷을 찍어요. 서로의 컷은 완성될 때까지 보이지 않아요. 프레임은 내가 고른 걸로 정해져요.</Typography>}
+      </Box>
       <Box>
         <Typography sx={{ fontFamily: "'Jua',sans-serif", color: B.pants, mb: 1 }}>레이아웃</Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -218,7 +302,7 @@ export default function PhotoBooth({ currentUser }) {
       </Box>
       <Typography sx={{ fontFamily: font, fontSize: '0.75rem', color: alpha(B.dark, '99'), lineHeight: 1.6 }}>시작을 누르면 카메라가 켜지고, 3-2-1 뒤에 한 컷씩 모두 4컷을 찍어요.</Typography>
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button sx={{ ...btn(true), flex: 1 }} onClick={() => setView('shoot')}>시작</Button>
+        <Button sx={{ ...btn(true), flex: 1 }} onClick={() => { const duo = mode === 'duo' && !pending; setCfg(duo ? { need: 2, role: 'starter' } : { need: 4, role: 'solo' }); setResult(null); setView('shoot'); }}>시작</Button>
         <Button sx={btn(false)} onClick={() => setView('gallery')}>취소</Button>
       </Box>
     </Box>
@@ -227,7 +311,20 @@ export default function PhotoBooth({ currentUser }) {
   // gallery
   return (
     <Box>
-      <Button sx={{ ...btn(true), width: '100%', mb: 2 }} onClick={() => { vibrate(15); setView('setup'); }}>📸 새로 찍기</Button>
+      {pending && (
+        <Box sx={{ mb: 2, p: 1.5, borderRadius: '16px', bgcolor: alpha(B.pants, '12'), border: `1.5px dashed ${alpha(B.pants, '55')}` }}>
+          <Typography sx={{ fontFamily: font, fontSize: '0.85rem', color: B.dark, lineHeight: 1.5 }}>
+            {pending.starter === currentUser
+              ? `💌 ${pending.partner}가 2컷을 찍어 주길 기다리는 중이에요 (남은 시간 ${leftText(pending.expiresAt - Date.now())})`
+              : `💌 ${pending.starter}가 2컷을 보냈어요! 이어서 내 2컷을 찍어 완성해 보세요 (남은 시간 ${leftText(pending.expiresAt - Date.now())})`}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+            {pending.starter !== currentUser && <Button sx={btn(true)} onClick={beginFinish}>📸 내 2컷 찍기</Button>}
+            <Button sx={btn(false)} onClick={dropPending}>{pending.starter === currentUser ? '보낸 컷 취소' : '거절'}</Button>
+          </Box>
+        </Box>
+      )}
+      <Button sx={{ ...btn(true), width: '100%', mb: 2 }} onClick={() => { vibrate(15); setMode('solo'); setView('setup'); }}>📸 새로 찍기</Button>
       {items === null ? <Box sx={{ textAlign: 'center', py: 6 }}><CircularProgress size={26} sx={{ color: B.pants }} /></Box>
         : items.length === 0 ? <Box sx={{ textAlign: 'center', py: 6 }}><Typography sx={{ fontSize: '2.2rem' }}>🎞️</Typography><Typography sx={{ fontFamily: font, fontSize: '0.85rem', color: alpha(B.dark, '88'), mt: 1 }}>아직 사진이 없어요. 첫 네컷을 찍어 볼까요?</Typography></Box>
         : <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 1.2 }}>

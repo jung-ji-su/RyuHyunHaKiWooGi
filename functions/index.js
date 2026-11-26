@@ -113,6 +113,8 @@ const ROUTE = {
   temp_diff:    `${BASE}/thermo`,
   coupon:       `${BASE}/coupons`,
   coupon_used:  `${BASE}/coupons`,
+  photo:        `${BASE}/photobooth`,
+  photo_done:   `${BASE}/photobooth`,
   jilta:        BASE,
 };
 

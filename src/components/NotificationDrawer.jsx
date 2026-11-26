@@ -21,6 +21,8 @@ const TYPE_META = {
   letter_reply: { icon: '💌', color: B.pants, label: '답장' },
   coupon:       { icon: '🎫', color: '#FF6B9D', label: '쿠폰' },
   coupon_used:  { icon: '✅', color: '#43A047', label: '쿠폰사용' },
+  photo:        { icon: '📸', color: '#FF6B9D', label: '네컷' },
+  photo_done:   { icon: '🎞️', color: '#FF6B9D', label: '네컷완성' },
   jilta:        { icon: '😤', color: '#E53935', label: '질타' },
 };
 
@@ -58,6 +60,7 @@ const TYPE_ROUTES = {
   letter: '/letter', letter_reply: '/letter',
   thermo: '/thermo', temp_diff: '/thermo', hug: '/thermo',
   coupon: '/coupons', coupon_used: '/coupons',
+  photo: '/photobooth', photo_done: '/photobooth',
   jilta: '/',
 };
 
